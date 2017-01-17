@@ -1,0 +1,127 @@
+From 7610d0eb2f5ba1b04d79d1a4cf1ed5b36d9facef Mon Sep 17 00:00:00 2001
+From: Yuri Konotopov <ykonotopov@gmail.com>
+Date: Sun, 4 Dec 2016 22:32:40 +0400
+Subject: [PATCH] Make build system Gentoo-compatible
+
+---
+ CMakeLists.txt              | 47 +++++++++++++++++----------------------------
+ cmake/c.linux.cmake         |  4 ----
+ driver/video/CMakeLists.txt |  8 ++++++--
+ 3 files changed, 24 insertions(+), 35 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 72b12be..49eed6a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -161,6 +161,17 @@ ELSE()
+ ENDIF()
+ UNSET(TMP_BOOST_VERSION)
+ 
++################################################################################
++# Drivers options
++
++OPTION(BUILD_GLFW_DRIVER "Build the GLFW video driver" 0)
++OPTION(BUILD_SDL_DRIVER "Build the sdl video driver" 1)
++IF (UNIX)
++       IF (NOT BUILD_SDL_DRIVER AND NOT BUILD_GLFW_DRIVER)
++               MESSAGE(FATAL_ERROR "No video driver selected! Either use SDL or GLFW.")
++       ENDIF (NOT BUILD_SDL_DRIVER AND NOT BUILD_GLFW_DRIVER)
++ENDIF (UNIX)
++
+ ################################################################################
+ # Set paths
+ # All paths are relative to the install-prefix.
+@@ -201,7 +212,7 @@ ELSE()
+ 	SET(RTTR_DRIVERDIR "${DEFAULT_DRIVERDIR}" CACHE STRING "Directory for driver objects")
+ ENDIF()
+ # Ensure relative paths
+-foreach(curDirVar RTTR_BINDIR RTTR_DATADIR RTTR_GAMEDIR RTTR_LIBDIR RTTR_DOCDIR RTTR_DRIVERDIR)
++foreach(curDirVar RTTR_BINDIR RTTR_DATADIR RTTR_LIBDIR RTTR_DOCDIR RTTR_DRIVERDIR)
+ 	if(IS_ABSOLUTE ${${curDirVar}})
+ 		message(FATAL_ERROR "All RTTR_*DIR variables must be relative paths. ${curDirVar} is absolute: ${${curDirVar}}")
+ 	endif()
+@@ -333,22 +344,12 @@ MACRO(symlinkFolder dst symLinkPath)
+ 	ENDIF()
+ ENDMACRO(symlinkFolder)
+ 
+-IF(NOT ${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
+-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${RTTR_DATADIR}")
+-	symlinkFolder("${CMAKE_SOURCE_DIR}/RTTR" "${CMAKE_BINARY_DIR}/${RTTR_DATADIR}/RTTR")
+-	file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${RTTR_LIBDIR}/RTTR")
+-	if(NOT EXISTS "${CMAKE_SOURCE_DIR}/S2")
+-		file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/S2")
+-	endif()
+-	symlinkFolder("${CMAKE_SOURCE_DIR}/S2" "${CMAKE_BINARY_DIR}/${RTTR_GAMEDIR}")
+-ELSE()
+-	message(STATUS "Host system is ${CMAKE_HOST_SYSTEM_NAME}. Will use copies instead of symlinks")
+-	file(COPY "${CMAKE_SOURCE_DIR}/RTTR" DESTINATION "${CMAKE_BINARY_DIR}"
+-		 PATTERN "*.po" EXCLUDE
+-		 PATTERN "*.pot" EXCLUDE
+-		 PATTERN ".*" EXCLUDE
+-	)
+-ENDIF()
++message(STATUS "Host system is ${CMAKE_HOST_SYSTEM_NAME}. Will use copies instead of symlinks")
++file(COPY "${CMAKE_SOURCE_DIR}/RTTR" DESTINATION "${CMAKE_BINARY_DIR}"
++	 PATTERN "*.po" EXCLUDE
++	 PATTERN "*.pot" EXCLUDE
++	 PATTERN ".*" EXCLUDE
++)
+ 
+ ################################################################################
+ # Configure files
+@@ -382,17 +383,6 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+ enable_testing()
+ 
+ ################################################################################
+-# Add version generater first
+-
+-ADD_SUBDIRECTORY(version)
+-
+-ADD_CUSTOM_TARGET(updateversion ALL
+-				  COMMAND "$<TARGET_FILE:version>" "${CMAKE_SOURCE_DIR}"
+-				  DEPENDS version
+-				  WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+-)
+-	
+-################################################################################
+ # Then add all other dependencies
+ 
+ ADD_SUBDIRECTORY(driver)
+@@ -404,7 +394,6 @@ ADD_SUBDIRECTORY(libutil)
+ SET(LOBBY_C TRUE)
+ ADD_SUBDIRECTORY(liblobby)
+ ADD_SUBDIRECTORY(s-c)
+-ADD_SUBDIRECTORY(s25update)
+ ADD_SUBDIRECTORY(src)
+ 
+ ################################################################################
+diff --git a/cmake/c.linux.cmake b/cmake/c.linux.cmake
+index f8c2297..3e84607e 100644
+--- a/cmake/c.linux.cmake
++++ b/cmake/c.linux.cmake
+@@ -1,5 +1 @@
+ SET(Boost_COMPILER "-gcc44")
+-
+-# set compiler flags
+-FORCE_ADD_FLAGS(CMAKE_C_FLAGS -mtune=generic -mno-align-double)
+-FORCE_ADD_FLAGS(CMAKE_CXX_FLAGS -mtune=generic -mno-align-double)
+diff --git a/driver/video/CMakeLists.txt b/driver/video/CMakeLists.txt
+index bcc8e10..f32d85b 100644
+--- a/driver/video/CMakeLists.txt
++++ b/driver/video/CMakeLists.txt
+@@ -1,6 +1,10 @@
+ 
+ ADD_SUBDIRECTORY( WinAPI )
+-ADD_SUBDIRECTORY( GLFW )
+-ADD_SUBDIRECTORY( SDL )
++IF(BUILD_GLFW_DRIVER)
++	ADD_SUBDIRECTORY( GLFW )
++ENDIF(BUILD_GLFW_DRIVER)
++IF(BUILD_SDL_DRIVER)
++	ADD_SUBDIRECTORY( SDL )
++ENDIF(BUILD_SDL_DRIVER)
+ 
+ #################################################################################
+-- 
+2.10.2
+
