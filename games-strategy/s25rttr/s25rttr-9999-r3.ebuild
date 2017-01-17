@@ -12,7 +12,7 @@ EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 IUSE="glfw"
 
 RDEPEND="app-arch/bzip2
@@ -31,6 +31,8 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${P}-cmake.patch
+	"${FILESDIR}"/${P}-restore-versionnumbers.patch
+	"${FILESDIR}"/${P}-de-lang.patch
 )
 
 src_prepare() {
