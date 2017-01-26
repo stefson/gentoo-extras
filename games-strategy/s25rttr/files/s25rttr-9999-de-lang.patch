@@ -5,7 +5,7 @@
  "Report-Msgid-Bugs-To: \n"
  "POT-Creation-Date: 2016-07-19 22:56+0200\n"
 -"PO-Revision-Date: 2016-07-25 07:19+0000\n"
-+"PO-Revision-Date: 2017-01-13 12:30+0100\n"
++"PO-Revision-Date: 2017-01-24 16:26+0100\n"
  "Last-Translator: Marcus <Unknown>\n"
  "Language-Team: Siedler II.5 RttR <sf-team@siedler25.org>\n"
  "Language: de_DE\n"
@@ -97,6 +97,20 @@
  
  #: ingameWindows/iwOptionsWindow.cpp:91
  msgid "End game"
+@@ -1269,11 +1267,11 @@ msgstr "Erstatte 100%"
+ 
+ #: addons/AddonRefundOnEmergency.h:35
+ msgid "Get building materials back when a building is destroyed and your emergency program is active."
+-msgstr "Erstatte Baumaterialien, wenn ein Gebäude abgerissen wird und das Notfallprogramm aktiv ist."
++msgstr "Erstatte Baumaterialien, wenn ein Gebäude abgerissen wird und gleichzeitig das Notfallprogramm aktiv ist."
+ 
+ #: addons/AddonRefundMaterials.h:34
+ msgid "Get building materials back when a building is destroyed."
+-msgstr "Erstatte Rohstoffe zurück wenn Gebäude abgerissen werden."
++msgstr "Erstatte Baumaterialien zurück wenn ein Gebäude abgerissen wird."
+ 
+ #: ingameWindows/iwAction.cpp:328
+ msgid "Go to headquarters"
 @@ -1370,10 +1368,10 @@ msgstr "Hauptquartier"
  
  #: ingameWindows/iwBuilding.cpp:68 ingameWindows/iwBuildingSite.cpp:40
@@ -132,6 +146,20 @@
  
  #: desktops/dskMainMenu.cpp:61 desktops/dskOptions.cpp:108
  msgid "Readme"
+@@ -2372,11 +2370,11 @@ msgstr "Erstatte 75%"
+ 
+ #: addons/AddonRefundMaterials.h:33
+ msgid "Refund materials for destroyed buildings"
+-msgstr "Erstatte Rohstoffe wenn ein Gebäude abgerissen wird"
++msgstr "Erstattung von Baumaterial"
+ 
+ #: addons/AddonRefundOnEmergency.h:34
+ msgid "Refund materials in emergency program"
+-msgstr "Erstatte Ressourcen zurück, wenn das Notfallprogramm aktiv ist"
++msgstr "Erstattung von Baumaterial im Notfallprogramm"
+ 
+ #: ingameWindows/iwLobbyConnect.cpp:73
+ msgid "Register"
 @@ -2569,8 +2567,7 @@ msgstr "Servername:"
  msgid "Server management"
  msgstr "Server Verwaltung"
