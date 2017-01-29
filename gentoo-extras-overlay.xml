@@ -9,7 +9,7 @@
       <email>herrtimson@yahoo.de</email>
       <name>Herr Timson</name>
     </owner>
-    <source type="git">git@github.com:stesfon/gentoo-extras.git</source>
+    <source type="git">git@github.com:stefson/gentoo-extras.git</source>
     <source type="git">https://github.com/stefson/gentoo-extras.git</source>
     <feed>https://github.com/stefson/gentoo-extras/commits/master.atom</feed>
   </repo>
