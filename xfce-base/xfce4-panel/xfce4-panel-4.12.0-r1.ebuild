@@ -12,13 +12,13 @@ SRC_URI="mirror://xfce/src/xfce/${PN}/${PV%.*}/${P}.tar.bz2"
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 sparc x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~x86-solaris"
-IUSE="debug"
+IUSE="debug +gtk3"
 
 RDEPEND=">=dev-libs/dbus-glib-0.100
 	>=dev-libs/glib-2.24
 	>=x11-libs/cairo-1
 	>=x11-libs/gtk+-2.20:2
-	>=x11-libs/gtk+-3.2:3
+	gtk3? ( >=x11-libs/gtk+-3.2:3 )
 	x11-libs/libX11
 	>=x11-libs/libwnck-2.31:1
 	>=xfce-base/exo-0.8
@@ -36,7 +36,7 @@ DEPEND="${RDEPEND}
 pkg_setup() {
 	XFCONF=(
 		--docdir="${EPREFIX}"/usr/share/doc/${PF}
-		--enable-gtk3
+		$(use_enable gtk3)
 		$(xfconf_use_debug)
 		)
 
