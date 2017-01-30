@@ -1,0 +1,26 @@
+From e379f939593d329792dc07ef17190410d2118541 Mon Sep 17 00:00:00 2001
+From: "Olivier F. R. Dierick" <o.dierick@piezo-forte.be>
+Date: Sun, 29 Jan 2017 19:48:59 +0100
+Subject: wined3d: Revenant crash hack + fix for Medieval Total War graphic glitches
+
+---
+ dlls/wined3d/surface.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dlls/wined3d/surface.c b/dlls/wined3d/surface.c
+index dcc4c57..75dca28 100644
+--- a/dlls/wined3d/surface.c
++++ b/dlls/wined3d/surface.c
+@@ -2856,7 +2856,7 @@ HRESULT surface_load_location(struct wined3d_surface *surface, struct wined3d_co
+     {
+         FIXME("Unimplemented copy from %s to %s for depth/stencil buffers.\n",
+                 wined3d_debug_location(sub_resource->locations), wined3d_debug_location(location));
+-        return WINED3DERR_INVALIDCALL;
++        goto done;
+     }
+ 
+     switch (location)
+-- 
+1.7.10.4
+
+

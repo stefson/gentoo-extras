@@ -249,6 +249,11 @@ src_prepare() {
 
 		# https://bugs.winehq.org/show_bug.cgi?id=42132
 		"${FILESDIR}"/${PN}-2.0_rc3-flex263.patch
+
+		# https://bugs.winehq.org/show_bug.cgi?id=40488 
+		# Fix for Medieval Total War battle mode graphic glitches
+		"${FILESDIR}"/${PN}-2.0-bug-40488.patch
+
 	)
 
 	default
