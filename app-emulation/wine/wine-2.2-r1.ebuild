@@ -252,7 +252,7 @@ src_prepare() {
 
 		# https://bugs.winehq.org/show_bug.cgi?id=40488 
 		# Fix for Medieval Total War battle mode graphic glitches
-#		"${FILESDIR}"/${PN}-2.0-bug-40488.patch #fails to apply for 2.2
+#		"${FILESDIR}"/${PN}-2.0-bug-40488.patch #fails to apply for 2.2 | see line #2763 of surface.c
 
 	)
 
