@@ -1,0 +1,16 @@
+@@ -, +, @@ 
+---
+ dlls/wined3d/surface.c |    1 -
+ 1 file changed, 1 deletion(-)
+--- a/dlls/wined3d/surface.c	
++++ a/dlls/wined3d/surface.c	
+@@ -2760,7 +2760,6 @@ HRESULT surface_load_location(struct wined3d_surface *surface, struct wined3d_co
+         DWORD current = texture->sub_resources[sub_resource_idx].locations;
+         FIXME("Unimplemented copy from %s to %s for depth/stencil buffers.\n",
+                 wined3d_debug_location(current), wined3d_debug_location(location));
+-        return WINED3DERR_INVALIDCALL;
+     }
+ 
+     switch (location)
+-- 
+
