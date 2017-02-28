@@ -1,0 +1,280 @@
+From 35e651caf130e1370c3fa7866ce0e1d29aa2aacd Mon Sep 17 00:00:00 2001
+From: Henri Verbeet <hverbeet@codeweavers.com>
+Date: Thu, 26 Jan 2017 13:25:18 +0100
+Subject: [PATCH] wined3d: Get rid of the "ds_current_size" field from struct
+ wined3d_surface.
+
+This should be unused now that surface_load_ds_location() is gone.
+
+Signed-off-by: Henri Verbeet <hverbeet@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/wined3d/cs.c              |  2 +-
+ dlls/wined3d/device.c          | 66 ++----------------------------------------
+ dlls/wined3d/drawprim.c        | 17 ++---------
+ dlls/wined3d/surface.c         | 23 +++------------
+ dlls/wined3d/swapchain.c       |  3 +-
+ dlls/wined3d/wined3d_private.h |  3 +-
+ 6 files changed, 12 insertions(+), 102 deletions(-)
+
+diff --git a/dlls/wined3d/cs.c b/dlls/wined3d/cs.c
+index f41b1a5..f1aef77 100644
+--- a/dlls/wined3d/cs.c
++++ b/dlls/wined3d/cs.c
+@@ -632,7 +632,7 @@ static void wined3d_cs_exec_set_depth_stencil_view(struct wined3d_cs *cs, const
+         if (prev_surface && (device->swapchains[0]->desc.flags & WINED3D_SWAPCHAIN_DISCARD_DEPTHSTENCIL
+                 || prev_surface->container->flags & WINED3D_TEXTURE_DISCARD))
+         {
+-            surface_modify_ds_location(prev_surface, WINED3D_LOCATION_DISCARDED, prev->width, prev->height);
++            surface_modify_ds_location(prev_surface, WINED3D_LOCATION_DISCARDED);
+             if (prev_surface == device->onscreen_depth_stencil)
+             {
+                 wined3d_texture_decref(device->onscreen_depth_stencil->container);
+diff --git a/dlls/wined3d/device.c b/dlls/wined3d/device.c
+index c6467f2..302df96 100644
+--- a/dlls/wined3d/device.c
++++ b/dlls/wined3d/device.c
+@@ -205,9 +205,7 @@ void device_switch_onscreen_ds(struct wined3d_device *device,
+     {
+         surface_load_location(device->onscreen_depth_stencil, context, WINED3D_LOCATION_TEXTURE_RGB);
+ 
+-        surface_modify_ds_location(device->onscreen_depth_stencil, WINED3D_LOCATION_TEXTURE_RGB,
+-                device->onscreen_depth_stencil->ds_current_size.cx,
+-                device->onscreen_depth_stencil->ds_current_size.cy);
++        surface_modify_ds_location(device->onscreen_depth_stencil, WINED3D_LOCATION_TEXTURE_RGB);
+         wined3d_texture_decref(device->onscreen_depth_stencil->container);
+     }
+     device->onscreen_depth_stencil = depth_stencil;
+@@ -231,62 +229,6 @@ static BOOL is_full_clear(const struct wined3d_surface *target, const RECT *draw
+     return TRUE;
+ }
+ 
+-static void prepare_ds_clear(struct wined3d_surface *ds, struct wined3d_context *context,
+-        DWORD location, const RECT *draw_rect, UINT rect_count, const RECT *clear_rect, RECT *out_rect)
+-{
+-    struct wined3d_texture_sub_resource *sub_resource = surface_get_sub_resource(ds);
+-    RECT current_rect, r;
+-
+-    if (sub_resource->locations & WINED3D_LOCATION_DISCARDED)
+-    {
+-        /* Depth buffer was discarded, make it entirely current in its new location since
+-         * there is no other place where we would get data anyway. */
+-        SetRect(out_rect, 0, 0,
+-                wined3d_texture_get_level_width(ds->container, ds->texture_level),
+-                wined3d_texture_get_level_height(ds->container, ds->texture_level));
+-        return;
+-    }
+-
+-    if (sub_resource->locations & location)
+-        SetRect(&current_rect, 0, 0,
+-                ds->ds_current_size.cx,
+-                ds->ds_current_size.cy);
+-    else
+-        SetRectEmpty(&current_rect);
+-
+-    IntersectRect(&r, draw_rect, &current_rect);
+-    if (EqualRect(&r, draw_rect))
+-    {
+-        /* current_rect ⊇ draw_rect, modify only. */
+-        SetRect(out_rect, 0, 0, ds->ds_current_size.cx, ds->ds_current_size.cy);
+-        return;
+-    }
+-
+-    if (EqualRect(&r, &current_rect))
+-    {
+-        /* draw_rect ⊇ current_rect, test if we're doing a full clear. */
+-
+-        if (!rect_count)
+-        {
+-            /* Full clear, modify only. */
+-            *out_rect = *draw_rect;
+-            return;
+-        }
+-
+-        IntersectRect(&r, draw_rect, clear_rect);
+-        if (EqualRect(&r, draw_rect))
+-        {
+-            /* clear_rect ⊇ draw_rect, modify only. */
+-            *out_rect = *draw_rect;
+-            return;
+-        }
+-    }
+-
+-    /* Full load. */
+-    surface_load_location(ds, context, location);
+-    SetRect(out_rect, 0, 0, ds->ds_current_size.cx, ds->ds_current_size.cy);
+-}
+-
+ void device_clear_render_targets(struct wined3d_device *device, UINT rt_count, const struct wined3d_fb_state *fb,
+         UINT rect_count, const RECT *clear_rect, const RECT *draw_rect, DWORD flags, const struct wined3d_color *color,
+         float depth, DWORD stencil)
+@@ -303,7 +245,6 @@ void device_clear_render_targets(struct wined3d_device *device, UINT rt_count, c
+     GLbitfield clear_mask = 0;
+     BOOL render_offscreen;
+     unsigned int i;
+-    RECT ds_rect = {0};
+ 
+     context = context_acquire(device, target);
+     if (!context->valid)
+@@ -361,8 +302,7 @@ void device_clear_render_targets(struct wined3d_device *device, UINT rt_count, c
+ 
+         if (!render_offscreen && depth_stencil != device->onscreen_depth_stencil)
+             device_switch_onscreen_ds(device, context, depth_stencil);
+-        prepare_ds_clear(depth_stencil, context, location,
+-                draw_rect, rect_count, clear_rect, &ds_rect);
++        surface_load_location(depth_stencil, context, location);
+     }
+ 
+     if (!context_apply_clear_state(context, state, rt_count, fb))
+@@ -391,7 +331,7 @@ void device_clear_render_targets(struct wined3d_device *device, UINT rt_count, c
+     {
+         DWORD location = render_offscreen ? dsv->resource->draw_binding : WINED3D_LOCATION_DRAWABLE;
+ 
+-        surface_modify_ds_location(depth_stencil, location, ds_rect.right, ds_rect.bottom);
++        surface_modify_ds_location(depth_stencil, location);
+ 
+         gl_info->gl_ops.gl.p_glDepthMask(GL_TRUE);
+         context_invalidate_state(context, STATE_RENDER(WINED3D_RS_ZWRITEENABLE));
+diff --git a/dlls/wined3d/drawprim.c b/dlls/wined3d/drawprim.c
+index 9be696b..d846b8f 100644
+--- a/dlls/wined3d/drawprim.c
++++ b/dlls/wined3d/drawprim.c
+@@ -467,23 +467,10 @@ void draw_primitive(struct wined3d_device *device, const struct wined3d_state *s
+ 
+         if (state->render_states[WINED3D_RS_ZWRITEENABLE] || state->render_states[WINED3D_RS_ZENABLE])
+         {
+-            RECT current_rect, draw_rect, r;
+-
+             if (!context->render_offscreen && ds != device->onscreen_depth_stencil)
+                 device_switch_onscreen_ds(device, context, ds);
+ 
+-            if (surface_get_sub_resource(ds)->locations & location)
+-                SetRect(&current_rect, 0, 0, ds->ds_current_size.cx, ds->ds_current_size.cy);
+-            else
+-                SetRectEmpty(&current_rect);
+-
+-            wined3d_get_draw_rect(state, &draw_rect);
+-
+-            IntersectRect(&r, &draw_rect, &current_rect);
+-            if (!EqualRect(&r, &draw_rect))
+-                wined3d_texture_load_location(ds->container, dsv->sub_resource_idx, context, location);
+-            else
+-                wined3d_texture_prepare_location(ds->container, dsv->sub_resource_idx, context, location);
++            wined3d_texture_load_location(ds->container, dsv->sub_resource_idx, context, location);
+         }
+         else
+             wined3d_texture_prepare_location(ds->container, dsv->sub_resource_idx, context, location);
+@@ -501,7 +488,7 @@ void draw_primitive(struct wined3d_device *device, const struct wined3d_state *s
+         struct wined3d_surface *ds = wined3d_rendertarget_view_get_surface(fb->depth_stencil);
+         DWORD location = context->render_offscreen ? ds->container->resource.draw_binding : WINED3D_LOCATION_DRAWABLE;
+ 
+-        surface_modify_ds_location(ds, location, ds->ds_current_size.cx, ds->ds_current_size.cy);
++        surface_modify_ds_location(ds, location);
+     }
+ 
+     if ((!gl_info->supported[WINED3D_GL_VERSION_2_0]
+diff --git a/dlls/wined3d/surface.c b/dlls/wined3d/surface.c
+index 4d1eced..ad02a20 100644
+--- a/dlls/wined3d/surface.c
++++ b/dlls/wined3d/surface.c
+@@ -720,8 +720,7 @@ static HRESULT wined3d_surface_depth_blt(struct wined3d_surface *src_surface, DW
+ 
+     surface_depth_blt_fbo(device, src_surface, src_location, src_rect, dst_surface, dst_location, dst_rect);
+ 
+-    surface_modify_ds_location(dst_surface, dst_location,
+-            dst_surface->ds_current_size.cx, dst_surface->ds_current_size.cy);
++    surface_modify_ds_location(dst_surface, dst_location);
+ 
+     return WINED3D_OK;
+ }
+@@ -2489,17 +2488,14 @@ static HRESULT surface_blt_special(struct wined3d_surface *dst_surface, const RE
+     return WINED3DERR_INVALIDCALL;
+ }
+ 
+-void surface_modify_ds_location(struct wined3d_surface *surface,
+-        DWORD location, UINT w, UINT h)
++void surface_modify_ds_location(struct wined3d_surface *surface, DWORD location)
+ {
+     struct wined3d_texture *texture = surface->container;
+     unsigned int sub_resource_idx;
+ 
+-    TRACE("surface %p, new location %#x, w %u, h %u.\n", surface, location, w, h);
++    TRACE("surface %p, new location %#x.\n", surface, location);
+ 
+     sub_resource_idx = surface_get_sub_resource_idx(surface);
+-    surface->ds_current_size.cx = w;
+-    surface->ds_current_size.cy = h;
+     wined3d_texture_validate_location(texture, sub_resource_idx, location);
+     wined3d_texture_invalidate_location(texture, sub_resource_idx, ~location);
+ }
+@@ -2827,17 +2823,12 @@ HRESULT surface_load_location(struct wined3d_surface *surface, struct wined3d_co
+     unsigned int sub_resource_idx = surface_get_sub_resource_idx(surface);
+     struct wined3d_texture *texture = surface->container;
+     struct wined3d_texture_sub_resource *sub_resource;
+-    unsigned int surface_w, surface_h;
+     HRESULT hr;
+ 
+     TRACE("surface %p, location %s.\n", surface, wined3d_debug_location(location));
+ 
+-    surface_w = wined3d_texture_get_level_width(texture, surface->texture_level);
+-    surface_h = wined3d_texture_get_level_height(texture, surface->texture_level);
+-
+     sub_resource = &texture->sub_resources[sub_resource_idx];
+-    if (sub_resource->locations & location && (!(texture->resource.usage & WINED3DUSAGE_DEPTHSTENCIL)
+-            || (surface->ds_current_size.cx == surface_w && surface->ds_current_size.cy == surface_h)))
++    if (sub_resource->locations & location)
+     {
+         TRACE("Location (%#x) is already up to date.\n", location);
+         return WINED3D_OK;
+@@ -2907,12 +2898,6 @@ HRESULT surface_load_location(struct wined3d_surface *surface, struct wined3d_co
+ done:
+     wined3d_texture_validate_location(texture, sub_resource_idx, location);
+ 
+-    if (texture->resource.usage & WINED3DUSAGE_DEPTHSTENCIL)
+-    {
+-        surface->ds_current_size.cx = surface_w;
+-        surface->ds_current_size.cy = surface_h;
+-    }
+-
+     return WINED3D_OK;
+ }
+ 
+diff --git a/dlls/wined3d/swapchain.c b/dlls/wined3d/swapchain.c
+index e52ab41..cb704cd 100644
+--- a/dlls/wined3d/swapchain.c
++++ b/dlls/wined3d/swapchain.c
+@@ -622,8 +622,7 @@ static void swapchain_gl_present(struct wined3d_swapchain *swapchain,
+         if (ds && (swapchain->desc.flags & WINED3D_SWAPCHAIN_DISCARD_DEPTHSTENCIL
+                 || ds->container->flags & WINED3D_TEXTURE_DISCARD))
+         {
+-            surface_modify_ds_location(ds, WINED3D_LOCATION_DISCARDED,
+-                    fb->depth_stencil->width, fb->depth_stencil->height);
++            surface_modify_ds_location(ds, WINED3D_LOCATION_DISCARDED);
+             if (ds == swapchain->device->onscreen_depth_stencil)
+             {
+                 wined3d_texture_decref(swapchain->device->onscreen_depth_stencil->container);
+diff --git a/dlls/wined3d/wined3d_private.h b/dlls/wined3d/wined3d_private.h
+index 9c98b85..31c6c0d 100644
+--- a/dlls/wined3d/wined3d_private.h
++++ b/dlls/wined3d/wined3d_private.h
+@@ -2940,7 +2940,6 @@ struct wined3d_surface
+ 
+     struct list               renderbuffers;
+     const struct wined3d_renderbuffer_entry *current_renderbuffer;
+-    SIZE ds_current_size;
+ 
+     /* DirectDraw Overlay handling */
+     RECT                      overlay_srcrect;
+@@ -2984,7 +2983,7 @@ void surface_load_fb_texture(struct wined3d_surface *surface, BOOL srgb,
+         struct wined3d_context *context) DECLSPEC_HIDDEN;
+ HRESULT surface_load_location(struct wined3d_surface *surface,
+         struct wined3d_context *context, DWORD location) DECLSPEC_HIDDEN;
+-void surface_modify_ds_location(struct wined3d_surface *surface, DWORD location, UINT w, UINT h) DECLSPEC_HIDDEN;
++void surface_modify_ds_location(struct wined3d_surface *surface, DWORD location) DECLSPEC_HIDDEN;
+ void surface_set_compatible_renderbuffer(struct wined3d_surface *surface,
+         const struct wined3d_surface *rt) DECLSPEC_HIDDEN;
+ void surface_translate_drawable_coords(const struct wined3d_surface *surface, HWND window, RECT *rect) DECLSPEC_HIDDEN;
+-- 
+2.1.4
+
+

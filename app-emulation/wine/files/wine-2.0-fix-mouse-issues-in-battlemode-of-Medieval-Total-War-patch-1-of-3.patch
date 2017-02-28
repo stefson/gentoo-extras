@@ -1,0 +1,716 @@
+From 1bd56b6ca5638cdf026938eb89fac0ccfd24874b Mon Sep 17 00:00:00 2001
+From: Henri Verbeet <hverbeet@codeweavers.com>
+Date: Tue, 24 Jan 2017 22:15:27 +0100
+Subject: [PATCH] wined3d: Get rid of surface_load_ds_location().
+
+This should be unused now that "AlwaysOffscreen" is gone.
+
+Signed-off-by: Henri Verbeet <hverbeet@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/wined3d/arb_program_shader.c | 186 -------------------------------------
+ dlls/wined3d/glsl_shader.c        | 179 ------------------------------------
+ dlls/wined3d/shader.c             |   5 -
+ dlls/wined3d/surface.c            | 188 --------------------------------------
+ dlls/wined3d/wined3d_private.h    |   3 -
+ 5 files changed, 561 deletions(-)
+
+diff --git a/dlls/wined3d/arb_program_shader.c b/dlls/wined3d/arb_program_shader.c
+index 210b2f9..f2a5b38 100644
+--- a/dlls/wined3d/arb_program_shader.c
++++ b/dlls/wined3d/arb_program_shader.c
+@@ -291,9 +291,6 @@ struct shader_arb_priv
+     GLuint                  current_fprogram_id;
+     const struct arb_ps_compiled_shader *compiled_fprog;
+     const struct arb_vs_compiled_shader *compiled_vprog;
+-    GLuint                  depth_blt_vprogram_id;
+-    GLuint                  depth_blt_fprogram_id_full[WINED3D_GL_RES_TYPE_COUNT];
+-    GLuint                  depth_blt_fprogram_id_masked[WINED3D_GL_RES_TYPE_COUNT];
+     BOOL                    use_arbfp_fixed_func;
+     struct wine_rb_tree     fragment_shaders;
+     BOOL                    last_ps_const_clamped;
+@@ -3358,120 +3355,6 @@ static BOOL shader_arb_compile(const struct wined3d_gl_info *gl_info, GLenum tar
+     return TRUE;
+ }
+ 
+-/* Context activation is done by the caller. */
+-static GLuint create_arb_blt_vertex_program(const struct wined3d_gl_info *gl_info)
+-{
+-    GLuint program_id = 0;
+-
+-    static const char blt_vprogram[] =
+-        "!!ARBvp1.0\n"
+-        "PARAM c[1] = { { 1, 0.5 } };\n"
+-        "MOV result.position, vertex.position;\n"
+-        "MOV result.color, c[0].x;\n"
+-        "MOV result.texcoord[0], vertex.texcoord[0];\n"
+-        "END\n";
+-
+-    GL_EXTCALL(glGenProgramsARB(1, &program_id));
+-    GL_EXTCALL(glBindProgramARB(GL_VERTEX_PROGRAM_ARB, program_id));
+-    shader_arb_compile(gl_info, GL_VERTEX_PROGRAM_ARB, blt_vprogram);
+-
+-    return program_id;
+-}
+-
+-/* Context activation is done by the caller. */
+-static GLuint create_arb_blt_fragment_program(const struct wined3d_gl_info *gl_info,
+-        enum wined3d_gl_resource_type tex_type, BOOL masked)
+-{
+-    GLuint program_id = 0;
+-    const char *fprogram;
+-
+-    static const char * const blt_fprograms_full[WINED3D_GL_RES_TYPE_COUNT] =
+-    {
+-        /* WINED3D_GL_RES_TYPE_TEX_1D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_2D */
+-        "!!ARBfp1.0\n"
+-        "TEMP R0;\n"
+-        "TEX R0.x, fragment.texcoord[0], texture[0], 2D;\n"
+-        "MOV result.depth.z, R0.x;\n"
+-        "END\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_3D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_CUBE */
+-        "!!ARBfp1.0\n"
+-        "TEMP R0;\n"
+-        "TEX R0.x, fragment.texcoord[0], texture[0], CUBE;\n"
+-        "MOV result.depth.z, R0.x;\n"
+-        "END\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_RECT */
+-        "!!ARBfp1.0\n"
+-        "TEMP R0;\n"
+-        "TEX R0.x, fragment.texcoord[0], texture[0], RECT;\n"
+-        "MOV result.depth.z, R0.x;\n"
+-        "END\n",
+-        /* WINED3D_GL_RES_TYPE_BUFFER */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_RB */
+-        NULL,
+-    };
+-
+-    static const char * const blt_fprograms_masked[WINED3D_GL_RES_TYPE_COUNT] =
+-    {
+-        /* WINED3D_GL_RES_TYPE_TEX_1D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_2D */
+-        "!!ARBfp1.0\n"
+-        "PARAM mask = program.local[0];\n"
+-        "TEMP R0;\n"
+-        "SLT R0.xy, fragment.position, mask.zwzw;\n"
+-        "MUL R0.x, R0.x, R0.y;\n"
+-        "KIL -R0.x;\n"
+-        "TEX R0.x, fragment.texcoord[0], texture[0], 2D;\n"
+-        "MOV result.depth.z, R0.x;\n"
+-        "END\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_3D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_CUBE */
+-        "!!ARBfp1.0\n"
+-        "PARAM mask = program.local[0];\n"
+-        "TEMP R0;\n"
+-        "SLT R0.xy, fragment.position, mask.zwzw;\n"
+-        "MUL R0.x, R0.x, R0.y;\n"
+-        "KIL -R0.x;\n"
+-        "TEX R0.x, fragment.texcoord[0], texture[0], CUBE;\n"
+-        "MOV result.depth.z, R0.x;\n"
+-        "END\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_RECT */
+-        "!!ARBfp1.0\n"
+-        "PARAM mask = program.local[0];\n"
+-        "TEMP R0;\n"
+-        "SLT R0.xy, fragment.position, mask.zwzw;\n"
+-        "MUL R0.x, R0.x, R0.y;\n"
+-        "KIL -R0.x;\n"
+-        "TEX R0.x, fragment.texcoord[0], texture[0], RECT;\n"
+-        "MOV result.depth.z, R0.x;\n"
+-        "END\n",
+-        /* WINED3D_GL_RES_TYPE_BUFFER */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_RB */
+-        NULL,
+-    };
+-
+-    fprogram = masked ? blt_fprograms_masked[tex_type] : blt_fprograms_full[tex_type];
+-    if (!fprogram)
+-    {
+-        FIXME("tex_type %#x not supported, falling back to 2D\n", tex_type);
+-        tex_type = WINED3D_GL_RES_TYPE_TEX_2D;
+-        fprogram = masked ? blt_fprograms_masked[tex_type] : blt_fprograms_full[tex_type];
+-    }
+-
+-    GL_EXTCALL(glGenProgramsARB(1, &program_id));
+-    GL_EXTCALL(glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, program_id));
+-    shader_arb_compile(gl_info, GL_FRAGMENT_PROGRAM_ARB, fprogram);
+-
+-    return program_id;
+-}
+-
+ static void arbfp_add_sRGB_correction(struct wined3d_string_buffer *buffer, const char *fragcolor,
+         const char *tmp1, const char *tmp2, const char *tmp3, const char *tmp4, BOOL condcode)
+ {
+@@ -4853,56 +4736,6 @@ static void shader_arb_disable(void *shader_priv, struct wined3d_context *contex
+             | (1u << WINED3D_SHADER_TYPE_COMPUTE);
+ }
+ 
+-/* Context activation is done by the caller. */
+-static void shader_arb_select_depth_blt(void *shader_priv, const struct wined3d_gl_info *gl_info,
+-        enum wined3d_gl_resource_type tex_type, const SIZE *ds_mask_size)
+-{
+-    const float mask[] = {0.0f, 0.0f, (float)ds_mask_size->cx, (float)ds_mask_size->cy};
+-    BOOL masked = ds_mask_size->cx && ds_mask_size->cy;
+-    struct shader_arb_priv *priv = shader_priv;
+-    GLuint *blt_fprogram;
+-
+-    if (!priv->depth_blt_vprogram_id) priv->depth_blt_vprogram_id = create_arb_blt_vertex_program(gl_info);
+-    GL_EXTCALL(glBindProgramARB(GL_VERTEX_PROGRAM_ARB, priv->depth_blt_vprogram_id));
+-    gl_info->gl_ops.gl.p_glEnable(GL_VERTEX_PROGRAM_ARB);
+-
+-    blt_fprogram = masked ? &priv->depth_blt_fprogram_id_masked[tex_type] : &priv->depth_blt_fprogram_id_full[tex_type];
+-    if (!*blt_fprogram) *blt_fprogram = create_arb_blt_fragment_program(gl_info, tex_type, masked);
+-    GL_EXTCALL(glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, *blt_fprogram));
+-    if (masked) GL_EXTCALL(glProgramLocalParameter4fvARB(GL_FRAGMENT_PROGRAM_ARB, 0, mask));
+-    gl_info->gl_ops.gl.p_glEnable(GL_FRAGMENT_PROGRAM_ARB);
+-}
+-
+-/* Context activation is done by the caller. */
+-static void shader_arb_deselect_depth_blt(void *shader_priv, const struct wined3d_gl_info *gl_info)
+-{
+-    struct shader_arb_priv *priv = shader_priv;
+-
+-    if (priv->current_vprogram_id) {
+-        GL_EXTCALL(glBindProgramARB(GL_VERTEX_PROGRAM_ARB, priv->current_vprogram_id));
+-        checkGLcall("glBindProgramARB(GL_VERTEX_PROGRAM_ARB, vertexShader->prgId);");
+-
+-        TRACE("Bound vertex program %u and enabled GL_VERTEX_PROGRAM_ARB.\n", priv->current_vprogram_id);
+-    }
+-    else
+-    {
+-        gl_info->gl_ops.gl.p_glDisable(GL_VERTEX_PROGRAM_ARB);
+-        checkGLcall("glDisable(GL_VERTEX_PROGRAM_ARB)");
+-    }
+-
+-    if (priv->current_fprogram_id) {
+-        GL_EXTCALL(glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, priv->current_fprogram_id));
+-        checkGLcall("glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, pixelShader->prgId);");
+-
+-        TRACE("Bound fragment program %u and enabled GL_FRAGMENT_PROGRAM_ARB.\n", priv->current_fprogram_id);
+-    }
+-    else if(!priv->use_arbfp_fixed_func)
+-    {
+-        gl_info->gl_ops.gl.p_glDisable(GL_FRAGMENT_PROGRAM_ARB);
+-        checkGLcall("glDisable(GL_FRAGMENT_PROGRAM_ARB)");
+-    }
+-}
+-
+ static void shader_arb_destroy(struct wined3d_shader *shader)
+ {
+     struct wined3d_device *device = shader->device;
+@@ -5022,24 +4855,7 @@ static void release_signature(struct wine_rb_entry *entry, void *context)
+ /* Context activation is done by the caller. */
+ static void shader_arb_free(struct wined3d_device *device)
+ {
+-    const struct wined3d_gl_info *gl_info = &device->adapter->gl_info;
+     struct shader_arb_priv *priv = device->shader_priv;
+-    int i;
+-
+-    if (priv->depth_blt_vprogram_id)
+-        GL_EXTCALL(glDeleteProgramsARB(1, &priv->depth_blt_vprogram_id));
+-
+-    for (i = 0; i < WINED3D_GL_RES_TYPE_COUNT; ++i)
+-    {
+-        if (priv->depth_blt_fprogram_id_full[i])
+-        {
+-            GL_EXTCALL(glDeleteProgramsARB(1, &priv->depth_blt_fprogram_id_full[i]));
+-        }
+-        if (priv->depth_blt_fprogram_id_masked[i])
+-        {
+-            GL_EXTCALL(glDeleteProgramsARB(1, &priv->depth_blt_fprogram_id_masked[i]));
+-        }
+-    }
+ 
+     wine_rb_destroy(&priv->signature_tree, release_signature, NULL);
+     priv->fragment_pipe->free_private(device);
+@@ -5837,8 +5653,6 @@ const struct wined3d_shader_backend_ops arb_program_shader_backend =
+     shader_arb_handle_instruction,
+     shader_arb_select,
+     shader_arb_disable,
+-    shader_arb_select_depth_blt,
+-    shader_arb_deselect_depth_blt,
+     shader_arb_update_float_vertex_constants,
+     shader_arb_update_float_pixel_constants,
+     shader_arb_load_constants,
+diff --git a/dlls/wined3d/glsl_shader.c b/dlls/wined3d/glsl_shader.c
+index 40bbfdc..f053f55 100644
+--- a/dlls/wined3d/glsl_shader.c
++++ b/dlls/wined3d/glsl_shader.c
+@@ -121,8 +121,6 @@ struct shader_glsl_priv {
+     struct constant_heap vconst_heap;
+     struct constant_heap pconst_heap;
+     unsigned char *stack;
+-    GLuint depth_blt_program_full[WINED3D_GL_RES_TYPE_COUNT];
+-    GLuint depth_blt_program_masked[WINED3D_GL_RES_TYPE_COUNT];
+     UINT next_constant_version;
+ 
+     const struct wined3d_vertex_pipe_ops *vertex_pipe;
+@@ -8290,125 +8288,6 @@ static void set_glsl_shader_program(const struct wined3d_context *context, const
+ }
+ 
+ /* Context activation is done by the caller. */
+-static GLuint create_glsl_blt_shader(const struct wined3d_gl_info *gl_info, enum wined3d_gl_resource_type tex_type,
+-        BOOL masked)
+-{
+-    GLuint program_id;
+-    GLuint vshader_id, pshader_id;
+-    const char *blt_pshader;
+-
+-    static const char blt_vshader[] =
+-        "#version 120\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    gl_Position = gl_Vertex;\n"
+-        "    gl_FrontColor = vec4(1.0);\n"
+-        "    gl_TexCoord[0] = gl_MultiTexCoord0;\n"
+-        "}\n";
+-
+-    static const char * const blt_pshaders_full[WINED3D_GL_RES_TYPE_COUNT] =
+-    {
+-        /* WINED3D_GL_RES_TYPE_TEX_1D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_2D */
+-        "#version 120\n"
+-        "uniform sampler2D sampler;\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    gl_FragDepth = texture2D(sampler, gl_TexCoord[0].xy).x;\n"
+-        "}\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_3D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_CUBE */
+-        "#version 120\n"
+-        "uniform samplerCube sampler;\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    gl_FragDepth = textureCube(sampler, gl_TexCoord[0].xyz).x;\n"
+-        "}\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_RECT */
+-        "#version 120\n"
+-        "#extension GL_ARB_texture_rectangle : enable\n"
+-        "uniform sampler2DRect sampler;\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    gl_FragDepth = texture2DRect(sampler, gl_TexCoord[0].xy).x;\n"
+-        "}\n",
+-        /* WINED3D_GL_RES_TYPE_BUFFER */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_RB */
+-        NULL,
+-    };
+-
+-    static const char * const blt_pshaders_masked[WINED3D_GL_RES_TYPE_COUNT] =
+-    {
+-        /* WINED3D_GL_RES_TYPE_TEX_1D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_2D */
+-        "#version 120\n"
+-        "uniform sampler2D sampler;\n"
+-        "uniform vec4 mask;\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    if (all(lessThan(gl_FragCoord.xy, mask.zw))) discard;\n"
+-        "    gl_FragDepth = texture2D(sampler, gl_TexCoord[0].xy).x;\n"
+-        "}\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_3D */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_TEX_CUBE */
+-        "#version 120\n"
+-        "uniform samplerCube sampler;\n"
+-        "uniform vec4 mask;\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    if (all(lessThan(gl_FragCoord.xy, mask.zw))) discard;\n"
+-        "    gl_FragDepth = textureCube(sampler, gl_TexCoord[0].xyz).x;\n"
+-        "}\n",
+-        /* WINED3D_GL_RES_TYPE_TEX_RECT */
+-        "#version 120\n"
+-        "#extension GL_ARB_texture_rectangle : enable\n"
+-        "uniform sampler2DRect sampler;\n"
+-        "uniform vec4 mask;\n"
+-        "void main(void)\n"
+-        "{\n"
+-        "    if (all(lessThan(gl_FragCoord.xy, mask.zw))) discard;\n"
+-        "    gl_FragDepth = texture2DRect(sampler, gl_TexCoord[0].xy).x;\n"
+-        "}\n",
+-        /* WINED3D_GL_RES_TYPE_BUFFER */
+-        NULL,
+-        /* WINED3D_GL_RES_TYPE_RB */
+-        NULL,
+-    };
+-
+-    blt_pshader = masked ? blt_pshaders_masked[tex_type] : blt_pshaders_full[tex_type];
+-    if (!blt_pshader)
+-    {
+-        FIXME("tex_type %#x not supported\n", tex_type);
+-        return 0;
+-    }
+-
+-    vshader_id = GL_EXTCALL(glCreateShader(GL_VERTEX_SHADER));
+-    shader_glsl_compile(gl_info, vshader_id, blt_vshader);
+-
+-    pshader_id = GL_EXTCALL(glCreateShader(GL_FRAGMENT_SHADER));
+-    shader_glsl_compile(gl_info, pshader_id, blt_pshader);
+-
+-    program_id = GL_EXTCALL(glCreateProgram());
+-    GL_EXTCALL(glAttachShader(program_id, vshader_id));
+-    GL_EXTCALL(glAttachShader(program_id, pshader_id));
+-    GL_EXTCALL(glLinkProgram(program_id));
+-
+-    shader_glsl_validate_link(gl_info, program_id);
+-
+-    /* Once linked we can mark the shaders for deletion. They will be deleted once the program
+-     * is destroyed
+-     */
+-    GL_EXTCALL(glDeleteShader(vshader_id));
+-    GL_EXTCALL(glDeleteShader(pshader_id));
+-    return program_id;
+-}
+-
+-/* Context activation is done by the caller. */
+ static void shader_glsl_select(void *shader_priv, struct wined3d_context *context,
+         const struct wined3d_state *state)
+ {
+@@ -8504,48 +8383,6 @@ static void shader_glsl_disable(void *shader_priv, struct wined3d_context *conte
+     }
+ }
+ 
+-/* Context activation is done by the caller. */
+-static void shader_glsl_select_depth_blt(void *shader_priv, const struct wined3d_gl_info *gl_info,
+-        enum wined3d_gl_resource_type tex_type, const SIZE *ds_mask_size)
+-{
+-    BOOL masked = ds_mask_size->cx && ds_mask_size->cy;
+-    struct shader_glsl_priv *priv = shader_priv;
+-    GLuint *blt_program;
+-    GLint loc;
+-
+-    blt_program = masked ? &priv->depth_blt_program_masked[tex_type] : &priv->depth_blt_program_full[tex_type];
+-    if (!*blt_program)
+-    {
+-        *blt_program = create_glsl_blt_shader(gl_info, tex_type, masked);
+-        loc = GL_EXTCALL(glGetUniformLocation(*blt_program, "sampler"));
+-        GL_EXTCALL(glUseProgram(*blt_program));
+-        GL_EXTCALL(glUniform1i(loc, 0));
+-    }
+-    else
+-    {
+-        GL_EXTCALL(glUseProgram(*blt_program));
+-    }
+-
+-    if (masked)
+-    {
+-        loc = GL_EXTCALL(glGetUniformLocation(*blt_program, "mask"));
+-        GL_EXTCALL(glUniform4f(loc, 0.0f, 0.0f, (float)ds_mask_size->cx, (float)ds_mask_size->cy));
+-    }
+-}
+-
+-/* Context activation is done by the caller. */
+-static void shader_glsl_deselect_depth_blt(void *shader_priv, const struct wined3d_gl_info *gl_info)
+-{
+-    const struct glsl_context_data *ctx_data = context_get_current()->shader_backend_data;
+-    GLuint program_id;
+-
+-    program_id = ctx_data->glsl_program ? ctx_data->glsl_program->id : 0;
+-    if (program_id) TRACE("Using GLSL program %u\n", program_id);
+-
+-    GL_EXTCALL(glUseProgram(program_id));
+-    checkGLcall("glUseProgram");
+-}
+-
+ static void shader_glsl_invalidate_contexts_program(struct wined3d_device *device,
+         const struct glsl_shader_prog_link *program)
+ {
+@@ -8794,21 +8631,7 @@ fail:
+ /* Context activation is done by the caller. */
+ static void shader_glsl_free(struct wined3d_device *device)
+ {
+-    const struct wined3d_gl_info *gl_info = &device->adapter->gl_info;
+     struct shader_glsl_priv *priv = device->shader_priv;
+-    int i;
+-
+-    for (i = 0; i < WINED3D_GL_RES_TYPE_COUNT; ++i)
+-    {
+-        if (priv->depth_blt_program_full[i])
+-        {
+-            GL_EXTCALL(glDeleteProgram(priv->depth_blt_program_full[i]));
+-        }
+-        if (priv->depth_blt_program_masked[i])
+-        {
+-            GL_EXTCALL(glDeleteProgram(priv->depth_blt_program_masked[i]));
+-        }
+-    }
+ 
+     wine_rb_destroy(&priv->program_lookup, NULL, NULL);
+     constant_heap_free(&priv->pconst_heap);
+@@ -9172,8 +8995,6 @@ const struct wined3d_shader_backend_ops glsl_shader_backend =
+     shader_glsl_handle_instruction,
+     shader_glsl_select,
+     shader_glsl_disable,
+-    shader_glsl_select_depth_blt,
+-    shader_glsl_deselect_depth_blt,
+     shader_glsl_update_float_vertex_constants,
+     shader_glsl_update_float_pixel_constants,
+     shader_glsl_load_constants,
+diff --git a/dlls/wined3d/shader.c b/dlls/wined3d/shader.c
+index 5e9b0de..4ca82c2 100644
+--- a/dlls/wined3d/shader.c
++++ b/dlls/wined3d/shader.c
+@@ -2653,9 +2653,6 @@ struct shader_none_priv
+ };
+ 
+ static void shader_none_handle_instruction(const struct wined3d_shader_instruction *ins) {}
+-static void shader_none_select_depth_blt(void *shader_priv, const struct wined3d_gl_info *gl_info,
+-        enum wined3d_gl_resource_type tex_type, const SIZE *ds_mask_size) {}
+-static void shader_none_deselect_depth_blt(void *shader_priv, const struct wined3d_gl_info *gl_info) {}
+ static void shader_none_update_float_vertex_constants(struct wined3d_device *device, UINT start, UINT count) {}
+ static void shader_none_update_float_pixel_constants(struct wined3d_device *device, UINT start, UINT count) {}
+ static void shader_none_load_constants(void *shader_priv, struct wined3d_context *context,
+@@ -2778,8 +2775,6 @@ const struct wined3d_shader_backend_ops none_shader_backend =
+     shader_none_handle_instruction,
+     shader_none_select,
+     shader_none_disable,
+-    shader_none_select_depth_blt,
+-    shader_none_deselect_depth_blt,
+     shader_none_update_float_vertex_constants,
+     shader_none_update_float_pixel_constants,
+     shader_none_load_constants,
+diff --git a/dlls/wined3d/surface.c b/dlls/wined3d/surface.c
+index 18b008c..4d1eced 100644
+--- a/dlls/wined3d/surface.c
++++ b/dlls/wined3d/surface.c
+@@ -2489,68 +2489,6 @@ static HRESULT surface_blt_special(struct wined3d_surface *dst_surface, const RE
+     return WINED3DERR_INVALIDCALL;
+ }
+ 
+-/* Context activation is done by the caller. */
+-static void surface_depth_blt(const struct wined3d_surface *surface, struct wined3d_context *context,
+-        GLuint texture, GLint x, GLint y, GLsizei w, GLsizei h, GLenum target)
+-{
+-    struct wined3d_device *device = surface->container->resource.device;
+-    const struct wined3d_gl_info *gl_info = context->gl_info;
+-    GLint compare_mode = GL_NONE;
+-    struct blt_info info;
+-    GLint old_binding = 0;
+-    RECT rect;
+-
+-    gl_info->gl_ops.gl.p_glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_VIEWPORT_BIT);
+-
+-    gl_info->gl_ops.gl.p_glDisable(GL_CULL_FACE);
+-    gl_info->gl_ops.gl.p_glDisable(GL_BLEND);
+-    gl_info->gl_ops.gl.p_glDisable(GL_ALPHA_TEST);
+-    gl_info->gl_ops.gl.p_glDisable(GL_SCISSOR_TEST);
+-    gl_info->gl_ops.gl.p_glDisable(GL_STENCIL_TEST);
+-    gl_info->gl_ops.gl.p_glEnable(GL_DEPTH_TEST);
+-    gl_info->gl_ops.gl.p_glDepthFunc(GL_ALWAYS);
+-    gl_info->gl_ops.gl.p_glDepthMask(GL_TRUE);
+-    gl_info->gl_ops.gl.p_glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+-    gl_info->gl_ops.gl.p_glViewport(x, y, w, h);
+-    gl_info->gl_ops.gl.p_glDepthRange(0.0, 1.0);
+-
+-    SetRect(&rect, 0, h, w, 0);
+-    surface_get_blt_info(target, &rect,
+-            wined3d_texture_get_level_pow2_width(surface->container, surface->texture_level),
+-            wined3d_texture_get_level_pow2_height(surface->container, surface->texture_level), &info);
+-    context_active_texture(context, context->gl_info, 0);
+-    gl_info->gl_ops.gl.p_glGetIntegerv(info.binding, &old_binding);
+-    gl_info->gl_ops.gl.p_glBindTexture(info.bind_target, texture);
+-    if (gl_info->supported[ARB_SHADOW])
+-    {
+-        gl_info->gl_ops.gl.p_glGetTexParameteriv(info.bind_target, GL_TEXTURE_COMPARE_MODE_ARB, &compare_mode);
+-        if (compare_mode != GL_NONE)
+-            gl_info->gl_ops.gl.p_glTexParameteri(info.bind_target, GL_TEXTURE_COMPARE_MODE_ARB, GL_NONE);
+-    }
+-
+-    device->shader_backend->shader_select_depth_blt(device->shader_priv,
+-            gl_info, info.tex_type, &surface->ds_current_size);
+-
+-    gl_info->gl_ops.gl.p_glBegin(GL_TRIANGLE_STRIP);
+-    gl_info->gl_ops.gl.p_glTexCoord3fv(&info.texcoords[0].x);
+-    gl_info->gl_ops.gl.p_glVertex2f(-1.0f, -1.0f);
+-    gl_info->gl_ops.gl.p_glTexCoord3fv(&info.texcoords[1].x);
+-    gl_info->gl_ops.gl.p_glVertex2f(1.0f, -1.0f);
+-    gl_info->gl_ops.gl.p_glTexCoord3fv(&info.texcoords[2].x);
+-    gl_info->gl_ops.gl.p_glVertex2f(-1.0f, 1.0f);
+-    gl_info->gl_ops.gl.p_glTexCoord3fv(&info.texcoords[3].x);
+-    gl_info->gl_ops.gl.p_glVertex2f(1.0f, 1.0f);
+-    gl_info->gl_ops.gl.p_glEnd();
+-
+-    if (compare_mode != GL_NONE)
+-        gl_info->gl_ops.gl.p_glTexParameteri(info.bind_target, GL_TEXTURE_COMPARE_MODE_ARB, compare_mode);
+-    gl_info->gl_ops.gl.p_glBindTexture(info.bind_target, old_binding);
+-
+-    gl_info->gl_ops.gl.p_glPopAttrib();
+-
+-    device->shader_backend->shader_deselect_depth_blt(device->shader_priv, gl_info);
+-}
+-
+ void surface_modify_ds_location(struct wined3d_surface *surface,
+         DWORD location, UINT w, UINT h)
+ {
+@@ -2566,125 +2504,6 @@ void surface_modify_ds_location(struct wined3d_surface *surface,
+     wined3d_texture_invalidate_location(texture, sub_resource_idx, ~location);
+ }
+ 
+-/* Context activation is done by the caller. */
+-static void surface_load_ds_location(struct wined3d_surface *surface, struct wined3d_context *context, DWORD location)
+-{
+-    unsigned int sub_resource_idx = surface_get_sub_resource_idx(surface);
+-    struct wined3d_texture *texture = surface->container;
+-    struct wined3d_device *device = texture->resource.device;
+-    const struct wined3d_gl_info *gl_info = context->gl_info;
+-    GLsizei w, h;
+-
+-    TRACE("surface %p, context %p, new location %#x.\n", surface, context, location);
+-
+-    /* TODO: Make this work for modes other than FBO */
+-    if (wined3d_settings.offscreen_rendering_mode != ORM_FBO) return;
+-
+-    if (!(texture->sub_resources[sub_resource_idx].locations & location))
+-    {
+-        w = surface->ds_current_size.cx;
+-        h = surface->ds_current_size.cy;
+-        surface->ds_current_size.cx = 0;
+-        surface->ds_current_size.cy = 0;
+-    }
+-    else
+-    {
+-        w = wined3d_texture_get_level_width(texture, surface->texture_level);
+-        h = wined3d_texture_get_level_height(texture, surface->texture_level);
+-    }
+-
+-    if (surface->current_renderbuffer)
+-    {
+-        FIXME("Not supported with fixed up depth stencil.\n");
+-        return;
+-    }
+-
+-    wined3d_texture_prepare_location(texture, sub_resource_idx, context, location);
+-
+-    if (location == WINED3D_LOCATION_TEXTURE_RGB)
+-    {
+-        GLint old_binding = 0;
+-        GLenum bind_target;
+-
+-        /* The render target is allowed to be smaller than the depth/stencil
+-         * buffer, so the onscreen depth/stencil buffer is potentially smaller
+-         * than the offscreen surface. Don't overwrite the offscreen surface
+-         * with undefined data. */
+-        w = min(w, context->swapchain->desc.backbuffer_width);
+-        h = min(h, context->swapchain->desc.backbuffer_height);
+-
+-        TRACE("Copying onscreen depth buffer to depth texture.\n");
+-
+-        if (!device->depth_blt_texture)
+-            gl_info->gl_ops.gl.p_glGenTextures(1, &device->depth_blt_texture);
+-
+-        /* Note that we use depth_blt here as well, rather than glCopyTexImage2D
+-         * directly on the FBO texture. That's because we need to flip. */
+-        context_apply_fbo_state_blit(context, GL_FRAMEBUFFER,
+-                context->swapchain->front_buffer->sub_resources[0].u.surface,
+-                NULL, WINED3D_LOCATION_DRAWABLE);
+-        if (surface->texture_target == GL_TEXTURE_RECTANGLE_ARB)
+-        {
+-            gl_info->gl_ops.gl.p_glGetIntegerv(GL_TEXTURE_BINDING_RECTANGLE_ARB, &old_binding);
+-            bind_target = GL_TEXTURE_RECTANGLE_ARB;
+-        }
+-        else
+-        {
+-            gl_info->gl_ops.gl.p_glGetIntegerv(GL_TEXTURE_BINDING_2D, &old_binding);
+-            bind_target = GL_TEXTURE_2D;
+-        }
+-        gl_info->gl_ops.gl.p_glBindTexture(bind_target, device->depth_blt_texture);
+-        /* We use GL_DEPTH_COMPONENT instead of the surface's specific
+-         * internal format, because the internal format might include stencil
+-         * data. In principle we should copy stencil data as well, but unless
+-         * the driver supports stencil export it's hard to do, and doesn't
+-         * seem to be needed in practice. If the hardware doesn't support
+-         * writing stencil data, the glCopyTexImage2D() call might trigger
+-         * software fallbacks. */
+-        gl_info->gl_ops.gl.p_glCopyTexImage2D(bind_target, 0, GL_DEPTH_COMPONENT, 0, 0, w, h, 0);
+-        gl_info->gl_ops.gl.p_glTexParameteri(bind_target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+-        gl_info->gl_ops.gl.p_glTexParameteri(bind_target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+-        gl_info->gl_ops.gl.p_glTexParameteri(bind_target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+-        gl_info->gl_ops.gl.p_glTexParameteri(bind_target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+-        gl_info->gl_ops.gl.p_glTexParameteri(bind_target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+-        gl_info->gl_ops.gl.p_glBindTexture(bind_target, old_binding);
+-
+-        context_apply_fbo_state_blit(context, GL_FRAMEBUFFER,
+-                NULL, surface, WINED3D_LOCATION_TEXTURE_RGB);
+-        context_set_draw_buffer(context, GL_NONE);
+-
+-        /* Do the actual blit */
+-        surface_depth_blt(surface, context, device->depth_blt_texture, 0, 0, w, h, bind_target);
+-        checkGLcall("depth_blt");
+-
+-        context_invalidate_state(context, STATE_FRAMEBUFFER);
+-
+-        if (wined3d_settings.strict_draw_ordering)
+-            gl_info->gl_ops.gl.p_glFlush(); /* Flush to ensure ordering across contexts. */
+-    }
+-    else if (location == WINED3D_LOCATION_DRAWABLE)
+-    {
+-        TRACE("Copying depth texture to onscreen depth buffer.\n");
+-
+-        context_apply_fbo_state_blit(context, GL_FRAMEBUFFER,
+-                context->swapchain->front_buffer->sub_resources[0].u.surface,
+-                NULL, WINED3D_LOCATION_DRAWABLE);
+-        surface_depth_blt(surface, context, texture->texture_rgb.name, 0,
+-                wined3d_texture_get_level_pow2_height(texture, surface->texture_level) - h,
+-                w, h, surface->texture_target);
+-        checkGLcall("depth_blt");
+-
+-        context_invalidate_state(context, STATE_FRAMEBUFFER);
+-
+-        if (wined3d_settings.strict_draw_ordering)
+-            gl_info->gl_ops.gl.p_glFlush(); /* Flush to ensure ordering across contexts. */
+-    }
+-    else
+-    {
+-        ERR("Invalid location (%#x) specified.\n", location);
+-    }
+-}
+-
+ static DWORD resource_access_from_location(DWORD location)
+ {
+     switch (location)
+@@ -3050,13 +2869,6 @@ HRESULT surface_load_location(struct wined3d_surface *surface, struct wined3d_co
+ 
+     if (texture->resource.usage & WINED3DUSAGE_DEPTHSTENCIL)
+     {
+-        if ((location == WINED3D_LOCATION_TEXTURE_RGB && sub_resource->locations & WINED3D_LOCATION_DRAWABLE)
+-                || (location == WINED3D_LOCATION_DRAWABLE && sub_resource->locations & WINED3D_LOCATION_TEXTURE_RGB))
+-        {
+-            surface_load_ds_location(surface, context, location);
+-            goto done;
+-        }
+-
+         FIXME("Unimplemented copy from %s to %s for depth/stencil buffers.\n",
+                 wined3d_debug_location(sub_resource->locations), wined3d_debug_location(location));
+         return WINED3DERR_INVALIDCALL;
+diff --git a/dlls/wined3d/wined3d_private.h b/dlls/wined3d/wined3d_private.h
+index 71c9523..9c98b85 100644
+--- a/dlls/wined3d/wined3d_private.h
++++ b/dlls/wined3d/wined3d_private.h
+@@ -1202,9 +1202,6 @@ struct wined3d_shader_backend_ops
+     void (*shader_select)(void *shader_priv, struct wined3d_context *context,
+             const struct wined3d_state *state);
+     void (*shader_disable)(void *shader_priv, struct wined3d_context *context);
+-    void (*shader_select_depth_blt)(void *shader_priv, const struct wined3d_gl_info *gl_info,
+-            enum wined3d_gl_resource_type tex_type, const SIZE *ds_mask_size);
+-    void (*shader_deselect_depth_blt)(void *shader_priv, const struct wined3d_gl_info *gl_info);
+     void (*shader_update_float_vertex_constants)(struct wined3d_device *device, UINT start, UINT count);
+     void (*shader_update_float_pixel_constants)(struct wined3d_device *device, UINT start, UINT count);
+     void (*shader_load_constants)(void *shader_priv, struct wined3d_context *context,
+-- 
+2.1.4
+
+

@@ -17,7 +17,7 @@ if [[ ${PV} == "9999" ]] ; then
 	#KEYWORDS=""
 else
 	MAJOR_V=$(get_version_component_range 1-2)
-	SRC_URI="https://dl.winehq.org/wine/source/${MAJOR_V}/${P}.tar.xz"
+	SRC_URI="https://dl.winehq.org/wine/source/${MAJOR_V}/${P}.tar.bz2"
 	KEYWORDS="-* ~amd64 ~x86 ~x86-fbsd"
 fi
 
@@ -251,8 +251,13 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-2.0_rc3-flex263.patch
 
 		# https://bugs.winehq.org/show_bug.cgi?id=40488 
-		# Fix for Medieval Total War battle mode graphic glitches
-		"${FILESDIR}"/${PN}-2.0-bug-40488.patch
+		# https://bugs.winehq.org/show_bug.cgi?id=40488#c32 backports for stable branch
+		# Fix for Medieval Total War battle mode graphic glitches and backport for the mouse click issue from master-branch
+
+		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-1-of-3.patch
+		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-2-of-3.patch
+		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-3-of-3.patch
+		"${FILESDIR}"/${PN}-2.2-bug-40488.patch
 
 	)
 
