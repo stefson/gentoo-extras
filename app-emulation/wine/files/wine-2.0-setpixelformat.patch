@@ -1,0 +1,22 @@
+diff --git a/dlls/wined3d/context.c b/dlls/wined3d/context.c
+index 6112b40..580b812 100644
+--- a/dlls/wined3d/context.c
++++ b/dlls/wined3d/context.c
+@@ -1715,10 +1715,14 @@ struct wined3d_context *context_create(struct wined3d_swapchain *swapchain,
+         }
+     }
+ 
+-    if (!(hdc = GetDCEx(swapchain->win_handle, 0, DCX_USESTYLE | DCX_CACHE)))
+-    {
+-        WARN("Failed to retrieve device context, trying swapchain backup.\n");
++    hdc = NULL;
+ 
++    if (swapchain->win_handle == GetDesktopWindow())
++        TRACE("Attempted to retrieve device context of desktop window, trying swapchain backup.\n");
++    else if (!(hdc = GetDC(swapchain->win_handle)))
++        WARN("Failed to retrieve device context, trying swapchain backup.\n");
++    if (!hdc)
++    {
+         if ((hdc = swapchain_get_backup_dc(swapchain)))
+             hdc_is_private = TRUE;
+         else
