@@ -259,7 +259,7 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-3-of-3.patch
 		"${FILESDIR}"/${PN}-2.2-bug-40488.patch
 
-		# Fix for Napoleon Total War battle mode, this is a hack made by myself and not yet tested thoroughly
+		# Fix for Napoleon Total War battle mode, this is a hack by me and not yet tested thoroughly
 		# https://bugs.winehq.org/show_bug.cgi?id=18490
 		"${FILESDIR}"/${PN}-2.0-setpixelformat.patch
 

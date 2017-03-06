@@ -250,6 +250,10 @@ src_prepare() {
 		# https://bugs.winehq.org/show_bug.cgi?id=42132
 		"${FILESDIR}"/${PN}-2.0_rc3-flex263.patch
 
+		# Fix for Napoleon Total War battle mode, this is a hack by me and not yet tested thoroughly
+		# https://bugs.winehq.org/show_bug.cgi?id=18490
+		"${FILESDIR}"/${PN}-2.0-setpixelformat.patch
+
 	)
 
 	default
