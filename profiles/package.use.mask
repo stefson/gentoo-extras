@@ -1,0 +1,1 @@
+media-video/vlc qt5 #fails with current gcc-4.9.4 on musl, see #603648
