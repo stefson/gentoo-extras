@@ -263,6 +263,10 @@ src_prepare() {
 		# https://bugs.winehq.org/show_bug.cgi?id=18490
 		"${FILESDIR}"/${PN}-2.0-setpixelformat.patch
 
+		# possible fix for crash in Total War Shogun2 
+		# https://bugs.winehq.org/show_bug.cgi?id=32515#c54
+		"${FILESDIR}"/${PN}-2.4-fix-VALVE-CEG-DRM-scheme.patch
+
 	)
 
 	default
