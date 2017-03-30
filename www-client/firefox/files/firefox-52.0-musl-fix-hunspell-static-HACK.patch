@@ -1,0 +1,20 @@
+diff -Naur firefox-52.0.1.orig/mozilla-config.h.in firefox-52.0.1/mozilla-config.h.in
+--- firefox-52.0.1.orig/mozilla-config.h.in	2017-03-21 11:23:06.486363553 -0700
++++ firefox-52.0.1/mozilla-config.h.in	2017-03-21 11:28:05.538519928 -0700
+@@ -48,14 +48,13 @@
+ #endif
+ 
+ /*
+- * Force-include hunspell_alloc_hooks.h and hunspell_fopen_hooks.h for hunspell,
++ * Force-include hunspell_fopen_hooks.h for hunspell,
+  * so that we don't need to modify them directly.
+  *
+  * HUNSPELL_STATIC is defined in extensions/spellcheck/hunspell/src/Makefile.in,
+  * unless --enable-system-hunspell is defined.
+  */
+ #if defined(HUNSPELL_STATIC)
+-#include "hunspell_alloc_hooks.h"
+ #include "hunspell_fopen_hooks.h"
+ #endif
+ 
+
