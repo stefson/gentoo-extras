@@ -342,9 +342,6 @@ src_prepare() {
 
 		"${WORKDIR}/${GST_P}.patch"
 
-		# https://bugs.winehq.org/show_bug.cgi?id=42132
-		"${FILESDIR}"/${PN}-2.0_rc3-flex263.patch
-
 	)
 	if use staging; then
 		ewarn "Applying the Wine-Staging patchset. Any bug reports to the"

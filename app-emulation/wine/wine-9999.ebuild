@@ -11,7 +11,7 @@ inherit autotools eutils fdo-mime flag-o-matic gnome2-utils l10n multilib multil
 if [[ ${PV} == "9999" ]] ; then
 	EGIT_REPO_URI="git://source.winehq.org/git/wine.git http://source.winehq.org/git/wine.git"
 	EGIT_BRANCH="stable" # master, stable, oldstable
-	WINE_COMMIT="088968f242a7efd57cd6d07602443157c40be6ac"		#WINE_COMMIT, STAGING_COMMIT, and D3D9_COMMIT
+	WINE_COMMIT="088968f242a7efd57cd6d07602443157c40be6ac" #WINE_COMMIT, STAGING_COMMIT, and D3D9_COMMIT
 	STAGING_COMMIT="26a06cd63be9ec2206aad025f5efecf1673e5567"
 #	D3D9_COMMIT=""
 	inherit git-r3
@@ -341,21 +341,18 @@ src_prepare() {
 		"${FILESDIR}"/${PN}-1.7.12-osmesa-check.patch #429386
 		"${FILESDIR}"/${PN}-1.6-memset-O3.patch #480508
 
-		# https://bugs.winehq.org/show_bug.cgi?id=42132
-		"${FILESDIR}"/${PN}-2.0_rc3-flex263.patch
-
 		# https://bugs.winehq.org/show_bug.cgi?id=40488 
 		# https://bugs.winehq.org/show_bug.cgi?id=40488#c32 backports for stable branch
 		# Fix for Medieval Total War battle mode graphic glitches and backport for the mouse click issue from master-branch
 
-#		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-1-of-3.patch
-#		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-2-of-3.patch
-#		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-3-of-3.patch
-#		"${FILESDIR}"/${PN}-2.2-bug-40488.patch
+		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-1-of-3.patch
+		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-2-of-3.patch
+		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-3-of-3.patch
+		"${FILESDIR}"/${PN}-2.2-bug-40488.patch
 
 		# Fix for Napoleon Total War battle mode, this is a hack by me and not yet tested thoroughly
 		# https://bugs.winehq.org/show_bug.cgi?id=18490
-		# "${FILESDIR}"/${PN}-2.0-setpixelformat.patch
+		"${FILESDIR}"/${PN}-2.0-setpixelformat.patch
 
 	)
 	if use staging; then
