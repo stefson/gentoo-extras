@@ -130,6 +130,11 @@ src_prepare() {
 	# Apply our patches
 	eapply "${WORKDIR}/firefox"
 
+	# remove pocket and loop/hello
+	eapply "${FILESDIR}"/${PN}-45.9.0-disable-loop-pocket.patch
+	rm -fr browser/extensions/loop || die
+	rm -fr browser/components/pocket || die
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
