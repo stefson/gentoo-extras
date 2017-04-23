@@ -125,7 +125,7 @@ src_unpack() {
 src_prepare() {
 	# Apply our patches
 	eapply "${WORKDIR}/firefox"
-	eapply "${FILESDIR}"/${PN}-52.0-musl-fix-hunspell-static-HACK.patch #https://bugs.gentoo.org/show_bug.cgi?id=607562
+	eapply "${FILESDIR}"/${PN}-52.0.2-musl_drop_hunspell_alloc_hooks.patch #https://bugs.gentoo.org/show_bug.cgi?id=607562
 
 	# remove pocket leftovers
 	eapply "${FILESDIR}"/${PN}-52.0.2-remove-pocket-leftovers.patch
