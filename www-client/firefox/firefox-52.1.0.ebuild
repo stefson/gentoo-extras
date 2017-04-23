@@ -125,7 +125,11 @@ src_unpack() {
 src_prepare() {
 	# Apply our patches
 	eapply "${WORKDIR}/firefox"
-	eapply "${FILESDIR}"/musl_drop_hunspell_alloc_hooks.patch
+	eapply "${FILESDIR}"/-52.0.2-musl_drop_hunspell_alloc_hooks.patch
+
+	# remove pocket leftovers
+	eapply "${FILESDIR}"/${PN}-52.0.2-remove-pocket-leftovers.patch
+	rm -fr browser/extensions/pocket || die
 
 	# Enable gnomebreakpad
 	if use debug ; then
