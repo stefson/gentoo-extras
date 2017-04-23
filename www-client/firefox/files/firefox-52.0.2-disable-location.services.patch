@@ -5,7 +5,7 @@
    }
  
 +  // Prevent Firefox from contacting location.services.mozilla.com on a new profile
-+  Services.prefs.setCharPref("browser.search.region", "US");
++  Services.prefs.setCharPref("browser.search.region", "DE");
 +  return;
 +
    // If we have 'isUS' but no 'countryCode' then we are almost certainly
@@ -16,7 +16,7 @@
    } catch(e) {}
  
 +  // No countryCode set, use US as default, don't contact location.services.mozilla.com
-+  Services.prefs.setCharPref("browser.search.countryCode", "US");
++  Services.prefs.setCharPref("browser.search.countryCode", "DE");
 +  return;
 +
    if (!countryCode) {
