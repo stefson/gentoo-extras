@@ -124,8 +124,12 @@ src_unpack() {
 
 src_prepare() {
 	# Apply our patches
-	eapply "${WORKDIR}/firefox" \
-	"${FILESDIR}"/${PN}-52.0-musl-fix-hunspell-static-HACK.patch #https://bugs.gentoo.org/show_bug.cgi?id=607562
+	eapply "${WORKDIR}/firefox"
+	eapply "${FILESDIR}"/${PN}-52.0-musl-fix-hunspell-static-HACK.patch #https://bugs.gentoo.org/show_bug.cgi?id=607562
+
+	# remove pocket leftovers
+	eapply "${FILESDIR}"/${PN}-52.0.2-remove-pocket-leftovers.patch
+	rm -fr browser/extensions/pocket || die
 
 	# Enable gnomebreakpad
 	if use debug ; then
