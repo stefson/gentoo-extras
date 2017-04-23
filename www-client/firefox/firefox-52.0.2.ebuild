@@ -133,6 +133,9 @@ src_prepare() {
 	eapply "${FILESDIR}"/${PN}-52.0.2-remove-pocket-leftovers.patch
 	rm -fr browser/extensions/pocket || die
 
+	# disable geo IP lookup on first run
+	eapply "${FILESDIR}"/${PN}-52.0.2-disable-location.services.patch
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
