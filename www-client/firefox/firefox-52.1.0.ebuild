@@ -125,13 +125,7 @@ src_unpack() {
 src_prepare() {
 	# Apply our patches
 	eapply "${WORKDIR}/firefox"
-
-	#https://bugs.gentoo.org/show_bug.cgi?id=607562
-	eapply "${FILESDIR}"/${PN}-52.0.2-musl_drop_hunspell_alloc_hooks.patch
-
-	# remove pocket leftovers
-	eapply "${FILESDIR}"/${PN}-52.0.2-remove-pocket-leftovers.patch
-	rm -fr browser/extensions/pocket || die
+	eapply "${FILESDIR}"/musl_drop_hunspell_alloc_hooks.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
@@ -369,6 +363,22 @@ PROFILE_EOF
 
 pkg_preinst() {
 	gnome2_icon_savelist
+
+	# if the apulse libs are available in MOZILLA_FIVE_HOME then apulse
+	# doesn't need to be forced into the LD_LIBRARY_PATH
+	if use pulseaudio && [ -d ${EPREFIX}/usr/$(get_libdir)/apulse ] ; then
+		einfo "APULSE found - Generating library symlinks for sound support"
+		local lib
+		pushd "${ED}"${MOZILLA_FIVE_HOME} &>/dev/null || die
+		for lib in "${EPREFIX}"/usr/$(get_libdir)/apulse/libpulse* ; do
+			# a quickpkg rolled by hand will grab symlinks as part of the package,
+			# so we need to avoid creating them if they already exist.
+			if ! [ -L ${lib##*/} ]; then
+				ln -s "${lib}" || die
+			fi
+		done
+		popd &>/dev/null || die
+	fi
 }
 
 pkg_postinst() {
