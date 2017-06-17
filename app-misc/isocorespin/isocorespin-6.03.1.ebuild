@@ -25,11 +25,19 @@ DEPEND=""
 #	kde? ( kde-apps/kdialog )
 #	rar? ( app-arch/unrar )"
 
+src_unpack() {
+	mkdir "${S}" || die 
+}
 
+src_prepare() {
 
-#src_unpack() {
-#	default
-#}
+default
+#cp "${FILESDIR}"/${PN}.sh "${S}" || die
+#Wenn du nichts zu entpacken hast wirst du eine eigene src_unpack() schreiben wollen die über $A iteriert
+cp "${DISTDIR}"/${PN}.sh "${S}" || die
+mv "${S}"/${PN}.sh ${S}"/${PN}" || die
+
+}
 
 src_install() {
 	dobin isocorespin
