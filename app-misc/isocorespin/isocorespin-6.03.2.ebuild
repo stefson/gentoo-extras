@@ -16,31 +16,32 @@ SLOT="0"
 #IUSE=""
 
 DEPEND=""
-#RDEPEND="app-arch/cabextract
-#	app-arch/p7zip
-#	app-arch/unzip
-#	net-misc/wget
-# dpkg? debhelper? wget? curl? 
-#	gtk? ( gnome-extra/zenity )
-#	kde? ( kde-apps/kdialog )
-#	rar? ( app-arch/unrar )"
 
-RDEPEND="sys-devel/bc #/usr/bin/bc /ok
-	sys-apps/util-linux #/sbin/losetup /ok
-	sys-apps/iproute2 #/bin/ip /ok
-	app-cdr/cdrtools #/usr/bin/isoinfo /ok
-	sys-fs/dosfstools #/sbin/mkdosfs /not! ok, needs symlink? or binary needs patch
-	sys-fs/squashfs-tools:0= #/usr/bin/mksquashfs + /usr/bin/unsquashfs /ok?
-	net-misc/rsync #/usr/bin/rsync /ok
-	app-arch/unzip #/usr/bin/unzip /ok
-	net-misc/wget #/usr/bin/wget /ok
-	sys-apps/findutils #/usr/bin/xargs /ok
-	dev-libs/libisoburn #/usr/bin/xorriso /ok
-"
+RDEPEND="sys-devel/bc 
+	sys-apps/util-linux 
+	sys-apps/iproute2
+	app-cdr/cdrtools 
+	sys-fs/dosfstools 
+	sys-fs/squashfs-tools:0= 
+	net-misc/rsync 
+	app-arch/unzip 
+	net-misc/wget 
+	sys-apps/findutils 
+	dev-libs/libisoburn"
 
-#runtime depends on sys-fs/squashfs-tools + xorriso and libisoburn???? + genisoimage + dosfstools
+#/usr/bin/bc /ok
+#/sbin/losetup /ok
+#/bin/ip /ok
+#/usr/bin/isoinfo /ok
+#/sbin/mkdosfs /not! ok, needs symlink? or binary needs patch
+#/usr/bin/mksquashfs + /usr/bin/unsquashfs /ok?
+#/usr/bin/rsync /ok
+#/usr/bin/unzip /ok
+#/usr/bin/wget /ok
+#/usr/bin/xargs /ok
+#/usr/bin/xorriso /ok
 
-	[ ! $(sudo bash -c "command -v xorriso") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'xorriso' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
+#runtime depends on sys-fs/squashfs-tools + xorriso and libisoburn???? + genisoimage + dosfstools # dpkg? debhelper?
 
 src_unpack() {
 	mkdir "${S}" || die 
