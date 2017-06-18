@@ -21,7 +21,7 @@ RDEPEND="sys-devel/bc
 	sys-apps/util-linux 
 	sys-apps/iproute2
 	app-cdr/cdrtools 
-	sys-fs/dosfstools 
+	sys-fs/dosfstools
 	sys-fs/squashfs-tools:0= 
 	net-misc/rsync 
 	app-arch/unzip 
@@ -29,19 +29,9 @@ RDEPEND="sys-devel/bc
 	sys-apps/findutils 
 	dev-libs/libisoburn"
 
-#/usr/bin/bc /ok
-#/sbin/losetup /ok
-#/bin/ip /ok
-#/usr/bin/isoinfo /ok
 #/sbin/mkdosfs /not! ok, needs symlink? or binary needs patch
-#/usr/bin/mksquashfs + /usr/bin/unsquashfs /ok?
-#/usr/bin/rsync /ok
-#/usr/bin/unzip /ok
-#/usr/bin/wget /ok
-#/usr/bin/xargs /ok
-#/usr/bin/xorriso /ok
 
-#runtime depends on sys-fs/squashfs-tools + xorriso and libisoburn???? + genisoimage + dosfstools # dpkg? debhelper?
+#runtime depends on genisoimage? # dpkg? debhelper?
 
 src_unpack() {
 	mkdir "${S}" || die 
@@ -54,6 +44,8 @@ default
 #Wenn du nichts zu entpacken hast wirst du eine eigene src_unpack() schreiben wollen die über $A iteriert
 cp "${DISTDIR}"/${PN}.sh "${S}" || die
 mv "${S}"/${PN}.sh ${S}"/${PN}" || die
+
+eapply "${FILESDIR}"/gentoo-compat.patch
 
 }
 
