@@ -27,11 +27,14 @@ RDEPEND="sys-devel/bc
 	app-arch/unzip 
 	net-misc/wget 
 	sys-apps/findutils 
-	dev-libs/libisoburn"
+	dev-libs/libisoburn
+	app-admin/sudo"
 
 #/sbin/mkdosfs /not! ok, needs symlink? or binary needs patch
 
 #runtime depends on genisoimage? # dpkg? debhelper?
+
+#use app-misc/binwalk to have a look into the binary attached to the bash script. It seems as if those are mostly grub stages for the bootloader, efi-32bit and plain grub 64bit. 
 
 src_unpack() {
 	mkdir "${S}" || die 
