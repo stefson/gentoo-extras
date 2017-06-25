@@ -1,22 +1,22 @@
-diff --git a/isocorespin b/isocorespin
-index 8d4d634..21c0aa6 100644
+diff --git a/original b/arbeitskopie
+index b1224d7..b041469 100644
 --- a/isocorespin
 +++ b/isocorespin
-@@ -611,7 +611,7 @@ function CHECK_PACKAGE_DEPENDENCIES {
- 	[ ! $(sudo bash -c "command -v losetup") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'klibc-utils' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
- 	[ ! $(sudo bash -c "command -v ip") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'iproute2' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
- 	[ ! $(sudo bash -c "command -v isoinfo") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'genisoimage' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
--	[ ! $(sudo bash -c "command -v mkdosfs") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'dosfstools' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
-+	[ ! $(sudo bash -c "command -v mkfs.fat") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'dosfstools' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
- 	[ ! $(sudo bash -c "command -v mksquashfs") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'squashfs-tools' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
- 	[ ! $(sudo bash -c "command -v rsync") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'rsync' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
- 	[ ! $(sudo bash -c "command -v unsquashfs") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'squashfs-tools' or equivalent for your distro is installed ... exiting." && CLEAN_EXIT
-@@ -2067,7 +2067,7 @@ menuentry \"LINUXIUM ISO\" {\\
- 			sudo umount mnt
- 			sudo rm -f iso-directory-structure/boot/grub/efi.img
- 			sudo dd if=/dev/zero of=iso-directory-structure/boot/grub/efi.img bs=1 count=3109888 > /dev/null 2>&1
--			sudo mkdosfs iso-directory-structure/boot/grub/efi.img > /dev/null 2>&1
-+			sudo mkfs.fat iso-directory-structure/boot/grub/efi.img > /dev/null 2>&1
- 			sudo mount iso-directory-structure/boot/grub/efi.img mnt
- 			sudo cp -a efi mnt
- 			sudo cp grub_bootia32.efi mnt/efi/boot/bootia32.efi
+@@ -667,7 +667,7 @@ function CHECK_PACKAGE_DEPENDENCIES {
+ 	[ ! $(sudo bash -c "command -v losetup") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'klibc-utils' or equivalent for your distro is installed." && DIRTY_EXIT
+ 	[ ! $(sudo bash -c "command -v ip") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'iproute2' or equivalent for your distro is installed." && DIRTY_EXIT
+ 	[ ! $(sudo bash -c "command -v isoinfo") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'genisoimage' or equivalent for your distro is installed." && DIRTY_EXIT
+-	[ ! $(sudo bash -c "command -v mkdosfs") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'dosfstools' or equivalent for your distro is installed." && DIRTY_EXIT
++	[ ! $(sudo bash -c "command -v mkfs.fat") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'dosfstools' or equivalent for your distro is installed." && DIRTY_EXIT
+ 	[ ! $(sudo bash -c "command -v mksquashfs") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'squashfs-tools' or equivalent for your distro is installed." && DIRTY_EXIT
+ 	[ ! $(sudo bash -c "command -v rsync") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'rsync' or equivalent for your distro is installed." && DIRTY_EXIT
+ 	[ ! $(sudo bash -c "command -v unsquashfs") ] && DISPLAY_MESSAGE "${0}: Please ensure package 'squashfs-tools' or equivalent for your distro is installed." && DIRTY_EXIT
+@@ -1983,7 +1983,7 @@ menuentry \"LINUXIUM ISO\" {\\
+ 		sudo umount mnt
+ 		sudo rm -f iso-directory-structure/boot/grub/efi.img
+ 		sudo dd if=/dev/zero of=iso-directory-structure/boot/grub/efi.img bs=1 count=3109888 > /dev/null 2>&1
+-		sudo mkdosfs iso-directory-structure/boot/grub/efi.img > /dev/null 2>&1
++		sudo mkfs.fat iso-directory-structure/boot/grub/efi.img > /dev/null 2>&1
+ 		sudo mount iso-directory-structure/boot/grub/efi.img mnt
+ 		sudo cp -a efi mnt
+ 		sudo cp grub_bootia32.efi mnt/efi/boot/bootia32.efi
