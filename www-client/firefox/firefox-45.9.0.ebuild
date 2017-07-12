@@ -135,6 +135,9 @@ src_prepare() {
 	rm -fr browser/extensions/loop || die
 	rm -fr browser/components/pocket || die
 
+	# fix broken tab loading animation with libpng-1.6
+	cp "${FILESDIR}"/icon/firefox-fixed-loading-icon.png browser/themes/linux/tabbrowser/loading.png || die 
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -208,6 +211,12 @@ src_configure() {
 
 	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
 	mozconfig_annotate '' --disable-mailnews
+
+	# some options taken over from firefox-privacy-esr
+
+	mozconfig_annotate '' --disable-crashreporter
+	mozconfig_annotate '' --disable-webrtc
+	mozconfig_annotate '' --disable-safe-browsing
 
 	# Allow for a proper pgo build
 	if use pgo; then
