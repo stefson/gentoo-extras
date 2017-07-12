@@ -1,0 +1,9 @@
+--- a/etc/chromium.d/default-flags	2017-03-05 23:33:32.296413527 +0100
++++ b/etc/chromium.d/default-flags	2017-03-05 23:34:46.041613523 +0100
+@@ -14,3 +14,6 @@
+ 
+ # Disable the builtin media router (bug #833477)
+ export CHROMIUM_FLAGS="$CHROMIUM_FLAGS --media-router=0"
++
++# Allow installing browser extensions
++export CHROMIUM_FLAGS="${CHROMIUM_FLAGS} --enable-remote-extensions"
