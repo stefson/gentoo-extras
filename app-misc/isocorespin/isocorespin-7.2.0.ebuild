@@ -5,7 +5,7 @@ EAPI=6
 
 inherit eutils
 
-SRC_URI="https://doc-0s-a4-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/cjitc7ar3c2vgf9jl205k23nv9tt2fl8/1498399200000/03293037723036671428/*/0B99O3A0dDe67S053UE8zN3NwM2c?e=download -> ${PN}.sh"
+SRC_URI="https://doc-0s-a4-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/4mmgeaihdele7um6uh225ei2hmghn9vg/1501646400000/03293037723036671428/*/0B99O3A0dDe67S053UE8zN3NwM2c?e=download -> ${PN}.sh"
 #	KEYWORDS="amd64 x86"
 
 DESCRIPTION="Use this to inject either newer kernels or missing packages into debian or ubuntu iso images, for instance to make them bootable on Lenevo Miix 310"
@@ -35,6 +35,8 @@ RDEPEND="sys-devel/bc
 #runtime depends on genisoimage? # dpkg? debhelper?
 
 #use app-misc/binwalk to have a look into the binary attached to the bash script. It seems as if those are mostly grub stages for the bootloader, efi-32bit and plain grub 64bit. 
+
+# extract bash script from payload - head -n 3208 isorespin-arbeitskopie.sh  > isorespin.sh
 
 src_unpack() {
 	mkdir "${S}" || die 
