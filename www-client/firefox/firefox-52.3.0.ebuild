@@ -127,9 +127,10 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 	eapply "${FILESDIR}"/firefox-52.0.2-remove-pocket-leftovers.patch
 	eapply "${FILESDIR}"/firefox-52.1.0-disable-reader.patch
+	eapply "${FILESDIR}"/firefox-52.0.2-disable-location.services.patch 
+	eapply "${FILESDIR}"/firefox-52.1.0-disable-telemetry-options.patch
 
 	rm -fr browser/extensions/pocket || die
-
 
 	# Enable gnomebreakpad
 	if use debug ; then
