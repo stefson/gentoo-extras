@@ -10,20 +10,22 @@ MY_PN=${PN%%-bin-debian}
 
 DESCRIPTION="Chromium build from Debian unstable"
 HOMEPAGE="http://packages.debian.org/sid/chromium"
-SRC_PREFIX="http://snapshot.debian.org/archive/debian/20170508T041308Z/pool"
+SRC_PREFIX="http://snapshot.debian.org/archive/debian/20170802T161845Z/pool"
 SRC_URI="${SRC_PREFIX}/main/${PN:0:1}/${PN:0:8}-browser/${PN:0:8}_${MY_PV}_amd64.deb
-	${SRC_PREFIX}/main/f/ffmpeg/libavcodec57_3.2.4-1_armhf.deb
-	${SRC_PREFIX}/main/f/ffmpeg/libavformat57_3.2.4-1_armhf.deb
-	${SRC_PREFIX}/main/f/ffmpeg/libavutil55_3.2.4-1_armhf.deb
-	${SRC_PREFIX}/main/f/ffmpeg/libswresample2_3.2.4-1_armhf.deb
-	${SRC_PREFIX}/main/i/icu/libicu57_57.1-6_armhf.deb
-	${SRC_PREFIX}/main/libb/libbluray/libbluray1_0.9.3-3_armhf.deb
-	${SRC_PREFIX}/main/libe/libevent/libevent-2.0-5_2.0.21-stable-2+deb8u1_armhf.deb
-	${SRC_PREFIX}/main/libo/libopenmpt/libopenmpt0_0.2.7386~beta20.3-3_armhf.deb
-	${SRC_PREFIX}/main/libs/libssh/libssh-gcrypt-4_0.7.3-2_armhf.deb
-	${SRC_PREFIX}/main/r/re2/libre2-3_20170101+dfsg-1_armhf.deb
-	${SRC_PREFIX}/main/s/shine/libshine3_3.1.0-2.1_armhf.deb
-	${SRC_PREFIX}/main/x/x265/libx265-95_2.1-2+b2_armhf.deb
+	${SRC_PREFIX}/main/c/crystalhd/libcrystalhd3_0.0~git20110715.fdd2f19-11_amd64.deb
+	${SRC_PREFIX}/main/f/ffmpeg/libavcodec57_3.2.4-1_amd64.deb
+	${SRC_PREFIX}/main/f/ffmpeg/libavformat57_3.2.4-1_amd64.deb
+	${SRC_PREFIX}/main/f/ffmpeg/libavutil55_3.2.4-1_amd64.deb
+	${SRC_PREFIX}/main/f/ffmpeg/libswresample2_3.2.4-1_amd64.deb
+	${SRC_PREFIX}/main/i/icu/libicu57_57.1-5_amd64.deb
+	${SRC_PREFIX}/main/libb/libbluray/libbluray1_0.9.3-3_amd64.deb
+	${SRC_PREFIX}/main/libe/libevent/libevent-2.0-5_2.0.21-stable-3_amd64.deb
+	${SRC_PREFIX}/main/libo/libopenmpt/libopenmpt0_0.2.7386~beta20.3-3_amd64.deb
+	${SRC_PREFIX}/main/libs/libssh/libssh-gcrypt-4_0.7.3-2_amd64.deb
+	${SRC_PREFIX}/main/n/numactl/libnuma1_2.0.11-2.1_amd64.deb
+	${SRC_PREFIX}/main/r/re2/libre2-3_20170101+dfsg-1_amd64.deb
+	${SRC_PREFIX}/main/s/shine/libshine3_3.1.0-2.1_amd64.deb
+	${SRC_PREFIX}/main/x/x265/libx265-95_2.1-2+b2_amd64.deb
 	"
 
 LICENSE="BSD"
@@ -55,8 +57,9 @@ RDEPEND="
 	>=media-libs/libjpeg-turbo-1.3.1
 	media-libs/libpng:0/16
 	media-libs/libvpx:0/4
-	media-libs/libwebp:0/6
+	media-libs/libwebp:0/7
 	media-libs/openjpeg:0/5
+	media-libs/opus
 	media-libs/schroedinger
 	media-libs/soxr
 	media-libs/x265
@@ -99,8 +102,8 @@ src_prepare() {
 	QA_PRESTRIPPED="
 		usr/${libdir}/chromium/chrome-sandbox
 		usr/${libdir}/chromium/chromium
+		usr/${libdir}/chromium/x86_64-linux-gnu/lib.\\+
 	"
-#		usr/${libdir}/chromium/x86_64-linux-gnu/lib.\\+
 }
 
 src_install() {
