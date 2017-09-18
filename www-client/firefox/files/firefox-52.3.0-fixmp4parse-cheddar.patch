@@ -1,0 +1,71 @@
+# HG changeset patch
+# User Ralph Giles <giles@mozilla.com>
+# Date 1486760298 28800
+# Node ID 21af4e17cbf9f225e99c4103ac73a72311a702d1
+# Parent  459150ea79f6be75c0228450b2ae15c28b5fbe1b
+Bug 1338655 - Don't try to build mp4parse bindings. r=froydnj a=jorgk DONTBUILD
+
+We use the cheddar crate to generate a C header file
+for our mp4parse_capi wrapper crate. Currently we
+do this at code check-in time via update-rust.sh.
+
+Cargo 0.18 and later will try to execute a build.rs
+file in the crate source tree regardless of whether
+it's specified in Cargo.toml so patching out that
+line just results in 'crate cheddar not found'.
+
+This change restores the old behaviour by substituting
+a 'build = false' line instead.
+
+We do have syntex vendored, but we don't currently build
+it by default, so I prefer this solution to just vendoring
+cheddar and generating the header at build time. The syntex
+crate is quite large and adds significantly to our compile
+time.
+
+MozReview-Commit-ID: InJRRODWAdP
+
+diff --git a/media/libstagefright/binding/mp4parse-cargo.patch b/media/libstagefright/binding/mp4parse-cargo.patch
+--- a/media/libstagefright/binding/mp4parse-cargo.patch
++++ b/media/libstagefright/binding/mp4parse-cargo.patch
+@@ -1,15 +1,17 @@
+ diff --git a/media/libstagefright/binding/mp4parse/Cargo.toml b/media/libstagefright/binding/mp4parse/Cargo.toml
+ index ff9422c..814c4c6 100644
+ --- a/media/libstagefright/binding/mp4parse/Cargo.toml
+ +++ b/media/libstagefright/binding/mp4parse/Cargo.toml
+-@@ -18,17 +18,11 @@ exclude = [
++@@ -18,17 +18,13 @@ exclude = [
+  ]
+  
+++build = false
+++
+  [dependencies]
+ -byteorder = "0.5.0"
+ -afl = { version = "0.1.1", optional = true }
+ -afl-plugin = { version = "0.1.1", optional = true }
+ -abort_on_panic = { version = "1.0.0", optional = true }
+ +byteorder = "0.5.0"
+  
+  [dev-dependencies]
+diff --git a/media/libstagefright/binding/mp4parse_capi/Cargo.toml b/media/libstagefright/binding/mp4parse_capi/Cargo.toml
+--- a/media/libstagefright/binding/mp4parse_capi/Cargo.toml
++++ b/media/libstagefright/binding/mp4parse_capi/Cargo.toml
+@@ -13,14 +13,16 @@ license = "MPL-2.0"
+ 
+ repository = "https://github.com/mozilla/mp4parse-rust"
+ 
+ # Avoid complaints about trying to package test files.
+ exclude = [
+   "*.mp4",
+ ]
+ 
++build = false
++
+ [dependencies]
+ "mp4parse" = {version = "0.6.0", path = "../mp4parse"}
+ 
+ # Somewhat heavy-handed, but we want at least -Z force-overflow-checks=on.
+ [profile.release]
+ debug-assertions = true
+
+
