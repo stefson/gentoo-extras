@@ -6,8 +6,9 @@ EAPI=6
 inherit unpacker versionator
 
 MY_VERSION="$(get_version_component_range 1-4)"
-MY_PATCH="$(get_version_component_range 5)"
-MY_UBUNTUVERS="14.04.1"
+#MY_PATCH="$(get_version_component_range 5)"
+MY_PATCH=1194
+MY_UBUNTUVERS="14.04"
 
 KEYWORDS="~arm"
 SRC_URI="http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-browser_${MY_VERSION}-0ubuntu0.${MY_UBUNTUVERS}.${MY_PATCH}_armhf.deb
