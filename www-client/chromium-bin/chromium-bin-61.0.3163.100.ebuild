@@ -34,7 +34,7 @@ RDEPEND="app-accessibility/speech-dispatcher
 	gnome-base/libgnome-keyring
 	media-libs/alsa-lib
 	media-libs/fontconfig
-	media-libs/jpeg:0
+	media-libs/libjpeg-turbo
 	media-libs/libpng:0
 	net-libs/gnutls
 	net-print/cups
