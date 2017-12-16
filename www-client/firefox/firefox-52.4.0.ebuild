@@ -24,7 +24,7 @@ if [[ ${MOZ_ESR} == 1 ]]; then
 fi
 
 # Patch version
-PATCH="${PN}-52.0-patches-09"
+PATCH="${PN}-52.4-patches-02"
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
 MOZCONFIG_OPTIONAL_GTK2ONLY=1
@@ -129,8 +129,6 @@ src_prepare() {
 	eapply "${FILESDIR}"/firefox-52.1.0-disable-reader.patch
 	eapply "${FILESDIR}"/firefox-52.0.2-disable-location.services.patch 
 	eapply "${FILESDIR}"/firefox-52.1.0-disable-telemetry-options.patch
-	eapply "${FILESDIR}"/firefox-52.3.0-fixmp4parse-cheddar.patch #1338655 fixed in 52.3.0+
-	eapply "${FILESDIR}"/firefox-52.3.0-fix-1393467-breakage-of-subpixel-fonts-in-skia.patch #1393467 fixed in 52.3.0+
 
 	rm -fr browser/extensions/pocket || die
 
