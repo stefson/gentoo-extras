@@ -6,12 +6,16 @@ EAPI=6
 inherit unpacker versionator
 
 #MY_VERSION="$(get_version_component_range 1-4)"
-MY_VERSION="62.0.3202.94"
+MY_VERSION="63.0.3239.108"
 #MY_PATCH="$(get_version_component_range 5)"
-MY_PATCH=1215
+#MY_PATCH=1215
+MY_UBUNTUVERS=14.04.1
 KEYWORDS="~arm"
-SRC_URI="http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-browser_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb
-	http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb"
+SRC_URI="https://launchpad.net/~chromium-team/+archive/ubuntu/stable/+files/chromium-browser_${MY_VERSION}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb
+	https://launchpad.net/~chromium-team/+archive/ubuntu/stable/+files/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb"
+
+#SRC_URI="http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-browser_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb
+#	http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb"
 
 DESCRIPTION="Chromium Binary from Ubuntu for ARM (e.g. Raspberry Pi)"
 HOMEPAGE="http://packages.ubuntu.com/trusty/chromium-browser"
