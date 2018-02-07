@@ -3,18 +3,21 @@
 # $Header: /var/cvsroot/gentoo-x86/games-strategy/s25rttr/s25rttr-0.8.1.ebuild,v 1.1 2013/12/23 13:45:08 hasufell Exp $
 
 EAPI=6
-CMAKE_MIN_VERSION="3.7.1"
 inherit eutils cmake-utils gnome2-utils git-r3
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/"
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-EGIT_COMMIT="21761ae04eb8bb61af8e9a5034de804aff21302d"
+#EGIT_BRANCH="master"
+#EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
+#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+#EGIT_BRANCH="master"
+#EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 IUSE="glfw"
 
 RDEPEND="app-arch/bzip2
@@ -32,9 +35,7 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-	"${FILESDIR}"/${P}-cmake.patch
-	"${FILESDIR}"/${P}-restore-versionnumbers.patch
-	"${FILESDIR}"/${P}-de-lang.patch
+#	"${FILESDIR}"/${P}-cmake.patch
 )
 
 src_prepare() {
@@ -49,6 +50,7 @@ src_prepare() {
 	# Prevent installation of git stuff
 	rm -r RTTR/languages/.git/ || die
 	rm RTTR/languages/.gitignore || die
+	rm RTTR/LSTS/CREDIT.LST/*.bmp || die
 
 	cmake-utils_src_prepare
 }
@@ -65,9 +67,10 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=ON
-		-DRTTR_INSTALL_PREFIX=/usr
+		-DENABLE_OPTIMIZATIONS=OFF
+		-DRTTR_INSTALL_PREFIX=/usr/
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
-		-DRTTR_GAMEDIR="~/.${PN}/S2"
+		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
 		-DCOMPILEFOR="linux"
 		-DCOMPILEARCH="${arch}"
@@ -89,20 +92,22 @@ src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
 	exeinto /usr/"$(get_libdir)"/${PN}
-	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
+#	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
+	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
-	doexe driver/video/SDL/src/libvideoSDL.so
+	doexe lib64/s25rttr/video/libvideoSDL.so
 	use glfw && doexe driver/video/GLFW/src/libvideoGLFW.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
-	doexe driver/audio/SDL/src/libaudioSDL.so
+	doexe lib64/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
 	doins -r "${CMAKE_USE_DIR}"/RTTR
 
 	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
-	dobin src/s25client
+	dobin bin/s25client
+	dobin bin/s25edit
 	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
-	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
+#	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
 }
 
 pkg_preinst() {
