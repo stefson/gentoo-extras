@@ -92,7 +92,6 @@ src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
 	exeinto /usr/"$(get_libdir)"/${PN}
-#	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe lib64/s25rttr/video/libvideoSDL.so
