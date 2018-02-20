@@ -3,10 +3,10 @@
 
 EAPI=6
 
-inherit unpacker versionator
+inherit eutils unpacker versionator
 
 #MY_VERSION="$(get_version_component_range 1-4)"
-MY_VERSION="64.0.3282.140"
+MY_VERSION="64.0.3282.167"
 #MY_PATCH="$(get_version_component_range 5)"
 #MY_PATCH=1215
 MY_UBUNTUVERS=14.04.1
@@ -47,6 +47,10 @@ RDEPEND="app-accessibility/speech-dispatcher
 	x11-libs/gtk+:2
 	x11-libs/libXScrnSaver
 	x11-libs/pango"
+
+src_prepare() {
+	eapply_user
+}
 
 src_install() {
 	mv "${S}"/{usr,etc} "${D}"/ || die
