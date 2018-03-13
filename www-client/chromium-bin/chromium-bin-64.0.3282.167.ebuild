@@ -6,7 +6,7 @@ EAPI=6
 inherit eutils unpacker versionator
 
 #MY_VERSION="$(get_version_component_range 1-4)"
-MY_VERSION="65.0.3325.146"
+MY_VERSION="64.0.3282.167"
 #MY_PATCH="$(get_version_component_range 5)"
 #MY_PATCH=1215
 MY_UBUNTUVERS=14.04.1
@@ -16,8 +16,6 @@ SRC_URI="https://launchpad.net/~chromium-team/+archive/ubuntu/stable/+files/chro
 
 #SRC_URI="http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-browser_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb
 #	http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb"
-
-#SRC_URI="http://mirror.archlinuxarm.org/armv7h/extra/chromium-64.0.3282.186-1-armv7h.pkg.tar.xz"
 
 DESCRIPTION="Chromium Binary from Ubuntu for ARM (e.g. Raspberry Pi)"
 HOMEPAGE="http://packages.ubuntu.com/trusty/chromium-browser"
