@@ -44,7 +44,8 @@ RDEPEND="app-accessibility/speech-dispatcher
 	>=sys-devel/gcc-4.9
 	x11-libs/gtk+:2
 	x11-libs/libXScrnSaver
-	x11-libs/pango"
+	x11-libs/pango
+	!media-libs/libvpx"
 
 src_prepare() {
 	eapply_user
