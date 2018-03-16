@@ -52,6 +52,5 @@ src_prepare() {
 }
 
 src_install() {
-#	rm -rf "${S}"/usr/lib/mime || die
-	mv "${S}"/{usr,etc} "${D}"/ || die
+	declare MOZILLA_FIVE_HOME=/opt/${MOZ_PN}
 }
