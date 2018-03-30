@@ -148,6 +148,7 @@ src_prepare() {
 	fi
 
 	epatch "${FILESDIR}/${PN}-0.6.2-fix-libzip.patch"
+	epatch "${FILESDIR}/${PN}-0.6.2-fix-ffmpeg.patch"
 
 
 	config_rpath_update "${S}/config.rpath" || die
