@@ -147,6 +147,9 @@ src_prepare() {
 		epatch "${FILESDIR}/${PN}-0.6.2-or-higher-remove-unity-trash.patch"
 	fi
 
+	epatch "${FILESDIR}/${PN}-0.6.2-fix-libzip.patch"
+
+
 	config_rpath_update "${S}/config.rpath" || die
 	eautoreconf
 }
