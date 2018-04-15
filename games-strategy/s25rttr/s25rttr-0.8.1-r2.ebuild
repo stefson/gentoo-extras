@@ -34,6 +34,7 @@ PATCHES=(
 	"${FILESDIR}"/${P}-miniupnpc-api-14.patch
 	"${FILESDIR}"/${P}-cmake-3.patch
 	"${FILESDIR}"/${P}-gcc6.patch
+	"${FILESDIR}"/${P}-musl.patch	# fixes 560726
 )
 
 src_prepare() {
