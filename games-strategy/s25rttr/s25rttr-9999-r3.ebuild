@@ -36,6 +36,7 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 #	"${FILESDIR}"/${P}-cmake.patch
+	"${FILESDIR}"/armv7.patch
 )
 
 src_prepare() {
