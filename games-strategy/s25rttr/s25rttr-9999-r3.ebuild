@@ -17,7 +17,7 @@ EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm"
 IUSE="glfw"
 
 RDEPEND="app-arch/bzip2
@@ -50,7 +50,7 @@ src_prepare() {
 	# Prevent installation of git stuff
 	rm -r RTTR/languages/.git/ || die
 	rm RTTR/languages/.gitignore || die
-	rm RTTR/LSTS/CREDIT.LST/*.bmp || die
+	rm RTTR/LSTS/CREDITS.LST/*.bmp || die
 
 	cmake-utils_src_prepare
 }
@@ -62,6 +62,8 @@ src_configure() {
 			arch="x86_64" ;;
 		x86)
 			arch="i386" ;;
+		arm)
+			arch="arm" ;;
 		*) die "Architecture ${ARCH} not yet supported" ;;
 	esac
 
