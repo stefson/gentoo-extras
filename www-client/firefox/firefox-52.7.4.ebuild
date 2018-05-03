@@ -131,6 +131,9 @@ src_prepare() {
 	eapply "${FILESDIR}"/firefox-52.0.2-disable-location.services.patch 
 	eapply "${FILESDIR}"/firefox-52.1.0-disable-telemetry-options.patch
 
+	#arm porting
+	eapply "${FILESDIR}"/firefox-52.3.0-fix-SandboxEarlyInit-on-arm.patch
+
 	rm -fr browser/extensions/pocket || die
 
 	# Enable gnomebreakpad
