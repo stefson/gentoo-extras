@@ -9,6 +9,7 @@ DESCRIPTION="Open Source remake of The Settlers II game (needs original game fil
 HOMEPAGE="http://www.siedler25.org/"
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+#EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
 #EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
@@ -17,7 +18,7 @@ EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="amd64 ~arm"
 IUSE="glfw"
 
 RDEPEND="app-arch/bzip2
@@ -64,6 +65,8 @@ src_configure() {
 			arch="x86_64" ;;
 		x86)
 			arch="i386" ;;
+		arm)
+			arch="arm" ;;
 		*) die "Architecture ${ARCH} not yet supported" ;;
 	esac
 
@@ -97,10 +100,12 @@ src_install() {
 #	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
-	doexe lib64/s25rttr/video/libvideoSDL.so
+	use amd64 && doexe lib64/s25rttr/video/libvideoSDL.so
+	use arm && doexe lib/s25rttr/video/libvideoSDL.so
 	use glfw && doexe driver/video/GLFW/src/libvideoGLFW.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
-	doexe lib64/s25rttr/audio/libaudioSDL.so
+	use amd64 && doexe lib64/s25rttr/audio/libaudioSDL.so	
+	use arm && doexe lib/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
 	doins -r "${CMAKE_USE_DIR}"/RTTR
