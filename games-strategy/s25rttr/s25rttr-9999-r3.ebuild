@@ -100,12 +100,10 @@ src_install() {
 #	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
-	use amd64 && doexe lib64/s25rttr/video/libvideoSDL.so
-	use arm && doexe lib/s25rttr/video/libvideoSDL.so
+	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
 	use glfw && doexe driver/video/GLFW/src/libvideoGLFW.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
-	use amd64 && doexe lib64/s25rttr/audio/libaudioSDL.so	
-	use arm && doexe lib/s25rttr/audio/libaudioSDL.so
+	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so	
 
 	insinto /usr/share/"${PN}"
 	doins -r "${CMAKE_USE_DIR}"/RTTR
