@@ -49,8 +49,7 @@ RDEPEND="app-accessibility/speech-dispatcher
 	x11-libs/gtk+:2
 	x11-libs/libXScrnSaver
 	x11-libs/pango
-	x11-misc/xdg-utils
-	>=sys-libs/glibc-2.27"
+	x11-misc/xdg-utils"
 
 src_prepare() {
 	eapply_user
