@@ -50,7 +50,7 @@ RDEPEND="app-accessibility/speech-dispatcher
 	x11-libs/libXScrnSaver
 	x11-libs/pango
 	x11-misc/xdg-utils
-	>=sys-devel/glibc-2.17"
+	>=sys-libs/glibc-2.17"
 
 src_prepare() {
 	eapply_user
