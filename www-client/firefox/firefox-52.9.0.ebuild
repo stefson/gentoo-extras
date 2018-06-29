@@ -127,13 +127,16 @@ src_prepare() {
 	rm -f "${WORKDIR}"/firefox/2007_fix_nvidia_latest.patch
 	eapply "${WORKDIR}/firefox"
 
-	eapply "${FILESDIR}"/firefox-52.0.2-remove-pocket-leftovers.patch
 	eapply "${FILESDIR}"/firefox-52.1.0-disable-reader.patch
+	eapply "${FILESDIR}"/firefox-52.0.2-remove-pocket-leftovers.patch
 	eapply "${FILESDIR}"/firefox-52.0.2-disable-location.services.patch 
 	eapply "${FILESDIR}"/firefox-52.1.0-disable-telemetry-options.patch
 	
 	#arm porting
 	eapply "${FILESDIR}"/firefox-52.3.0-fix-SandboxEarlyInit-on-arm.patch
+
+	#rust porting
+	eapply "${FILESDIR}"/firefox-52.8.0-fix-cheddar-for-rust.patch
 	
 	rm -fr browser/extensions/pocket || die
 
