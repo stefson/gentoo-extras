@@ -45,7 +45,7 @@ src_prepare() {
 	# Ensure no bundled libraries are used
 	for file in $(ls ${S}/contrib/); do
 		# Preserve boost backports and kaguya
-		if [ "${file}" != "backport" -a "${file}" != "kaguya" ]; then
+		if [ "${file}" != "backport" -a "${file}" != "kaguya" !="glad" ]; then
 			rm -r contrib/"${file}" || die
 		fi
 	done
