@@ -13,7 +13,7 @@ HOMEPAGE="http://www.siedler25.org/"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
 EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-EGIT_BRANCH="master"
+EGIT_BRANCH="cmake"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL-3"
