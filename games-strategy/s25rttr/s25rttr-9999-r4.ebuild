@@ -72,7 +72,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=ON
 		-DENABLE_OPTIMIZATIONS=OFF
-		-DRTTR_INSTALL_PREFIX=/usr/
+#		-DRTTR_INSTALL_PREFIX=/usr/
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
