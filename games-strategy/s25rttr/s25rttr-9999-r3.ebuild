@@ -19,7 +19,7 @@ EGIT_BRANCH="cmake"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 ~arm"
-IUSE="glfw"
+IUSE=""
 
 RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2
@@ -29,8 +29,7 @@ RDEPEND="app-arch/bzip2
 	media-libs/sdl-mixer[vorbis]
 	net-libs/miniupnpc
 	virtual/libiconv
-	virtual/opengl
-	glfw? ( <media-libs/glfw-3 )"
+	virtual/opengl"
 DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.56.0:0=
 	sys-devel/gettext"
@@ -80,7 +79,6 @@ src_configure() {
 		-DCOMPILEFOR="linux"
 		-DCOMPILEARCH="${arch}"
 		-DCMAKE_SKIP_RPATH=YES
-		-DBUILD_GLFW="$(usex glfw)"
 		-DRTTR_TARGET_BOARD=RasPi2
 	)
 
@@ -102,7 +100,6 @@ src_install() {
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
-	use glfw && doexe driver/video/GLFW/src/libvideoGLFW.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
 	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so	
 
