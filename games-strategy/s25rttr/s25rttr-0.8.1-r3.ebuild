@@ -1,8 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-inherit eutils cmake-utils gnome2-utils games
+EAPI=6
+
+inherit cmake-utils desktop gnome2-utils readme.gentoo-r1
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/"
@@ -25,6 +26,10 @@ RDEPEND="app-arch/bzip2
 	virtual/opengl"
 DEPEND="${RDEPEND}
 	sys-devel/gettext"
+
+DOCS=( RTTR/texte/{keyboardlayout.txt,readme.txt} )
+
+DOC_CONTENTS="Copy your Settlers2 game files into ~/.${PN}/S2"
 
 PATCHES=(
 	"${FILESDIR}"/${P}-cmake.patch
@@ -55,11 +60,11 @@ src_configure() {
 		-DCOMPILEFOR="linux"
 		-DCOMPILEARCH="${arch}"
 		-DCMAKE_SKIP_RPATH=YES
-		-DPREFIX="${GAMES_PREFIX}"
-		-DBINDIR="${GAMES_BINDIR}"
-		-DDATADIR="${GAMES_DATADIR}"
-		-DLIBDIR="$(games_get_libdir)/${PN}"
-		-DDRIVERDIR="$(games_get_libdir)/${PN}"
+		-DPREFIX="/usr/"
+		-DBINDIR="/usr/bin"
+		-DDATADIR="/usr/share"
+		-DLIBDIR="/usr/$(get_libdir)/${PN}"
+		-DDRIVERDIR="/usr/$(get_libdir)/${PN}"
 		-DGAMEDIR="~/.${PN}/S2"
 		-DBUILD_GLFW_DRIVER=OFF
 	)
@@ -79,34 +84,27 @@ src_compile() {
 src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
-	exeinto "$(games_get_libdir)"/${PN}
+	exeinto /usr/"$(get_libdir)"/${PN}
 	doexe "${T}"/{sound-convert,s-c_resample}
-	exeinto "$(games_get_libdir)"/${PN}/video
+	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe driver/video/SDL/src/libvideoSDL.so
-	exeinto "$(games_get_libdir)"/${PN}/audio
+	exeinto /usr/"$(get_libdir)"/${PN}/audio
 	doexe driver/audio/SDL/src/libaudioSDL.so
 
-	insinto "${GAMES_DATADIR}"
+	insinto /usr/share
 	doins -r "${CMAKE_USE_DIR}"/RTTR
-	dosym ./LSTS/splash.bmp "${GAMES_DATADIR}"/RTTR/splash.bmp
+	dosym ./LSTS/splash.bmp /usr/share/RTTR/splash.bmp
 
 	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
-	dogamesbin src/s25client
+	dobin src/s25client
 	make_desktop_entry "s25client" "Settlers RTTR" "${PN}"
-	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
 
-	prepgamesdirs
-}
-
-pkg_preinst() {
-	games_pkg_preinst
-	gnome2_icon_savelist
+	einstalldocs
+	readme.gentoo_create_doc
 }
 
 pkg_postinst() {
 	games_pkg_postinst
-	elog "Copy your Settlers2 game files into ~/.${PN}/S2"
-
 	gnome2_icon_cache_update
 }
 
