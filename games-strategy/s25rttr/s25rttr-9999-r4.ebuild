@@ -76,8 +76,8 @@ src_configure() {
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
-		-DCOMPILEFOR="linux"
-		-DCOMPILEARCH="${arch}"
+#		-DCOMPILEFOR="linux"
+#		-DCOMPILEARCH="${arch}"
 		-DRTTR_TARGET_BOARD=RasPi2
 	)
 
