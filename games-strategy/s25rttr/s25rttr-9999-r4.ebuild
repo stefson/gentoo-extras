@@ -78,7 +78,6 @@ src_configure() {
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
 		-DCOMPILEFOR="linux"
 		-DCOMPILEARCH="${arch}"
-		-DCMAKE_SKIP_RPATH=YES
 		-DRTTR_TARGET_BOARD=RasPi2
 	)
 
