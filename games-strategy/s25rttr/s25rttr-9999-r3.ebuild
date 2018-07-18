@@ -1,4 +1,4 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/games-strategy/s25rttr/s25rttr-0.8.1.ebuild,v 1.1 2013/12/23 13:45:08 hasufell Exp $
 
@@ -96,7 +96,6 @@ src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
 	exeinto /usr/"$(get_libdir)"/${PN}
-#	doexe s-c/src/sound-convert s-c/resample-1.8.1/src/s-c_resample
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
