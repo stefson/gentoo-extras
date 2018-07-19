@@ -98,7 +98,7 @@ src_install() {
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
-	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so	
+	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
 	doins -r "${CMAKE_USE_DIR}"/RTTR
