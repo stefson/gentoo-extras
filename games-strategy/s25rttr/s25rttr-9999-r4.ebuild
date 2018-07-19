@@ -35,7 +35,6 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-#	"${FILESDIR}"/${P}-cmake.patch
 #	"${FILESDIR}"/armv7.patch
 
 )
