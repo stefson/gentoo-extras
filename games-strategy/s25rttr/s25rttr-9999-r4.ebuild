@@ -36,7 +36,7 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 #	"${FILESDIR}"/armv7.patch
-
+	"${FILESDIR}"/s25rttr-9999-fix-arm-timeout.patch
 )
 
 src_prepare() {
