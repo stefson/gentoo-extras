@@ -204,8 +204,9 @@ mozconfig_config() {
 		--with-system-zlib \
 		--with-system-bz2
 
-	# Stylo is only broken on x86 builds
+	# Stylo is broken on armhf and x86 builds
 	use x86 && mozconfig_annotate 'Upstream bug 1341234' --disable-stylo
+	use arm && mozconfig_annotate 'Upstream bug 1341234' --disable-stylo
 
 	# Must pass release in order to properly select linker
 	mozconfig_annotate 'Enable by Gentoo' --enable-release
