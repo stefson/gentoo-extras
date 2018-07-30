@@ -127,6 +127,10 @@ src_prepare() {
 
 	eapply "${FILESDIR}/bug_1461221.patch"
 
+	#esr privacy patchset
+
+	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
+
 	rm -fr browser/extensions/pocket || die
 
 	# Enable gnomebreakpad
