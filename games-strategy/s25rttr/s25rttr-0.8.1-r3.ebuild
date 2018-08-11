@@ -6,7 +6,7 @@ EAPI=6
 inherit cmake-utils desktop gnome2-utils readme.gentoo-r1
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
-HOMEPAGE="http://www.siedler25.org/"
+HOMEPAGE="https://www.siedler25.org/"
 # no upstream source tarball yet
 # https://bugs.launchpad.net/s25rttr/+bug/1069546
 SRC_URI="https://dev.gentoo.org/~hasufell/distfiles/${P}.tar.xz"
@@ -16,16 +16,19 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="debug"
 
-RDEPEND="app-arch/bzip2
+RDEPEND="
+	app-arch/bzip2
 	media-libs/libsamplerate
 	media-libs/libsdl[X,sound,opengl,video]
 	media-libs/libsndfile
 	media-libs/sdl-mixer[vorbis]
 	net-libs/miniupnpc
 	virtual/libiconv
-	virtual/opengl"
+	virtual/opengl
+"
 DEPEND="${RDEPEND}
-	sys-devel/gettext"
+	sys-devel/gettext
+"
 
 DOCS=( RTTR/texte/{keyboardlayout.txt,readme.txt} )
 
@@ -39,12 +42,8 @@ PATCHES=(
 	"${FILESDIR}"/${P}-miniupnpc-api-14.patch
 	"${FILESDIR}"/${P}-cmake-3.patch
 	"${FILESDIR}"/${P}-gcc6.patch
-	"${FILESDIR}"/${P}-musl.patch	# fixes 560726
+	"${FILESDIR}"/${P}-musl.patch
 )
-
-src_prepare() {
-	cmake-utils_src_prepare
-}
 
 src_configure() {
 	local arch
@@ -104,8 +103,8 @@ src_install() {
 }
 
 pkg_postinst() {
-	games_pkg_postinst
 	gnome2_icon_cache_update
+	readme.gentoo_print_elog
 }
 
 pkg_postrm() {
