@@ -24,7 +24,7 @@ if [[ ${MOZ_ESR} == 1 ]]; then
 fi
 
 # Patch version
-PATCH="${PN}-60.0-patches-02"
+PATCH="${PN}-60.0-patches-03"
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
 MOZCONFIG_OPTIONAL_WIFI=1
@@ -123,6 +123,8 @@ src_unpack() {
 
 src_prepare() {
 	rm "${WORKDIR}/firefox/2005_ffmpeg4.patch"
+	# rm because I want to keep the same patch into ${FILESDIR} for documentation
+	rm "${WORKDIR}/2008_add_support_for_new_Mesa_device_probing.patch"
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}/bug_1461221.patch"
