@@ -127,6 +127,17 @@ src_prepare() {
 
 	eapply "${FILESDIR}/bug_1461221.patch"
 
+	# fix rust compile warnings
+
+	eapply "${FILESDIR}/firefox-60.2.0-fix-std-ascii-warning.patch"
+
+	# https://bugs.gentoo.org/665168
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1480755
+	# http://webglreport.com/
+	# https://get.webgl.org/
+
+	eapply "${FILESDIR}/firefox-62.0-fix-broken-webgl.patch"
+
 	#esr privacy patchset
 
 	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
