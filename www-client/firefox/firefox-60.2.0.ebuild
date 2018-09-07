@@ -123,25 +123,25 @@ src_unpack() {
 
 src_prepare() {
 	rm "${WORKDIR}/firefox/2005_ffmpeg4.patch"
+
 	# rm because I want to keep the same patch into ${FILESDIR} for documentation
 	rm "${WORKDIR}/2008_add_support_for_new_Mesa_device_probing.patch"
+
+	# apply gentoo-patchset
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}/bug_1461221.patch"
 
 	# fix rust compile warnings
-
 	eapply "${FILESDIR}/firefox-60.2.0-fix-std-ascii-warning.patch"
 
 	# https://bugs.gentoo.org/665168
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1480755
 	# http://webglreport.com/
 	# https://get.webgl.org/
-
 	eapply "${FILESDIR}/firefox-62.0-fix-broken-webgl.patch"
 
 	#esr privacy patchset
-
 	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
 
 	rm -fr browser/extensions/pocket || die
