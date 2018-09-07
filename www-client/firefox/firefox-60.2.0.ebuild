@@ -145,6 +145,10 @@ src_prepare() {
 	# https://svnweb.freebsd.org/ports/head/www/firefox-esr/files/patch-bug1467882?view=markup
 	eapply "${FILESDIR}/firefox-60.2.0-backport-of-sndio-volume-fix.patch"
 
+	# https://svnweb.freebsd.org/ports/head/www/firefox-esr/files/patch-z-bug517422?revision=472833&view=markup
+	# stolen from freebsd to allow more external libs: libogg, libtremor, etc. pp
+	eapply "${FILESDIR}/firefox-60.2.0-allow-more-external-libs.patch"
+
 	#esr privacy patchset
 	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
 
