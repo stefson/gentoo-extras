@@ -166,10 +166,8 @@ DEPEND="app-arch/zip
 	sys-apps/findutils
 	pulseaudio? ( media-sound/pulseaudio )
 	elibc_glibc? ( || (
-		( >=dev-lang/rust-1.27.1[-cargo(-)] >=virtual/cargo-1.27.1 )
-		>=dev-lang/rust-1.27.1[cargo]
-		( >=dev-lang/rust-bin-1.27.1[-cargo] >=virtual/cargo-1.27.1 )
-		>=dev-lang/rust-bin-1.27.1[cargo]
+		>=virtual/cargo-1.26.2
+		>=virtual/rust-1.26.2
 	) )
 	elibc_musl? ( || ( >=dev-lang/rust-1.24.1
 		>=dev-util/cargo-0.25.0
@@ -205,8 +203,7 @@ mozconfig_config() {
 		--with-system-bz2
 
 	# Stylo is broken on armhf and x86 builds
-	use x86 && mozconfig_annotate 'Upstream bug 1341234' --disable-stylo
-	use arm && mozconfig_annotate 'Upstream bug 1341234' --disable-stylo
+	! use amd64 && mozconfig_annotate 'Upstream bug 1341234' --disable-stylo
 
 	# Must pass release in order to properly select linker
 	mozconfig_annotate 'Enable by Gentoo' --enable-release
