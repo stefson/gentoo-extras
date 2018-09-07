@@ -141,6 +141,10 @@ src_prepare() {
 	# https://get.webgl.org/
 	eapply "${FILESDIR}/firefox-62.0-fix-broken-webgl.patch"
 
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1467882
+	# https://svnweb.freebsd.org/ports/head/www/firefox-esr/files/patch-bug1467882?view=markup
+	eapply "${FILESDIR}/firefox-60.2.0-backport-of-sndio-volume-fix.patch"
+
 	#esr privacy patchset
 	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
 
