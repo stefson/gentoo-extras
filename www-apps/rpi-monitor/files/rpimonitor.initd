@@ -1,0 +1,51 @@
+#!/sbin/openrc-run
+# Copyright (c) 2013 Stuart Shelton <stuart@shelton.me>
+# Distributed under the terms of the GNU General Public License v2
+
+PERL="$( type -pf perl )"
+NAME="rpimonitord"
+PIDFILE="/var/run/${NAME}.pid"
+DAEMON="/usr/sbin/${NAME}"
+DAEMON_ARGS="-b ${PIDFILE}${CONFFILES:+ ${CONFFILES}}"
+
+depend() {
+	need net
+}
+
+start() {
+	if ! [ -x "${PERL}" ]; then
+		eerror "Cannot locate perl binary"
+		return 1
+	fi
+
+	export LC_ALL=C
+
+	ebegin "Starting RPi Monitor"
+	start-stop-daemon --start --quiet --pidfile "${PIDFILE}" --exec "${PERL}" -- "${DAEMON}" ${DAEMON_ARGS}
+	eend ${?} "Unable to start RPi Monitor"
+}
+
+stop() {
+	local pid pids
+	declare -i pid rc=1
+
+	ebegin "Stopping RPi Monitor"
+	if [ -r "${PIDFILE}" ]; then
+		pids="$( cat "${PIDFILE}" )"
+
+		start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile "${PIDFILE}" --exec "${PERL}"
+		rc=${?}
+
+		if [ -n "${pids}" ]; then
+			for pid in ${pids}; do
+				if ps -o args= ${pid} | grep -qw "${PIDFILE}"; then
+					eindent
+					einfo "Sending HUP signal to child ${pid} ..."
+					kill -HUP ${pid}
+					eoutdent
+				fi
+			done
+		fi
+	fi
+	eend ${rc} "Unable to stop RPi Monitor"
+}
