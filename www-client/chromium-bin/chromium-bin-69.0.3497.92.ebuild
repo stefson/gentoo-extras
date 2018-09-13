@@ -6,14 +6,13 @@ EAPI=6
 inherit eutils unpacker versionator
 
 #MY_VERSION="$(get_version_component_range 1-4)"
-MY_VERSION="69.0.3497.81"
+MY_VERSION="69.0.3497.92"
 #MY_PATCH="$(get_version_component_range 5)"
 MY_UBUNTUVERS=16.04.1
 KEYWORDS="~arm"
 
 SRC_URI="https://launchpad.net/~chromium-team/+archive/ubuntu/stable/+files/chromium-browser_${MY_VERSION}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb
 	https://launchpad.net/~chromium-team/+archive/ubuntu/stable/+files/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb"
-
 
 #SRC_URI="http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-browser_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb
 #	http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb"
