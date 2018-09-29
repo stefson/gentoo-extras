@@ -116,12 +116,12 @@ DEPEND="${CDEPEND}
 	)
 	pulseaudio? ( media-sound/pulseaudio )
 	elibc_glibc? (
-		virtual/cargo
-		virtual/rust
+		>=virtual/cargo-1.28.0
+		>=virtual/rust-1.28.0
 	)
 	elibc_musl? (
-		virtual/cargo
-		virtual/rust
+		>=virtual/cargo-1.28.0
+		>=virtual/rust-1.28.0
 	)
 	amd64? ( >=dev-lang/yasm-1.1 virtual/opengl )
 	x86? ( >=dev-lang/yasm-1.1 virtual/opengl )"
