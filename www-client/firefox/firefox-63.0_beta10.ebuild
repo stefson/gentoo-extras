@@ -67,6 +67,7 @@ CDEPEND="
 	>=media-libs/libpng-1.6.34:0=[apng]
 	>=media-libs/mesa-10.2:*
 	media-libs/fontconfig
+	net-libs/nodejs
 	>=media-libs/freetype-2.4.10
 	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
 	virtual/freedesktop-icon-theme
