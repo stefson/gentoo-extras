@@ -10,11 +10,12 @@ PYTHON_COMPAT=( python3_{5,6,7} )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads'
 
 # This list can be updated with scripts/get_langs.sh from the mozilla overlay
-MOZ_LANGS=( ach af an ar as ast az bg bn-BD bn-IN br bs ca cak cs cy da de dsb
-el en en-GB en-US en-ZA eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE
-gd gl gn gu-IN he hi-IN hr hsb hu hy-AM id is it ja ka kab kk km kn ko lij lt lv
-mai mk ml mr ms nb-NO nl nn-NO or pa-IN pl pt-BR pt-PT rm ro ru si sk sl son sq
-sr sv-SE ta te th tr uk uz vi xh zh-CN zh-TW )
+MOZ_LANGS=( de)
+#MOZ_LANGS=( ach af an ar as ast az bg bn-BD bn-IN br bs ca cak cs cy da de dsb
+#el en en-GB en-US en-ZA eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE
+#gd gl gn gu-IN he hi-IN hr hsb hu hy-AM id is it ja ka kab kk km kn ko lij lt lv
+#mai mk ml mr ms nb-NO nl nn-NO or pa-IN pl pt-BR pt-PT rm ro ru si sk sl son sq
+#sr sv-SE ta te th tr uk uz vi xh zh-CN zh-TW )
 
 # Convert the ebuild version to the upstream mozilla version, used by mozlinguas
 MOZ_PV="${PV/_alpha/a}" # Handle alpha for SRC_URI
@@ -27,7 +28,7 @@ if [[ ${MOZ_ESR} == 1 ]]; then
 fi
 
 # Patch version
-PATCH="${PN}-62.0-patches-01"
+PATCH="${PN}-63.0-patches-01"
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
 inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils llvm \
@@ -182,12 +183,17 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm "${WORKDIR}/firefox/1001_dont_use_build_id.patch" #it changed a lot, uncertain if still needed
+#	rm "${WORKDIR}/firefox/2000_system_harfbuzz_support.patch"
+#	rm "${WORKDIR}/firefox/2001_system_graphite2_support.patch"
+	rm "${WORKDIR}/firefox/2003_musl_requires_padding_liblibc.patch"
+	rm "${WORKDIR}/firefox/6006_musl_pthread_setname.patch"
+
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}"/${PN}-60.0-blessings-TERM.patch # 654316
-	eapply "${FILESDIR}"/${PN}-60.0-do-not-force-lld.patch
-	eapply "${FILESDIR}"/${PN}-60.0-sandbox-lto.patch # 666580
-	eapply "${FILESDIR}"/${PN}-60.0-missing-errno_h-in-SandboxOpenedFiles_cpp.patch
+#	eapply "${FILESDIR}"/${PN}-60.0-do-not-force-lld.patch
+#	eapply "${FILESDIR}"/${PN}-60.0-sandbox-lto.patch # 666580
 
 	# Enable gnomebreakpad
 	if use debug ; then
