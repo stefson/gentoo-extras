@@ -139,7 +139,7 @@ src_prepare() {
 	eapply "${FILESDIR}/firefox-60.2.0-fix-std-ascii-warning.patch"
 
 	# backported from firefox-63.0_beta
-	eapply "${FILESDIR}/files/firefox-60.0-rust-1.29-comp.patch"
+	eapply "${FILESDIR}/firefox-60.0-rust-1.29-comp.patch"
 
 	# https://bugs.gentoo.org/665168
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1480755
