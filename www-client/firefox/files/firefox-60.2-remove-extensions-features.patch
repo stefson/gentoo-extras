@@ -1,19 +1,21 @@
 diff -ur a/browser/extensions/moz.build b/browser/extensions/moz.build
---- a/browser/extensions/moz.build	2018-09-27 21:02:03.422667363 +0300
-+++ b/browser/extensions/moz.build	2018-09-28 08:12:39.194420333 +0300
-@@ -5,14 +5,8 @@
+index 85b2bb0..0de94f6 100644
+--- a/browser/extensions/moz.build
++++ b/browser/extensions/moz.build
+@@ -5,15 +5,10 @@
  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
  DIRS += [
 -    'activity-stream',
 -    'aushelper',
+     'followonsearch',
 -    'formautofill',
+     'jaws-esr',
 -    'onboarding',
      'pdfjs',
--    'screenshots',
+     'screenshots',
 -    'webcompat',
--    'webcompat-reporter'
-+    'screenshots'
  ]
  
- # Only include mortar system add-ons if we locally enable it
+ # Only include the following system add-ons if building Aurora or Nightly
+
