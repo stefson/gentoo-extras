@@ -143,7 +143,7 @@ src_prepare() {
 	eapply 	"${FILESDIR}/"${PN}-60.2-remove-extensions-features.patch
 
 	rm -fr browser/extensions/pocket || die
-	rm -fr browser/extensions/{activity-stream,aushelper,formautofill,onboarding,webcompat,webcompat-reporter} || die
+	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
 
 	# Enable gnomebreakpad
 	if use debug ; then
