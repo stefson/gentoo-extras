@@ -140,8 +140,10 @@ src_prepare() {
 
 	#esr privacy patchset
 	eapply 	"${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
+	eapply 	"${FILESDIR}/"${PN}-60.2-remove-extensions-features.patch
 
 	rm -fr browser/extensions/pocket || die
+	rm -fr browser/extensions/{activity-stream,aushelper,formautofill,onboarding,webcompat,webcompat-reporter} || die
 
 	# Enable gnomebreakpad
 	if use debug ; then
