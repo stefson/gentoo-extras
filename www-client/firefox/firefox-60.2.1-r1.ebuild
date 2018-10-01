@@ -132,6 +132,9 @@ src_prepare() {
 	eapply "${FILESDIR}"/${PN}-60.0-rust-1.29-comp.patch
 	eapply "${FILESDIR}"/${PN}-60.0-missing-errno_h-in-SandboxOpenedFiles_cpp.patch
 
+	# fix rust compile warnings, open bug? 
+	eapply "${FILESDIR}/"${PN}-60.2.0-fix-std-ascii-warning.patch
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
