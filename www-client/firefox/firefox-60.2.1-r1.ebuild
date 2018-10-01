@@ -135,6 +135,11 @@ src_prepare() {
 	# fix rust compile warnings, open bug? 
 	eapply "${FILESDIR}/"${PN}-60.2.0-fix-std-ascii-warning.patch
 
+	#esr privacy patchset
+	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
+
+	rm -fr browser/extensions/pocket || die
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
