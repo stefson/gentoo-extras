@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,7 +7,7 @@ WANT_AUTOCONF="2.1"
 MOZ_ESR="1"
 
 PYTHON_COMPAT=( python3_{5,6,7} )
-PYTHON_REQ_USE='ncurses,sqlite,ssl,threads'
+PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
 
 # This list can be updated with scripts/get_langs.sh from the mozilla overlay
 MOZ_LANGS=( ach af an ar as ast az bg bn-BD bn-IN br bs ca cak cs cy da de dsb
@@ -36,20 +36,19 @@ inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils llvm \
 		mozconfig-v6.60 pax-utils xdg-utils autotools mozlinguas-v2
 
 DESCRIPTION="Firefox Web Browser"
-HOMEPAGE="http://www.mozilla.com/firefox"
+HOMEPAGE="https://www.mozilla.com/firefox"
 
 KEYWORDS="~amd64 ~x86"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="bindist eme-free +gmp-autoupdate hardened hwaccel jack +screenshot selinux test"
+IUSE="bindist eme-free geckodriver +gmp-autoupdate hardened hwaccel jack +screenshot selinux test"
 RESTRICT="!bindist? ( bindist )"
 
-SRCHASH=239e434d6d2b8e1e2b697c3416d1e96d48fe98e5
 SDIR="release"
 [[ ${PV} = *_beta* ]] && SDIR="beta"
 
-PATCH_URIS=( https://dev.gentoo.org/~{anarchy,axs,polynomial-c}/mozilla/patchsets/${PATCH}.tar.xz )
+PATCH_URIS=( https://dev.gentoo.org/~whissi/dist/firefox/${PATCH}.tar.xz https://dev.gentoo.org/~{anarchy,axs,polynomial-c}/mozilla/patchsets/${PATCH}.tar.xz )
 SRC_URI="${SRC_URI}
 	${MOZ_HTTP_URI}/${MOZ_PV}/source/firefox-${MOZ_PV}.source.tar.xz
 	${PATCH_URIS[@]}"
@@ -126,39 +125,12 @@ src_unpack() {
 
 src_prepare() {
 	rm "${WORKDIR}/firefox/2005_ffmpeg4.patch"
-
-	# rm because I want to keep the same patch into ${FILESDIR} for documentation
-	rm "${WORKDIR}/2008_add_support_for_new_Mesa_device_probing.patch"
-
-	# apply gentoo-patchset
 	eapply "${WORKDIR}/firefox"
 
-	eapply "${FILESDIR}/bug_1461221.patch"
-
-	# fix rust compile warnings
-	eapply "${FILESDIR}/firefox-60.2.0-fix-std-ascii-warning.patch"
-
-	# backported from firefox-63.0_beta
-	eapply "${FILESDIR}/firefox-60.0-rust-1.29-comp.patch"
-
-	# https://bugs.gentoo.org/665168
-	# https://bugzilla.mozilla.org/show_bug.cgi?id=1480755
-	# http://webglreport.com/
-	# https://get.webgl.org/
-	eapply "${FILESDIR}/firefox-62.0-fix-broken-webgl.patch"
-
-	# https://bugzilla.mozilla.org/show_bug.cgi?id=1467882
-	# https://svnweb.freebsd.org/ports/head/www/firefox-esr/files/patch-bug1467882?view=markup
-	eapply "${FILESDIR}/firefox-60.2.0-backport-of-sndio-volume-fix.patch"
-
-	# https://svnweb.freebsd.org/ports/head/www/firefox-esr/files/patch-z-bug517422?revision=472833&view=markup
-	# stolen from freebsd to allow more external libs: libogg, libtremor, etc. pp
-	eapply "${FILESDIR}/firefox-60.2.0-allow-more-external-libs.patch"
-
-	#esr privacy patchset
-	eapply 	"${FILESDIR}/firefox-60.1.0-disable-pocket-leftovers.patch"
-
-	rm -fr browser/extensions/pocket || die
+	eapply "${FILESDIR}"/bug_1461221.patch
+	eapply "${FILESDIR}"/${PN}-60.0-blessings-TERM.patch # 654316
+	eapply "${FILESDIR}"/${PN}-60.0-rust-1.29-comp.patch
+	eapply "${FILESDIR}"/${PN}-60.0-missing-errno_h-in-SandboxOpenedFiles_cpp.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
@@ -221,6 +193,14 @@ src_configure() {
 	# get your own set of keys.
 	_google_api_key=AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc
 
+	# Add information about TERM to output (build.log) to aid debugging
+	# blessings problems
+	if [[ -n "${TERM}" ]] ; then
+		einfo "TERM is set to: \"${TERM}\""
+	else
+		einfo "TERM is unset."
+	fi
+
 	####################################
 	#
 	# mozconfig, CFLAGS and CXXFLAGS setup
@@ -229,6 +209,8 @@ src_configure() {
 
 	mozconfig_init
 	mozconfig_config
+
+	mozconfig_use_enable geckodriver
 
 	# enable JACK, bug 600002
 	mozconfig_use_enable jack
@@ -245,14 +227,23 @@ src_configure() {
 		mozconfig_use_enable hardened hardening
 	fi
 
-	# Only available on mozilla-overlay for experimentation -- Removed in Gentoo repo per bug 571180
-	#use egl && mozconfig_annotate 'Enable EGL as GL provider' --with-gl-provider=EGL
+	# Disable built-in ccache support to avoid sandbox violation, #665420
+	# Use FEATURES=ccache instead!
+	mozconfig_annotate '' --without-ccache
+	sed -i -e 's/ccache_stats = None/return None/' \
+		python/mozbuild/mozbuild/controller/building.py || \
+		die "Failed to disable ccache stats call"
 
 	# Setup api key for location services
 	echo -n "${_google_api_key}" > "${S}"/google-api-key
 	mozconfig_annotate '' --with-google-api-keyfile="${S}/google-api-key"
 
 	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
+
+	if use clang ; then
+		# https://bugzilla.mozilla.org/show_bug.cgi?id=1423822
+		mozconfig_annotate 'elf-hack is broken when using Clang' --disable-elf-hack
+	fi
 
 	echo "mk_add_options MOZ_OBJDIR=${BUILD_OBJ_DIR}" >> "${S}"/.mozconfig
 	echo "mk_add_options XARGS=/usr/bin/xargs" >> "${S}"/.mozconfig
@@ -313,7 +304,14 @@ src_install() {
 
 	cd "${S}"
 	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
-	DESTDIR="${D}" ./mach install
+	DESTDIR="${D}" ./mach install || die
+
+	if use geckodriver ; then
+		cp "${BUILD_OBJ_DIR}"/dist/bin/geckodriver "${ED%/}"${MOZILLA_FIVE_HOME} || die
+		pax-mark m "${ED%/}"${MOZILLA_FIVE_HOME}/geckodriver
+
+		dosym ${MOZILLA_FIVE_HOME}/geckodriver /usr/bin/geckodriver
+	fi
 
 	# Install language packs
 	mozlinguas_src_install
@@ -362,8 +360,16 @@ PROFILE_EOF
 			|| die
 	fi
 
+	# Don't install llvm-symbolizer from sys-devel/llvm package
+	[[ -f "${ED%/}${MOZILLA_FIVE_HOME}/llvm-symbolizer" ]] && \
+		rm "${ED%/}${MOZILLA_FIVE_HOME}/llvm-symbolizer"
+
+	# firefox and firefox-bin are identical
+	rm "${ED%/}"${MOZILLA_FIVE_HOME}/firefox-bin || die
+	dosym firefox ${MOZILLA_FIVE_HOME}/firefox-bin
+
 	# Required in order to use plugins and even run firefox on hardened.
-	pax-mark m "${ED}"${MOZILLA_FIVE_HOME}/{firefox,firefox-bin,plugin-container}
+	pax-mark m "${ED}"${MOZILLA_FIVE_HOME}/{firefox,plugin-container}
 }
 
 pkg_preinst() {
@@ -387,9 +393,8 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	# Update mimedb for the new .desktop file
-	xdg_desktop_database_update
 	gnome2_icon_cache_update
+	xdg_desktop_database_update
 
 	if ! use gmp-autoupdate && ! use eme-free ; then
 		elog "USE='-gmp-autoupdate' has disabled the following plugins from updating or"
@@ -409,5 +414,5 @@ pkg_postinst() {
 
 pkg_postrm() {
 	gnome2_icon_cache_update
+	xdg_desktop_database_update
 }
-
