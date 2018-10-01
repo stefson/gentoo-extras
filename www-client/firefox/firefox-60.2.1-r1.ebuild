@@ -135,6 +135,9 @@ src_prepare() {
 	# fix rust compile warnings, open bug? 
 	eapply "${FILESDIR}/"${PN}-60.2.0-fix-std-ascii-warning.patch
 
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1467882
+	eapply "${FILESDIR}/"${PN}-60.2.0-backport-of-sndio-volume-fix.patch
+
 	#esr privacy patchset
 	eapply 	"${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
 
