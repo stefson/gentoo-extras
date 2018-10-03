@@ -42,7 +42,7 @@ rust_abi() {
     armv6j*s*)    echo arm-unknown-linux-gnueabi;;
     armv6j*h*)    echo arm-unknown-linux-gnueabihf;;
     armv7a*h*)    echo armv7-unknown-linux-gnueabihf;;
-    i?86*)        echo i686-unknown-linux-gnu;;
+    i686*)        echo i686-unknown-linux-gnu;;
     mipsel*)      echo mipsel-unknown-linux-gnu;;
     mips*)        echo mips-unknown-linux-gnu;;
     powerpc*)     echo powerpc-unknown-linux-gnu;;
