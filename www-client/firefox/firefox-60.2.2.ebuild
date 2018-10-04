@@ -137,9 +137,12 @@ src_prepare() {
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1467882
 	eapply "${FILESDIR}/"${PN}-60.2.0-backport-of-sndio-volume-fix.patch
 
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1496270
+	use geckodriver && eapply "${FILESDIR}/"${PN}-60.0-update-cc-to-honor-CC.patch
+
 	#esr privacy patchset
-	eapply 	"${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
-	eapply 	"${FILESDIR}/"${PN}-60.2-remove-extensions-features.patch
+	eapply "${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
+	eapply "${FILESDIR}/"${PN}-60.2-remove-extensions-features.patch
 
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
