@@ -110,5 +110,8 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
+COMMON_RDEPEND="
+		net-libs/http-parser:=
+		"
 DEPEND=""
 RDEPEND=""
