@@ -112,6 +112,6 @@ IUSE=""
 
 COMMON_RDEPEND="
 		net-libs/http-parser:=
-		"
-DEPEND=""
+"
+DEPEND="${COMMON_DEPEND}"
 RDEPEND=""
