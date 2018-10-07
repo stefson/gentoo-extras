@@ -192,7 +192,6 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}"/${PN}-60.0-blessings-TERM.patch # 654316
-	eapply "${FILESDIR}"/${PN}-60.0-do-not-force-lld.patch
 	eapply "${FILESDIR}"/${PN}-60.0-sandbox-lto.patch # 666580
 
 	# Enable gnomebreakpad
