@@ -186,16 +186,15 @@ src_unpack() {
 
 src_prepare() {
 	rm "${WORKDIR}/firefox/1001_dont_use_build_id.patch" #it changed a lot, uncertain if still needed
-#	rm "${WORKDIR}/firefox/2000_system_harfbuzz_support.patch"
-#	rm "${WORKDIR}/firefox/2001_system_graphite2_support.patch"
 	rm "${WORKDIR}/firefox/2003_musl_requires_padding_liblibc.patch"
 	rm "${WORKDIR}/firefox/6006_musl_pthread_setname.patch"
 
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}"/${PN}-60.0-blessings-TERM.patch # 654316
-#	eapply "${FILESDIR}"/${PN}-60.0-do-not-force-lld.patch
-#	eapply "${FILESDIR}"/${PN}-60.0-sandbox-lto.patch # 666580
+	eapply "${FILESDIR}"/${PN}-60.0-do-not-force-lld.patch
+	eapply "${FILESDIR}"/${PN}-60.0-sandbox-lto.patch # 666580
+	eapply "${FILESDIR}"/${PN}-60.0-missing-errno_h-in-SandboxOpenedFiles_cpp.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
