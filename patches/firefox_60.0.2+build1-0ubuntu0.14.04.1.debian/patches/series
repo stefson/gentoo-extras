@@ -32,4 +32,4 @@ fix-armhf-webrtc-build.patch
 extra-webrtc-build-configs.patch
 update-gn-mozbuild.patch
 drop-check-glibc-symbols.patch
-gcc-mozilla-clang-hack.patch
+#gcc-mozilla-clang-hack.patch
