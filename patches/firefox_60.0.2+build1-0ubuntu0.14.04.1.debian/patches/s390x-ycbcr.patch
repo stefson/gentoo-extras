@@ -1,0 +1,15 @@
+diff -r 8efc3144ff2b gfx/ycbcr/chromium_types.h
+--- a/gfx/ycbcr/chromium_types.h	Wed Apr 18 06:22:54 2018 -0700
++++ b/gfx/ycbcr/chromium_types.h	Wed Apr 18 20:00:32 2018 +0200
+@@ -43,6 +43,11 @@
+ #define ARCH_CPU_AARCH64_FAMILY 1
+ #define ARCH_CPU_AARCH64 1
+ #define ARCH_CPU_64_BITS 1
++#elif defined(__s390x__)
++#define ARCH_CPU_S390_FAMILY 1
++#define ARCH_CPU_S390X 1
++#define ARCH_CPU_64_BITS 1
++#define ARCH_CPU_BIG_ENDIAN 1
+ #else
+ #warning Please add support for your architecture in chromium_types.h
+ #endif

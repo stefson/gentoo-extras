@@ -1,0 +1,34 @@
+Description: Introduce --with-app-profile to change the profile location, so
+ that we can have nightly builds that are fully coinstallable with release
+ builds
+Author: Chris Coulson <chris.coulson@canonical.com>
+Forwarded: no
+
+--- a/old-configure.in
++++ b/old-configure.in
+@@ -2195,6 +2195,15 @@
+     MOZ_UA_VENDOR="$WITH_UA_VENDOR"
+ fi
+ 
++MOZ_ARG_WITH_STRING(app-profile,
++[--with-app-profile=APPPROFILE sets MOZ_APP_PROFILE to APPPROFILE],
++WITH_APP_PROFILE=$withval,
++)
++
++if test -n "$WITH_APP_PROFILE" ; then
++    MOZ_APP_PROFILE="$WITH_APP_PROFILE"
++fi
++
+ # Special cases where we need to AC_DEFINE something. Also a holdover for apps
+ # that haven't made a confvars.sh yet. Don't add new stuff here, use
+ # MOZ_BUILD_APP.
+--- a/build/moz.configure/old.configure
++++ b/build/moz.configure/old.configure
+@@ -240,6 +240,7 @@
+     '--with-android-sdk',
+     '--with-app-basename',
+     '--with-app-name',
++    '--with-app-profile',
+     '--with-arch',
+     '--with-branding',
+     '--with-cross-lib',

@@ -1,0 +1,23 @@
+--- a/build/moz.configure/toolchain.configure
++++ b/build/moz.configure/toolchain.configure
+@@ -1330,9 +1330,9 @@
+ 
+ 
+ @depends('RUSTC_OPT_LEVEL', debug_rust, '--enable-debug-symbols',
+-         moz_optimize)
++         moz_optimize, host)
+ def rust_compiler_flags(opt_level_option, debug_rust, debug_symbols,
+-                        moz_optimize):
++                        moz_optimize, host):
+     optimize = moz_optimize.optimize
+ 
+     # Cargo currently supports only two interesting profiles for building:
+@@ -1363,6 +1363,8 @@
+ 
+     if debug_symbols:
+         debug_info = '2'
++        if host.bitness == 32:
++            debug_info = '1'
+ 
+     opts = []
+ 

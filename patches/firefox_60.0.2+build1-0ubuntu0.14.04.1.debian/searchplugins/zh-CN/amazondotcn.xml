@@ -1,0 +1,17 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>亚马逊</ShortName>
+<Description>亚马逊搜索</Description>
+<InputEncoding>UTF-8</InputEncoding>
+<Image width="16" height="16">resource://search-plugins/images/amazon.ico</Image>
+<Url type="text/html" method="GET" template="https://www.amazon.cn/mn/searchApp" resultdomain="amazon.cn">
+  <Param name="keywords" value="{searchTerms}"/>
+  <Param name="ix" value="sunray"/>
+  <Param name="pageletid" value="headsearch"/>
+  <Param name="searchType" value=""/>
+  <Param name="Go.x" value="0"/>
+  <Param name="Go.y" value="0"/>
+  <Param name="bestSaleNum" value="0"/>
+  <Param name="tag" value="wwwcanoniccom-20"/>
+</Url>
+<SearchForm>https://www.amazon.cn/</SearchForm>
+</SearchPlugin>

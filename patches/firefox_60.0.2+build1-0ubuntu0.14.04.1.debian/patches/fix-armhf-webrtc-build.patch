@@ -1,0 +1,244 @@
+--- a/media/webrtc/trunk/webrtc/system_wrappers/BUILD.gn
++++ b/media/webrtc/trunk/webrtc/system_wrappers/BUILD.gn
+@@ -98,9 +98,9 @@
+   if (is_linux) {
+     defines += [ "WEBRTC_THREAD_RR" ]
+ 
+-    if (!build_with_chromium) {
+-      deps += [ ":cpu_features_linux" ]
+-    }
++    #if (!build_with_chromium) {
++    #  deps += [ ":cpu_features_linux" ]
++    #}
+ 
+     libs += [ "rt" ]
+   }
+--- a/media/webrtc/gn-configs/x64_False_x64_linux.json
++++ b/media/webrtc/gn-configs/x64_False_x64_linux.json
+@@ -7781,98 +7781,6 @@
+             ],
+             "type": "static_library"
+         },
+-        "//webrtc/system_wrappers:cpu_features_linux": {
+-            "cflags": [
+-                "-fno-strict-aliasing",
+-                "--param=ssp-buffer-size=4",
+-                "-fstack-protector",
+-                "-Wno-builtin-macro-redefined",
+-                "-D__DATE__=",
+-                "-D__TIME__=",
+-                "-D__TIMESTAMP__=",
+-                "-funwind-tables",
+-                "-fPIC",
+-                "-pipe",
+-                "-B../../../../../media/webrtc/trunk/third_party/binutils/Linux_x64/Release/bin",
+-                "-fcolor-diagnostics",
+-                "-m64",
+-                "-march=x86-64",
+-                "-pthread",
+-                "-Wall",
+-                "-Werror",
+-                "-Wextra",
+-                "-Wno-missing-field-initializers",
+-                "-Wno-unused-parameter",
+-                "-Wno-c++11-narrowing",
+-                "-Wno-covered-switch-default",
+-                "-Wno-unneeded-internal-declaration",
+-                "-Wno-inconsistent-missing-override",
+-                "-Wno-undefined-var-template",
+-                "-Wno-nonportable-include-path",
+-                "-Wno-address-of-packed-member",
+-                "-Wno-unused-lambda-capture",
+-                "-Wno-user-defined-warnings",
+-                "-O2",
+-                "-fno-ident",
+-                "-fdata-sections",
+-                "-ffunction-sections",
+-                "-fomit-frame-pointer",
+-                "-g0",
+-                "-fvisibility=hidden",
+-                "-Xclang",
+-                "-load",
+-                "-Xclang",
+-                "../../../../../media/webrtc/trunk/third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.so",
+-                "-Xclang",
+-                "-add-plugin",
+-                "-Xclang",
+-                "find-bad-constructs",
+-                "-Xclang",
+-                "-plugin-arg-find-bad-constructs",
+-                "-Xclang",
+-                "check-auto-raw-pointer",
+-                "-Xclang",
+-                "-plugin-arg-find-bad-constructs",
+-                "-Xclang",
+-                "check-ipc",
+-                "-Wheader-hygiene",
+-                "-Wstring-conversion",
+-                "-Wtautological-overlap-compare",
+-                "-Wextra",
+-                "-Wno-unused-parameter",
+-                "-Wno-missing-field-initializers",
+-                "-Wno-strict-overflow",
+-                "-Wimplicit-fallthrough",
+-                "-Wthread-safety",
+-                "-Winconsistent-missing-override",
+-                "-Wundef"
+-            ],
+-            "defines": [
+-                "V8_DEPRECATION_WARNINGS",
+-                "USE_NSS_CERTS=1",
+-                "USE_X11=1",
+-                "CHROMIUM_BUILD",
+-                "_FILE_OFFSET_BITS=64",
+-                "NDEBUG",
+-                "NVALGRIND",
+-                "DYNAMIC_ANNOTATIONS_ENABLED=0",
+-                "WEBRTC_RESTRICT_LOGGING",
+-                "EXPAT_RELATIVE_PATH",
+-                "WEBRTC_MOZILLA_BUILD",
+-                "WEBRTC_POSIX",
+-                "WEBRTC_LINUX"
+-            ],
+-            "deps": [],
+-            "include_dirs": [
+-                "//",
+-                "/home/dminor/src/firefox-signaling/obj-x86_64-pc-linux-gnu/media/webrtc/trunk/gn-output/gen/"
+-            ],
+-            "libs": [],
+-            "sources": [
+-                "//webrtc/system_wrappers/source/cpu_features_linux.c"
+-            ],
+-            "type": "static_library"
+-        },
+         "//webrtc/system_wrappers:field_trial_default": {
+             "cflags": [
+                 "-fno-strict-aliasing",
+@@ -8143,8 +8051,7 @@
+             ],
+             "deps": [
+                 "//webrtc:webrtc_common",
+-                "//webrtc/base:rtc_base_approved",
+-                "//webrtc/system_wrappers:cpu_features_linux"
++                "//webrtc/base:rtc_base_approved"
+             ],
+             "include_dirs": [
+                 "//",
+@@ -9191,4 +9098,4 @@
+             "type": "static_library"
+         }
+     }
+-}
+\ No newline at end of file
++}
+--- a/media/webrtc/gn-configs/x86_False_x86_linux.json
++++ b/media/webrtc/gn-configs/x86_False_x86_linux.json
+@@ -7781,98 +7781,6 @@
+             ],
+             "type": "static_library"
+         },
+-        "//webrtc/system_wrappers:cpu_features_linux": {
+-            "cflags": [
+-                "-fno-strict-aliasing",
+-                "--param=ssp-buffer-size=4",
+-                "-fstack-protector",
+-                "-Wno-builtin-macro-redefined",
+-                "-D__DATE__=",
+-                "-D__TIME__=",
+-                "-D__TIMESTAMP__=",
+-                "-funwind-tables",
+-                "-fPIC",
+-                "-pipe",
+-                "-B../../../../../media/webrtc/trunk/third_party/binutils/Linux_x64/Release/bin",
+-                "-fcolor-diagnostics",
+-                "-m64",
+-                "-march=x86-64",
+-                "-pthread",
+-                "-Wall",
+-                "-Werror",
+-                "-Wextra",
+-                "-Wno-missing-field-initializers",
+-                "-Wno-unused-parameter",
+-                "-Wno-c++11-narrowing",
+-                "-Wno-covered-switch-default",
+-                "-Wno-unneeded-internal-declaration",
+-                "-Wno-inconsistent-missing-override",
+-                "-Wno-undefined-var-template",
+-                "-Wno-nonportable-include-path",
+-                "-Wno-address-of-packed-member",
+-                "-Wno-unused-lambda-capture",
+-                "-Wno-user-defined-warnings",
+-                "-O2",
+-                "-fno-ident",
+-                "-fdata-sections",
+-                "-ffunction-sections",
+-                "-fomit-frame-pointer",
+-                "-g0",
+-                "-fvisibility=hidden",
+-                "-Xclang",
+-                "-load",
+-                "-Xclang",
+-                "../../../../../media/webrtc/trunk/third_party/llvm-build/Release+Asserts/lib/libFindBadConstructs.so",
+-                "-Xclang",
+-                "-add-plugin",
+-                "-Xclang",
+-                "find-bad-constructs",
+-                "-Xclang",
+-                "-plugin-arg-find-bad-constructs",
+-                "-Xclang",
+-                "check-auto-raw-pointer",
+-                "-Xclang",
+-                "-plugin-arg-find-bad-constructs",
+-                "-Xclang",
+-                "check-ipc",
+-                "-Wheader-hygiene",
+-                "-Wstring-conversion",
+-                "-Wtautological-overlap-compare",
+-                "-Wextra",
+-                "-Wno-unused-parameter",
+-                "-Wno-missing-field-initializers",
+-                "-Wno-strict-overflow",
+-                "-Wimplicit-fallthrough",
+-                "-Wthread-safety",
+-                "-Winconsistent-missing-override",
+-                "-Wundef"
+-            ],
+-            "defines": [
+-                "V8_DEPRECATION_WARNINGS",
+-                "USE_NSS_CERTS=1",
+-                "USE_X11=1",
+-                "CHROMIUM_BUILD",
+-                "_FILE_OFFSET_BITS=64",
+-                "NDEBUG",
+-                "NVALGRIND",
+-                "DYNAMIC_ANNOTATIONS_ENABLED=0",
+-                "WEBRTC_RESTRICT_LOGGING",
+-                "EXPAT_RELATIVE_PATH",
+-                "WEBRTC_MOZILLA_BUILD",
+-                "WEBRTC_POSIX",
+-                "WEBRTC_LINUX"
+-            ],
+-            "deps": [],
+-            "include_dirs": [
+-                "//",
+-                "/home/dminor/src/firefox-signaling/obj-x86_64-pc-linux-gnu/media/webrtc/trunk/gn-output/gen/"
+-            ],
+-            "libs": [],
+-            "sources": [
+-                "//webrtc/system_wrappers/source/cpu_features_linux.c"
+-            ],
+-            "type": "static_library"
+-        },
+         "//webrtc/system_wrappers:field_trial_default": {
+             "cflags": [
+                 "-fno-strict-aliasing",
+@@ -8143,8 +8051,7 @@
+             ],
+             "deps": [
+                 "//webrtc:webrtc_common",
+-                "//webrtc/base:rtc_base_approved",
+-                "//webrtc/system_wrappers:cpu_features_linux"
++                "//webrtc/base:rtc_base_approved"
+             ],
+             "include_dirs": [
+                 "//",

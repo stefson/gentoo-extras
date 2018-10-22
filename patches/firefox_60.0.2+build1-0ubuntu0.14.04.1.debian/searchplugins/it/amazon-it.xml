@@ -1,0 +1,14 @@
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+<ShortName>Amazon.it</ShortName>
+<Description>Ricerca Amazon.it</Description>
+<InputEncoding>ISO-8859-1</InputEncoding>
+<Image width="16" height="16">resource://search-plugins/images/amazon.ico</Image>
+<Url type="text/html" method="GET" template="https://www.amazon.it/exec/obidos/external-search/" resultdomain="amazon.it">
+  <Param name="field-keywords" value="{searchTerms}"/>
+  <Param name="ie" value="{inputEncoding}"/>
+  <Param name="mode" value="blended"/>
+  <Param name="tag" value="wwwcanoniccom-20"/>
+  <Param name="sourceid" value="Mozilla-search"/>
+</Url>
+<SearchForm>https://www.amazon.it/</SearchForm>
+</SearchPlugin>

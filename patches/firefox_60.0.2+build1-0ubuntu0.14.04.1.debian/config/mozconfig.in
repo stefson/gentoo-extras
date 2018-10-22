@@ -1,0 +1,93 @@
+%%ifdef DEB_BUILD_GNU_TYPE
+ac_add_options --build=@DEB_BUILD_GNU_TYPE@
+%%endif
+ac_add_options --host=@DEB_HOST_GNU_TYPE@
+ac_add_options --prefix=/usr
+ac_add_options --with-l10n-base=@TOPSRCDIR@/@DEB_BUILDDIR@/l10n
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/@MOZ_OBJDIR@
+ac_add_options --enable-release
+ac_add_options --disable-gconf
+ac_add_options --disable-install-strip
+ac_add_options --disable-updater
+ac_add_options --enable-application=browser
+ac_add_options --enable-startup-notification
+ac_add_options --with-distribution-id=com.ubuntu
+%%if DEB_HOST_ARCH == armel
+ac_add_options --disable-methodjit
+%%endif
+%%ifdef MOZ_NO_OPTIMIZE
+ac_add_options --disable-optimize
+%%else
+%%ifndef MOZ_VALGRIND
+%%if DEB_HOST_ARCH == armhf
+# See https://launchpad.net/bugs/1711337
+ac_add_options --enable-optimize="-g -O2 -fno-schedule-insns"
+%%else
+ac_add_options --enable-optimize
+%%endif
+%%else
+ac_add_options --enable-optimize="-g -O -freorder-blocks"
+%%endif
+%%endif
+%%ifdef MOZ_VALGRIND
+ac_add_options --disable-jemalloc
+ac_add_options --enable-valgrind
+%%endif
+%%ifdef DEB_PARALLEL_JOBS
+mk_add_options MOZ_MAKE_FLAGS=-j@DEB_PARALLEL_JOBS@
+%%endif
+ac_add_options --enable-tests
+%%ifdef MOZ_ENABLE_BREAKPAD
+ac_add_options --enable-crashreporter
+%%else
+ac_add_options --disable-crashreporter
+%%endif
+ac_add_options @MOZ_BRANDING_OPTION@
+%%ifdef MOZ_BUILD_PGO
+mk_add_options MOZ_PGO=1
+mk_add_options PROFILE_GEN_SCRIPT='xvfb-run -a @MOZ_PYTHON@ @TOPSRCDIR@/@MOZ_OBJDIR@/_profile/pgo/profileserver.py 10'
+%%endif
+ac_add_options --enable-update-channel=@MOZ_UPDATE_CHANNEL@
+%%ifdef MOZ_DEBUG
+ac_add_options --enable-debug
+%%else
+ac_add_options --disable-debug
+%%endif
+%%if DEB_HOST_ARCH != arm64
+%%if DEB_HOST_ARCH != ppc64el
+%%if DEB_HOST_ARCH != s390x
+ac_add_options --disable-elf-hack
+%%endif
+%%endif
+%%endif
+%%if DEB_HOST_ARCH != amd64
+%%if DEB_HOST_ARCH != i386
+%%if DEB_HOST_ARCH != armhf
+%%if DEB_HOST_ARCH != arm64
+# See https://bugzilla.mozilla.org/show_bug.cgi?id=1430094
+ac_add_options --disable-webrtc
+ac_add_options --disable-av1
+%%endif
+%%endif
+%%endif
+%%endif
+%%if MOZ_APP_NAME != MOZ_DEFAULT_APP_NAME
+ac_add_options --with-app-name=@MOZ_APP_NAME@
+%%endif
+%%ifdef MOZ_APP_PROFILE
+ac_add_options --with-app-profile=@MOZ_APP_PROFILE@
+%%endif
+%%if DISTRIB == Ubuntu
+ac_add_options --with-ua-vendor=Ubuntu
+%%endif
+%%if MOZ_UPDATE_CHANNEL == nightly
+ac_add_options --enable-profiling
+%%endif
+# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
+# Note: these are for Ubuntu use ONLY. For your own distribution,
+# please get your own set of keys.
+# Included with permission from Paweł Hajdan.
+# Feel free to contact Chad Miller (chad.miller@canonical.com) or Chris
+# Coulson (chris.coulson@canonical.com) for more info
+ac_add_options --with-google-api-keyfile=@TOPSRCDIR@/debian/ga
+ac_add_options --enable-stdcxx-compat
