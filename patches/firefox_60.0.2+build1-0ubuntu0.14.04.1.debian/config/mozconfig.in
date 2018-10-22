@@ -26,6 +26,8 @@ ac_add_options --disable-debug
 ac_add_options --disable-debug-symbols
 ac_add_options --disable-rust-debug
 ac_add_options --disable-tests
+ac_add_options --disable-stylo
+
 %%else
 ac_add_options --enable-optimize
 %%endif

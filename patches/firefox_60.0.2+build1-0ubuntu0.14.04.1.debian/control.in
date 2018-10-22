@@ -37,8 +37,6 @@ Build-Depends: cdbs,
 	xvfb,
 	python (>= 2.7),
 	libffi-dev (>= 3.0.9) [powerpc ppc64el s390x],
-	clang-4.0,
-	llvm-4.0-dev,
 	cargo (>= 0.25),
 	rustc (>= 1.24.0),
 	gcc-mozilla (>= 4.9)
