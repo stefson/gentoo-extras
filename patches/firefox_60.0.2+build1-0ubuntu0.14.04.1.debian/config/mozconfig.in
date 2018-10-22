@@ -28,6 +28,13 @@ ac_add_options --disable-rust-debug
 ac_add_options --disable-tests
 ac_add_options --disable-stylo
 
+ac_add_options --disable-webrtc
+ac_add_options --disable-pulseaudio
+ac_add_options --disable-crashreporter
+ac_add_options --disable-startup-notification
+ac_add_options --disable-eme
+ac_add_options --disable-xcode-checks
+
 %%else
 ac_add_options --enable-optimize
 %%endif
