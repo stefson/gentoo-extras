@@ -119,10 +119,6 @@ ifeq (,$(filter i386 amd64, $(DEB_HOST_ARCH)))
 MOZ_BUILD_PGO = 0
 endif
 
-DEB_MAKE_ENVVARS += CC=$(CURDIR)/debian/gcc-mozilla/gcc
-DEB_MAKE_ENVVARS += CXX=$(CURDIR)/debian/gcc-mozilla/g++
-DEB_MAKE_ENVVARS += PATH=$(CURDIR)/debian/gcc-mozilla:$$PATH
-
 export SHELL=/bin/bash
 export NO_PNG_PKG_MANGLE=1
 export LDFLAGS
