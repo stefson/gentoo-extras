@@ -144,8 +144,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
 	eapply "${FILESDIR}/"${PN}-60.2-remove-extensions-features.patch
 
-#	this should, in theory, enable gcc build without segfaulting for armv7-hardfloat
-#	eapply "${FILESDIR}/"${PN}-60.0-mozbg-1463035-Remove-MOZ_SIGNAL_TRAMPOLINE.-r-darchons.patch
+	#this should, in theory, enable gcc build without segfaulting for armv7-hardfloat
+	eapply "${FILESDIR}/"${PN}-60.0-mozbg-1463035-Remove-MOZ_SIGNAL_TRAMPOLINE.-r-darchons.patch
 
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
