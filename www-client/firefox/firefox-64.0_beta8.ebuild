@@ -53,8 +53,8 @@ SRC_URI="${SRC_URI}
 	${PATCH_URIS[@]}"
 
 CDEPEND="
-	>=dev-libs/nss-3.38
-	>=dev-libs/nspr-4.19
+	>=dev-libs/nss-3.40
+	>=dev-libs/nspr-4.20
 	>=app-text/hunspell-1.5.4:=
 	dev-libs/atk
 	dev-libs/expat
@@ -89,7 +89,7 @@ CDEPEND="
 	system-icu? ( >=dev-libs/icu-60.2:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.0:0= )
-	system-sqlite? ( >=dev-db/sqlite-3.24.0:3[secure-delete,debug=] )
+	system-sqlite? ( >=dev-db/sqlite-3.25.0:3[secure-delete,debug=] )
 	system-libvpx? ( >=media-libs/libvpx-1.5.0:0=[postproc] )
 	system-harfbuzz? ( >=media-libs/harfbuzz-1.4.2:0= >=media-gfx/graphite2-1.3.9-r1 )
 	wifi? ( kernel_linux? ( >=sys-apps/dbus-0.60
@@ -343,7 +343,7 @@ src_configure() {
 
 	mozconfig_use_enable !bindist official-branding
 	# Enable position independent executables
-	mozconfig_annotate 'enabled by Gentoo' --enable-pie
+	# mozconfig_annotate 'enabled by Gentoo' --enable-pie
 
 	mozconfig_use_enable debug
 	mozconfig_use_enable debug tests
