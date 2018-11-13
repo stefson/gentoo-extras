@@ -27,8 +27,8 @@ RDEPEND="
 	net-analyzer/rrdtool[perl]
 	|| ( ( virtual/perl-JSON-PP dev-perl/JSON-Any ) dev-perl/JSON )
 	dev-perl/File-Which
-	dev-perl/IPC-ShareLite
-	media-libs/raspberrypi-userland"
+	dev-perl/IPC-ShareLite"
+#	media-libs/raspberrypi-userland"
 
 S="${WORKDIR}/RPi-Monitor-${PV}"
 
