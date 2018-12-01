@@ -96,6 +96,7 @@ src_install() {
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
+	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL2.so
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
 	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so
 
