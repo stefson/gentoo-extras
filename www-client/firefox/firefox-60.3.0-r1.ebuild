@@ -147,6 +147,9 @@ src_prepare() {
 	#this should, in theory, enable gcc build without segfaulting for armv7-hardfloat
 	eapply "${FILESDIR}/"${PN}-60.0-mozbg-1463035-Remove-MOZ_SIGNAL_TRAMPOLINE.-r-darchons.patch
 
+	#drop with >=firefox-60.3.1
+	eapply "${FILESDIR}/"${PN}-60.3.0-fix-nspr-regexp.patch
+
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
 
