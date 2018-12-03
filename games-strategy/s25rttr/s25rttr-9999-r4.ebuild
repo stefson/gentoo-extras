@@ -13,7 +13,7 @@ EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
 #EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-#EGIT_BRANCH="modernOGL"
+#EGIT_BRANCH="restructure"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL-3"
@@ -35,22 +35,28 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-	"${FILESDIR}"/s25rttr-9999-fix-arm-timeout.patch
+#	"${FILESDIR}"/s25rttr-9999-fix-arm-timeout.patch
 )
 
 src_prepare() {
 	# Ensure no bundled libraries are used
-	for file in $(ls ${S}/contrib/); do
-		# Preserve boost backports and kaguya
-		if [ "${file}" != "backport" -a "${file}" != "kaguya" !="glad" ]; then
-			rm -r contrib/"${file}" || die
-		fi
-	done
+
+#	for file in $(ls ${S}/external/); do
+#		# Preserve boost backports and kaguya
+#		if [ "${file}" != "backport" -a "${file}" != "kaguya" !="glad" ]; then
+#			rm -r contrib/"${file}" || die
+#		fi
+#	done
+
+	rm -r external/lua || die
+	rm -r external/macos || die
+	rm external/full-contrib-msvc.rar || die
+	mkdir RTTR || die
 
 	# Prevent installation of git stuff
-	rm -r RTTR/languages/.git/ || die
-	rm RTTR/languages/.gitignore || die
-	rm RTTR/LSTS/CREDITS.LST/*.bmp || die
+	rm -r data/RTTR/languages/.git/ || die
+	rm data/RTTR/languages/.gitignore || die
+	rm data/RTTR/LSTS/CREDITS.LST/*.bmp || die
 
 	cmake-utils_src_prepare
 }
@@ -101,12 +107,12 @@ src_install() {
 	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
-	doins -r "${CMAKE_USE_DIR}"/RTTR
+	doins -r "${CMAKE_USE_DIR}"/data/RTTR
 
-	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
+#	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
 	dobin bin/s25client
 	dobin bin/s25edit
-	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
+#	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
 #	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
 }
 
