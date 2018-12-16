@@ -38,7 +38,7 @@ inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils llvm \
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="~amd64 x86"
+KEYWORDS="amd64 x86 ~arm"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -136,9 +136,6 @@ src_prepare() {
 
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1467882
 	eapply "${FILESDIR}/"${PN}-60.2.0-backport-of-sndio-volume-fix.patch
-
-	# https://bugzilla.mozilla.org/show_bug.cgi?id=1496270
-	use geckodriver && eapply "${FILESDIR}/"${PN}-60.0-update-cc-to-honor-CC.patch
 
 	#esr privacy patchset
 	eapply "${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
