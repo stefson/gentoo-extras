@@ -5,14 +5,12 @@ EAPI=6
 
 inherit eutils unpacker versionator
 
-MY_VERSION="52.9.0esr"
-MY_DEBVERSION=deb9
+MY_VERSION="60.4.0esr"
+MY_DEBVERSION="deb9u1"
 KEYWORDS="~arm"
-#SRC_URI="http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr_${MY_VERSION}-1~${MY_DEBVERSION}u1_armhf.deb
-#	http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr-l10n-de_${MY_VERSION}-1~${MY_DEBVERSION}u1_all.deb"
 
-SRC_URI="http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr_52.9.0esr-1~deb9u1_armhf.deb
-	http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr-l10n-de_52.9.0esr-1~deb8u1_all.deb
+SRC_URI="http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr_${MY_VERSION}-1~${MY_DEBVERSION}_armhf.deb
+	http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr-l10n-de_${MY_VERSION}-1~${MY_DEBVERSION}_all.deb
 	http://ftp.de.debian.org/debian/pool/main/libv/libvpx/libvpx5_1.7.0-3_armhf.deb"
 
 DESCRIPTION="Firefox Binary from Ubuntu for ARM (e.g. Raspberry Pi)"
