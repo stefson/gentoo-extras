@@ -3,6 +3,8 @@
 
 EAPI=6
 
+inherit desktop
+
 DESCRIPTION="Speech analysis and synthesis"
 HOMEPAGE="http://www.fon.hum.uva.nl/praat/ https://github.com/praat/praat"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -34,4 +36,9 @@ src_install() {
 	dobin ${PN}
 	insinto /usr/share/${PN}
 	doins -r test
+
+	cd "${FILESDIR}"
+	doicon -s scalable praat.svg
+
+	make_desktop_entry praat Praat praat "AudioVideo;Audio"
 }
