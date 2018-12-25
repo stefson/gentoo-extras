@@ -58,6 +58,8 @@ src_prepare() {
 	rm data/RTTR/languages/.gitignore || die
 	rm data/RTTR/LSTS/CREDITS.LST/*.bmp || die
 
+	CMAKE_BUILD_TYPE="Debug"
+
 	cmake-utils_src_prepare
 }
 
