@@ -32,7 +32,8 @@ if [[ ${MOZ_ESR} == 1 ]]; then
 fi
 MOZ_P="${PN}-${MOZ_PV}"
 
-inherit check-reqs flag-o-matic toolchain-funcs gnome2-utils llvm mozcoreconf-v6 pax-utils xdg-utils autotools mozlinguas-v2
+inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils llvm \
+		mozcoreconf-v6 pax-utils xdg-utils autotools mozlinguas-v2
 
 DESCRIPTION="Thunderbird Mail Client"
 HOMEPAGE="https://www.mozilla.org/thunderbird"
@@ -200,6 +201,15 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}"/thunderbird-60-sqlite3-fts3-tokenizer.patch
+
+	# esr privacy patchset
+	eapply "${FILESDIR}"/firefox-60.1.0-disable-pocket-leftovers.patch
+	eapply "${FILESDIR}"/firefox-60.2-remove-extensions-features.patch
+
+	# remove pocket and all other crap
+
+	rm -fr browser/extensions/pocket || die
+	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
 
 	# Ensure that are plugins dir is enabled as default
 	sed -i -e "s:/usr/lib/mozilla/plugins:/usr/lib/nsbrowser/plugins:" \
