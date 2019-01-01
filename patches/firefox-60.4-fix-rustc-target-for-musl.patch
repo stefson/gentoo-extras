@@ -1,0 +1,11 @@
+--- a/build/moz.configure/rust.configure
++++ b/build/moz.configure/rust.configure
+@@ -192,7 +192,7 @@
+ 
+         # Check to see whether our rustc has a reasonably functional stdlib
+         # for our chosen target.
+-        target_arg = '--target=' + rustc_target.alias
++        target_arg = '--target=x86_64-gentoo-linux-musl'
+         in_fd, in_path = mkstemp(prefix='conftest', suffix='.rs')
+         out_fd, out_path = mkstemp(prefix='conftest', suffix='.rlib')
+         os.close(out_fd)
