@@ -31,7 +31,7 @@ RDEPEND="app-arch/bzip2
 	virtual/libiconv
 	virtual/opengl"
 DEPEND="${RDEPEND}
-	>=dev-libs/boost-1.56.0:0=
+	>=dev-libs/boost-1.64.0:0=
 	sys-devel/gettext"
 
 PATCHES=(
