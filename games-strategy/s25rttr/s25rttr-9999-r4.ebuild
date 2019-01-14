@@ -55,9 +55,9 @@ src_prepare() {
 	mkdir RTTR || die
 
 	# Prevent installation of git stuff
-	rm -r data/RTTR/languages/.git/ || die
-	rm data/RTTR/languages/.gitignore || die
-	rm data/RTTR/LSTS/CREDITS.LST/*.bmp || die
+	rm -r external/languages/.git/ || die
+	rm external/languages/.gitignore || die
+#	rm external/LSTS/CREDITS.LST/*.bmp || die
 
 	CMAKE_BUILD_TYPE="Debug"
 
