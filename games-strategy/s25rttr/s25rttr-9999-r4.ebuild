@@ -57,7 +57,7 @@ src_prepare() {
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
 	rm external/languages/.gitignore || die
-#	rm external/LSTS/CREDITS.LST/*.bmp || die
+	rm data/RTTR/LSTS/CREDITS.LST/*.bmp || die
 
 	CMAKE_BUILD_TYPE="Debug"
 
@@ -117,6 +117,7 @@ src_install() {
 	dobin bin/s25edit
 #	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
 #	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
+
 }
 
 pkg_preinst() {
