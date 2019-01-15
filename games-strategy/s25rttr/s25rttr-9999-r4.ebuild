@@ -36,7 +36,6 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=(
-#	"${FILESDIR}"/s25rttr-9999-fix-arm-timeout.patch
 )
 
 src_prepare() {
