@@ -35,7 +35,8 @@ DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.64.0:0=
 	sys-devel/gettext"
 
-PATCHES=(
+PATCHES=( 
+	"${FILESDIR}"/f41f9f85116b99671ac22266e90c367be357a87c.patch
 )
 
 src_prepare() {

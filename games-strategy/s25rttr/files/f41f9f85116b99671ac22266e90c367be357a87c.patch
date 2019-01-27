@@ -1,0 +1,23 @@
+From f41f9f85116b99671ac22266e90c367be357a87c Mon Sep 17 00:00:00 2001
+From: Flamefire <git@grundis.de>
+Date: Sun, 27 Jan 2019 12:49:01 +0100
+Subject: [PATCH] Fix crash on save
+
+Fixes #16
+---
+ external/s25edit/CIO/CTextfield.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/external/s25edit/CIO/CTextfield.cpp b/external/s25edit/CIO/CTextfield.cpp
+index dbec670..2e4bf50 100644
+--- a/external/s25edit/CIO/CTextfield.cpp
++++ b/external/s25edit/CIO/CTextfield.cpp
+@@ -26,7 +26,7 @@ CTextfield::CTextfield(Uint16 x, Uint16 y, Uint16 cols, Uint16 rows, int fontsiz
+     needRender = true;
+     rendered = false;
+     this->button_style = button_style;
+-    textObj = new CFont((const char*)nullptr, x, y, fontsize, text_color);
++    textObj = new CFont("", x, y, fontsize, text_color);
+ }
+ 
+ CTextfield::~CTextfield()
