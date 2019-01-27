@@ -36,7 +36,6 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext"
 
 PATCHES=( 
-	"${FILESDIR}"/f41f9f85116b99671ac22266e90c367be357a87c.patch
 )
 
 src_prepare() {
