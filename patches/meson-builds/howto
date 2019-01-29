@@ -1,0 +1,1 @@
+meson build/ --cross-file=/tmp/cross-arm --prefix=/usr/armv7a-unknown-linux-gnueabihf/usr/ --libdir=/usr/armv7a-unknown-linux-gnueabihf/usr/lib -Dvulkan-drivers= -Dtexture-float=true -Dgallium-drivers=vc4,swrast -Dplatforms=x11,drm,surfaceless -Ddri-drivers= -Dlibunwind=false -Dllvm=true
