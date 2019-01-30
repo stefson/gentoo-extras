@@ -100,7 +100,7 @@ src_compile() {
 src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
-	exeinto /usr/"$(get_libdir)"/${PN}
+	exeinto /usr/libexec/"${PN}"
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
