@@ -83,6 +83,7 @@ src_configure() {
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
 		-DBUILD_TESTING=OFF
+		-DRTTR_BUILD_UPDATER=OFF
 #		-DCOMPILEFOR="linux"
 #		-DCOMPILEARCH="${arch}"
 		-DRTTR_TARGET_BOARD=RasPi2
