@@ -6,7 +6,7 @@ EAPI=6
 inherit eutils cmake-utils gnome2-utils git-r3
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
-HOMEPAGE="http://www.siedler25.org/"
+HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 EGIT_BRANCH="master"
@@ -35,7 +35,7 @@ DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.64.0:0=
 	sys-devel/gettext"
 
-PATCHES=( 
+PATCHES=(
 )
 
 src_prepare() {
@@ -79,7 +79,6 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 #		-DENABLE_OPTIMIZATIONS=OFF
 		-DCMAKE_INSTALL_PREFIX=/usr/
-#		-DRTTR_INSTALL_PREFIX=/usr/
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
@@ -128,7 +127,7 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	elog "Copy your Settlers2 game files into /usr/share/${PN}/S2/"
+	elog "Copy your Settlers2 game files into /usr/share/${PN}/S2"
 
 	gnome2_icon_cache_update
 }
