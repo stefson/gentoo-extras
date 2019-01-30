@@ -128,7 +128,7 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	elog "Copy your Settlers2 game files into ~/.${PN}/S2"
+	elog "Copy your Settlers2 game files into /usr/share/${PN}/S2/"
 
 	gnome2_icon_cache_update
 }
