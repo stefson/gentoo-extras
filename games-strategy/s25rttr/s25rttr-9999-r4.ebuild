@@ -120,7 +120,6 @@ src_install() {
 
 #	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
 #	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
-#	dodoc RTTR/texte/{keyboardlayout.txt,readme.txt}
 
 }
 
