@@ -51,7 +51,7 @@ src_prepare() {
 	rm -r external/lua || die
 	rm -r external/macos || die
 	rm external/full-contrib-msvc.rar || die
-	mkdir RTTR || die
+#	mkdir RTTR || die
 
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
