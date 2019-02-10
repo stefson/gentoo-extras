@@ -113,10 +113,8 @@ src_install() {
 	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
-	doins -r "${CMAKE_USE_DIR}"/data/RTTR
-
-	insinto /usr/share/"${PN}"/RTTR/languages
-	doins -r "${CMAKE_USE_DIR}"/external/languages/*.po
+	doins -r share/"${PN}"/RTTR
+	doins -r share/"${PN}"/S2
 
 #	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
 	dobin bin/s25client
