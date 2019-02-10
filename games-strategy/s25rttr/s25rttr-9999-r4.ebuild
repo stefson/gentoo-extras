@@ -104,14 +104,19 @@ src_install() {
 
 	exeinto /usr/libexec/"${PN}"
 	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
+
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL2.so
+
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
 	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so
 
 	insinto /usr/share/"${PN}"
 	doins -r "${CMAKE_USE_DIR}"/data/RTTR
+
+	insinto /usr/share/"${PN}"/RTTR/languages
+	doins -r "${CMAKE_USE_DIR}"/external/languages/*.po
 
 #	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
 	dobin bin/s25client
