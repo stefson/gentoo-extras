@@ -112,9 +112,8 @@ src_install() {
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
 	doexe "$(get_libdir)"/s25rttr/audio/libaudioSDL.so
 
-	insinto /usr/share/"${PN}"
-	doins -r share/"${PN}"/RTTR
-	doins -r share/"${PN}"/S2
+	insinto /usr/share
+	doins -r share/"${PN}"
 
 	dobin bin/s25client
 	dobin bin/s25edit
