@@ -124,12 +124,6 @@ src_unpack() {
 }
 
 src_prepare() {
-#	rm "${WORKDIR}/firefox/2005_ffmpeg4.patch"
-#	rm "${WORKDIR}/firefox/2002_musl_getid.patch"
-#	rm "${WORKDIR}/firefox/2008_add_support_for_new_Mesa_device_probing.patch"
-#	rm "${WORKDIR}/firefox/6005_musl_memory_report.patch"
-#	rm "${WORKDIR}/firefox/6006_musl_pthread_setname.patch"
-#	rm "${WORKDIR}/firefox/6007_musl_fix_tools.patch"
 	eapply "${WORKDIR}/firefox"
 
 #	eapply "${FILESDIR}"/bug_1461221.patch
