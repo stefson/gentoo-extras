@@ -126,10 +126,6 @@ src_unpack() {
 src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
-#	eapply "${FILESDIR}"/bug_1461221.patch
-#	eapply "${FILESDIR}"/${PN}-60.0-blessings-TERM.patch # 654316
-#	eapply "${FILESDIR}"/${PN}-60.0-missing-errno_h-in-SandboxOpenedFiles_cpp.patch
-
 	# fix rust compile warnings, open bug? 
 	eapply "${FILESDIR}/"${PN}-60.2.0-fix-std-ascii-warning.patch
 
