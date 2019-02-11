@@ -25,9 +25,10 @@ RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2
 	media-libs/libsamplerate
 	media-libs/libsdl[X,sound,static-libs,opengl,video]
-	>=media-libs/libsdl2-2.0.4[X,sound,static-libs,opengl,video]
-	media-libs/libsndfile
 	media-libs/sdl-mixer[vorbis]
+	>=media-libs/libsdl2-2.0.4[X,sound,static-libs,opengl,video]
+	>=media-libs/sdl2-mixer-2.0.4[vorbis]
+	media-libs/libsndfile
 	net-libs/miniupnpc
 	virtual/libiconv
 	virtual/opengl"
