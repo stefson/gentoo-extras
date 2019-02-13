@@ -5,7 +5,7 @@ EAPI=6
 
 inherit eutils unpacker versionator
 
-MY_VERSION="60.4.0esr"
+MY_VERSION="60.5.0esr"
 MY_DEBVERSION="deb9u1"
 KEYWORDS="~arm"
 
