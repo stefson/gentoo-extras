@@ -13,16 +13,16 @@ PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
 
 # This list can be updated using scripts/get_langs.sh from the mozilla overlay
 MOZ_LANGS=(ar ast be bg br ca cs cy da de el en en-GB en-US es-AR
-es-ES et eu fi fr fy-NL ga-IE gd gl he hr hsb hu hy-AM id is it ja ko lt
-nb-NO nl nn-NO pl pt-BR pt-PT rm ro ru si sk sl sq sr sv-SE tr
-uk vi zh-CN zh-TW )
+es-ES et eu fi fr fy-NL ga-IE gd gl he hr hsb hu hy-AM id is it
+ja ko lt nb-NO nl nn-NO pl pt-BR pt-PT rm ro ru si sk sl sq sr
+sv-SE tr uk vi zh-CN zh-TW )
 
 # Convert the ebuild version to the upstream mozilla version, used by mozlinguas
 MOZ_PV="${PV/_beta/b}"
 
 # Patches
 PATCHTB="thunderbird-60.0-patches-0"
-PATCHFF="firefox-60.0-patches-04"
+PATCHFF="firefox-60.5-patches-01"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
@@ -194,10 +194,7 @@ src_unpack() {
 
 src_prepare() {
 	# Apply our patchset from firefox to thunderbird as well
-	rm -f   "${WORKDIR}"/firefox/2007_fix_nvidia_latest.patch \
-		"${WORKDIR}"/firefox/2005_ffmpeg4.patch \
-		"${WORKDIR}"/firefox/2012_update-cc-to-honor-CC.patch \
-		|| die
+
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}"/thunderbird-60-sqlite3-fts3-tokenizer.patch
