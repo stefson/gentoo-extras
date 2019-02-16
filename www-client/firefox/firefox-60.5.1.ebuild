@@ -64,7 +64,6 @@ RDEPEND="
 
 DEPEND="${RDEPEND}
 	>=sys-devel/llvm-4.0.1
-	>=sys-devel/clang-4.0.1
 	amd64? ( ${ASM_DEPEND} virtual/opengl )
 	x86? ( ${ASM_DEPEND} virtual/opengl )"
 
@@ -80,9 +79,9 @@ if [[ -z $GMP_PLUGIN_LIST ]]; then
 	GMP_PLUGIN_LIST=( gmp-gmpopenh264 gmp-widevinecdm )
 fi
 
-llvm_check_deps() {
-	has_version "sys-devel/clang:${LLVM_SLOT}"
-}
+#llvm_check_deps() {
+#	has_version "sys-devel/clang:${LLVM_SLOT}"
+#}
 
 pkg_setup() {
 	moz_pkgsetup
