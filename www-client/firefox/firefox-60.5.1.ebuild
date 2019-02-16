@@ -132,11 +132,12 @@ src_prepare() {
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1467882
 	eapply "${FILESDIR}/"${PN}-60.2.0-backport-of-sndio-volume-fix.patch
 
-	#esr privacy patchset
+	# esr privacy patchset
 	eapply "${FILESDIR}/"${PN}-60.1.0-disable-pocket-leftovers.patch
 	eapply "${FILESDIR}/"${PN}-60.2-remove-extensions-features.patch
+	eapply "${FILESDIR}/"${PN}-60-disable-telemetry.patch
 
-	#this should, in theory, enable gcc build without segfaulting for armv7-hardfloat
+	# this should, in theory, enable gcc build without segfaulting for armv7-hardfloat
 	eapply "${FILESDIR}/"${PN}-60.0-mozbg-1463035-Remove-MOZ_SIGNAL_TRAMPOLINE.-r-darchons.patch
 
 	rm -fr browser/extensions/pocket || die
