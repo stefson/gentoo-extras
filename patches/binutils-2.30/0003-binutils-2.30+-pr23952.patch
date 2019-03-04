@@ -1,0 +1,71 @@
+From c2f5dc30afa34696f2da0081c4ac50b958ecb0e9 Mon Sep 17 00:00:00 2001
+From: Alan Modra <amodra@gmail.com>
+Date: Fri, 7 Dec 2018 23:39:42 +1030
+Subject: [PATCH] PR23952, memory leak in _bfd_generic_read_minisymbols
+
+bfd/
+	PR 23952
+	* syms.c (_bfd_generic_read_minisymbols): Free syms before
+	returning with zero symcount.
+binutils/
+	* nm.c (display_rel_file): Use xrealloc to increase minisyms
+	for synthetic symbols.
+---
+ bfd/syms.c         | 13 ++++++++++---
+ binutils/nm.c      |  9 +++------
+ 4 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/bfd/syms.c b/bfd/syms.c
+index e09640a..cbf85cb 100644
+--- a/bfd/syms.c
++++ b/bfd/syms.c
+@@ -822,9 +822,16 @@ _bfd_generic_read_minisymbols (bfd *abfd,
+   if (symcount < 0)
+     goto error_return;
+ 
+-  *minisymsp = syms;
+-  *sizep = sizeof (asymbol *);
+-
++  if (symcount == 0)
++    /* We return 0 above when storage is 0.  Exit in the same state
++       here, so as to not complicate callers with having to deal with
++       freeing memory for zero symcount.  */
++    free (syms);
++  else
++    {
++      *minisymsp = syms;
++      *sizep = sizeof (asymbol *);
++    }
+   return symcount;
+ 
+  error_return:
+
+diff --git a/binutils/nm.c b/binutils/nm.c
+index 8807832..39083c3 100644
+--- a/binutils/nm.c
++++ b/binutils/nm.c
+@@ -1175,17 +1175,14 @@ display_rel_file (bfd *abfd, bfd *archive_bfd)
+       if (synth_count > 0)
+ 	{
+ 	  asymbol **symp;
+-	  void *new_mini;
+ 	  long i;
+ 
+-	  new_mini = xmalloc ((symcount + synth_count + 1) * sizeof (*symp));
+-	  symp = (asymbol **) new_mini;
+-	  memcpy (symp, minisyms, symcount * sizeof (*symp));
+-	  symp += symcount;
++	  minisyms = xrealloc (minisyms,
++			       (symcount + synth_count + 1) * sizeof (*symp));
++	  symp = (asymbol **) minisyms + symcount;
+ 	  for (i = 0; i < synth_count; i++)
+ 	    *symp++ = synthsyms + i;
+ 	  *symp = 0;
+-	  minisyms = new_mini;
+ 	  symcount += synth_count;
+ 	}
+     }
+-- 
+2.9.3
+
+
