@@ -139,6 +139,11 @@ src_prepare() {
 	# this should, in theory, enable gcc build without segfaulting for armv7-hardfloat
 	eapply "${FILESDIR}/"${PN}-60.0-mozbg-1463035-Remove-MOZ_SIGNAL_TRAMPOLINE.-r-darchons.patch
 
+	# taken from: http://deb.debian.org/debian/pool/main/f/firefox-esr/firefox-esr_60.5.1esr-1.debian.tar.xz
+	eapply "${FILESDIR}/"${PN}-60.5.2-attempt-to-fix-building-webrtc-on-non-x86.patch
+	eapply "${FILESDIR}/"${PN}-60.5.2-only-build-webrtc-neon-on-aarch64.patch
+
+
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
 
