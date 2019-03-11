@@ -9,8 +9,7 @@ inherit python-r1
 
 DESCRIPTION="Versatile replacement for vmstat, iostat and ifstat"
 HOMEPAGE="http://dag.wieers.com/home-made/dstat/"
-SRC_URI="https://github.com/dagwieers/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
+SRC_URI="https://github.com/dagwieers/${PN}/archive/6f5db0a.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux"
