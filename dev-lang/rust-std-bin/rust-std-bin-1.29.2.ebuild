@@ -14,20 +14,11 @@ SRC_URI="$(rust_all_arch_uris ${MY_P})"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="~amd64 ~arm64 ~x86"
-IUSE="cargo cpu_flags_x86_sse2 doc libressl"
-
-#CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2) + 1)).0"
+IUSE="cpu_flags_x86_sse2 doc libressl"
 
 DEPEND=""
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-	cargo? (
-		sys-libs/zlib
-		!libressl? ( dev-libs/openssl:0= )
-		libressl? ( dev-libs/libressl:0= )
-		net-libs/libssh2
-		net-misc/curl[ssl]
-		!dev-util/cargo
-	)
+	=dev-lang/rust-bin-1.29.2-r1
 	!dev-lang/rust:0"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
