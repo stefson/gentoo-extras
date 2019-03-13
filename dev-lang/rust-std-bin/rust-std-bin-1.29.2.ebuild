@@ -32,8 +32,6 @@ RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
 QA_PREBUILT="
-	opt/${P}/bin/*-${PV}
-	opt/${P}/lib/*.so
 	opt/${P}/lib/rustlib/*/lib/*.so
 	opt/${P}/lib/rustlib/*/lib/*.rlib*
 "
