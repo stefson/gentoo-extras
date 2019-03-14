@@ -241,6 +241,11 @@ src_prepare() {
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
+	# remove formautofill, webcompat and webcompat-reporter
+	eapply "${FILESDIR}/"${PN}-65.0-remove-extensions.patch
+	rm -fr browser/extensions/{formautofill,webcompat,webcompat-reporter} || die
+
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
