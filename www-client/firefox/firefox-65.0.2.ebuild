@@ -516,6 +516,14 @@ src_configure() {
 
 	mozconfig_use_enable wifi necko-wifi
 
+	mozconfig_annotate '' --disable-parental-controls
+
+	mozconfig_annotate '' --disable-libproxy
+
+	mozconfig_annotate '' --disable-accessibility
+	mozconfig_annotate '' --disable-address-sanitizer
+	mozconfig_annotate '' --disable-address-sanitizer-reporter
+
 	mozconfig_use_enable geckodriver
 
 	# enable JACK, bug 600002
