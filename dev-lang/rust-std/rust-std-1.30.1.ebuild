@@ -52,6 +52,12 @@ src_install() {
 		--prefix="${D}/opt/"${RUST_PROVIDER}"" \
 		--disable-ldconfig \
 		|| die
+
+#	rm "${S}"/opt/rust-std-1.30.1/lib/rustlib/components || die
+#	rm "${S}"/uninstall.sh || die
+#	rm "${S}"/rust-installer-version || die
+#	rm "${S}"/opt/rust-std-1.30.1/lib/rustlib/install.log || die
+
 }
 
 pkg_postinst() {
