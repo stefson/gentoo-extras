@@ -12,7 +12,7 @@ HOMEPAGE="https://www.rust-lang.org/"
 #SRC_URI="$(rust_all_arch_uris ${MY_P})"
 
 RUSTHOST="armv7-unknown-linux-gnueabihf"
-RUST_PROVIDER="rust-1.30.1-bin"
+RUST_PROVIDER="rust-bin-1.30.1"
 
 SRC_URI="https://static.rust-lang.org/dist/"${P}"-"${RUSTHOST}".tar.xz"
 
