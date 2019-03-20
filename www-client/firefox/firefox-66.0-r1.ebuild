@@ -251,6 +251,8 @@ src_unpack() {
 src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
+	eapply "${FILESDIR}/"${P}-armv7a-cross.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
