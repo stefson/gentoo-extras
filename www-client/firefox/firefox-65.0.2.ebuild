@@ -241,6 +241,8 @@ src_prepare() {
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
+	eapply "${FILESDIR}/"${P}-armv7a-cross.patch
+
 	# remove formautofill, webcompat and webcompat-reporter
 	eapply "${FILESDIR}/"${PN}-65.0-remove-extensions.patch
 	rm -fr browser/extensions/{formautofill,webcompat,webcompat-reporter} || die
