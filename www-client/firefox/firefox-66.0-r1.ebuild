@@ -252,6 +252,8 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
 	eapply "${FILESDIR}/"${P}-armv7a-cross.patch
+	eapply "${FILESDIR}/"${P}-1515641-av1-build-1.patch
+	eapply "${FILESDIR}/"${P}-1515641-av1-build-2.patch  
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
