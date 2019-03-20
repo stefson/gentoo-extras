@@ -78,22 +78,6 @@ if [[ -z $GMP_PLUGIN_LIST ]]; then
 	GMP_PLUGIN_LIST=( gmp-gmpopenh264 gmp-widevinecdm )
 fi
 
-#llvm_check_deps() {
-#	if ! has_version "sys-devel/clang:${LLVM_SLOT}" ; then
-#		ewarn "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..."
-#		return 1
-#	fi
-#
-#	if use clang ; then
-#		if ! has_version "=sys-devel/lld-${LLVM_SLOT}*" ; then
-#			ewarn "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..."
-#			return 1
-#		fi
-#	fi
-#
-#	einfo "Will use LLVM slot ${LLVM_SLOT}!"
-#}
-
 pkg_setup() {
 	moz_pkgsetup
 
@@ -116,7 +100,6 @@ pkg_setup() {
 
 	addpredict /proc/self/oom_score_adj
 
-	llvm_pkg_setup
 }
 
 pkg_pretend() {
