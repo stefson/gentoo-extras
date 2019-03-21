@@ -249,7 +249,11 @@ src_unpack() {
 }
 
 src_prepare() {
+
+	rm "${WORKDIR}/firefox"/6022_Document-some-ARM-Linux-compile-problems_bug1526653.patch
 	eapply "${WORKDIR}/firefox"
+
+	eapply "${FILESDIR}/"${P}-armhf-disable-unaligned-fp-access-emulation.patch
 
 	eapply "${FILESDIR}/"${P}-armv7a-cross.patch
 	eapply "${FILESDIR}/"${P}-1515641-av1-build-1.patch
