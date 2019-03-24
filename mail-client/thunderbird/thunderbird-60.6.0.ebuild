@@ -1,11 +1,11 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
-MOZ_LIGHTNING_VER="6.2.2.1"
+MOZ_LIGHTNING_VER="6.2.5"
 MOZ_LIGHTNING_GDATA_VER="4.4.1"
 
 PYTHON_COMPAT=( python3_{5,6,7} )
@@ -22,7 +22,7 @@ MOZ_PV="${PV/_beta/b}"
 
 # Patches
 PATCHTB="thunderbird-60.0-patches-0"
-PATCHFF="firefox-60.5-patches-01"
+PATCHFF="firefox-60.6-patches-01"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
