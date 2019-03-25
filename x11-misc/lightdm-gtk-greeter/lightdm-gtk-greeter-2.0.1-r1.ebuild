@@ -3,7 +3,7 @@
 
 EAPI=4
 
-inherit versionator eutils
+inherit versionator xdg-utils eutils
 
 DESCRIPTION="LightDM GTK+ Greeter"
 HOMEPAGE="https://launchpad.net/lightdm-gtk-greeter"
@@ -64,4 +64,15 @@ src_install() {
 			"${D}"/etc/lightdm/${PN}.conf || die
 		newdoc "${WORKDIR}"/README.txt README-background.txt
 	fi
+}
+
+pkg_postinst() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
+
+}
+
+pkg_postrm() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
 }
