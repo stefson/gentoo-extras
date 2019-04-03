@@ -249,14 +249,17 @@ src_unpack() {
 }
 
 src_prepare() {
-
 	eapply "${WORKDIR}/firefox"
 
-	eapply "${FILESDIR}/"${P}-armhf-disable-unaligned-fp-access-emulation.patch
+	eapply "${FILESDIR}/"${PN}-66.0-armhf-disable-unaligned-fp-access-emulation.patch
 
-	eapply "${FILESDIR}/"${P}-armv7a-cross.patch
-	eapply "${FILESDIR}/"${P}-1515641-av1-build-1.patch
-	eapply "${FILESDIR}/"${P}-1515641-av1-build-2.patch  
+	eapply "${FILESDIR}/"${PN}-66.0-armv7a-cross.patch
+	eapply "${FILESDIR}/"${PN}-66.0-1515641-av1-build-1.patch
+	eapply "${FILESDIR}/"${PN}-66.0-1515641-av1-build-2.patch
+
+	eapply "${FILESDIR}/"mozilla-1526243.patch
+	eapply "${FILESDIR}/"mozilla-1540145.patch
+
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
