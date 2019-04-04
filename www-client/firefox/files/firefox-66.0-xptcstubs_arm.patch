@@ -1,0 +1,44 @@
+commit 9311b4e80e6e14881e43089c13f9465720eceb70
+Author: Nathan Froyd <froydnj@mozilla.com>
+Date:   Thu Apr 4 16:23:00 2019 -0400
+
+    fix LTO issues with arm xptcstubs; r=mccr8
+    
+    ARM's xptcstubs use a slightly different setup for PrepareAndDispatch
+    than...well, all of our other stubs.  This difference appears to be
+    causing problems with LTO builds.  Change the setup to be more like our
+    other stubs, which additionally gets rid of some of the `asm` nonsense.
+
+diff --git a/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp b/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp
+index c6756758..68d040f 100644
+--- a/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp
++++ b/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp
+@@ -11,10 +11,6 @@
+ #error "This code is for Linux/iOS ARM only. Please check if it works for you, too.\nDepends strongly on gcc behaviour."
+ #endif
+ 
+-/* Specify explicitly a symbol for this function, don't try to guess the c++ mangled symbol.  */
+-static nsresult PrepareAndDispatch(nsXPTCStubBase* self, uint32_t methodIndex, uint32_t* args) asm("_PrepareAndDispatch")
+-ATTRIBUTE_USED;
+-
+ #ifdef __ARM_EABI__
+ #define DOUBLEWORD_ALIGN(p) ((uint32_t *)((((uint32_t)(p)) + 7) & 0xfffffff8))
+ #else
+@@ -38,7 +34,7 @@ ATTRIBUTE_USED;
+ #define THUMB_FUNC
+ #endif
+ 
+-static nsresult
++extern "C" nsresult ATTRIBUTE_USED
+ PrepareAndDispatch(nsXPTCStubBase* self, uint32_t methodIndex, uint32_t* args)
+ {
+ #define PARAM_BUFFER_COUNT     16
+@@ -160,7 +156,7 @@ __asm__ ("\n"
+          GNU(".cfi_def_cfa_offset 16\n")
+          GNU(".cfi_offset lr, -16\n")
+          "mov	r1, ip\n"
+-         "bl	_PrepareAndDispatch\n"
++         "bl	PrepareAndDispatch\n"
+          "ldr	pc, [sp], #16\n"
+          GNU(".cfi_endproc\n")
+          GNU(".fnend"));
