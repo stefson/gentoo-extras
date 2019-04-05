@@ -1,19 +1,26 @@
-commit 9311b4e80e6e14881e43089c13f9465720eceb70
-Author: Nathan Froyd <froydnj@mozilla.com>
-Date:   Thu Apr 4 16:23:00 2019 -0400
+# HG changeset patch
+# User Nathan Froyd <froydnj@mozilla.com>
+# Date 1554412458 0
+# Node ID 576f9e652a20cc885e258cdcebd2a1a275afa714
+# Parent  7c3de15af00bcd3ba3e8fd8d89d6385dd64f9f85
+Bug 1538236 - fix LTO issues with arm xptcstubs; r=mccr8
 
-    fix LTO issues with arm xptcstubs; r=mccr8
-    
-    ARM's xptcstubs use a slightly different setup for PrepareAndDispatch
-    than...well, all of our other stubs.  This difference appears to be
-    causing problems with LTO builds.  Change the setup to be more like our
-    other stubs, which additionally gets rid of some of the `asm` nonsense.
+ARM's xptcstubs use a slightly different setup for PrepareAndDispatch
+than...well, all of our other stubs.  This difference appears to be
+causing problems with LTO builds.  Change the setup to be more like our
+other stubs, which additionally gets rid of some of the `asm` nonsense.
+
+Differential Revision: https://phabricator.services.mozilla.com/D26243
 
 diff --git a/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp b/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp
-index c6756758..68d040f 100644
 --- a/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp
 +++ b/xpcom/reflect/xptcall/md/unix/xptcstubs_arm.cpp
-@@ -11,10 +11,6 @@
+@@ -6,20 +6,16 @@
+ /* Implement shared vtbl methods. */
+ 
+ #include "xptcprivate.h"
+ 
+ #if !defined(__arm__) && !(defined(LINUX) || defined(ANDROID) || defined(XP_DARWIN))
  #error "This code is for Linux/iOS ARM only. Please check if it works for you, too.\nDepends strongly on gcc behaviour."
  #endif
  
@@ -24,7 +31,17 @@ index c6756758..68d040f 100644
  #ifdef __ARM_EABI__
  #define DOUBLEWORD_ALIGN(p) ((uint32_t *)((((uint32_t)(p)) + 7) & 0xfffffff8))
  #else
-@@ -38,7 +34,7 @@ ATTRIBUTE_USED;
+ #define DOUBLEWORD_ALIGN(p) (p)
+ #endif
+ 
+ // Apple's iOS toolchain is lame.
+ #ifdef __APPLE__
+@@ -33,17 +29,17 @@ ATTRIBUTE_USED;
+ #endif
+ 
+ #ifdef __thumb__
+ #define THUMB_FUNC ".thumb_func\n"
+ #else
  #define THUMB_FUNC
  #endif
  
@@ -33,7 +50,17 @@ index c6756758..68d040f 100644
  PrepareAndDispatch(nsXPTCStubBase* self, uint32_t methodIndex, uint32_t* args)
  {
  #define PARAM_BUFFER_COUNT     16
-@@ -160,7 +156,7 @@ __asm__ ("\n"
+ 
+     nsXPTCMiniVariant paramBuffer[PARAM_BUFFER_COUNT];
+     nsXPTCMiniVariant* dispatchParams = nullptr;
+     const nsXPTMethodInfo* info;
+     uint8_t paramCount;
+@@ -155,17 +151,17 @@ PrepareAndDispatch(nsXPTCStubBase* self,
+          GNU(".cfi_offset r2, -8\n")
+          GNU(".cfi_offset r1, -12\n")
+          "mov	r2, sp\n"
+          "str	lr, [sp, #-4]!\n"
+          GNU(".save	{lr}\n")
           GNU(".cfi_def_cfa_offset 16\n")
           GNU(".cfi_offset lr, -16\n")
           "mov	r1, ip\n"
@@ -42,3 +69,8 @@ index c6756758..68d040f 100644
           "ldr	pc, [sp], #16\n"
           GNU(".cfi_endproc\n")
           GNU(".fnend"));
+ 
+ /*
+  * Create sets of stubs to call the SharedStub.
+  * We don't touch the stack here, nor any registers, other than IP.
+  * IP is defined to be corruptable by a called function, so we are
