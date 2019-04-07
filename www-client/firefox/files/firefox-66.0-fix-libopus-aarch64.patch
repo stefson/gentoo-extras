@@ -1,0 +1,51 @@
+# HG changeset patch
+# User Jan Beich <jbeich@FreeBSD.org>
+# Date 1553032840 0
+# Node ID dba7de840829244c8978c16dfc4a7123aaa19610
+# Parent  d511bf7fa222cfac860067f72bb11c6691b50a20
+Bug 1530659 - Always pass -Isilk/fixed to unbreak on aarch64 after bug 1522016. r=glandium a=pascalc
+
+diff --git a/media/libopus/moz.build b/media/libopus/moz.build
+--- a/media/libopus/moz.build
++++ b/media/libopus/moz.build
+@@ -58,38 +58,34 @@ if CONFIG['OS_ARCH'] == 'SunOS':
+ if not CONFIG['MOZ_SAMPLE_TYPE_FLOAT32']:
+     DEFINES['FIXED_POINT'] = 1
+     DEFINES['DISABLE_FLOAT_API'] = True
+ 
+ LOCAL_INCLUDES += [
+     'celt',
+     'include',
+     'silk',
++    'silk/fixed',
++    'silk/float',
+     'src',
+ ]
+ 
+ # sources.mozbuild is generated from gen-sources.py when a new libopus is
+ # imported.
+ include('sources.mozbuild')
+ 
+ UNIFIED_SOURCES += celt_sources
+ UNIFIED_SOURCES += silk_sources
+ UNIFIED_SOURCES += opus_sources
+ SOURCES += opus_nonunified_sources
+ 
+ if CONFIG['MOZ_SAMPLE_TYPE_FLOAT32']:
+-    LOCAL_INCLUDES += [
+-        'silk/float',
+-    ]
+     UNIFIED_SOURCES += silk_sources_float
+     UNIFIED_SOURCES += opus_sources_float
+ else:
+-    LOCAL_INCLUDES += [
+-        'silk/fixed',
+-    ]
+     UNIFIED_SOURCES += silk_sources_fixed
+ 
+ if CONFIG['CPU_ARCH'] in ('x86', 'x86_64'):
+     DEFINES['OPUS_HAVE_RTCD'] = True
+     DEFINES['OPUS_X86_MAY_HAVE_SSE'] = True
+     DEFINES['OPUS_X86_MAY_HAVE_SSE2'] = True
+     DEFINES['OPUS_X86_MAY_HAVE_SSE4_1'] = True
+     DEFINES['OPUS_X86_MAY_HAVE_AVX'] = True

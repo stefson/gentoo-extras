@@ -260,8 +260,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"mozilla-1526243.patch
 	eapply "${FILESDIR}/"mozilla-1540145.patch
 
-	eapply "${FILESDIR}/"${PN}-66.0-xptcstubs_arm.patch
-
+	eapply "${FILESDIR}/"${PN}-66.0-xptcstubs_arm.patch # for armhf+lto
+	eapply "${FILESDIR}/"${PN}-66.0-fix-libopus-aarch64.patch # for aarch64
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
