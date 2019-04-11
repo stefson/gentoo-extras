@@ -206,6 +206,8 @@ src_configure() {
 
 	mozconfig_use_enable pulseaudio
 	mozconfig_use_enable dbus
+	mozconfig_use_enable wifi necko-wifi
+	mozconfig_use_enable geckodriver
 
 	# Allow for a proper pgo build
 	if use pgo; then
