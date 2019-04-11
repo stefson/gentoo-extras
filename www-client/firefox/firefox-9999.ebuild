@@ -205,6 +205,7 @@ src_configure() {
 	fi
 
 	mozconfig_use_enable pulseaudio
+	mozconfig_use_enable dbus
 
 	# Allow for a proper pgo build
 	if use pgo; then
