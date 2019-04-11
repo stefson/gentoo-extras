@@ -307,7 +307,7 @@ src_prepare() {
 
 	# Must run autoconf in js/src
 	cd "${S}"/js/src || die
-	eautoconf old-configure.in
+	autoconf-2.13
 }
 
 src_configure() {
