@@ -1,0 +1,73 @@
+# HG changeset patch
+# Parent  b8180780676f02fc15b2232505828c1f46077d98
+https://bugzilla.mozilla.org/show_bug.cgi?id=1516081
+
+diff --git a/build/moz.configure/toolchain.configure b/build/moz.configure/toolchain.configure
+--- a/build/moz.configure/toolchain.configure
++++ b/build/moz.configure/toolchain.configure
+@@ -1362,17 +1362,17 @@ set_config('_DEPEND_CFLAGS', depend_cfla
+ @imports(_from='__builtin__', _import='min')
+ def pgo_flags(compiler, build_env, target):
+     topobjdir = build_env.topobjdir
+     if topobjdir.endswith('/js/src'):
+         topobjdir = topobjdir[:-7]
+ 
+     if compiler.type == 'gcc':
+         return namespace(
+-            gen_cflags=['-fprofile-generate'],
++            gen_cflags=['-fprofile-generate', '-DMOZ_PROFILE_INSTRUMENTATION'],
+             gen_ldflags=['-fprofile-generate'],
+             use_cflags=['-fprofile-use', '-fprofile-correction',
+                         '-Wcoverage-mismatch'],
+             use_ldflags=['-fprofile-use'],
+         )
+ 
+     if compiler.type in ('clang-cl', 'clang'):
+         profdata = os.path.join(topobjdir, 'merged.profdata')
+@@ -1383,17 +1383,18 @@ def pgo_flags(compiler, build_env, targe
+                 gen_ldflags = ['clang_rt.profile-i386.lib']
+             else:
+                 gen_ldflags = None
+         else:
+             gen_ldflags = ['-fprofile-instr-generate']
+ 
+         if gen_ldflags:
+             return namespace(
+-                gen_cflags=['-fprofile-instr-generate'],
++                gen_cflags=['-fprofile-instr-generate',
++			    '-DMOZ_PROFILE_INSTRUMENTATION'],
+                 gen_ldflags=gen_ldflags,
+                 use_cflags=['-fprofile-instr-use=%s' % profdata,
+                             '-Wno-error=profile-instr-out-of-date',
+                             '-Wno-error=profile-instr-unprofiled'],
+                 use_ldflags=[],
+             )
+ 
+ 
+diff --git a/toolkit/components/terminator/nsTerminator.cpp b/toolkit/components/terminator/nsTerminator.cpp
+--- a/toolkit/components/terminator/nsTerminator.cpp
++++ b/toolkit/components/terminator/nsTerminator.cpp
+@@ -396,16 +396,23 @@ void nsTerminator::StartWatchdog() {
+   // AsyncShutdown.
+   if (crashAfterMS > INT32_MAX - ADDITIONAL_WAIT_BEFORE_CRASH_MS) {
+     // Defend against overflow
+     crashAfterMS = INT32_MAX;
+   } else {
+     crashAfterMS += ADDITIONAL_WAIT_BEFORE_CRASH_MS;
+   }
+ 
++  // Disable watchdog for PGO train builds - writting profile information at
++  // exit may take time and it is better to make build hang rather than
++  // silently produce poorly performing binary.
++#ifdef MOZ_PROFILE_INSTRUMENTATION
++  crashAfterMS = INT32_MAX;
++#endif
++
+ #ifdef MOZ_VALGRIND
+   // If we're running on Valgrind, we'll be making forward progress at a
+   // rate of somewhere between 1/25th and 1/50th of normal.  This can cause
+   // timeouts frequently enough to be a problem for the Valgrind runs on
+   // automation: see bug 1296819.  As an attempt to avoid the worst of this,
+   // scale up the presented timeout by a factor of three.  For a
+   // non-Valgrind-enabled build, or for an enabled build which isn't running
+   // on Valgrind, the timeout is unchanged.

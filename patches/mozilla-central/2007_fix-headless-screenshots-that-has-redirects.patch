@@ -1,0 +1,84 @@
+
+# HG changeset patch
+# User Brendan Dahl <bdahl@mozilla.com>
+# Date 1551836656 28800
+# Node ID eaf4ac664c5bd7f59877ebfd6891508349d49fe9
+# Parent  83a43e620d953276cbf8f5342bf54d3e86f1c44f
+Bug 1526822 - Fix headless screenshot that has redirects. r=mossop
+
+The changes in bug 1507352 caused onLocationChange events to be ignored
+when there was an http redirect. This caused the screenshot command to hang
+since it never attached an event listener on the page it was redirected to.
+
+Differential Revision: https://phabricator.services.mozilla.com/D22220
+
+diff --git a/browser/components/shell/HeadlessShell.jsm b/browser/components/shell/HeadlessShell.jsm
+--- a/browser/components/shell/HeadlessShell.jsm
++++ b/browser/components/shell/HeadlessShell.jsm
+@@ -36,18 +36,18 @@ function loadContentWindow(webNavigation
+         // Ignore inner-frame events
+         if (progress != webProgress) {
+           return;
+         }
+         // Ignore events that don't change the document
+         if (flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
+           return;
+         }
+-        // Ignore the initial about:blank
+-        if (uri.spec != location.spec) {
++        // Ignore the initial about:blank, unless about:blank is requested
++        if (location.spec == "about:blank" && uri.spec != "about:blank") {
+           return;
+         }
+         let contentWindow = docShell.domWindow;
+         progressListeners.delete(progressListener);
+         webProgress.removeProgressListener(progressListener);
+         contentWindow.addEventListener("load", (event) => {
+           resolve(contentWindow);
+         }, { once: true });
+diff --git a/browser/components/shell/test/chrome.ini b/browser/components/shell/test/chrome.ini
+--- a/browser/components/shell/test/chrome.ini
++++ b/browser/components/shell/test/chrome.ini
+@@ -1,5 +1,8 @@
+ [DEFAULT]
+-support-files = headless.html
++support-files =
++  headless.html
++  headless_redirect.html
++  headless_redirect.html^headers^
+ 
+ [test_headless_screenshot.html]
+ skip-if = toolkit == 'android'
+diff --git a/browser/components/shell/test/headless_redirect.html b/browser/components/shell/test/headless_redirect.html
+new file mode 100644
+diff --git a/browser/components/shell/test/headless_redirect.html^headers^ b/browser/components/shell/test/headless_redirect.html^headers^
+new file mode 100644
+--- /dev/null
++++ b/browser/components/shell/test/headless_redirect.html^headers^
+@@ -0,0 +1,2 @@
++HTTP 302 Moved Temporarily
++Location: headless.html
+\ No newline at end of file
+diff --git a/browser/components/shell/test/test_headless_screenshot.html b/browser/components/shell/test/test_headless_screenshot.html
+--- a/browser/components/shell/test/test_headless_screenshot.html
++++ b/browser/components/shell/test/test_headless_screenshot.html
+@@ -132,16 +132,19 @@ https://bugzilla.mozilla.org/show_bug.cg
+     await testFileCreationPositive(["-url", "http://mochi.test:8888/chrome/browser/components/shell/test/headless.html", "-screenshot", "--window-size=800"], "screenshot.png");
+ 
+     // Test other variations of the "window-size" argument.
+     await testWindowSizePositive(800, 600);
+     await testWindowSizePositive(1234);
+     await testFileCreationNegative(["-url", "http://mochi.test:8888/chrome/browser/components/shell/test/headless.html", "-screenshot", "-window-size", "hello"], "screenshot.png");
+     await testFileCreationNegative(["-url", "http://mochi.test:8888/chrome/browser/components/shell/test/headless.html", "-screenshot", "-window-size", "800,"], "screenshot.png");
+ 
++    // Test when the requested URL redirects
++    await testFileCreationPositive(["-url", "http://mochi.test:8888/chrome/browser/components/shell/test/headless_redirect.html", "-screenshot", screenshotPath], screenshotPath);
++
+     SimpleTest.finish();
+   })();
+   </script>
+ </head>
+ <body>
+ <a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1378010">Mozilla Bug 1378010</a>
+ <p id="display"></p>
+ <div id="content" style="display: none">

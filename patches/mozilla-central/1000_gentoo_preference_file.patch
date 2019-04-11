@@ -1,0 +1,25 @@
+From: Jory A. Pratt <anarchy@gentoo.org>
+
+Install the Gentoo preference file into the omni.jar
+
+diff --git a/browser/installer/package-manifest.in b/browser/installer/package-manifest.in
+--- a/browser/installer/package-manifest.in
++++ b/browser/installer/package-manifest.in
+@@ -272,16 +272,17 @@
+ ; updater icon
+ @RESPATH@/icons/updater.png
+ #endif
+ #endif
+ #endif
+ 
+ ; [Default Preferences]
+ ; All the pref files must be part of base to prevent migration bugs
++@RESPATH@/browser/@PREF_DIR@/all-gentoo.js
+ @RESPATH@/browser/@PREF_DIR@/firefox.js
+ @RESPATH@/browser/@PREF_DIR@/firefox-branding.js
+ @RESPATH@/greprefs.js
+ @RESPATH@/defaults/autoconfig/prefcalls.js
+ @RESPATH@/browser/defaults/permissions
+ @RESPATH@/browser/defaults/settings/blocklists
+ @RESPATH@/browser/defaults/settings/pinning
+ @RESPATH@/browser/defaults/settings/main
