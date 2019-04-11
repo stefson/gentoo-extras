@@ -39,7 +39,7 @@ ASM_DEPEND=">=dev-lang/yasm-1.1"
 RDEPEND="
 	>=dev-libs/nspr-4.21
 	>=dev-libs/nss-3.43
-	>=dev-util/cbindgen-0.8.2
+	>=dev-util/cbindgen-0.8.3
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${RDEPEND}
