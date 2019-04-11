@@ -193,9 +193,10 @@ src_configure() {
 	# Only available on mozilla-overlay for experimentation -- Removed in Gentoo repo per bug 571180
 	#use egl && mozconfig_annotate 'Enable EGL as GL provider' --with-gl-provider=EGL
 
-	# Setup api key for location services
+	# Setup api key for location services and safebrowsing, https://bugzilla.mozilla.org/show_bug.cgi?id=1531176#c34
 	echo -n "${_google_api_key}" > "${S}"/google-api-key
-	mozconfig_annotate '' --with-google-api-keyfile="${S}/google-api-key"
+	mozconfig_annotate '' --with-google-location-service-api-keyfile="${S}/google-api-key"
+	mozconfig_annotate '' --with-google-safebrowsing-api-keyfile="${S}/google-api-key"
 
 	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
 
