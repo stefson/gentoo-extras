@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -14,7 +14,9 @@ S="${WORKDIR}/firefox"
 EGIT_REPO_URI="https://github.com/mozilla/gecko-dev"
 EGIT_CHECKOUT_DIR="${WORKDIR}/firefox"
 
-inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils mozconfig-custom pax-utils fdo-mime autotools virtualx git-r3
+inherit check-reqs flag-o-matic toolchain-funcs eutils \
+		gnome2-utils mozcoreconf-v6 pax-utils \
+		fdo-mime autotools virtualx git-r3
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="http://www.mozilla.com/firefox"
