@@ -27,7 +27,11 @@ KEYWORDS=""
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="bindist +gmp-autoupdate hardened hwaccel pgo selinux test wayland"
+IUSE="bindist clang cpu_flags_x86_avx2 dbus debug eme-free geckodriver
+	+gmp-autoupdate hardened hwaccel jack lto neon pgo pulseaudio
+	+screenshot selinux startup-notification +system-av1
+	+system-harfbuzz +system-icu +system-jpeg +system-libevent
+	+system-sqlite +system-libvpx +system-webp test wayland wifi"
 RESTRICT="!bindist? ( bindist ) mirror"
 
 ASM_DEPEND=">=dev-lang/yasm-1.1"
