@@ -159,7 +159,7 @@ src_prepare() {
 
 	# Must run autoconf in js/src
 	cd "${S}"/js/src || die
-	eautoconf old-configure.in
+	autoconf-2.13
 
 	# Need to update jemalloc's configure
 	#cd "${S}"/memory/mozjemalloc || die
