@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI="6"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
@@ -37,10 +37,10 @@ ASM_DEPEND=">=dev-lang/yasm-1.1"
 RDEPEND="
 	>=dev-libs/nspr-4.21
 	>=dev-libs/nss-3.43
-	>=dev-util/cbindgen-0.8.3
 	selinux? ( sec-policy/selinux-mozilla )"
 
-DEPEND="${RDEPEND}
+DEPEND="${CDEPEND}
+	>=dev-util/cbindgen-0.8.3
 	>=net-libs/nodejs-8.12.0
 	pgo? ( >=sys-devel/gcc-4.5 )
 	|| ( dev-lang/rust dev-lang/rust-bin )
