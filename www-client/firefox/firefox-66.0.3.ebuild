@@ -263,6 +263,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"${PN}-66.0-xptcstubs_arm.patch # for armhf+lto
 	eapply "${FILESDIR}/"${PN}-66.0-fix-libopus-aarch64.patch # for aarch64
 
+	eapply "${FILESDIR}/"${PN}-66.0-fix-fpic.patch # fix for clang on non-x86
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 

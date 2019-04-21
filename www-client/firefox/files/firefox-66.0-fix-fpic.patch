@@ -1,0 +1,83 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1552400083 0
+# Node ID f6582e6dba4b9a588312e100c74e9b87b554f716
+# Parent  af754eae965880c9ef86d98976a8dac0aac054d9
+Bug 1513605 - Add PIC flags when running the clock_gettime(CLOCK_MONOTONIC) check. r=dmajor
+
+Differential Revision: https://phabricator.services.mozilla.com/D23091
+
+diff --git a/js/src/old-configure.in b/js/src/old-configure.in
+--- a/js/src/old-configure.in
++++ b/js/src/old-configure.in
+@@ -1002,29 +1002,32 @@ dnl Checks for library functions.
+ dnl ========================================================
+ AC_CHECK_FUNCS([getc_unlocked _getc_nolock gmtime_r localtime_r pthread_getname_np pthread_get_name_np])
+ 
+ dnl check for clock_gettime(), the CLOCK_MONOTONIC clock
+ AC_CACHE_CHECK(for clock_gettime(CLOCK_MONOTONIC),
+                ac_cv_clock_monotonic,
+                [for libs in "" -lrt; do
+                     _SAVE_LIBS="$LIBS"
++                    _SAVE_CFLAGS="$CFLAGS"
+                     LIBS="$LIBS $libs"
++                    CFLAGS="$CFLAGS $DSO_PIC_CFLAGS"
+ dnl clock_gettime is available on OSX since 10.12, so depending on MACOSX_DEPLOYMENT_TARGET,
+ dnl we should or not be able to use it. To detect if we can, we need to make the
+ dnl availability attribute strict, so that compilation fails when the target is < 10.12.
+                     AC_TRY_LINK([#define availability(os, ...) availability(os, strict, __VA_ARGS)
+                                  #include <time.h>],
+                                  [ struct timespec ts;
+                                    clock_gettime(CLOCK_MONOTONIC, &ts); ],
+                                  ac_cv_clock_monotonic=$libs
+                                  LIBS="$_SAVE_LIBS"
+                                  break,
+                                  ac_cv_clock_monotonic=no)
+                     LIBS="$_SAVE_LIBS"
++                    CFLAGS="$_SAVE_CFLAGS"
+                 done])
+ if test "$ac_cv_clock_monotonic" != "no"; then
+     HAVE_CLOCK_MONOTONIC=1
+     REALTIME_LIBS=$ac_cv_clock_monotonic
+     AC_DEFINE(HAVE_CLOCK_MONOTONIC)
+     AC_SUBST(HAVE_CLOCK_MONOTONIC)
+     AC_SUBST_LIST(REALTIME_LIBS)
+ fi
+diff --git a/old-configure.in b/old-configure.in
+--- a/old-configure.in
++++ b/old-configure.in
+@@ -1277,29 +1277,32 @@ dnl Checks for library functions.
+ dnl ========================================================
+ AC_CHECK_FUNCS(stat64 lstat64 truncate64 statvfs64 statvfs statfs64 statfs getpagesize gmtime_r localtime_r arc4random arc4random_buf mallinfo gettid lchown setpriority strerror syscall)
+ 
+ dnl check for clock_gettime(), the CLOCK_MONOTONIC clock
+ AC_CACHE_CHECK(for clock_gettime(CLOCK_MONOTONIC),
+                ac_cv_clock_monotonic,
+                [for libs in "" -lrt; do
+                     _SAVE_LIBS="$LIBS"
++                    _SAVE_CFLAGS="$CFLAGS"
+                     LIBS="$LIBS $libs"
++                    CFLAGS="$CFLAGS $DSO_PIC_CFLAGS"
+ dnl clock_gettime is available on OSX since 10.12, so depending on MACOSX_DEPLOYMENT_TARGET,
+ dnl we should or not be able to use it. To detect if we can, we need to make the
+ dnl availability attribute strict, so that compilation fails when the target is < 10.12.
+                     AC_TRY_LINK([#define availability(os, ...) availability(os, strict, __VA_ARGS)
+                                  #include <time.h>],
+                                  [ struct timespec ts;
+                                    clock_gettime(CLOCK_MONOTONIC, &ts); ],
+                                  ac_cv_clock_monotonic=$libs
+                                  LIBS="$_SAVE_LIBS"
+                                  break,
+                                  ac_cv_clock_monotonic=no)
+                     LIBS="$_SAVE_LIBS"
++                    CFLAGS="$_SAVE_CFLAGS"
+                 done])
+ if test "$ac_cv_clock_monotonic" != "no"; then
+     HAVE_CLOCK_MONOTONIC=1
+     REALTIME_LIBS=$ac_cv_clock_monotonic
+     AC_DEFINE(HAVE_CLOCK_MONOTONIC)
+     AC_SUBST(HAVE_CLOCK_MONOTONIC)
+     AC_SUBST_LIST(REALTIME_LIBS)
+ fi
+
+
