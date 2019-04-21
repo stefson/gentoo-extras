@@ -178,6 +178,11 @@ src_configure() {
 	mozconfig_init
 	mozconfig_config
 
+	if use lto ; then
+		mozconfig_annotate "forcing ld=gold due to USE=lto" --enable-linker=gold
+		mozconfig_annotate '+lto' --enable-lto=thin
+	fi
+
 	# It doesn't compile on alpha without this LDFLAGS
 	use alpha && append-ldflags "-Wl,--no-relax"
 
