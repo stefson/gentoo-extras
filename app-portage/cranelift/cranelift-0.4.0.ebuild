@@ -9,12 +9,15 @@ CRATES="
 aho-corasick-0.7.3
 aho-corasick-0.6.10
 ansi_term-0.11.0
+argon2rs-0.2.5
+arrayvec-0.4.10
 atty-0.2.11
 autocfg-0.1.2
 backtrace-0.3.15
 backtrace-sys-0.1.28
 bitflags-0.7.0
 bitflags-1.0.4
+blake2-rfc-0.2.18
 byteorder-1.3.1
 capstone-0.5.0
 capstone-sys-0.9.1
@@ -23,17 +26,25 @@ cc-1.0.35
 cfg-if-0.1.7
 chrono-0.4.6
 clap-2.33.0
+cloudabi-0.0.3
 cmake-0.1.38
+constant_time_eq-0.1.3
 dirs-1.0.5
 docopt-0.8.3
 env_logger-0.6.1
 errno-0.2.4
+errno-dragonfly-0.1.1
 faerie-0.10.0
 failure-0.1.5
 failure_derive-0.1.5
 file-per-thread-logger-0.1.2
 filecheck-0.4.0
+fuchsia-cprng-0.1.1
+gcc-0.3.55
+glob-0.2.11
+glob-0.3.0
 goblin-0.0.21
+hashmap_core-0.1.10
 heck-0.3.1
 humantime-1.2.0
 indexmap-1.0.2
@@ -42,17 +53,29 @@ lazy_static-1.3.0
 libc-0.2.51
 log-0.4.6
 memchr-2.2.0
+mach-0.2.3
+nodrop-0.1.13
 num-integer-0.1.39
 num-traits-0.2.6
 num_cpus-1.10.0
+numtoa-0.1.0
+numtoa-0.2.3
 plain-0.2.3
 pretty_env_logger-0.3.0
 proc-macro2-0.4.27
 quick-error-1.2.2
 quote-0.6.12
+kernel32-sys-0.2.2
 rand-0.4.6
+rand_core-0.3.1
+rand_core-0.4.0
+rand_os-0.1.3
 raw-cpuid-3.1.0
 raw-cpuid-6.1.0
+rdrand-0.4.0
+redox_syscall-0.1.54
+redox_termios-0.1.1
+redox_users-0.3.0
 regex-0.2.11
 regex-1.1.6
 regex-syntax-0.5.6
@@ -62,6 +85,7 @@ remove_dir_all-0.5.1
 rustc-demangle-0.1.14
 rustc_version-0.2.3
 ryu-0.2.7
+scoped_threadpool-0.1.9
 scroll-0.9.2
 scroll_derive-0.9.5
 semver-0.9.0
@@ -83,6 +107,7 @@ term-0.5.2
 termcolor-1.0.4
 textwrap-0.11.0
 thread_local-0.3.6
+termion-1.5.2
 time-0.1.42
 ucd-util-0.1.3
 unicode-segmentation-1.2.1
@@ -94,13 +119,18 @@ wabt-0.7.4
 wabt-sys-0.5.4
 wasmparser-0.14.1
 wasmparser-0.29.2
+winapi-0.3.7
+winapi-i686-pc-windows-gnu-0.4.0
+winapi-util-0.1.2
+winapi-x86_64-pc-windows-gnu-0.4.0
+wincolor-1.0.1
 "
 
 inherit cargo
 
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
-SRC_URI="https://github.com/CraneStation/cranelift/archive/0.3.0.tar.gz -> ${P}.tar.gz
+SRC_URI="https://github.com/CraneStation/cranelift/archive/0.4.0.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="Apache-2.0 WITH LLVM-exception" # Update to proper Gentoo format
@@ -117,5 +147,6 @@ src_configure() {
 }
 
 src_compile() {
+	export CARGO_HOME="${ECARGO_HOME}"
 	cargo build -j$(makeopts_jobs) --release || die
 }
