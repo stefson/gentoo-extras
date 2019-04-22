@@ -251,8 +251,6 @@ src_unpack() {
 src_prepare() {
 	eapply "${WORKDIR}/firefox"
 
-	eapply "${FILESDIR}/"${PN}-66.0-armhf-disable-unaligned-fp-access-emulation.patch
-
 	eapply "${FILESDIR}/"${PN}-66.0-armv7a-cross.patch
 	eapply "${FILESDIR}/"${PN}-66.0-1515641-av1-build-1.patch
 	eapply "${FILESDIR}/"${PN}-66.0-1515641-av1-build-2.patch
@@ -260,10 +258,12 @@ src_prepare() {
 	eapply "${FILESDIR}/"mozilla-1526243.patch
 	eapply "${FILESDIR}/"mozilla-1540145.patch
 
-	eapply "${FILESDIR}/"${PN}-66.0-xptcstubs_arm.patch # for armhf+lto
+	eapply "${FILESDIR}/"${P}-xptcstubs_arm.patch # for armhf+lto
 	eapply "${FILESDIR}/"${PN}-66.0-fix-libopus-aarch64.patch # for aarch64
+#	eapply "${FILESDIR}/"${PN}-66.0-fix-fpic.patch # fix for clang on non-x86
 
-	eapply "${FILESDIR}/"${PN}-66.0-fix-fpic.patch # fix for clang on non-x86
+#	eapply "${FILESDIR}/"${PN}-66.0-armhf-disable-unaligned-fp-access-emulation.patch #moz 1526653, a more radical approach
+	eapply "${FILESDIR}/"fix-arm-user-include.patch # moz 1526653, for spidermonkey to play nicely with wasm + arm
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
