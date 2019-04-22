@@ -150,3 +150,7 @@ src_compile() {
 	export CARGO_HOME="${ECARGO_HOME}"
 	cargo build -j$(makeopts_jobs) --release || die
 }
+
+src_install() {
+	dobin target/release/clif-util
+}
