@@ -1,0 +1,14 @@
+diff --git a/mfbt/Compiler.h b/mfbt/Compiler.h
+index 8febc43..062bea2 100644
+--- a/mfbt/Compiler.h
++++ b/mfbt/Compiler.h
+@@ -40,7 +40,7 @@
+  * the version macros and deduce macros from there.
+  */
+ #ifdef __cplusplus
+-#  include <cstddef>
++#  include <stddef.h>
+ #  ifdef _STLPORT_MAJOR
+ #    define MOZ_USING_STLPORT 1
+ #    define MOZ_STLPORT_VERSION_AT_LEAST(major, minor, patch) \
+

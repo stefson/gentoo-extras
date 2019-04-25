@@ -108,6 +108,8 @@ src_prepare() {
 	#eapply "${FILESDIR}"/2002_system_graphite2.patch
 #	eapply "${FILESDIR}"/2003_include_sysmacros_h.patch
 
+	eapply "${FILESDIR}"/firefox-9999-fix-stddef-header.patch
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
