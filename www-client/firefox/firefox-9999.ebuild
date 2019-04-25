@@ -183,6 +183,10 @@ src_configure() {
 		mozconfig_annotate '+lto' --enable-lto=thin
 	fi
 
+	if ! use amd64 ; then
+		mozconfig_annotate "cranelift hasn't been ported yet to ${arch}" --disable-cranelift
+	fi
+
 	# It doesn't compile on alpha without this LDFLAGS
 	use alpha && append-ldflags "-Wl,--no-relax"
 
