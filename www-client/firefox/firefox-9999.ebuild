@@ -186,7 +186,7 @@ src_configure() {
 	fi
 
 	if ! use amd64 ; then
-		mozconfig_annotate "cranelift hasn't been ported yet to ${arch}" --disable-cranelift
+		mozconfig_annotate "cranelift hasn't been ported yet to your arch" --disable-cranelift
 	fi
 
 	# It doesn't compile on alpha without this LDFLAGS
