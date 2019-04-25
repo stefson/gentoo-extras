@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -12,7 +12,7 @@ inherit autotools gnome2-utils l10n versionator xdg-utils
 
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm ~x86"
 
 DESCRIPTION="foobar2k-like music player"
 HOMEPAGE="http://deadbeef.sourceforge.net"
@@ -51,6 +51,7 @@ LICENSE="BSD
 	mpg123? ( LGPL-2.1 ZLIB )
 	musepack? ( BSD ZLIB )
 	nullout? ( ZLIB )
+	opus? ( ZLIB )
 	oss? ( GPL-2 )
 	playlist-browser? ( ZLIB )
 	psf? ( BSD GPL-1 MAME ZLIB )
@@ -71,7 +72,7 @@ SLOT="0"
 IUSE="+alsa +flac +gtk2 +hotkeys +m3u +mad +mp3 +sndfile +vorbis
 	aac adplug alac cdda cdparanoia converter cover cover-imlib2 cover-network curl dts dumb equalizer
 	ffmpeg gme gtk3 lastfm libav libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
-	nullout oss playlist-browser psf pulseaudio sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
+	nullout opus oss playlist-browser psf pulseaudio sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
 
 REQUIRED_USE="cdparanoia? ( cdda )
 	converter? ( || ( gtk2 gtk3 ) )
@@ -118,6 +119,7 @@ RDEPEND="dev-libs/glib:2
 	mad? ( media-libs/libmad:0 )
 	midi? ( media-sound/timidity-freepats:0 )
 	mpg123? ( media-sound/mpg123:0 )
+	opus? ( media-libs/opusfile:0 )
 	psf? ( sys-libs/zlib:0 )
 	pulseaudio? ( media-sound/pulseaudio:0 )
 	sndfile? ( media-libs/libsndfile:0 )
@@ -136,20 +138,10 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${P}"
 
 src_prepare() {
-#	if ! use_if_iuse linguas_pt_BR && use_if_iuse linguas_ru ; then
-#		eapply "${FILESDIR}/${PN}-remove-pt_br-help-translation.patch"
-#		rm -v "${S}/translation/help.pt_BR.txt" || die
-#	fi
-
-#	if ! use_if_iuse linguas_ru && use_if_iuse linguas_pt_BR ; then
-#		eapply "${FILESDIR}/${PN}-remove-ru-help-translation.patch"
-#		rm -v "${S}/translation/help.ru.txt" || die
-#	fi
-
-#	if ! use_if_iuse linguas_pt_BR && ! use_if_iuse linguas_ru ; then
-#		eapply "${FILESDIR}/${PN}-remove-pt_br-and-ru-help-translation.patch"
-#		rm -v "${S}/translation/help.pt_BR.txt" "${S}/translation/help.ru.txt" || die
-#	fi
+	if ! use_if_iuse linguas_ru ; then
+		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
+		rm -v "${S}/translation/help.ru.txt" || die
+	fi
 
 	if use midi ; then
 		# set default gentoo path
@@ -157,10 +149,10 @@ src_prepare() {
 			-i "${S}/plugins/wildmidi/wildmidiplug.c" || die
 	fi
 
-#	if ! use unity ; then
+	if ! use unity ; then
 		# remove unity trash
-#		eapply "${FILESDIR}/${PN}-0.7.2-remove-unity-trash.patch"
-#	fi
+		eapply "${FILESDIR}/${P}-remove-unity-trash.patch"
+	fi
 
 	eapply_user
 
@@ -211,6 +203,7 @@ src_configure() {
 		$(use_enable musepack) \
 		$(use_enable nls) \
 		$(use_enable nullout) \
+		$(use_enable opus) \
 		$(use_enable oss) \
 		$(use_enable playlist-browser pltbrowser) \
 		$(use_enable psf) \
