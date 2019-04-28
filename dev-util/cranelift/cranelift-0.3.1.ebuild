@@ -128,7 +128,10 @@ inherit cargo
 
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
-SRC_URI="https://github.com/CraneStation/cranelift/archive/0.3.1.tar.gz -> ${P}.tar.gz
+
+SRCHASH=4f69c32572a13f4ded3b05542abf476d1cd2ead8
+
+SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="Apache-2.0 WITH LLVM-exception" # Update to proper Gentoo format
@@ -138,6 +141,8 @@ IUSE=""
 
 DEPEND=""
 RDEPEND=""
+
+S="${WORKDIR}"/cranelift-${SRCHASH}
 
 src_configure() {
 	# Do nothing
