@@ -108,7 +108,8 @@ src_prepare() {
 	#eapply "${FILESDIR}"/2002_system_graphite2.patch
 #	eapply "${FILESDIR}"/2003_include_sysmacros_h.patch
 
-	eapply "${FILESDIR}"/firefox-9999-fix-stddef-header.patch
+#	eapply "${FILESDIR}"/firefox-9999-fix-stddef-header.patch
+	eapply "${FILESDIR}"/firefox-9999-revert-632127ba32c36634abb952b3a08d529e63709915.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
