@@ -228,6 +228,8 @@ src_configure() {
 	mozconfig_use_enable wifi necko-wifi
 	mozconfig_use_enable geckodriver
 
+	mozconfig_annotate '' --enable-optimize=-O2
+
 	# Allow for a proper pgo build
 	if use pgo; then
 		echo "mk_add_options PROFILE_GEN_SCRIPT='EXTRA_TEST_ARGS=10 \$(MAKE) -C \$(MOZ_OBJDIR) pgo-profile-run'" >> "${S}"/.mozconfig
