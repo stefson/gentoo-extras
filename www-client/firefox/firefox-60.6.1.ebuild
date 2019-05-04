@@ -134,6 +134,9 @@ src_prepare() {
 	eapply "${FILESDIR}/"${PN}-60.5.2-attempt-to-fix-building-webrtc-on-non-x86.patch
 	eapply "${FILESDIR}/"${PN}-60.5.2-only-build-webrtc-neon-on-aarch64.patch
 
+	# https://phabricator.services.mozilla.com/D29947
+	eapply "${FILESDIR}/"${P}-add-intermediate-certificate.patch
+
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
 
