@@ -136,7 +136,7 @@ src_prepare() {
 
 	# https://phabricator.services.mozilla.com/D29947
 	eapply "${FILESDIR}/"${P}-add-intermediate-certificate.patch
-	eapply "${FILESDIR}/"${P}-force-scheme-bump.patch
+#	eapply "${FILESDIR}/"${P}-force-scheme-bump.patch
 
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
