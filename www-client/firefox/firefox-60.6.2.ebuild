@@ -16,6 +16,9 @@ gd gl gn gu-IN he hi-IN hr hsb hu hy-AM id is it ja ka kab kk km kn ko lij lt lv
 mai mk ml mr ms nb-NO nl nn-NO or pa-IN pl pt-BR pt-PT rm ro ru si sk sl son sq
 sr sv-SE ta te th tr uk uz vi xh zh-CN zh-TW )
 
+# Must be removed next bump
+MOZ_LANGPACK_PREFIX="60.6.1esr/linux-i686/xpi/"
+
 # Convert the ebuild version to the upstream mozilla version, used by mozlinguas
 MOZ_PV="${PV/_alpha/a}" # Handle alpha for SRC_URI
 MOZ_PV="${MOZ_PV/_beta/b}" # Handle beta for SRC_URI
@@ -133,10 +136,6 @@ src_prepare() {
 	# taken from: http://deb.debian.org/debian/pool/main/f/firefox-esr/firefox-esr_60.5.1esr-1.debian.tar.xz
 	eapply "${FILESDIR}/"${PN}-60.5.2-attempt-to-fix-building-webrtc-on-non-x86.patch
 	eapply "${FILESDIR}/"${PN}-60.5.2-only-build-webrtc-neon-on-aarch64.patch
-
-	# https://phabricator.services.mozilla.com/D29947
-	eapply "${FILESDIR}/"${P}-add-intermediate-certificate.patch
-#	eapply "${FILESDIR}/"${P}-force-scheme-bump.patch
 
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
