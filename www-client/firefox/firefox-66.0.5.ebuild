@@ -260,7 +260,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"${P}-xptcstubs_arm.patch # for armhf+lto
 	eapply "${FILESDIR}/"${PN}-66.0-fix-libopus-aarch64.patch # for aarch64
-#	eapply "${FILESDIR}/"${PN}-66.0-fix-fpic.patch # fix for clang on non-x86
 
 #	eapply "${FILESDIR}/"${PN}-66.0-armhf-disable-unaligned-fp-access-emulation.patch #moz 1526653, a more radical approach
 	eapply "${FILESDIR}/"fix-arm-user-include.patch # moz 1526653, for spidermonkey to play nicely with wasm + arm
