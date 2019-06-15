@@ -27,9 +27,7 @@ SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="bindist clang cpu_flags_x86_avx2 dbus debug geckodriver
 	+gmp-autoupdate hardened hwaccel jack lto neon pgo pulseaudio
-	+screenshot selinux startup-notification +system-av1
-	+system-harfbuzz +system-icu +system-jpeg +system-libevent
-	+system-sqlite +system-libvpx +system-webp test wayland wifi"
+	+screenshot selinux startup-notification test wayland wifi"
 RESTRICT="!bindist? ( bindist ) mirror"
 
 ASM_DEPEND=">=dev-lang/yasm-1.1"
@@ -97,19 +95,7 @@ pkg_pretend() {
 
 src_prepare() {
 	# Apply our patches
-	#rm "${S}"/1001_disable_sdk_install.patch
-	#rm "${S}"/1003_drop_build_id.patch
-	#rm "${S}"/1004_dont_hardcode_libc_soname.patch
-	#rm "${S}"/2002_system_graphite2.patch
-#	rm "${WORKDIR}"/firefox/2003_include_sysmacros_h.patch
-
-	#eapply "${S}"
-	#eapply "${FILESDIR}"/1003_drop_build_id.patch
-	#eapply "${FILESDIR}"/2002_system_graphite2.patch
-#	eapply "${FILESDIR}"/2003_include_sysmacros_h.patch
-
-#	eapply "${FILESDIR}"/firefox-9999-fix-stddef-header.patch
-	eapply "${FILESDIR}"/firefox-9999-revert-632127ba32c36634abb952b3a08d529e63709915.patch
+	# eapply "${S}"
 
 	# Enable gnomebreakpad
 	if use debug ; then
@@ -187,7 +173,7 @@ src_configure() {
 	fi
 
 	if ! use amd64 ; then
-		mozconfig_annotate "cranelift hasn't been ported yet to your arch" --disable-cranelift
+		mozconfig_annotate "cranelift hasn't yet been ported to your arch" --disable-cranelift
 	fi
 
 	# It doesn't compile on alpha without this LDFLAGS
