@@ -545,6 +545,9 @@ src_configure() {
 	# disable webrtc for now, bug 667642
 	use arm && mozconfig_annotate 'broken on arm' --disable-webrtc
 
+	# disable some more stuff
+	mozconfig_annotate 'remove parental controlls' --disable-parental-controls
+
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
 	append-ldflags "-Wl,--compress-debug-sections=zlib"
