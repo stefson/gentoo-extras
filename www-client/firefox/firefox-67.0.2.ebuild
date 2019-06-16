@@ -547,6 +547,7 @@ src_configure() {
 
 	# disable some more stuff
 	mozconfig_annotate 'remove parental controlls' --disable-parental-controls
+	mozconfig_annotate 'remove accessibility' --disable-accessibility
 
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
