@@ -118,7 +118,7 @@ src_unpack() {
 
 src_prepare() {
 
-	rm "${S}"/2007_add_musl_padding_cmsg.patch
+	rm "${WORKDIR}"/firefox/2007_add_musl_padding_cmsg.patch
 	eapply "${WORKDIR}/firefox"
 
 	# fix rust compile warnings, open bug? 
@@ -136,8 +136,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"${PN}-60.5.2-attempt-to-fix-building-webrtc-on-non-x86.patch
 	eapply "${FILESDIR}/"${PN}-60.5.2-only-build-webrtc-neon-on-aarch64.patch
 
-	# remove on next bump
-	# eapply "${FILESDIR}/"${P}-reintroduce-serialize_function.patch
+	# try to fix audiopic for arm
+	eapply "${FILESDIR}/"${PN}-60.7-rust-unitialized-field.patch
 
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
