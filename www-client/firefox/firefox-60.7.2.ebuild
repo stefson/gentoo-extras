@@ -117,6 +117,8 @@ src_unpack() {
 }
 
 src_prepare() {
+
+	rm "${S}"/2007_add_musl_padding_cmsg.patch
 	eapply "${WORKDIR}/firefox"
 
 	# fix rust compile warnings, open bug? 
