@@ -118,7 +118,10 @@ src_unpack() {
 
 src_prepare() {
 
-	rm "${WORKDIR}"/firefox/2007_add_musl_padding_cmsg.patch
+	if use arm && use elibc_musl ; then
+		rm "${WORKDIR}"/firefox/2007_add_musl_padding_cmsg.patch
+	fi
+
 	eapply "${WORKDIR}/firefox"
 
 	# fix rust compile warnings, open bug? 
@@ -136,8 +139,10 @@ src_prepare() {
 	eapply "${FILESDIR}/"${PN}-60.5.2-attempt-to-fix-building-webrtc-on-non-x86.patch
 	eapply "${FILESDIR}/"${PN}-60.5.2-only-build-webrtc-neon-on-aarch64.patch
 
-	# try to fix audiopic for arm
-	eapply "${FILESDIR}/"${PN}-60.7-rust-unitialized-field.patch
+	if use arm && use elibc_musl ; then
+		# try to fix audiopic for arm
+		eapply "${FILESDIR}/"${PN}-60.7-rust-unitialized-field.patch
+	fi
 
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
