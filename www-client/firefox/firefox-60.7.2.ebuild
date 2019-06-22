@@ -142,6 +142,9 @@ src_prepare() {
 	if use arm && use elibc_musl ; then
 		# try to fix audiopic for arm
 		eapply "${FILESDIR}/"${PN}-60.7-rust-unitialized-field.patch
+		# fix for missing symbols in spidermonkey
+		# https://github.com/void-linux/void-packages/issues/2598
+		eapply "${FILESDIR}/"${PN}-60.7-fix-missing-symbols-from-spidermonkey.patch
 	fi
 
 	rm -fr browser/extensions/pocket || die
