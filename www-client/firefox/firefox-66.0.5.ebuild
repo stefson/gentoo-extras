@@ -255,9 +255,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"${PN}-66.0-1515641-av1-build-1.patch
 	eapply "${FILESDIR}/"${PN}-66.0-1515641-av1-build-2.patch
 
-	eapply "${FILESDIR}/"mozilla-1526243.patch
-	eapply "${FILESDIR}/"mozilla-1540145.patch
-
 	eapply "${FILESDIR}/"${P}-xptcstubs_arm.patch # for armhf+lto
 	eapply "${FILESDIR}/"${PN}-66.0-fix-libopus-aarch64.patch # for aarch64
 
