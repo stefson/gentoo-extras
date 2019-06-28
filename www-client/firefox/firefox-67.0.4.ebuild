@@ -251,10 +251,14 @@ src_prepare() {
 	use !wayland && rm -f "${WORKDIR}/firefox/2019_mozilla-bug1539471.patch"
 	eapply "${WORKDIR}/firefox"
 
+
+	if use arm ; then
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1542622
 	# this is needed to make firefox-67.0 play nicely with rust-1.35.0 + llvm-7 + gcc-8.3.0 + cbindgen-0.8x in cross
 	# todo: simplify, open bug
-	eapply "${FILESDIR}/"firefox-67.0-cross-fix-stddef-not-found.patch 
+	eapply "${FILESDIR}/"firefox-66.0-armhf-disable-unaligned-fp-access-emulation.patch
+	eapply "${FILESDIR}/"firefox-67.0-cross-fix-stddef-not-found.patch
+	fi
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
