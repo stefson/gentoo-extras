@@ -159,6 +159,7 @@ src_prepare() {
 	if ! use unity ; then
 		# remove unity trash
 		eapply "${FILESDIR}/${P}-remove-unity-trash.patch"
+		eapply "${FILESDIR}/${P}-fix-missmatching-desktop-groups-warnings.patch"
 	fi
 
 	eapply_user
