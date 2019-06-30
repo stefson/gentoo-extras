@@ -53,7 +53,7 @@ SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="bindist clang cpu_flags_x86_avx2 dbus debug eme-free geckodriver
 	+gmp-autoupdate hardened hwaccel jack lto neon pgo pulseaudio
-	+screenshot selinux startup-notification +system-av1
+	+screenshot selinux startup-notification system-av1
 	+system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-sqlite +system-libvpx +system-webp test wayland wifi"
 RESTRICT="!bindist? ( bindist )"
@@ -161,8 +161,7 @@ DEPEND="${CDEPEND}
 	>=virtual/rust-1.31.0
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland] )
 	amd64? ( >=dev-lang/yasm-1.1 virtual/opengl )
-	x86? ( >=dev-lang/yasm-1.1 virtual/opengl )
-	!system-av1? ( dev-lang/nasm )"
+	x86? ( >=dev-lang/yasm-1.1 virtual/opengl )"
 
 # Due to a bug in GCC, profile guided optimization will produce
 # AVX2 instructions, bug #677052
@@ -508,7 +507,6 @@ src_configure() {
 
 	mozconfig_use_enable startup-notification
 	mozconfig_use_enable system-sqlite
-	mozconfig_use_with system-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
@@ -553,6 +551,7 @@ src_configure() {
 	# disable some more stuff
 	mozconfig_annotate 'remove parental controlls' --disable-parental-controls
 	mozconfig_annotate 'remove accessibility' --disable-accessibility
+	mozconfig_annotate 'remove av1 decoder' --disable-av1
 
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
