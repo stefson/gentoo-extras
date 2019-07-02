@@ -102,6 +102,7 @@ RDEPEND="dev-libs/glib:2
 		virtual/jpeg:0
 		x11-libs/gdk-pixbuf:2[jpeg] )
 	curl? ( net-misc/curl:0 )
+	elibc_musl? ( sys-libs/queue-standalone )
 	ffmpeg? ( media-video/ffmpeg:0= )
 	libav? ( media-video/libav:0= )
 	flac? ( media-libs/flac:0 )
