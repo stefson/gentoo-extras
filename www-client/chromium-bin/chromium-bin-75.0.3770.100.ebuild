@@ -44,13 +44,13 @@ RDEPEND="app-accessibility/speech-dispatcher
 	net-libs/gnutls
 	net-print/cups
 	sys-apps/lsb-release
-	>=sys-devel/gcc-4.9
-	x11-libs/gtk+:2
+	>=sys-devel/gcc-7.4.0
+	x11-libs/gtk+:3
 	x11-libs/libXScrnSaver
 	x11-libs/libXtst
 	x11-libs/pango
 	x11-misc/xdg-utils
-	>=sys-libs/glibc-2.17"
+	>=sys-libs/glibc-2.27"
 
 src_prepare() {
 	eapply_user
