@@ -6,9 +6,9 @@ EAPI=6
 inherit eutils unpacker versionator
 
 #MY_VERSION="$(get_version_component_range 1-4)"
-MY_VERSION="75.0.3770.90"
+MY_VERSION="75.0.3770.100"
 #MY_PATCH="$(get_version_component_range 5)"
-MY_UBUNTUVERS=16.04.1
+MY_UBUNTUVERS=18.04.1
 KEYWORDS="~arm"
 
 SRC_URI="https://launchpad.net/~canonical-chromium-builds/+archive/ubuntu/stage/+files/chromium-browser_${MY_VERSION}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb
