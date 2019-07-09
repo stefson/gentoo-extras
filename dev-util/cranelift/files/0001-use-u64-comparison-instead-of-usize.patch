@@ -1,23 +1,32 @@
-From 35b40fccc5140cd2743c4ac05f96695e9aca2bb6 Mon Sep 17 00:00:00 2001
+From 544ae1b5f23b24257e85e300184a57768c924063 Mon Sep 17 00:00:00 2001
 From: Benjamin Bouvier <public@benj.me>
 Date: Tue, 9 Jul 2019 17:59:36 +0200
 Subject: [PATCH] Fixes #837: Use an u64 comparison instead of a usize
  comparison in meta;
 
 ---
- cranelift-codegen/meta/src/gen_encodings.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ cranelift-codegen/meta/src/gen_encodings.rs | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/cranelift-codegen/meta/src/gen_encodings.rs b/cranelift-codegen/meta/src/gen_encodings.rs
-index aff6d32d5..adda66392 100644
+index aff6d32d5..14ea39267 100644
 --- a/cranelift-codegen/meta/src/gen_encodings.rs
 +++ b/cranelift-codegen/meta/src/gen_encodings.rs
-@@ -913,7 +913,7 @@ fn emit_tables(defs: &SharedDefinitions, isa: &TargetIsa, fmt: &mut Formatter) {
+@@ -46,6 +46,7 @@
+ 
+ use std::collections::btree_map;
+ use std::collections::{BTreeMap, HashMap, HashSet};
++use std::convert::TryFrom;
+ use std::iter::FromIterator;
+ 
+ use cranelift_entity::EntityRef;
+@@ -913,7 +914,7 @@ fn emit_tables(defs: &SharedDefinitions, isa: &TargetIsa, fmt: &mut Formatter) {
          if length <= 0x10000 {
              "u16"
          } else {
 -            assert!(length <= 0x100000000, "table too big!");
-+            assert!((length as u64) <= 0x100000000u64, "table too big!");
++            assert!(u32::try_from(length).is_ok(), "table too big!");
              "u32"
          }
      };
+
