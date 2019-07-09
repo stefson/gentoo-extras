@@ -130,11 +130,10 @@ inherit cargo eutils
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=d4ee7c3360de14935cf232ddb16e46ccf520a474
+SRCHASH=544ae1b5f23b24257e85e300184a57768c924063
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
-	$(cargo_crate_uris ${CRATES})
-	https://github.com/bnjbvr/cranelift/commit/35b40fccc5140cd2743c4ac05f96695e9aca2bb6.patch -> 0001-use-u64-comparison-instead-of-usize.patch"
+	$(cargo_crate_uris ${CRATES})"
 
 RESTRICT="mirror"
 LICENSE="Apache-2.0 WITH LLVM-exception" # Update to proper Gentoo format
@@ -146,10 +145,6 @@ DEPEND=""
 RDEPEND=""
 
 S="${WORKDIR}"/cranelift-${SRCHASH}
-
-PATCHES=(
-	"${FILESDIR}"/0001-use-u64-comparison-instead-of-usize.patch
-)
 
 src_configure() {
 	# Do nothing
