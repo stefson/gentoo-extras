@@ -125,7 +125,7 @@ winapi-x86_64-pc-windows-gnu-0.4.0
 wincolor-1.0.1
 "
 
-inherit cargo
+inherit cargo eutils
 
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
@@ -133,7 +133,9 @@ HOMEPAGE="https://github.com/CraneStation/cranelift"
 SRCHASH=d4ee7c3360de14935cf232ddb16e46ccf520a474
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
-	$(cargo_crate_uris ${CRATES})"
+	$(cargo_crate_uris ${CRATES})
+	https://github.com/bnjbvr/cranelift/commit/35b40fccc5140cd2743c4ac05f96695e9aca2bb6.patch -> 0001-use-u64-comparison-instead-of-usize.patch"
+
 RESTRICT="mirror"
 LICENSE="Apache-2.0 WITH LLVM-exception" # Update to proper Gentoo format
 SLOT="0"
@@ -144,6 +146,10 @@ DEPEND=""
 RDEPEND=""
 
 S="${WORKDIR}"/cranelift-${SRCHASH}
+
+PATCHES=(
+	"${FILESDIR}"/0001-use-u64-comparison-instead-of-usize.patch
+)
 
 src_configure() {
 	# Do nothing
