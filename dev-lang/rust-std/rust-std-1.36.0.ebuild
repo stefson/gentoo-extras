@@ -11,9 +11,9 @@ DESCRIPTION="std libraries for rust"
 HOMEPAGE="https://www.rust-lang.org/"
 #SRC_URI="$(rust_all_arch_uris ${MY_P})"
 
-RUSTHOST="armv7-unknown-linux-gnueabihf"
-#RUSTHOST="thumbv7neon-unknown-linux-gnueabihf"
-RUST_PROVIDER="rust-bin-1.35.0"
+#RUSTHOST="armv7-unknown-linux-gnueabihf"
+RUSTHOST="thumbv7neon-unknown-linux-gnueabihf"
+RUST_PROVIDER="rust-bin-1.36.0"
 
 SRC_URI="https://static.rust-lang.org/dist/"${P}"-"${RUSTHOST}".tar.xz"
 
@@ -24,7 +24,7 @@ IUSE="cpu_flags_x86_sse2 doc libressl +rust-std-armv7-h"
 
 DEPEND=""
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-	=dev-lang/rust-bin-1.35.0
+	=dev-lang/rust-bin-1.36.0
 	!dev-lang/rust:0"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
