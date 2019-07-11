@@ -260,10 +260,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"firefox-67.0-cross-fix-stddef-not-found.patch
 	fi
 
-	if use elibc_musl ; then
-		eapply "${FILESDIR}/"firefox-67.0.4-fix-lto-musl.patch
-	fi
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
