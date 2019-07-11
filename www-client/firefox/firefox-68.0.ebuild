@@ -540,6 +540,9 @@ src_configure() {
 	# disable webrtc for now, bug 667642
 	use arm && mozconfig_annotate 'broken on arm' --disable-webrtc
 
+	# disable av1 decoder for arm
+	use arm && mozconfig_annotate 'no av1 decoder for arm' --disable-av1
+
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
 	append-ldflags "-Wl,--compress-debug-sections=zlib"
