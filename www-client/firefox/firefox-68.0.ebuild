@@ -549,8 +549,14 @@ src_configure() {
 	# disable webrtc for now, bug 667642
 	use arm && mozconfig_annotate 'broken on arm' --disable-webrtc
 
-	# disable av1 decoder for arm
-	use arm && mozconfig_annotate 'no av1 decoder for arm' --disable-av1
+ 	# disable some more stuff
+ 	mozconfig_annotate 'remove parental controlls' --disable-parental-controls
+ 	mozconfig_annotate 'remove accessibility' --disable-accessibility
+
+	if use arm ; then
+	mozconfig_annotate 'remove av1 decoder' --disable-alsa
+ 	mozconfig_annotate 'remove av1 decoder' --disable-av1
+	fi
 
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
