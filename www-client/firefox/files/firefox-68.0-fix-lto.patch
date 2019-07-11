@@ -1,0 +1,11 @@
+--- a/security/sandbox/linux/moz.build	2019-07-11 15:29:41.211281893 +0200
++++ b/security/sandbox/linux/moz.build	2019-07-11 15:40:24.189355910 +0200
+@@ -99,7 +99,7 @@
+ # from the function using it which breaks the build.  Work around that by
+ # forcing there to be only one partition.
+ for f in CONFIG['OS_CXXFLAGS']:
+-    if f.startswith('-flto') and CONFIG['CC_TYPE'] != 'clang':
++    if (f.startswith('-flto') or CONFIG['MOZ_LTO']) and CONFIG['CC_TYPE'] != 'clang':
+         LDFLAGS += ['--param', 'lto-partitions=1']
+ 
+ DEFINES['NS_NO_XPCOM'] = True
