@@ -16,16 +16,17 @@ SLOT="0"
 KEYWORDS=""
 #IUSE="glfw"
 
-RDEPEND="virtual/opengl
-	dev-libs/libbsd
-	x11-libs/libX11
-	>=sys-devel/gcc-6.4.0"
+RDEPEND="dev-libs/libbsd
+	media-libs/flac
+	media-libs/libvorbis
+	>=sys-devel/gcc-6.4.0
+	virtual/opengl
+	x11-libs/libX11"
 #	sci-physics/bullet[bullet3]
 #	glfw? ( <media-libs/glfw-3 )"
 DEPEND="${RDEPEND}"
 
 #PATCHES=(
-#	"${FILESDIR}"/${P}-.patch
 #)
 
 src_prepare() {
