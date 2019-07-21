@@ -154,7 +154,7 @@ src_compile() {
 }
 
 src_test() {
-	cargo test || die "tests failed"
+	RUST_BACKTRACE=1 cargo test --all || die "tests failed"
 }
 
 src_install() {
