@@ -81,8 +81,8 @@ raw-cpuid-6.1.0
 rdrand-0.4.0
 redox_syscall-0.1.56
 redox_users-0.3.0
-regex-1.1.9
-regex-syntax-0.6.8
+regex-1.2.0
+regex-syntax-0.6.10
 region-2.1.2
 rustc-demangle-0.1.15
 rustc_version-0.2.3
@@ -99,7 +99,7 @@ string-interner-0.6.3
 strsim-0.8.0
 structopt-0.2.18
 structopt-derive-0.2.18
-syn-0.15.39
+syn-0.15.40
 synstructure-0.10.2
 target-lexicon-0.4.0
 term-0.5.2
@@ -107,7 +107,7 @@ termcolor-1.0.5
 textwrap-0.11.0
 thread_local-0.3.6
 time-0.1.42
-ucd-util-0.1.3
+ucd-util-0.1.5
 unicode-segmentation-1.3.0
 unicode-width-0.1.5
 unicode-xid-0.1.0
