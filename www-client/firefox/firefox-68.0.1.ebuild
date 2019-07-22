@@ -270,6 +270,9 @@ src_prepare() {
 		eapply "${FILESDIR}/"${PN}-68.0-fix-lto.patch
 	fi
 
+	# to be removed in 68.1.0
+	eapply "${FILESDIR}/"firefox-68.0-fix-skia-on-i686.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
