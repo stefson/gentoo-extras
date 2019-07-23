@@ -561,7 +561,7 @@ src_configure() {
  	mozconfig_annotate 'remove accessibility' --disable-accessibility
 
 	if use arm ; then
-	mozconfig_annotate 'remove av1 decoder' --disable-alsa
+	mozconfig_annotate 'disable alsa, no sound anyway' --disable-alsa
  	mozconfig_annotate 'remove av1 decoder' --disable-av1
 	fi
 
