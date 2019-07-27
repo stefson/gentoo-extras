@@ -68,7 +68,6 @@ CDEPEND="
 	>=dev-libs/nspr-4.21
 	dev-libs/atk
 	dev-libs/expat
-	dev-libs/jsoncpp
 	>=x11-libs/cairo-1.10[X]
 	>=x11-libs/gtk+-2.18:2
 	>=x11-libs/gtk+-3.4.0:3=[X]
@@ -274,8 +273,10 @@ src_prepare() {
 	# to be removed in 68.1.0
 	eapply "${FILESDIR}/"firefox-68.0-fix-skia-on-i686.patch
 
+	# XXX sadly, this breaks cross compile. It might be related to '%/usr/include', hence
+	# pulling in systems deps somehow? 
 	# hack from debian, to use system-jsoncpp
-	eapply "${FILESDIR}/"firefox-68.0-system-jsoncpp.patch
+	# eapply "${FILESDIR}/"firefox-68.0-system-jsoncpp.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
