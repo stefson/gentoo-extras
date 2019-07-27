@@ -87,7 +87,7 @@ index 59022733ce0d..20b9733957d2 100644
  
  LOCAL_INCLUDES += [
 -    '/toolkit/components/jsoncpp/include',
-+    '%/usr/include',
++    '%/sys-include',
  ]
  
  if CONFIG['OS_TARGET'] != 'WINNT':
@@ -101,7 +101,7 @@ diff --git a/gfx/vr/service/moz.build b/gfx/vr/service/openvr/moz.build
  
  LOCAL_INCLUDES += [
 -    '/toolkit/components/jsoncpp/include',
-+    '%/usr/include',
++    '%/sys-include',
  ]
  
  USE_LIBS += [
