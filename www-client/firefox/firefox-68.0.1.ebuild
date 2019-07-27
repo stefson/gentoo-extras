@@ -565,9 +565,13 @@ src_configure() {
  	mozconfig_annotate 'remove accessibility' --disable-accessibility
 
 	if use arm ; then
-	mozconfig_annotate 'disable alsa, no sound anyway' --disable-alsa
- 	mozconfig_annotate 'remove av1 decoder' --disable-av1
+		mozconfig_annotate 'disable alsa, no sound anyway' --disable-alsa
+ 		mozconfig_annotate 'remove av1 decoder' --disable-av1
 	fi
+
+	if ! use amd64 ; then
+		mozconfig_annotate 'disable cranelift, not yet ported to ${ARCH}' --disable-cranelift
+	fi	
 
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
