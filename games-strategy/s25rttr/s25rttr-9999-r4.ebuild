@@ -8,12 +8,12 @@ inherit eutils cmake-utils gnome2-utils git-r3
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
-EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-EGIT_BRANCH="master"
+#EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+#EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
-#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-#EGIT_BRANCH="restructure"
+EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+EGIT_BRANCH="improve_resampling"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL-3"
@@ -36,23 +36,17 @@ DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.64.0:0=
 	sys-devel/gettext"
 
-PATCHES=(
-)
+#PATCHES=(
+#)
 
 src_prepare() {
+
 	# Ensure no bundled libraries are used
-
-#	for file in $(ls ${S}/external/); do
-#		# Preserve boost backports and kaguya
-#		if [ "${file}" != "backport" -a "${file}" != "kaguya" !="glad" ]; then
-#			rm -r contrib/"${file}" || die
-#		fi
-#	done
-
 	rm -r external/lua || die
 	rm -r external/macos || die
+	rm -r external/libsamplerate || die
+
 	rm external/full-contrib-msvc.rar || die
-#	mkdir RTTR || die
 
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
@@ -84,6 +78,7 @@ src_configure() {
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
 		-DBUILD_TESTING=OFF
 		-DRTTR_BUILD_UPDATER=OFF
+		-DRTTR_USE_SYSTEM_SAMPLERATE=ON
 	)
 
 	use arm && mycmakeargs+=(
@@ -103,9 +98,6 @@ src_compile() {
 src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
-	exeinto /usr/libexec/"${PN}"
-	doexe libexec/s25rttr/sound-convert libexec/s25rttr/s-c_resample
-
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL2.so
@@ -120,7 +112,6 @@ src_install() {
 	dobin bin/s25edit
 
 #	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
-#	make_desktop_entry "s25client" "Settlers RTTR" "${PN}" "Game;StrategyGame" "Path=/usr/bin"
 
 }
 
