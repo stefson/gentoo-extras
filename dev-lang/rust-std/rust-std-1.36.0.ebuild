@@ -20,13 +20,13 @@ SRC_URI="https://static.rust-lang.org/dist/"${P}"-"${RUSTHOST}".tar.xz"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="~amd64"
-IUSE="cpu_flags_x86_sse2 doc libressl +rust-std-armv7-h"
+IUSE="+rust-std-thumbv7-neon"
 
 DEPEND=""
-RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+RDEPEND="app-eselect/eselect-rust
 	=dev-lang/rust-bin-1.36.0
 	!dev-lang/rust:0"
-REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
+REQUIRED_USE=""
 
 QA_PREBUILT="
 	opt/"${RUST_PROVIDER}"/lib/rustlib/*/lib/*.so
@@ -45,22 +45,17 @@ src_prepare() {
 }
 
 src_install() {
-	local std=$(grep 'std' ./components)
-	local components="${std}"
 	./install.sh \
-		--components="${components}" \
 		--disable-verify \
 		--prefix="${D}/opt/"${RUST_PROVIDER}"" \
 		--disable-ldconfig \
 		|| die
 
-# INSTALL_MASK="${INSTALL_MASK} install.log rust-installer-version components uninstall.sh"
-
-#	rm "${S}"/opt/rust-std-1.30.1/lib/rustlib/components || die
-#	rm "${S}"/uninstall.sh || die
-#	rm "${S}"/rust-installer-version || die
-#	rm "${S}"/opt/rust-std-1.30.1/lib/rustlib/install.log || die
-
+	cd "${D}"/opt/"${RUST_PROVIDER}"/lib/rustlib || die
+	rm install.log || die
+	rm rust-installer-version || die
+	rm components || die
+	rm uninstall.sh || die
 }
 
 pkg_postinst() {
