@@ -61,8 +61,14 @@ src_unpack() {
 src_prepare() {
 	default
 	cd "${S}"/"${PN}"-"${RUSTHOST}"/lib/rustlib/"${RUSTHOST}"/lib || die
-	if use armv7-hardfloat-std ; then
+	if use armv6j-softfloat-std ; then
+		armv6j-unknown-linux-gnueabi-strip *.so || die
+	elif use armv6j-hardfloat-std ; then
+		armv6j-unknown-linux-gnueabihf-strip *.so || die 
+	elif use || armv7-hardfloat-std thumbv7-neon-std ; then
 		armv7a-unknown-linux-gnueabihf-strip *.so || die
+	elif use aarch64-gnu-std ; then
+		aarch64-unknown-linux-gnu-strip *.so || die
 	fi
 }
 
