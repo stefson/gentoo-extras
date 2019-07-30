@@ -106,7 +106,8 @@ rust_all_arch_uris()
   uris+="amd64? ( $(rust_arch_uri x86_64-unknown-linux-gnu       "$@") ) "
   uris+="arm?   ( $(rust_arch_uri arm-unknown-linux-gnueabi      "$@")
                   $(rust_arch_uri arm-unknown-linux-gnueabihf    "$@")
-                  $(rust_arch_uri armv7-unknown-linux-gnueabihf  "$@") ) "
+                  $(rust_arch_uri armv7-unknown-linux-gnueabihf  "$@")
+                  $(rust_arch_uri thumbv7neon-unknown-linux-gnueabihf  "$@") ) "
   uris+="arm64? ( $(rust_arch_uri aarch64-unknown-linux-gnu      "$@") ) "
   uris+="mips?  ( $(rust_arch_uri mips-unknown-linux-gnu         "$@")
                   $(rust_arch_uri mipsel-unknown-linux-gnu       "$@")
