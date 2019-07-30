@@ -9,13 +9,13 @@ MY_P="rust-std-${PV}"
 
 DESCRIPTION="std libraries for rust"
 HOMEPAGE="https://www.rust-lang.org/"
-#SRC_URI="$(rust_all_arch_uris ${MY_P})"
+SRC_URI="$(rust_all_arch_uris ${MY_P})"
 
 #RUSTHOST="armv7-unknown-linux-gnueabihf"
 RUSTHOST="thumbv7neon-unknown-linux-gnueabihf"
 RUST_PROVIDER="rust-bin-1.36.0"
 
-SRC_URI="https://static.rust-lang.org/dist/"${P}"-"${RUSTHOST}".tar.xz"
+#SRC_URI="https://static.rust-lang.org/dist/"${P}"-"${RUSTHOST}".tar.xz"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
