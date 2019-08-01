@@ -10,7 +10,8 @@ MY_P="rust-std-${PV}"
 DESCRIPTION="std libraries for rust"
 HOMEPAGE="https://www.rust-lang.org/"
 
-SRC_URI="armv6j-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-arm-unknown-linux-gnueabi.tar.xz )
+SRC_URI="armv5tel-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-armv5te-unknown-linux-gnueabi.tar.xz )
+	armv6j-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-arm-unknown-linux-gnueabi.tar.xz )
 	armv6j-hardfloat-std? ( https://static.rust-lang.org/dist/"${P}"-arm-unknown-linux-gnueabihf.tar.xz )
 	armv7-hardfloat-std? (  https://static.rust-lang.org/dist/"${P}"-armv7-unknown-linux-gnueabihf.tar.xz )
 	thumbv7-neon-std? ( https://static.rust-lang.org/dist/"${P}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )
@@ -21,7 +22,7 @@ RUST_PROVIDER="rust-bin-1.36.0"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="~amd64"
-IUSE="aarch64-gnu-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std thumbv7-neon-std"
+IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std thumbv7-neon-std"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
@@ -34,7 +35,9 @@ QA_PREBUILT="
 "
 
 pkg_setup() {
-	if use armv6j-softfloat-std ; then
+	if use armv5tel-softfloat-std ; then
+		RUSTHOST=armv5te-unknown-linux-gnueabi
+	elif use armv6j-softfloat-std ; then
 		RUSTHOST=arm-unknown-linux-gnueabi
 	elif use armv6j-hardfloat-std ; then
 		RUSTHOST=arm-unknown-linux-gnueabihf
@@ -59,7 +62,9 @@ src_unpack() {
 src_prepare() {
 	default
 	cd "${S}"/"${PN}"-"${RUSTHOST}"/lib/rustlib/"${RUSTHOST}"/lib || die
-	if use armv6j-softfloat-std ; then
+	if use armv5tel-softfloat-std ; then
+		armv5tel-unknown-linux-gnueabi-strip *.so || die
+	elif use armv6j-softfloat-std ; then
 		armv6j-unknown-linux-gnueabi-strip *.so || die
 	elif use armv6j-hardfloat-std ; then
 		armv6j-unknown-linux-gnueabihf-strip *.so || die 
