@@ -1,0 +1,100 @@
+# HG changeset patch
+# User Eric Rahm <erahm@mozilla.com>
+# Date 1562799811 0
+# Node ID 78deb0f239034979f37df845acba79b5a267ebad
+# Parent  2d91aeed09f88d75460a11db687fcf9fa8c5cb66
+Bug 1564647 - Fix sdp `...` range patterns are deprecated errors. r!drno r=drno,ng
+
+Differential Revision: https://phabricator.services.mozilla.com/D37510
+
+diff --git a/media/webrtc/signaling/src/sdp/rsdparsa/src/attribute_type.rs b/media/webrtc/signaling/src/sdp/rsdparsa/src/attribute_type.rs
+--- a/media/webrtc/signaling/src/sdp/rsdparsa/src/attribute_type.rs
++++ b/media/webrtc/signaling/src/sdp/rsdparsa/src/attribute_type.rs
+@@ -1812,26 +1812,26 @@ fn parse_fmtp(to_parse: &str) -> Result<
+ 
+             let parameter_name = name_value_pair[0];
+             let parameter_val = name_value_pair[1];
+ 
+             match parameter_name.to_uppercase().as_str() {
+                 // H264
+                 "PROFILE-LEVEL-ID" => {
+                     parameters.profile_level_id = match u32::from_str_radix(parameter_val, 16)? {
+-                        x @ 0...0x00ff_ffff => x,
++                        x @ 0..=0x00ff_ffff => x,
+                         _ => return Err(SdpParserInternalError::Generic(
+                             "The fmtp parameter 'profile-level-id' must be in range [0,0xffffff]"
+                                 .to_string(),
+                         )),
+                     }
+                 }
+                 "PACKETIZATION-MODE" => {
+                     parameters.packetization_mode = match parameter_val.parse::<u32>()? {
+-                        x @ 0...2 => x,
++                        x @ 0..=2 => x,
+                         _ => {
+                             return Err(SdpParserInternalError::Generic(
+                                 "The fmtp parameter 'packetization-mode' must be 0,1 or 2"
+                                     .to_string(),
+                             ));
+                         }
+                     }
+                 }
+@@ -1859,34 +1859,34 @@ fn parse_fmtp(to_parse: &str) -> Result<
+                 _ => parameters.unknown_tokens.push(parameter_token.to_string()),
+             }
+         }
+     } else if parameter_token.contains('/') {
+         let encodings: Vec<&str> = parameter_token.split('/').collect();
+ 
+         for encoding in encodings {
+             match encoding.parse::<u8>()? {
+-                x @ 0...128 => parameters.encodings.push(x),
++                x @ 0..=128 => parameters.encodings.push(x),
+                 _ => {
+                     return Err(SdpParserInternalError::Generic(
+                         "Red codec must be in range [0,128]".to_string(),
+                     ));
+                 }
+             }
+         }
+     } else {
+         // This is the case for the 'telephone-event' codec
+         let dtmf_tones: Vec<&str> = parameter_token.split(',').collect();
+         let mut dtmf_tone_is_ok = true;
+ 
+         // This closure verifies the output of some_number_as_string.parse::<u8>().ok() like calls
+         let validate_digits = |digit_option: Option<u8>| -> Option<u8> {
+             match digit_option {
+                 Some(x) => match x {
+-                    0...100 => Some(x),
++                    0..=100 => Some(x),
+                     _ => None,
+                 },
+                 None => None,
+             }
+         };
+ 
+         // This loop does some sanity checking on the passed dtmf tones
+         for dtmf_tone in dtmf_tones {
+diff --git a/media/webrtc/signaling/src/sdp/rsdparsa/src/media_type.rs b/media/webrtc/signaling/src/sdp/rsdparsa/src/media_type.rs
+--- a/media/webrtc/signaling/src/sdp/rsdparsa/src/media_type.rs
++++ b/media/webrtc/signaling/src/sdp/rsdparsa/src/media_type.rs
+@@ -366,17 +366,17 @@ pub fn parse_media(value: &str) -> Resul
+             let mut fmt_vec: Vec<u32> = vec![];
+             for num in fmt_slice {
+                 let fmt_num = num.parse::<u32>()?;
+                 match fmt_num {
+                     0  |  // PCMU
+                     8  |  // PCMA
+                     9  |  // G722
+                     13 |  // Comfort Noise
+-                    96 ... 127 => (),  // dynamic range
++                    96 ..= 127 => (),  // dynamic range
+                     _ => return Err(SdpParserInternalError::Generic(
+                           "format number in media line is out of range".to_string()))
+                 };
+                 fmt_vec.push(fmt_num);
+             }
+             SdpFormatList::Integers(fmt_vec)
+         }
+         SdpMediaValue::Application => {
