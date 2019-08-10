@@ -57,7 +57,6 @@ hashbrown-0.5.0
 hashmap_core-0.1.10
 heck-0.3.1
 humantime-1.2.0
-indicatif-0.11.0
 indexmap-1.0.2
 itoa-0.4.4
 lazy_static-1.3.0
@@ -129,7 +128,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=470ff52a51b37e58b2d6782df7a7a8bc61386368
+SRCHASH=81a02359304df32db0ff1e0c2088541de03d9875
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
