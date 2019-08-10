@@ -6,13 +6,13 @@
 EAPI=7
 
 CRATES="
-aho-corasick-0.7.4
+aho-corasick-0.7.6
 ansi_term-0.11.0
 argon2rs-0.2.5
 arrayvec-0.4.11
 atty-0.2.13
 autocfg-0.1.5
-backtrace-0.3.33
+backtrace-0.3.34
 backtrace-sys-0.1.31
 bitflags-1.1.0
 blake2-rfc-0.2.18
@@ -24,7 +24,7 @@ cfg-if-0.1.9
 chrono-0.4.7
 clap-2.33.0
 cloudabi-0.0.3
-cmake-0.1.40
+cmake-0.1.41
 constant_time_eq-0.1.3
 cranelift-0.38.0
 cranelift-bforest-0.38.0
