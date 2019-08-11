@@ -23,8 +23,10 @@ cc-1.0.38
 cfg-if-0.1.9
 chrono-0.4.7
 clap-2.33.0
+clicolors-control-1.0.0
 cloudabi-0.0.3
 cmake-0.1.41
+console-0.7.7
 constant_time_eq-0.1.3
 cranelift-0.38.0
 cranelift-bforest-0.38.0
@@ -40,6 +42,7 @@ cranelift-reader-0.38.0
 cranelift-simplejit-0.38.0
 cranelift-wasm-0.38.0
 dirs-1.0.5
+encode_unicode-0.3.5
 env_logger-0.6.2
 errno-0.2.4
 errno-dragonfly-0.1.1
@@ -58,10 +61,13 @@ hashmap_core-0.1.10
 heck-0.3.1
 humantime-1.2.0
 indexmap-1.0.2
+indicatif-0.11.0
 itoa-0.4.4
 lazy_static-1.3.0
 libc-0.2.60
-log-0.4.7
+lock_api-0.1.5
+lock_api-0.3.1
+log-0.4.8
 mach-0.2.3
 memchr-2.2.1
 memmap-0.7.0
@@ -69,11 +75,18 @@ nodrop-0.1.13
 num-integer-0.1.41
 num-traits-0.2.8
 num_cpus-1.10.1
+number_prefix-0.2.8
+owning_ref-0.4.0
+parking_lot-0.6.4
+parking_lot-0.9.0
+parking_lot_core-0.3.1
+parking_lot_core-0.6.2
 plain-0.2.3
 pretty_env_logger-0.3.0
 proc-macro2-0.4.30
 quick-error-1.2.2
 quote-0.6.13
+rand-0.5.6
 rand_core-0.3.1
 rand_core-0.4.0
 rand_os-0.1.3
@@ -87,6 +100,8 @@ region-2.1.2
 rustc-demangle-0.1.15
 rustc_version-0.2.3
 ryu-1.0.0
+scopeguard-0.3.3
+scopeguard-1.0.0
 scoped_threadpool-0.1.9
 scroll-0.9.2
 scroll_derive-0.9.5
@@ -95,6 +110,7 @@ semver-parser-0.7.0
 serde-1.0.97
 serde_derive-1.0.97
 serde_json-1.0.40
+smallvec-0.6.10
 string-interner-0.6.3
 strsim-0.8.0
 structopt-0.2.18
@@ -104,6 +120,7 @@ synstructure-0.10.2
 target-lexicon-0.4.0
 term-0.5.2
 termcolor-1.0.5
+termios-0.3.1
 textwrap-0.11.0
 thread_local-0.3.6
 time-0.1.42
@@ -128,7 +145,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=81a02359304df32db0ff1e0c2088541de03d9875
+SRCHASH=57fa45c8520110ee7e9b216538f1990376aed0e9
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
