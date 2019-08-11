@@ -19,7 +19,7 @@ EGIT_BRANCH="master"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 ~arm"
-IUSE=""
+IUSE="test"
 
 RDEPEND="app-arch/bzip2
 	dev-lang/lua:5.2
@@ -75,10 +75,15 @@ src_configure() {
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
-		-DBUILD_TESTING=OFF
 		-DRTTR_BUILD_UPDATER=OFF
 		-DRTTR_USE_SYSTEM_SAMPLERATE=ON
 	)
+
+	if ! use test ; then
+		mycmakeargs+=(
+			-DBUILD_TESTING=OFF
+		)
+	fi
 
 	use arm && mycmakeargs+=(
 		-DRTTR_TARGET_BOARD=RasPi2
@@ -92,6 +97,11 @@ src_compile() {
 	ln -s "${CMAKE_USE_DIR}"/RTTR "${CMAKE_BUILD_DIR}"/RTTR || die
 
 	cmake-utils_src_compile
+}
+
+src_test() {
+	# try to enable tests
+	cmake-utils_src_test
 }
 
 src_install() {
