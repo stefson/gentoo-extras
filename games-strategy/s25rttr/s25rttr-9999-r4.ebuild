@@ -87,6 +87,10 @@ src_configure() {
 		)
 	elif use test ; then
 	# todo: this needs CC=clang
+	einfo "Enforcing the use of clang due to USE=test ..."
+		CC=${CHOST}-clang
+		CXX=${CHOST}-clang++
+
 		mycmakeargs+=(
 			-DRTTR_ENABLE_SANITIZERS=ON
 			-DBUILD_TESTING=ON
