@@ -49,7 +49,6 @@ src_prepare() {
 
 	rm external/full-contrib-msvc.rar || die
 
-	rm -r bugle || die
 	rm -r tools || die
 	rm -r data/win32 || die
 
