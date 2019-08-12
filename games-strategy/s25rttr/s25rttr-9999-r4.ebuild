@@ -92,8 +92,8 @@ src_configure() {
 		CXX=${CHOST}-clang++
 
 		mycmakeargs+=(
-			-DRTTR_ENABLE_SANITIZERS=ON
 			-DBUILD_TESTING=ON
+			-DRTTR_ENABLE_SANITIZERS=ON
 		)
 	fi
 
