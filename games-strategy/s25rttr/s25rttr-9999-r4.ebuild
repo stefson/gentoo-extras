@@ -134,7 +134,7 @@ src_install() {
 	dobin bin/s25client
 	dobin bin/s25edit
 
-	doicon -s 64 tools/release/debian/s25rttr.png
+#	doicon -s 64 tools/release/debian/s25rttr.png
 }
 
 pkg_preinst() {
