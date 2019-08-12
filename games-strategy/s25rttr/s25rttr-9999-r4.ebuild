@@ -8,12 +8,12 @@ inherit eutils cmake-utils gnome2-utils git-r3
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
-#EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-#EGIT_BRANCH="master"
+EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
-EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-EGIT_BRANCH="sanitizers"
+#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+#EGIT_BRANCH="sanitizers"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL2+ GPL-3 Boost-1.0"
@@ -37,7 +37,9 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext
 	test? ( sys-devel/clang )"
 
-#PATCHES=()
+PATCHES=(
+	"${FILESDIR}"/c29cf9580a48548327f61e35f7f5ded396571e36.patch
+)
 
 src_prepare() {
 
@@ -86,7 +88,7 @@ src_configure() {
 	if ! use test ; then
 		mycmakeargs+=(
 			-DBUILD_TESTING=OFF
-			-DRTTR_ENABLE_SANITIZERS=OFF
+#			-DRTTR_ENABLE_SANITIZERS=OFF
 		)
 	elif use test ; then
 	# todo: this needs CC=clang
@@ -96,7 +98,7 @@ src_configure() {
 
 		mycmakeargs+=(
 			-DBUILD_TESTING=ON
-			-DRTTR_ENABLE_SANITIZERS=ON
+#			-DRTTR_ENABLE_SANITIZERS=ON
 		)
 	fi
 
