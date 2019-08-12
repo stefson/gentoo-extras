@@ -8,12 +8,12 @@ inherit eutils cmake-utils gnome2-utils git-r3
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
-EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-EGIT_BRANCH="master"
+#EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+#EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
-#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-#EGIT_BRANCH="improve_resampling"
+EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+EGIT_BRANCH="sanitizers"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL-3"
@@ -34,7 +34,8 @@ RDEPEND="app-arch/bzip2
 	virtual/opengl"
 DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.64.0:0=[nls]
-	sys-devel/gettext"
+	sys-devel/gettext
+	test? ( sys-devel/clang )"
 
 #PATCHES=(
 #)
@@ -82,12 +83,15 @@ src_configure() {
 	if ! use test ; then
 		mycmakeargs+=(
 			-DBUILD_TESTING=OFF
+			-DRTTR_ENABLE_SANITIZERS=OFF
+		)
+	elif use test ; then
+	# todo: this needs CC=clang
+		mycmakeargs+=(
+			-DRTTR_ENABLE_SANITIZERS=ON
+			-DBUILD_TESTING=ON
 		)
 	fi
-
-	use arm && mycmakeargs+=(
-		-DRTTR_TARGET_BOARD=RasPi2
-	)
 
 	cmake-utils_src_configure
 }
