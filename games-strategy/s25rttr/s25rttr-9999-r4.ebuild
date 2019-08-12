@@ -49,6 +49,10 @@ src_prepare() {
 
 	rm external/full-contrib-msvc.rar || die
 
+	rm -r bugle || die
+	rm -r tools || die
+	rm -r data/win32 || die
+
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
 	rm external/languages/.gitignore || die
@@ -125,9 +129,6 @@ src_install() {
 
 	dobin bin/s25client
 	dobin bin/s25edit
-
-#	doicon -s 64 "${CMAKE_USE_DIR}"/debian/${PN}.png
-
 }
 
 pkg_preinst() {
