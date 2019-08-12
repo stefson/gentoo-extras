@@ -4,13 +4,13 @@ Date: Sat, 23 Dec 2017 17:22:35 +0200
 Subject: [PATCH] Add unaligned test
 
 ---
- test/buffer_test.cpp | 12 ++++++++++++
+ libs/endian/test/buffer_test.cpp | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
 diff --git a/test/buffer_test.cpp b/test/buffer_test.cpp
 index e214a03..cb305f2 100644
---- a/test/buffer_test.cpp
-+++ b/test/buffer_test.cpp
+--- a/libs/endian/test/buffer_test.cpp
++++ b/libs/endian/test/buffer_test.cpp
 @@ -145,6 +145,12 @@ namespace
  
    }
