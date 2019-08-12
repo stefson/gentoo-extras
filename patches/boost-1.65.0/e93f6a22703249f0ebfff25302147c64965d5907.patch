@@ -4,13 +4,13 @@ Date: Sat, 23 Dec 2017 18:40:09 +0200
 Subject: [PATCH] Fix unaligned loads and stores
 
 ---
- include/boost/endian/buffers.hpp | 13 +++++++++++--
+ boost/endian/buffers.hpp | 13 +++++++++++--
  1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/include/boost/endian/buffers.hpp b/include/boost/endian/buffers.hpp
+diff --git a/boost/endian/buffers.hpp b/boost/endian/buffers.hpp
 index 081aee8..258bbec 100644
---- a/include/boost/endian/buffers.hpp
-+++ b/include/boost/endian/buffers.hpp
+--- a/boost/endian/buffers.hpp
++++ b/boost/endian/buffers.hpp
 @@ -47,6 +47,7 @@
  #include <boost/core/scoped_enum.hpp>
  #include <iosfwd>
