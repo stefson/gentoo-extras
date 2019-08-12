@@ -38,7 +38,10 @@ DEPEND="${RDEPEND}
 	test? ( sys-devel/clang )"
 
 PATCHES=(
-	"${FILESDIR}"/c29cf9580a48548327f61e35f7f5ded396571e36.patch
+	# fix for libsamplerate test
+#	"${FILESDIR}"/1091.patch
+	# this doesn't work for arm, you need the full sanitizer branch
+	# "${FILESDIR}"/c29cf9580a48548327f61e35f7f5ded396571e36.patch
 )
 
 src_prepare() {
@@ -130,6 +133,8 @@ src_install() {
 
 	dobin bin/s25client
 	dobin bin/s25edit
+
+	doicon -s 64 tools/release/debian/s25rttr.png
 }
 
 pkg_preinst() {
