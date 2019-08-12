@@ -37,8 +37,7 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext
 	test? ( sys-devel/clang )"
 
-#PATCHES=(
-#)
+#PATCHES=()
 
 src_prepare() {
 
@@ -49,6 +48,7 @@ src_prepare() {
 
 	rm external/full-contrib-msvc.rar || die
 
+	# removing one of these causes an error on arm
 	rm -r tools || die
 	rm -r data/win32 || die
 
