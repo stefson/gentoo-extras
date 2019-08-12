@@ -97,9 +97,7 @@ src_configure() {
 }
 
 src_compile() {
-	# work around some relative paths (CMAKE_IN_SOURCE_BUILD not supported)
-	ln -s "${CMAKE_USE_DIR}"/RTTR "${CMAKE_BUILD_DIR}"/RTTR || die
-
+	# source build now supported
 	cmake-utils_src_compile
 }
 
