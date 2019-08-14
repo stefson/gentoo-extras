@@ -40,8 +40,6 @@ DEPEND="${RDEPEND}
 PATCHES=(
 	# fix for libsamplerate test
 	"${FILESDIR}"/1091.patch
-	# this doesn't work for arm, you need the full sanitizer branch
-	# "${FILESDIR}"/c29cf9580a48548327f61e35f7f5ded396571e36.patch
 )
 
 src_prepare() {
