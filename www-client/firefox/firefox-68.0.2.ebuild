@@ -270,8 +270,10 @@ src_prepare() {
 		eapply "${FILESDIR}/"${PN}-68.0-fix-lto.patch
 	fi
 
-	# to be removed in 68.1.0
-	eapply "${FILESDIR}/"firefox-68.0-fix-skia-on-i686.patch
+	# to be removed in 68.1.0 (broken with 68.0.2?)
+	# eapply "${FILESDIR}/"firefox-68.0-fix-skia-on-i686.patch
+
+	eapply "${FILESDIR}/"firefox-68.0-update-mp4parse.patch
 
 	# XXX sadly, this breaks cross compile. It might be related to '%/usr/include', hence
 	# pulling in systems deps somehow? 
