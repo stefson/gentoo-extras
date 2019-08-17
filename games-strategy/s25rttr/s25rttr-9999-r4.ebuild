@@ -36,6 +36,7 @@ DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.64.0:0=[nls]
 	sys-devel/gettext
 	test? ( sys-devel/clang )"
+BDEPEND="app-arch/unzip"
 
 PATCHES=(
 	# fix for libsamplerate test
