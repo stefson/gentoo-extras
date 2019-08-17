@@ -161,14 +161,13 @@ DEPEND="${CDEPEND}
 	>=virtual/rust-1.34.0
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland] )
 	amd64? ( >=dev-lang/yasm-1.1 virtual/opengl )
+	x86? ( >=dev-lang/yasm-1.1 virtual/opengl )
 	!system-av1? (
 		amd64? ( >=dev-lang/nasm-2.13 )
 		x86? ( >=dev-lang/nasm-2.13 )
 	)"
 
 
-# Due to a bug in GCC, profile guided optimization will produce
-# AVX2 instructions, bug #677052
 REQUIRED_USE="wifi? ( dbus )
 	pgo? ( lto )"
 
