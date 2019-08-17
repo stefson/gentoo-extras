@@ -190,8 +190,8 @@ llvm_check_deps() {
 	fi
 
 	if use pgo ; then
-		if ! has usersandbox $FEATURES ; then
-			eerror "You must enable usersandbox as X server can not run as root!"
+		if ! has userpriv $FEATURES ; then
+			eerror "Building firefox with USE=pgo and FEATURES=-userpriv is not supported!"
 		fi
 	fi
 
