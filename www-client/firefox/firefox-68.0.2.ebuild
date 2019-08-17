@@ -577,7 +577,7 @@ src_configure() {
 	fi
 
 	if ! use amd64 ; then
-		mozconfig_annotate 'disable cranelift, not yet ported to ${ARCH}' --disable-cranelift
+		mozconfig_annotate 'disable cranelift, not yet ported to your arch' --disable-cranelift
 	fi	
 
 	# allow elfhack to work in combination with unstripped binaries
@@ -615,8 +615,14 @@ src_compile() {
 		addpredict /etc/gconf
 	fi
 
-	MOZ_MAKE_FLAGS="${MAKEOPTS} -O" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 ${_virtx} \
-	./mach build --verbose || die
+	GDK_BACKEND=x11 \
+		MOZ_MAKE_FLAGS="${MAKEOPTS} -O" \
+		SHELL="${SHELL:-${EPREFIX}/bin/bash}" \
+		MOZ_NOSPAM=1 \
+		${_virtx} \
+		./mach build --verbose \
+		|| die
+
 }
 
 src_install() {
