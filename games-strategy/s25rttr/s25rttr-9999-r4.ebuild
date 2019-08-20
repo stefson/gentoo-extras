@@ -1,6 +1,5 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/games-strategy/s25rttr/s25rttr-0.8.1.ebuild,v 1.1 2013/12/23 13:45:08 hasufell Exp $
 
 EAPI=6
 inherit eutils cmake-utils gnome2-utils git-r3
@@ -52,7 +51,7 @@ src_prepare() {
 
 	rm external/full-contrib-msvc.rar || die
 
-	# removing one of these causes an error on arm
+	# removing win32 causes an error with gcc
 	rm -r tools || die
 #	rm -r data/win32 || die
 
@@ -108,12 +107,10 @@ src_configure() {
 }
 
 src_compile() {
-	# source build now supported
 	cmake-utils_src_compile
 }
 
 src_test() {
-	# try to enable tests
 	cmake-utils_src_test
 }
 
