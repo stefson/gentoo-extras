@@ -51,7 +51,7 @@ encode_unicode-0.3.5
 env_logger-0.6.2
 errno-0.2.4
 errno-dragonfly-0.1.1
-faerie-0.10.1
+faerie-0.10.2
 failure-0.1.5
 failure_derive-0.1.5
 file-per-thread-logger-0.1.2
@@ -69,12 +69,14 @@ indexmap-1.1.0
 indicatif-0.11.0
 itoa-0.4.4
 lazy_static-1.3.0
+libc-0.1.12
 libc-0.2.62
 lock_api-0.3.1
 log-0.4.8
 mach-0.2.3
 memchr-2.2.1
 memmap-0.7.0
+mmap-0.1.1
 nodrop-0.1.13
 num-integer-0.1.41
 num-traits-0.2.8
@@ -89,6 +91,7 @@ proc-macro2-1.0.1
 quick-error-1.2.2
 quote-0.6.13
 quote-1.0.2
+rand-0.4.6
 rand_core-0.3.1
 rand_core-0.4.2
 rand_os-0.1.3
@@ -99,10 +102,12 @@ redox_users-0.3.1
 regex-1.2.1
 regex-syntax-0.6.11
 region-2.1.2
+remove_dir_all-0.5.2
 rust-argon2-0.5.1
 rustc-demangle-0.1.15
 rustc_version-0.2.3
 ryu-1.0.0
+same-file-1.0.5
 scopeguard-1.0.0
 scoped_threadpool-0.1.9
 scroll-0.9.2
@@ -121,6 +126,7 @@ syn-0.15.44
 syn-1.0.3
 synstructure-0.10.2
 target-lexicon-0.4.0
+tempdir-0.3.7
 term-0.6.1
 termcolor-1.0.5
 termios-0.3.1
@@ -136,6 +142,7 @@ utf8-ranges-1.0.3
 vec_map-0.8.1
 wabt-0.9.1
 wabt-sys-0.6.1
+walkdir-2.2.9
 wasmparser-0.36.0
 winapi-0.3.7
 winapi-i686-pc-windows-gnu-0.4.0
@@ -149,7 +156,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=5534fd2c2f411dcdb981f992239fc0e96790312b
+SRCHASH=c473078d269c9d1fad2a77294d2fbf8214373bdc
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
