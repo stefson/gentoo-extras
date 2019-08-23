@@ -8,7 +8,6 @@ EAPI=7
 CRATES="
 aho-corasick-0.7.6
 ansi_term-0.11.0
-argon2rs-0.2.5
 arrayref-0.3.5
 arrayvec-0.4.11
 atty-0.2.13
@@ -18,7 +17,6 @@ backtrace-sys-0.1.31
 base64-0.10.1
 bitflags-1.1.0
 blake2b_simd-0.5.7
-blake2-rfc-0.2.18
 byteorder-1.3.2
 capstone-0.6.0
 capstone-sys-0.10.0
@@ -63,7 +61,6 @@ goblin-0.0.23
 goblin-0.0.24
 hashbrown-0.5.0
 hashmap_core-0.1.11
-heck-0.3.1
 humantime-1.2.0
 indexmap-1.1.0
 indicatif-0.11.0
@@ -104,12 +101,11 @@ regex-syntax-0.6.11
 region-2.1.2
 remove_dir_all-0.5.2
 rust-argon2-0.5.1
-rustc-demangle-0.1.15
+rustc-demangle-0.1.16
 rustc_version-0.2.3
 ryu-1.0.0
 same-file-1.0.5
 scopeguard-1.0.0
-scoped_threadpool-0.1.9
 scroll-0.9.2
 scroll_derive-0.9.5
 semver-0.9.0
@@ -120,8 +116,6 @@ serde_json-1.0.40
 smallvec-0.6.10
 string-interner-0.6.3
 strsim-0.8.0
-structopt-0.2.18
-structopt-derive-0.2.18
 syn-0.15.44
 syn-1.0.3
 synstructure-0.10.2
@@ -133,12 +127,9 @@ termios-0.3.1
 textwrap-0.11.0
 thread_local-0.3.6
 time-0.1.42
-ucd-util-0.1.5
-unicode-segmentation-1.3.0
 unicode-width-0.1.6
 unicode-xid-0.1.0
 unicode-xid-0.2.0
-utf8-ranges-1.0.3
 vec_map-0.8.1
 wabt-0.9.1
 wabt-sys-0.6.1
