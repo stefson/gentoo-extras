@@ -143,7 +143,7 @@ vec_map-0.8.1
 wabt-0.9.1
 wabt-sys-0.6.1
 walkdir-2.2.9
-wasmparser-0.36.0
+wasmparser-0.37.0
 winapi-0.3.7
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.2
@@ -156,7 +156,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=c473078d269c9d1fad2a77294d2fbf8214373bdc
+SRCHASH=281914d8dc98b078d6d2dc4b742caa417eaaa296
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
