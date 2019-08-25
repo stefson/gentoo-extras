@@ -144,6 +144,8 @@ src_prepare() {
 		eapply "${FILESDIR}/"${PN}-60.7-rust-unitialized-field.patch
 	fi
 
+	eapply "${FILESDIR}/"firefox-68.0-dropping-header-on-freebsd.patch
+
 	rm -fr browser/extensions/pocket || die
 	rm -fr browser/extensions/{activity-stream,aushelper,followonsearch,formautofill,jaws-esr,onboarding,webcompat} || die
 
