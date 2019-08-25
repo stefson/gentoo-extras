@@ -193,8 +193,8 @@ src_configure() {
 		fi
 	fi
 
-	# Only available on mozilla-overlay for experimentation -- Removed in Gentoo repo per bug 571180
-	#use egl && mozconfig_annotate 'Enable EGL as GL provider' --with-gl-provider=EGL
+	# libclang.so is not properly detected work around issue
+	mozconfig_annotate '' --with-libclang-path="$(llvm-config --libdir)"
 
 	# Setup api key for location services and safebrowsing, https://bugzilla.mozilla.org/show_bug.cgi?id=1531176#c34
 	echo -n "${_google_api_key}" > "${S}"/google-api-key
