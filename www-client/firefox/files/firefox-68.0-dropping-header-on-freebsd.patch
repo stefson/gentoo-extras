@@ -1,0 +1,33 @@
+From b588aee56dcb51a61db718c3b607c3de1f25fb02 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?T=C4=B3l=20Coosemans?= <tijl@FreeBSD.org>
+Date: Wed, 21 Aug 2019 23:46:52 +0200
+Subject: [PATCH] Bug 1575876 - Drop header unused on FreeBSD that breaks with
+ new libc++.
+
+---
+ media/mtransport/third_party/nICEr/src/stun/stun.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/media/mtransport/third_party/nICEr/src/stun/stun.h b/media/mtransport/third_party/nICEr/src/stun/stun.h
+index 0d55b63a94c1a..a32751d7950f6 100644
+--- a/media/mtransport/third_party/nICEr/src/stun/stun.h
++++ b/media/mtransport/third_party/nICEr/src/stun/stun.h
+@@ -36,17 +36,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ #ifdef WIN32
+ #include <winsock2.h>
+ #else
+ #include <sys/param.h>
+ #include <sys/socket.h>
+ #ifndef LINUX
+ #include <net/if.h>
+-#if !defined(__OpenBSD__) && !defined(__NetBSD__)
++#ifdef DARWIN
+ #include <net/if_var.h>
+ #endif
+ #include <net/if_dl.h>
+ #include <net/if_types.h>
+ #else
+ #include <linux/if.h>
+ #endif
+ #ifndef BSD

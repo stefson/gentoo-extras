@@ -275,6 +275,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"firefox-68.0-update-mp4parse.patch
 
+	eapply "${FILESDIR}/"firefox-68.0-dropping-header-on-freebsd.patch
+
 	# XXX sadly, this breaks cross compile. It might be related to '%/usr/include', hence
 	# pulling in systems deps somehow? 
 	# hack from debian, to use system-jsoncpp
