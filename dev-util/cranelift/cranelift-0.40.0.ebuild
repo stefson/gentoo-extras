@@ -73,7 +73,6 @@ log-0.4.8
 mach-0.2.3
 memchr-2.2.1
 memmap-0.7.0
-mmap-0.1.1
 nodrop-0.1.13
 num-integer-0.1.41
 num-traits-0.2.8
@@ -147,7 +146,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=281914d8dc98b078d6d2dc4b742caa417eaaa296
+SRCHASH=ec29f612a48ddb98d4a87750a3790a69be1c39e1
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
