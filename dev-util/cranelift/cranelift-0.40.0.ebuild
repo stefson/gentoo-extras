@@ -24,10 +24,10 @@ cc-1.0.40
 cfg-if-0.1.9
 chrono-0.4.7
 clap-2.33.0
-clicolors-control-1.0.0
+clicolors-control-1.0.1
 cloudabi-0.0.3
 cmake-0.1.41
-console-0.7.7
+console-0.8.0
 constant_time_eq-0.1.4
 cranelift-0.40.0
 cranelift-bforest-0.40.0
@@ -116,7 +116,7 @@ smallvec-0.6.10
 string-interner-0.6.3
 strsim-0.8.0
 syn-0.15.44
-syn-1.0.3
+syn-1.0.5
 synstructure-0.10.2
 target-lexicon-0.4.0
 tempdir-0.3.7
@@ -133,7 +133,7 @@ vec_map-0.8.1
 wabt-0.9.1
 wabt-sys-0.6.1
 walkdir-2.2.9
-wasmparser-0.37.0
+wasmparser-0.37.1
 winapi-0.3.7
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.2
@@ -146,7 +146,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=ec29f612a48ddb98d4a87750a3790a69be1c39e1
+SRCHASH=d5058da505dd9cdf48858936dff52e5c3f6b72a3
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
