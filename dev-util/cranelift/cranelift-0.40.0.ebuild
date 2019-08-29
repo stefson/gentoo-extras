@@ -20,13 +20,13 @@ blake2b_simd-0.5.7
 byteorder-1.3.2
 capstone-0.6.0
 capstone-sys-0.10.0
-cc-1.0.40
+cc-1.0.41
 cfg-if-0.1.9
 chrono-0.4.7
 clap-2.33.0
 clicolors-control-1.0.1
 cloudabi-0.0.3
-cmake-0.1.41
+cmake-0.1.42
 console-0.8.0
 constant_time_eq-0.1.4
 cranelift-0.40.0
