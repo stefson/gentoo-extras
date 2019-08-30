@@ -11,9 +11,9 @@ DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
 RESTRICT="mirror"
-LICENSE="apache-2.0-with-llvm-exception"
+LICENSE="Apache-2.0-with-LLVM-exceptions"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS=""
 IUSE="cpu_flags_x86_sse2 test"
 
 EGIT_REPO_URI="https://github.com/CraneStation/cranelift.git"
