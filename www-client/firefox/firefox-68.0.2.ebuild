@@ -277,6 +277,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"firefox-68.0-dropping-header-on-freebsd.patch
 
+	eapply "${FILESDIR}/"firefox-68.0-fix-arm-enable-neon.patch
+
 	# XXX sadly, this breaks cross compile. It might be related to '%/usr/include', hence
 	# pulling in systems deps somehow? 
 	# hack from debian, to use system-jsoncpp
