@@ -1,0 +1,354 @@
+From 7064808191778dcf87c054e36bf7b871ee2ea851 Mon Sep 17 00:00:00 2001
+From: Flamefire <Flamefire@users.noreply.github.com>
+Date: Sun, 25 Aug 2019 14:35:47 +0200
+Subject: [PATCH] List all available files in OpenMap dialogue
+
+---
+ CIO/CFont.cpp      | 18 ++++++++------
+ CIO/CFont.h        |  9 +++----
+ CIO/CSelectBox.cpp | 58 +++++++++++-----------------------------------
+ CIO/CSelectBox.h   | 16 ++++++-------
+ callbacks.cpp      | 25 +++++++++++++-------
+ 5 files changed, 55 insertions(+), 71 deletions(-)
+
+diff --git a/CIO/CFont.cpp b/CIO/CFont.cpp
+index ec396bd..ca2cb99 100644
+--- a/CIO/CFont.cpp
++++ b/CIO/CFont.cpp
+@@ -11,7 +11,7 @@ CFont::CFont(std::string text, unsigned x, unsigned y, unsigned fontsize, unsign
+         this->fontsize_ = 9;
+     else
+         this->fontsize_ = fontsize;
+-    this->color_ = color;
++    initialColor_ = this->color_ = color;
+     callback = nullptr;
+     clickedParam = 0;
+     // create surface and write text to it
+@@ -34,7 +34,7 @@ void CFont::setFontsize(unsigned fontsize)
+ 
+ void CFont::setColor(unsigned color)
+ {
+-    this->color_ = color;
++    initialColor_ = color_ = color;
+     writeText();
+ }
+ 
+@@ -50,21 +50,25 @@ void CFont::setText(std::string text)
+ 
+ void CFont::setMouseData(SDL_MouseButtonEvent button)
+ {
++    if(!callback)
++        return;
+     // left button is pressed
+     if(button.button == SDL_BUTTON_LEFT)
+     {
+         if((button.x >= x_) && (button.x < x_ + w) && (button.y >= y_) && (button.y < y_ + h))
+         {
+             // if mouse button is pressed ON the text
+-            if((button.state == SDL_PRESSED) && callback)
++            if((button.state == SDL_PRESSED) && getColor() == initialColor_)
+             {
++                const auto tmpInitialColor = initialColor_;
+                 setColor(FONT_ORANGE);
+-            } else if(button.state == SDL_RELEASED)
++                initialColor_ = tmpInitialColor;
++            } else if(button.state == SDL_RELEASED && getColor() == FONT_ORANGE)
+             {
+-                if(color_ == FONT_ORANGE && callback)
+-                    callback(clickedParam);
++                callback(clickedParam);
+             }
+-        }
++        }else if(getColor() != initialColor_)
++            setColor(initialColor_);
+     }
+ }
+ 
+diff --git a/CIO/CFont.h b/CIO/CFont.h
+index bb0ff4b..15fc4b5 100644
+--- a/CIO/CFont.h
++++ b/CIO/CFont.h
+@@ -3,6 +3,7 @@
+ 
+ #include "../defines.h"
+ #include <SDL.h>
++#include <functional>
+ #include <string>
+ 
+ class CFont
+@@ -17,8 +18,8 @@ class CFont
+     Uint16 h;
+     std::string string_;
+     unsigned fontsize_; //== Uint16 h;
+-    unsigned color_;
+-    void (*callback)(int);
++    unsigned color_, initialColor_;
++    std::function<void(int)> callback;
+     int clickedParam;
+ 
+ public:
+@@ -36,9 +37,9 @@ class CFont
+     void setColor(unsigned color);
+     unsigned getColor() { return color_; }
+     void setText(std::string text);
+-    void setCallback(void (*callback)(int), int param)
++    void setCallback(std::function<void(int)> callback, int param)
+     {
+-        this->callback = callback;
++        this->callback = std::move(callback);
+         clickedParam = param;
+     }
+     void unsetCallback()
+diff --git a/CIO/CSelectBox.cpp b/CIO/CSelectBox.cpp
+index 59e9913..b11c587 100644
+--- a/CIO/CSelectBox.cpp
++++ b/CIO/CSelectBox.cpp
+@@ -14,49 +14,31 @@ CSelectBox::CSelectBox(Uint16 x, Uint16 y, Uint16 w, Uint16 h, int fontsize, int
+     this->fontsize = fontsize;
+     this->text_color = text_color;
+     setColor(bg_color);
+-    // initialize CFont array
+-    for(auto& entry : Entries)
+-        entry = nullptr;
+ 
+     Surf_SelectBox = nullptr;
+     needSurface = true;
+     needRender = true;
+     rendered = false;
+     // button position is relative to the selectbox
+-    ScrollUpButton = new CButton(nullptr, 0, w - 1 - 20, 0, 20, 20, BUTTON_GREY, nullptr, PICTURE_SMALL_ARROW_UP);
+-    ScrollDownButton = new CButton(nullptr, 0, w - 1 - 20, h - 1 - 20, 20, 20, BUTTON_GREY, nullptr, PICTURE_SMALL_ARROW_DOWN);
++    ScrollUpButton = std::make_unique<CButton>(nullptr, 0, w - 1 - 20, 0, 20, 20, BUTTON_GREY, nullptr, PICTURE_SMALL_ARROW_UP);
++    ScrollDownButton =
++      std::make_unique<CButton>(nullptr, 0, w - 1 - 20, h - 1 - 20, 20, 20, BUTTON_GREY, nullptr, PICTURE_SMALL_ARROW_DOWN);
+ }
+ 
+ CSelectBox::~CSelectBox()
+ {
+-    for(auto& entry : Entries)
+-    {
+-        if(entry)
+-        {
+-            delete entry;
+-            entry = nullptr;
+-        }
+-    }
+-    delete ScrollUpButton;
+-    delete ScrollDownButton;
+     SDL_FreeSurface(Surf_SelectBox);
+ }
+ 
+-void CSelectBox::setOption(const char* string, void (*callback)(int), int param)
++void CSelectBox::setOption(const std::string& string, std::function<void(int)> callback, int param)
+ {
+     // explanation: row_height = row_separator + fontsize
+     int row_height = (fontsize == 9 ? 1 : (fontsize == 11 ? 3 : 4)) + fontsize;
+ 
+-    for(auto& Entry : Entries)
+-    {
+-        if(!Entry)
+-        {
+-            Entry = new CFont(string, 10, last_text_pos_y, fontsize, FONT_YELLOW);
+-            Entry->setCallback(callback, param);
+-            last_text_pos_y += row_height;
+-            break;
+-        }
+-    }
++    auto Entry = std::make_unique<CFont>(string, 10, last_text_pos_y, fontsize, FONT_YELLOW);
++    Entry->setCallback(std::move(callback), param);
++    Entries.emplace_back(std::move(Entry));
++    last_text_pos_y += row_height;
+ }
+ 
+ bool CSelectBox::hasRendered()
+@@ -156,8 +138,7 @@ void CSelectBox::setMouseData(SDL_MouseButtonEvent button)
+ 
+                 for(auto& entry : Entries)
+                 {
+-                    if(entry)
+-                        entry->setMouseData(button);
++                    entry->setMouseData(button);
+                 }
+             }
+         } else if(button.state == SDL_RELEASED)
+@@ -174,8 +155,7 @@ void CSelectBox::setMouseData(SDL_MouseButtonEvent button)
+                         {
+                             for(auto& entry : Entries)
+                             {
+-                                if(entry)
+-                                    entry->setY(entry->getY() + 10);
++                                entry->setY(entry->getY() + 10);
+                             }
+                         }
+                     }
+@@ -186,19 +166,11 @@ void CSelectBox::setMouseData(SDL_MouseButtonEvent button)
+                     if((button.x > x_ + w_ - 20) && (button.y > y_ + h_ - 20))
+                     {
+                         // test if last entry is on the most lower position
+-                        int j;
+-                        for(j = 0; j < MAXSELECTBOXENTRIES; j++)
+-                        {
+-                            if(Entries[j] == nullptr)
+-                                break;
+-                        }
+-                        j--;
+-                        if(j >= 0 && Entries[j] != nullptr && Entries[j]->getY() > h_ - 10)
++                        if(!Entries.empty() && Entries.back()->getY() > h_ - 10)
+                         {
+                             for(auto& entry : Entries)
+                             {
+-                                if(entry)
+-                                    entry->setY(entry->getY() - 10);
++                                entry->setY(entry->getY() - 10);
+                             }
+                         }
+                     }
+@@ -212,8 +184,7 @@ void CSelectBox::setMouseData(SDL_MouseButtonEvent button)
+ 
+                 for(auto& entry : Entries)
+                 {
+-                    if(entry)
+-                        entry->setMouseData(button);
++                    entry->setMouseData(button);
+                 }
+             }
+             scroll_up_button_marked = false;
+@@ -305,8 +276,7 @@ bool CSelectBox::render()
+ 
+     for(auto& entry : Entries)
+     {
+-        if(entry)
+-            CSurface::Draw(Surf_SelectBox, entry->getSurface(), entry->getX(), entry->getY());
++        CSurface::Draw(Surf_SelectBox, entry->getSurface(), entry->getX(), entry->getY());
+     }
+ 
+     CSurface::Draw(Surf_SelectBox, ScrollUpButton->getSurface(), w_ - 1 - 20, 0);
+diff --git a/CIO/CSelectBox.h b/CIO/CSelectBox.h
+index 01a0cdd..e1591cc 100644
+--- a/CIO/CSelectBox.h
++++ b/CIO/CSelectBox.h
+@@ -3,20 +3,20 @@
+ 
+ #include "../defines.h"
+ #include <SDL.h>
++#include <functional>
++#include <memory>
++#include <vector>
+ 
+ class CFont;
+ class CButton;
+ 
+-// maximum number of entries for a selectbox
+-#define MAXSELECTBOXENTRIES 20000
+-
+ class CSelectBox
+ {
+     friend class CDebug;
+ 
+ private:
+     SDL_Surface* Surf_SelectBox;
+-    CFont* Entries[MAXSELECTBOXENTRIES];
++    std::vector<std::unique_ptr<CFont>> Entries;
+     bool needSurface;
+     bool needRender;
+     Uint16 x_;
+@@ -28,10 +28,10 @@ class CSelectBox
+     int pic_background;
+     int pic_foreground;
+     int text_color;
+-    // we need this to say the window if it needs to render, otherwise no chiffres are shown
++    // we need this to say the window if it needs to render, otherwise no chiffre are shown
+     bool rendered;
+-    CButton* ScrollUpButton;
+-    CButton* ScrollDownButton;
++    std::unique_ptr<CButton> ScrollUpButton;
++    std::unique_ptr<CButton> ScrollDownButton;
+ 
+ public:
+     // Constructor - Destructor
+@@ -60,7 +60,7 @@ class CSelectBox
+         text_color = color;
+         needRender = true;
+     }
+-    void setOption(const char* string, void (*callback)(int) = nullptr, int param = 0);
++    void setOption(const std::string& string, std::function<void(int)> callback = nullptr, int param = 0);
+ };
+ 
+ #endif
+diff --git a/callbacks.cpp b/callbacks.cpp
+index a61269c..ef3187a 100644
+--- a/callbacks.cpp
++++ b/callbacks.cpp
+@@ -754,8 +754,8 @@ void callback::EditorMainMenu(int Param)
+ void callback::EditorLoadMenu(int Param)
+ {
+     static CWindow* WNDLoad = nullptr;
+-    static CTextfield* TXTF_Filename = nullptr;
+     static CMap* MapObj = nullptr;
++    static std::string curFilename;
+ 
+     enum
+     {
+@@ -766,26 +766,34 @@ void callback::EditorLoadMenu(int Param)
+     switch(Param)
+     {
+         case INITIALIZING_CALL:
++        {
+             if(WNDLoad)
+                 break;
+             WNDLoad = global::s2->RegisterWindow(
+               std::make_unique<CWindow>(EditorLoadMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 140,
+-                                        global::s2->GameResolution.y / 2 - 45, 280, 120, "Load", WINDOW_GREEN1, WINDOW_CLOSE));
++                                        global::s2->GameResolution.y / 2 - 45, 280, 160, "Load", WINDOW_GREEN1, WINDOW_CLOSE));
+             MapObj = global::s2->getMapObj();
+ 
+-            TXTF_Filename = WNDLoad->addTextfield(10, 10, 21, 1);
+-            TXTF_Filename->setText("MyMap");
++            auto* CB_Filename = WNDLoad->addSelectBox(10, 20, 160, 130, 11);
++            curFilename.clear();
++            for(const auto& itFile : bfs::directory_iterator(global::userMapsPath))
++            {
++                if(is_regular_file(itFile.status()))
++                {
++                    const std::string filename = itFile.path().filename().string();
++                    CB_Filename->setOption(filename, [filename](int) { curFilename = filename; });
++                }
++            }
+             WNDLoad->addButton(EditorLoadMenu, LOADMAP, 170, 40, 90, 20, BUTTON_GREY, "Load");
+             WNDLoad->addButton(EditorLoadMenu, WINDOWQUIT, 170, 65, 90, 20, BUTTON_RED1, "Abort");
+             break;
+-
++        }
+         case WINDOWQUIT:
+             if(WNDLoad)
+             {
+                 WNDLoad->setWaste();
+                 WNDLoad = nullptr;
+             }
+-            TXTF_Filename = nullptr;
+             break;
+ 
+         case MAP_QUIT:
+@@ -794,11 +802,12 @@ void callback::EditorLoadMenu(int Param)
+                 WNDLoad->setWaste();
+                 WNDLoad = nullptr;
+             }
+-            TXTF_Filename = nullptr;
+             break;
+ 
+         case LOADMAP:
+         {
++            if(curFilename.empty())
++                return;
+             PleaseWait(INITIALIZING_CALL);
+ 
+             // we have to close the windows and initialize them again to prevent failures
+@@ -812,7 +821,7 @@ void callback::EditorLoadMenu(int Param)
+             EditorPlayerMenu(MAP_QUIT);
+ 
+             MapObj->destructMap();
+-            bfs::path filepath = bfs::path(global::userMapsPath) / TXTF_Filename->getText();
++            bfs::path filepath = bfs::path(global::userMapsPath) / curFilename;
+             if(!filepath.has_extension())
+                 filepath.replace_extension("SWD");
+             if(!bfs::exists(filepath))

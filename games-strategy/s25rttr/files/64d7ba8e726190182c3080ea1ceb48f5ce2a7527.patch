@@ -1,0 +1,2417 @@
+From 64d7ba8e726190182c3080ea1ceb48f5ce2a7527 Mon Sep 17 00:00:00 2001
+From: Flamefire <Flamefire@users.noreply.github.com>
+Date: Sun, 25 Aug 2019 13:57:25 +0200
+Subject: [PATCH] Cleanup by using some RAII
+
+---
+ CDebug.cpp         |  15 +-
+ CGame.cpp          | 228 +++++-------
+ CGame.h            |  37 +-
+ CGame_Cleanup.cpp  |  39 --
+ CGame_Event.cpp    |  25 +-
+ CGame_GameLoop.cpp |  22 --
+ CGame_Init.cpp     |  37 +-
+ CGame_Render.cpp   |  20 +-
+ CIO/CFile.cpp      |  88 ++---
+ CIO/CMenu.cpp      |   4 +-
+ CMakeLists.txt     |   4 -
+ CMap.cpp           |   5 +-
+ CSurface.cpp       |  40 ++-
+ CSurface.h         |   6 +
+ SdlSurface.h       |  19 +
+ callbacks.cpp      | 872 ++++++++++++++++++---------------------------
+ defines.h          |  11 +-
+ globals.h          |   2 +-
+ 18 files changed, 608 insertions(+), 866 deletions(-)
+ delete mode 100644 CGame_Cleanup.cpp
+ delete mode 100644 CGame_GameLoop.cpp
+ create mode 100644 SdlSurface.h
+
+diff --git a/CDebug.cpp b/CDebug.cpp
+index d31e6a0..bb49672 100644
+--- a/CDebug.cpp
++++ b/CDebug.cpp
+@@ -12,9 +12,8 @@
+ 
+ CDebug::CDebug(void dbgCallback(int), int quitParam)
+ {
+-    dbgWnd = new CWindow(dbgCallback, quitParam, 0, 0, 540, 130, "Debugger", WINDOW_GREEN1,
+-                         WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE | WINDOW_RESIZE);
+-    global::s2->RegisterWindow(dbgWnd);
++    dbgWnd = global::s2->RegisterWindow(std::make_unique<CWindow>(dbgCallback, quitParam, 0, 0, 540, 130, "Debugger", WINDOW_GREEN1,
++                                                                  WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE | WINDOW_RESIZE));
+     dbgWnd->addText("Debugger started", 0, 0, fontsize);
+     this->dbgCallback_ = dbgCallback;
+     FrameCounterText = nullptr;
+@@ -49,7 +48,7 @@ CDebug::CDebug(void dbgCallback(int), int quitParam)
+     unknown5Text = nullptr;
+     editorModeText = nullptr;
+     fontsize = 9;
+-    MapObj = global::s2->MapObj;
++    MapObj = global::s2->MapObj.get();
+     map = nullptr;
+     global::s2->RegisterCallback(dbgCallback);
+ 
+@@ -150,19 +149,19 @@ void CDebug::actualizeData()
+     if(!RegisteredMenusText)
+         RegisteredMenusText = dbgWnd->addText("", 0, 60, fontsize);
+     // write new RegisteredMenusText and draw it
+-    RegisteredMenusText->setText(helpers::format("Registered Menus: %d (max. %d)", global::s2->RegisteredMenus, MAXMENUS));
++    RegisteredMenusText->setText(helpers::format("Registered Menus: %d", global::s2->Menus.size()));
+ 
+     // del RegisteredWindowsText before drawing new
+     if(!RegisteredWindowsText)
+         RegisteredWindowsText = dbgWnd->addText("", 0, 70, fontsize);
+     // write new RegisteredWindowsText and draw it
+-    RegisteredWindowsText->setText(helpers::format("Registered Windows: %d (max. %d)", global::s2->RegisteredWindows, MAXWINDOWS));
++    RegisteredWindowsText->setText(helpers::format("Registered Windows: %d", global::s2->Windows.size()));
+ 
+     // del RegisteredCallbacksText before drawing new
+     if(!RegisteredCallbacksText)
+         RegisteredCallbacksText = dbgWnd->addText("", 0, 80, fontsize);
+     // write new RegisteredCallbacksText and draw it
+-    RegisteredCallbacksText->setText(helpers::format("Registered Callbacks: %d (max. %d)", global::s2->RegisteredCallbacks, MAXCALLBACKS));
++    RegisteredCallbacksText->setText(helpers::format("Registered Callbacks: %d", global::s2->Callbacks.size()));
+ 
+     if(!DisplayRectText)
+         DisplayRectText = dbgWnd->addText("", 0, 90, fontsize);
+@@ -171,7 +170,7 @@ void CDebug::actualizeData()
+                                              displayRect.right, displayRect.bottom, displayRect.getSize().x, displayRect.getSize().y));
+ 
+     // we will now write the map data if a map is active
+-    MapObj = global::s2->MapObj;
++    MapObj = global::s2->MapObj.get();
+     if(MapObj)
+     {
+         map = MapObj->map;
+diff --git a/CGame.cpp b/CGame.cpp
+index 9a9ceb7..23724d7 100644
+--- a/CGame.cpp
++++ b/CGame.cpp
+@@ -14,14 +14,10 @@ namespace bfs = boost::filesystem;
+ 
+ //#include <vld.h>
+ 
+-CGame::CGame()
+-    : GameResolution(1024, 768), fullscreen(false), Running(true), showLoadScreen(true), Surf_Display(nullptr), Surf_DisplayGL(nullptr)
++CGame::CGame() : GameResolution(1024, 768), fullscreen(false), Running(true), showLoadScreen(true)
+ {
+ #ifdef _ADMINMODE
+     FrameCounter = 0;
+-    RegisteredCallbacks = 0;
+-    RegisteredWindows = 0;
+-    RegisteredMenus = 0;
+ #endif
+ 
+     msWait = 0;
+@@ -33,16 +29,15 @@ CGame::CGame()
+     Cursor.button.left = false;
+     Cursor.button.right = false;
+ 
+-    for(auto& Menu : Menus)
+-        Menu = nullptr;
+-    for(auto& Window : Windows)
+-        Window = nullptr;
+-    for(auto& Callback : Callbacks)
+-        Callback = nullptr;
+-    MapObj = nullptr;
++    global::bmpArray.resize(MAXBOBBMP);
++    global::shadowArray.resize(MAXBOBSHADOW);
++    global::s2 = this;
+ }
+ 
+-CGame::~CGame() = default;
++CGame::~CGame()
++{
++    global::s2 = nullptr;
++}
+ 
+ int CGame::Execute()
+ {
+@@ -60,158 +55,106 @@ int CGame::Execute()
+         Render();
+     }
+ 
+-    Cleanup();
+-
+     return 0;
+ }
+ 
+-bool CGame::RegisterMenu(CMenu* Menu)
++CMenu* CGame::RegisterMenu(std::unique_ptr<CMenu> Menu)
+ {
+-    bool success = false;
+-
+-    if(!Menu)
+-        return success;
+     for(auto& i : Menus)
+-    {
+-        if(!success && !i)
+-        {
+-            i = Menu;
+-            i->setActive();
+-            success = true;
+-#ifdef _ADMINMODE
+-            RegisteredMenus++;
+-#endif
+-        } else if(i)
+-            i->setInactive();
+-    }
+-    return success;
++        i->setInactive();
++
++    Menu->setActive();
++    Menus.emplace_back(std::move(Menu));
++
++    return Menus.back().get();
+ }
+ 
+ bool CGame::UnregisterMenu(CMenu* Menu)
+ {
+-    if(!Menu)
++    auto it = std::find_if(Menus.begin(), Menus.end(), [Menu](const auto& cur) { return cur.get() == Menu; });
++    if(it == Menus.end())
+         return false;
+-    for(int i = 0; i < MAXMENUS; i++)
+-    {
+-        if(Menus[i] == Menu)
+-        {
+-            for(int j = i - 1; j >= 0; j--)
+-            {
+-                if(Menus[j])
+-                {
+-                    Menus[j]->setActive();
+-                    break;
+-                }
+-            }
+-            delete Menus[i];
+-            Menus[i] = nullptr;
+-#ifdef _ADMINMODE
+-            RegisteredMenus--;
+-#endif
+-            return true;
+-        }
+-    }
+-    return false;
++    if(it != Menus.begin())
++        it[-1]->setActive();
++    Menus.erase(it);
++    return true;
+ }
+ 
+-bool CGame::RegisterWindow(CWindow* Window)
++CWindow* CGame::RegisterWindow(std::unique_ptr<CWindow> Window)
+ {
+-    bool success = false;
+-    int highestPriority = 0;
+-
+     // first find the highest priority
+-    for(const auto* curWnd : Windows)
+-    {
+-        if(curWnd && curWnd->getPriority() > highestPriority)
+-            highestPriority = curWnd->getPriority();
+-    }
++    const auto itHighestPriority = std::max_element(
++      Windows.cbegin(), Windows.cend(), [](const auto& lhs, const auto& rhs) { return lhs->getPriority() < rhs->getPriority(); });
++    const int highestPriority = itHighestPriority == Windows.cend() ? 0 : (*itHighestPriority)->getPriority();
+ 
+-    if(!Window)
+-        return success;
+     for(auto& i : Windows)
+-    {
+-        if(!success && !i)
+-        {
+-            i = Window;
+-            i->setActive();
+-            i->setPriority(highestPriority + 1);
+-            success = true;
+-#ifdef _ADMINMODE
+-            RegisteredWindows++;
+-#endif
+-        } else if(i)
+-            i->setInactive();
+-    }
+-    return success;
++        i->setInactive();
++
++    Window->setActive();
++    Window->setPriority(highestPriority + 1);
++    Windows.emplace_back(std::move(Window));
++
++    return Windows.back().get();
+ }
+ 
+ bool CGame::UnregisterWindow(CWindow* Window)
+ {
+-    if(!Window)
++    auto it = std::find_if(Windows.begin(), Windows.end(), [Window](const auto& cur) { return cur.get() == Window; });
++    if(it == Windows.end())
+         return false;
+-    for(int i = 0; i < MAXWINDOWS; i++)
+-    {
+-        if(Windows[i] == Window)
+-        {
+-            for(int j = i - 1; j >= 0; j--)
+-            {
+-                if(Windows[j])
+-                {
+-                    Windows[j]->setActive();
+-                    break;
+-                }
+-            }
+-            delete Windows[i];
+-            Windows[i] = nullptr;
+-#ifdef _ADMINMODE
+-            RegisteredWindows--;
+-#endif
+-            return true;
+-        }
+-    }
+-    return false;
++    if(it != Windows.begin())
++        it[-1]->setActive();
++    Windows.erase(it);
++    return true;
+ }
+ 
+-bool CGame::RegisterCallback(void (*callback)(int))
++void CGame::RegisterCallback(void (*callback)(int))
+ {
+-    if(!callback)
+-        return false;
+-    for(auto& Callback : Callbacks)
+-    {
+-        if(!Callback)
+-        {
+-            Callback = callback;
+-#ifdef _ADMINMODE
+-            RegisteredCallbacks++;
+-#endif
+-            return true;
+-        }
+-    }
+-    return false;
++    assert(callback);
++    Callbacks.push_back(callback);
+ }
+ 
+ bool CGame::UnregisterCallback(void (*callback)(int))
+ {
+-    if(!callback)
++    auto it = std::find(Callbacks.begin(), Callbacks.end(), callback);
++    if(it == Callbacks.end())
+         return false;
+-    for(auto& Callback : Callbacks)
+-    {
+-        if(Callback == callback)
+-        {
+-            Callback = nullptr;
+-#ifdef _ADMINMODE
+-            RegisteredCallbacks--;
+-#endif
+-            return true;
+-        }
+-    }
+-    return false;
++    Callbacks.erase(it);
++    return true;
++}
++
++void CGame::setMapObj(std::unique_ptr<CMap> MapObj)
++{
++    this->MapObj = std::move(MapObj);
++}
++
++CMap* CGame::getMapObj()
++{
++    return MapObj.get();
+ }
+ 
+ void CGame::delMapObj()
+ {
+-    delete MapObj;
+-    MapObj = nullptr;
++    MapObj.reset();
++}
++
++void CGame::GameLoop()
++{
++    for(auto&& callback : Callbacks)
++        callback(CALL_FROM_GAMELOOP);
++    const auto isWaste = [](const auto& p) { return p->isWaste(); };
++    auto itMenu = std::find_if(Menus.begin(), Menus.end(), isWaste);
++    while(itMenu != Menus.end())
++    {
++        UnregisterMenu(itMenu->get());
++        itMenu = std::find_if(Menus.begin(), Menus.end(), isWaste);
++    }
++    auto itWnd = std::find_if(Windows.begin(), Windows.end(), isWaste);
++    while(itWnd != Windows.end())
++    {
++        UnregisterWindow(itWnd->get());
++        itWnd = std::find_if(Windows.begin(), Windows.end(), isWaste);
++    }
+ }
+ 
+ namespace {
+@@ -282,20 +225,25 @@ int main(int /*argc*/, char* /*argv*/ [])
+         return 1;
+     }
+ 
++    std::cout << "Initializing SDL...";
++    if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
++    {
++        std::cout << "failure";
++        return 1;
++    }
++    std::cout << "done\n";
++    int result = 0;
+     try
+     {
+-        global::s2 = new CGame;
+-
+-        global::s2->Execute();
++        auto s2 = std::make_unique<CGame>();
++        result = s2->Execute();
+     } catch(...)
+     {
+         std::cerr << "Unhandled Exception" << std::endl;
+-        delete global::s2;
+-        WaitForEnter();
+-        return 1;
++        result = 1;
+     }
+-    delete global::s2;
++    SDL_Quit();
+ 
+     WaitForEnter();
+-    return 0;
++    return result;
+ }
+diff --git a/CGame.h b/CGame.h
+index 75b7f2c..9135984 100644
+--- a/CGame.h
++++ b/CGame.h
+@@ -1,10 +1,10 @@
+ #ifndef _CGAME_H
+ #define _CGAME_H
+ 
+-#include "defines.h"
++#include "SdlSurface.h"
+ #include <Point.h>
+-#include <SDL.h>
+-#include <array>
++#include <memory>
++#include <vector>
+ 
+ class CWindow;
+ class CMap;
+@@ -20,15 +20,12 @@ class CGame
+ 
+     bool Running;
+     bool showLoadScreen;
+-    SDL_Surface *Surf_Display, *Surf_DisplayGL;
++    SdlSurface Surf_Display, Surf_DisplayGL;
+ 
+ private:
+ #ifdef _ADMINMODE
+     // some debugging variables
+     unsigned long int FrameCounter;
+-    int RegisteredCallbacks;
+-    int RegisteredWindows;
+-    int RegisteredMenus;
+ #endif
+     // milliseconds for SDL_Delay()
+     Uint32 msWait;
+@@ -45,13 +42,13 @@ class CGame
+     } Cursor;
+ 
+     // Object for Menu Screens
+-    std::array<CMenu*, MAXMENUS> Menus;
++    std::vector<std::unique_ptr<CMenu>> Menus;
+     // Object for Windows
+-    std::array<CWindow*, MAXWINDOWS> Windows;
++    std::vector<std::unique_ptr<CWindow>> Windows;
+     // Object for Callbacks
+-    std::array<void (*)(int), MAXCALLBACKS> Callbacks;
++    std::vector<void (*)(int)> Callbacks;
+     // Object for the Map
+-    CMap* MapObj;
++    std::unique_ptr<CMap> MapObj;
+ 
+     void SetAppIcon();
+ 
+@@ -70,19 +67,19 @@ class CGame
+ 
+     void Render();
+ 
+-    void Cleanup();
+-
+-    bool RegisterMenu(CMenu* Menu);
++    CMenu* RegisterMenu(std::unique_ptr<CMenu> Menu);
+     bool UnregisterMenu(CMenu* Menu);
+-    bool RegisterWindow(CWindow* Window);
++    CWindow* RegisterWindow(std::unique_ptr<CWindow> Window);
+     bool UnregisterWindow(CWindow* Window);
+-    bool RegisterCallback(void (*callback)(int));
++    void RegisterCallback(void (*callback)(int));
+     bool UnregisterCallback(void (*callback)(int));
+-    void setMapObj(CMap* MapObj) { this->MapObj = MapObj; };
+-    CMap* getMapObj() { return MapObj; };
++    void setMapObj(std::unique_ptr<CMap> MapObj);
++    ;
++    CMap* getMapObj();
++    ;
+     void delMapObj();
+-    SDL_Surface* getDisplaySurface() { return Surf_Display; };
+-    SDL_Surface* getDisplayGLSurface() { return Surf_DisplayGL; };
++    SDL_Surface* getDisplaySurface() { return Surf_Display.get(); };
++    SDL_Surface* getDisplayGLSurface() { return Surf_DisplayGL.get(); };
+     auto getRes() { return GameResolution; }
+ };
+ 
+diff --git a/CGame_Cleanup.cpp b/CGame_Cleanup.cpp
+deleted file mode 100644
+index ec1bbce..0000000
+--- a/CGame_Cleanup.cpp
++++ /dev/null
+@@ -1,39 +0,0 @@
+-#include "defines.h"
+-#include "CGame.h"
+-#include "globals.h"
+-#include <SDL.h>
+-
+-void CGame::Cleanup()
+-{
+-    // unregister menus
+-    for(auto& Menu : Menus)
+-    {
+-        if(Menu)
+-            CGame::UnregisterMenu(Menu);
+-    }
+-    // unregister windows
+-    for(auto& Window : Windows)
+-    {
+-        if(Window)
+-            CGame::UnregisterWindow(Window);
+-    }
+-
+-    // free all picture surfaces
+-    for(auto& i : global::bmpArray)
+-    {
+-        if(i.surface)
+-            SDL_FreeSurface(i.surface);
+-    }
+-    // free all shadow surfaces
+-    for(auto& i : global::shadowArray)
+-    {
+-        if(i.surface)
+-            SDL_FreeSurface(i.surface);
+-    }
+-
+-    SDL_FreeSurface(Surf_Display);
+-    if(Surf_DisplayGL)
+-        SDL_FreeSurface(Surf_DisplayGL);
+-
+-    SDL_Quit();
+-}
+diff --git a/CGame_Event.cpp b/CGame_Event.cpp
+index 40e06ca..4cd6752 100644
+--- a/CGame_Event.cpp
++++ b/CGame_Event.cpp
+@@ -20,14 +20,13 @@ void CGame::EventHandling(SDL_Event* Event)
+             int highestPriority = 0;
+             for(auto& Window : Windows)
+             {
+-                if(Window && Window->getPriority() > highestPriority)
++                if(Window->getPriority() > highestPriority)
+                     highestPriority = Window->getPriority();
+             }
+ 
+             for(auto& Window : Windows)
+             {
+-                if(Window && !Window->isWaste() && Window->isMarked() && Window->getPriority() == highestPriority
+-                   && Window->hasActiveInputElement())
++                if(!Window->isWaste() && Window->isMarked() && Window->getPriority() == highestPriority && Window->hasActiveInputElement())
+                 {
+                     Window->setKeyboardData(Event->key);
+                     delivered = true;
+@@ -50,7 +49,7 @@ void CGame::EventHandling(SDL_Event* Event)
+                 // deliver keyboard data to active menus
+                 for(auto& Menu : Menus)
+                 {
+-                    if(Menu && Menu->isActive() && !Menu->isWaste())
++                    if(Menu->isActive() && !Menu->isWaste())
+                         Menu->setKeyboardData(Event->key);
+                 }
+             }
+@@ -173,7 +172,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             int highestPriority = 0;
+             for(auto& Window : Windows)
+             {
+-                if(Window && Window->getPriority() > highestPriority)
++                if(Window->getPriority() > highestPriority)
+                     highestPriority = Window->getPriority();
+             }
+ 
+@@ -181,7 +180,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             {
+                 for(auto& Window : Windows)
+                 {
+-                    if(Window && !Window->isWaste() && Window->getPriority() == actualPriority)
++                    if(!Window->isWaste() && Window->getPriority() == actualPriority)
+                     {
+                         // is the cursor INSIDE the window or does the user move or resize the window?
+                         if(((Event->motion.x >= Window->getX()) && (Event->motion.x < Window->getX() + Window->getW())
+@@ -214,7 +213,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             // deliver mouse motion data to active menus
+             for(auto& Menu : Menus)
+             {
+-                if(Menu && Menu->isActive() && !Menu->isWaste())
++                if(Menu->isActive() && !Menu->isWaste())
+                 {
+                     Menu->setMouseData(Event->motion);
+                     break;
+@@ -251,7 +250,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             int highestPriority = 0;
+             for(auto& Window : Windows)
+             {
+-                if(Window && Window->getPriority() > highestPriority)
++                if(Window->getPriority() > highestPriority)
+                     highestPriority = Window->getPriority();
+             }
+ 
+@@ -259,7 +258,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             {
+                 for(auto& Window : Windows)
+                 {
+-                    if(Window && !Window->isWaste() && Window->getPriority() == actualPriority)
++                    if(!Window->isWaste() && Window->getPriority() == actualPriority)
+                     {
+                         // is the cursor INSIDE the window?
+                         if((Event->button.x >= Window->getX()) && (Event->button.x < Window->getX() + Window->getW())
+@@ -292,7 +291,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             // deliver mouse button data to active menus
+             for(auto& Menu : Menus)
+             {
+-                if(Menu && Menu->isActive() && !Menu->isWaste())
++                if(Menu->isActive() && !Menu->isWaste())
+                     Menu->setMouseData(Event->button);
+             }
+ 
+@@ -312,7 +311,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             int highestPriority = 0;
+             for(auto& Window : Windows)
+             {
+-                if(Window && Window->getPriority() > highestPriority)
++                if(Window->getPriority() > highestPriority)
+                     highestPriority = Window->getPriority();
+             }
+ 
+@@ -320,7 +319,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             {
+                 for(auto& Window : Windows)
+                 {
+-                    if(Window && !Window->isWaste() && Window->getPriority() == actualPriority)
++                    if(!Window->isWaste() && Window->getPriority() == actualPriority)
+                     {
+                         // is the cursor INSIDE the window?
+                         if((Event->button.x >= Window->getX()) && (Event->button.x < Window->getX() + Window->getW())
+@@ -363,7 +362,7 @@ void CGame::EventHandling(SDL_Event* Event)
+             // deliver mouse button data to active menus
+             for(auto& Menu : Menus)
+             {
+-                if(Menu && Menu->isActive() && !Menu->isWaste())
++                if(Menu->isActive() && !Menu->isWaste())
+                     Menu->setMouseData(Event->button);
+             }
+             break;
+diff --git a/CGame_GameLoop.cpp b/CGame_GameLoop.cpp
+deleted file mode 100644
+index 9dc034d..0000000
+--- a/CGame_GameLoop.cpp
++++ /dev/null
+@@ -1,22 +0,0 @@
+-#include "CGame.h"
+-#include "CIO/CMenu.h"
+-#include "CIO/CWindow.h"
+-
+-void CGame::GameLoop()
+-{
+-    for(int i = 0; i < MAXCALLBACKS; i++)
+-    {
+-        if(Callbacks[i] != nullptr)
+-            Callbacks[i](CALL_FROM_GAMELOOP);
+-    }
+-    for(int i = 0; i < MAXMENUS; i++)
+-    {
+-        if(Menus[i] != nullptr && Menus[i]->isWaste())
+-            UnregisterMenu(Menus[i]);
+-    }
+-    for(int i = 0; i < MAXWINDOWS; i++)
+-    {
+-        if(Windows[i] != nullptr && Windows[i]->isWaste())
+-            UnregisterWindow(Windows[i]);
+-    }
+-}
+diff --git a/CGame_Init.cpp b/CGame_Init.cpp
+index f463b0f..f74fe53 100644
+--- a/CGame_Init.cpp
++++ b/CGame_Init.cpp
+@@ -1,5 +1,6 @@
+ #include "CGame.h"
+ #include "CIO/CFile.h"
++#include "CMap.h"
+ #include "CSurface.h"
+ #include "SGE/sge_blib.h"
+ #include "callbacks.h"
+@@ -11,44 +12,34 @@
+ 
+ bool CGame::ReCreateWindow()
+ {
+-    SDL_FreeSurface(Surf_Display);
+-    Surf_Display = nullptr;
+-    SDL_FreeSurface(Surf_DisplayGL);
+-    Surf_DisplayGL = nullptr;
+     if(CSurface::useOpenGL)
+     {
+-        Surf_DisplayGL = SDL_SetVideoMode(GameResolution.x, GameResolution.y, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0));
+-        Surf_Display = SDL_CreateRGBSurface(SDL_SWSURFACE, GameResolution.x, GameResolution.y, 32, 0, 0, 0, 0);
++        Surf_DisplayGL.reset(SDL_SetVideoMode(GameResolution.x, GameResolution.y, 32, SDL_OPENGL | (fullscreen ? SDL_FULLSCREEN : 0)));
++        Surf_Display = makeSdlSurface(SDL_SWSURFACE, GameResolution.x, GameResolution.y, 32);
+         if(!Surf_Display || !Surf_DisplayGL)
+             return false;
+     } else
+     {
+-        Surf_Display =
+-          SDL_SetVideoMode(GameResolution.x, GameResolution.y, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | (fullscreen ? SDL_FULLSCREEN : 0));
++        Surf_Display.reset(
++          SDL_SetVideoMode(GameResolution.x, GameResolution.y, 32, SDL_SWSURFACE | SDL_DOUBLEBUF | (fullscreen ? SDL_FULLSCREEN : 0)));
++        Surf_DisplayGL.reset();
+         if(!Surf_Display)
+             return false;
+     }
+ 
+-    SDL_WM_SetCaption("Return to the Roots Mapeditor [BETA]", nullptr);
++    SDL_WM_SetCaption("Return to the Roots Map editor [BETA]", nullptr);
+     SetAppIcon();
+     return true;
+ }
+ 
+ bool CGame::Init()
+ {
+-    std::cout << "Return to the Roots Mapeditor\n";
+-
+-    std::cout << "\nInitializing SDL...";
+-    if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
+-    {
+-        std::cout << "failure";
+-        return false;
+-    }
++    std::cout << "Return to the Roots Map editor\n";
+ 
+     SDL_EnableKeyRepeat(100, 100);
+     SDL_ShowCursor(SDL_DISABLE);
+ 
+-    std::cout << "\nCreate Window...";
++    std::cout << "Create Window...";
+     if(!ReCreateWindow())
+     {
+         std::cout << "failure";
+@@ -72,7 +63,7 @@ bool CGame::Init()
+     if(!CFile::open_file(global::gameDataFilePath + "/GFX/PICS/SETUP997.LBM", LBM))
+     {
+         std::cout << "failure";
+-        // if SETUP997.LBM doesn't exist, it's probably settlers2+missioncd and there we have SETUP998.LBM instead
++        // if SETUP997.LBM doesn't exist, it's probably settlers2+mission cd and there we have SETUP998.LBM instead
+         std::cout << "\nTry to load file: /GFX/PICS/SETUP998.LBM instead...";
+         if(!CFile::open_file(global::gameDataFilePath + "/GFX/PICS/SETUP998.LBM", LBM))
+         {
+@@ -84,10 +75,10 @@ bool CGame::Init()
+     // std::cout << "\nShow loading screen...";
+     showLoadScreen = true;
+     // CSurface::Draw(Surf_Display, global::bmpArray[SPLASHSCREEN_LOADING_S2SCREEN].surface, 0, 0);
+-    SDL_Surface* surfSplash = global::bmpArray[SPLASHSCREEN_LOADING_S2SCREEN].surface;
+-    sge_TexturedRect(Surf_Display, 0, 0, Surf_Display->w - 1, 0, 0, Surf_Display->h - 1, Surf_Display->w - 1, Surf_Display->h - 1,
+-                     surfSplash, 0, 0, surfSplash->w - 1, 0, 0, surfSplash->h - 1, surfSplash->w - 1, surfSplash->h - 1);
+-    SDL_Flip(Surf_Display);
++    auto& surfSplash = global::bmpArray[SPLASHSCREEN_LOADING_S2SCREEN].surface;
++    sge_TexturedRect(Surf_Display.get(), 0, 0, Surf_Display->w - 1, 0, 0, Surf_Display->h - 1, Surf_Display->w - 1, Surf_Display->h - 1,
++                     surfSplash.get(), 0, 0, surfSplash->w - 1, 0, 0, surfSplash->h - 1, surfSplash->w - 1, surfSplash->h - 1);
++    SDL_Flip(Surf_Display.get());
+ 
+     GameDataLoader gdLoader(global::worldDesc);
+     if(!gdLoader.Load())
+diff --git a/CGame_Render.cpp b/CGame_Render.cpp
+index 67d3509..5dc9bb7 100644
+--- a/CGame_Render.cpp
++++ b/CGame_Render.cpp
+@@ -43,15 +43,15 @@ void CGame::Render()
+     if(showLoadScreen)
+     {
+         // CSurface::Draw(Surf_Display, global::bmpArray[SPLASHSCREEN_LOADING_S2SCREEN].surface, 0, 0);
+-        SDL_Surface* surfLoadScreen = global::bmpArray[SPLASHSCREEN_LOADING_S2SCREEN].surface;
+-        sge_TexturedRect(Surf_Display, 0, 0, Surf_Display->w - 1, 0, 0, Surf_Display->h - 1, Surf_Display->w - 1, Surf_Display->h - 1,
+-                         surfLoadScreen, 0, 0, surfLoadScreen->w - 1, 0, 0, surfLoadScreen->h - 1, surfLoadScreen->w - 1,
++        auto& surfLoadScreen = global::bmpArray[SPLASHSCREEN_LOADING_S2SCREEN].surface;
++        sge_TexturedRect(Surf_Display.get(), 0, 0, Surf_Display->w - 1, 0, 0, Surf_Display->h - 1, Surf_Display->w - 1, Surf_Display->h - 1,
++                         surfLoadScreen.get(), 0, 0, surfLoadScreen->w - 1, 0, 0, surfLoadScreen->h - 1, surfLoadScreen->w - 1,
+                          surfLoadScreen->h - 1);
+ 
+         if(CSurface::useOpenGL)
+             SDL_GL_SwapBuffers();
+         else
+-            SDL_Flip(Surf_Display);
++            SDL_Flip(Surf_Display.get());
+         return;
+     }
+ 
+@@ -62,7 +62,7 @@ void CGame::Render()
+     // render active menus
+     for(auto& Menu : Menus)
+     {
+-        if(Menu && Menu->isActive())
++        if(Menu->isActive())
+             CSurface::Draw(Surf_Display, Menu->getSurface(), 0, 0);
+     }
+ 
+@@ -71,7 +71,7 @@ void CGame::Render()
+     // first find the highest priority
+     for(auto& Window : Windows)
+     {
+-        if(Window && Window->getPriority() > highestPriority)
++        if(Window->getPriority() > highestPriority)
+             highestPriority = Window->getPriority();
+     }
+     // render from lowest priority to highest
+@@ -79,7 +79,7 @@ void CGame::Render()
+     {
+         for(auto& Window : Windows)
+         {
+-            if(Window && Window->getPriority() == actualPriority)
++            if(Window->getPriority() == actualPriority)
+                 CSurface::Draw(Surf_Display, Window->getSurface(), Window->getX(), Window->getY());
+         }
+     }
+@@ -100,11 +100,11 @@ void CGame::Render()
+ 
+     if(CSurface::useOpenGL)
+     {
+-        SDL_BlitSurface(Surf_Display, nullptr, Surf_DisplayGL, nullptr);
+-        SDL_Flip(Surf_DisplayGL);
++        SDL_BlitSurface(Surf_Display.get(), nullptr, Surf_DisplayGL.get(), nullptr);
++        SDL_Flip(Surf_DisplayGL.get());
+         SDL_GL_SwapBuffers();
+     } else
+-        SDL_Flip(Surf_Display);
++        SDL_Flip(Surf_Display.get());
+ 
+     SDL_Delay(msWait);
+ }
+diff --git a/CIO/CFile.cpp b/CIO/CFile.cpp
+index 3410c12..179c158 100644
+--- a/CIO/CFile.cpp
++++ b/CIO/CFile.cpp
+@@ -435,9 +435,9 @@ bool CFile::open_lbm(const std::string& filename)
+     CHECK_READ(libendian::be_read_ui(&length, fp));
+ 
+     // now we are ready to read the picture lines and fill the surface, so lets create one
+-    if(!(bmpArray->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)))
++    if(!(bmpArray->surface = makeSdlSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)))
+         return false;
+-    SDL_SetPalette(bmpArray->surface, SDL_LOGPAL, colors.data(), 0, colors.size());
++    SDL_SetPalette(bmpArray->surface.get(), SDL_LOGPAL, colors.data(), 0, colors.size());
+ 
+     if(compression_flag == 0)
+     {
+@@ -451,7 +451,7 @@ bool CFile::open_lbm(const std::string& filename)
+                 // read color value (1 Byte)
+                 CHECK_READ(libendian::read(&color_value, 1, fp));
+                 // draw
+-                CSurface::DrawPixel_Color(bmpArray->surface, x, y, (Uint32)color_value);
++                CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, (Uint32)color_value);
+             }
+         }
+ 
+@@ -478,7 +478,7 @@ bool CFile::open_lbm(const std::string& filename)
+                         // read color value (1 Byte)
+                         CHECK_READ(libendian::read(&color_value, 1, fp));
+                         // draw
+-                        CSurface::DrawPixel_Color(bmpArray->surface, x, y, (Uint32)color_value);
++                        CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, (Uint32)color_value);
+                     }
+                 } else if(ctype >= -127)
+                 {
+@@ -486,7 +486,7 @@ bool CFile::open_lbm(const std::string& filename)
+                     CHECK_READ(libendian::read(&color_value, 1, fp));
+ 
+                     for(int k = 0; k < -ctype + 1; k++, x++)
+-                        CSurface::DrawPixel_Color(bmpArray->surface, x, y, (Uint32)color_value);
++                        CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, (Uint32)color_value);
+                 } else // if (ctype == -128)
+                 {
+                     // ignore
+@@ -501,12 +501,12 @@ bool CFile::open_lbm(const std::string& filename)
+        || filename.find("TEX7.LBM") != std::string::npos || filename.find("TEXTUR_0.LBM") != std::string::npos
+        || filename.find("TEXTUR_3.LBM") != std::string::npos)
+     {
+-        SDL_SetColorKey(bmpArray->surface, SDL_SRCCOLORKEY, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
++        SDL_SetColorKey(bmpArray->surface.get(), SDL_SRCCOLORKEY, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
+ 
+         bmpArray++;
+-        if((bmpArray->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, (bmpArray - 1)->w, (bmpArray - 1)->h, 32, 0, 0, 0, 0)))
++        if((bmpArray->surface = makeSdlSurface(SDL_SWSURFACE, (bmpArray - 1)->w, (bmpArray - 1)->h, 32, 0, 0, 0, 0)))
+         {
+-            SDL_SetColorKey(bmpArray->surface, SDL_SRCCOLORKEY, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
++            SDL_SetColorKey(bmpArray->surface.get(), SDL_SRCCOLORKEY, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
+             CSurface::Draw(bmpArray->surface, (bmpArray - 1)->surface, 0, 0);
+         } else
+             bmpArray--;
+@@ -1029,11 +1029,11 @@ bool CFile::read_bob02()
+     fseek(fp, 4, SEEK_CUR);
+     // width of picture (2 Bytes)
+     CHECK_READ(libendian::le_read_us(&(bmpArray->w), fp));
+-    // heigth of picture (2 Bytes)
++    // height of picture (2 Bytes)
+     CHECK_READ(libendian::le_read_us(&(bmpArray->h), fp));
+     // skip unknown data (1x 2 Bytes)
+     fseek(fp, 2, SEEK_CUR);
+-    // length of datablock (1x 4 Bytes)
++    // length of data block (1x 4 Bytes)
+     CHECK_READ(libendian::le_read_ui(&length, fp));
+     // fp points now ON the first start adress, so "actual position + length = first offset of next entry in the file"
+     starting_point = ftell(fp);
+@@ -1046,18 +1046,18 @@ bool CFile::read_bob02()
+         return true;
+     }
+ 
+-    // array for start adresses of picture lines
++    // array for start addresses of picture lines
+     starts = new Uint16[bmpArray->h];
+ 
+-    // read start adresses
++    // read start addresses
+     for(int y = 0; y < bmpArray->h; y++)
+         CHECK_READ(libendian::le_read_us(&starts[y], fp));
+ 
+     // now we are ready to read the picture lines and fill the surface, so lets create one
+-    if((bmpArray->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)) == nullptr)
++    if((bmpArray->surface = makeSdlSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)) == nullptr)
+         return false;
+-    SDL_SetPalette(bmpArray->surface, SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
+-    SDL_SetColorKey(bmpArray->surface, SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
++    SDL_SetPalette(bmpArray->surface.get(), SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
++    SDL_SetColorKey(bmpArray->surface.get(), SDL_SRCCOLORKEY | SDL_RLEACCEL, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
+     // SDL_SetAlpha(bmpArray->surface, SDL_SRCALPHA, 128);
+ 
+     // main loop for reading picture lines
+@@ -1067,7 +1067,7 @@ bool CFile::read_bob02()
+         fseek(fp, starting_point + (Uint32)starts[y], SEEK_SET);
+ 
+         // loop for reading pixels of the actual picture line
+-        //(cause of a kind of RLE-Compression we cannot read the pixels sequentielly)
++        //(cause of a kind of RLE-Compression we cannot read the pixels sequentially)
+         //'x' will be incremented WITHIN the loop
+         for(int x = 0; x < bmpArray->w;)
+         {
+@@ -1080,7 +1080,7 @@ bool CFile::read_bob02()
+                 // read color value (1 Byte)
+                 CHECK_READ(libendian::read(&color_value, 1, fp));
+                 // draw
+-                CSurface::DrawPixel_Color(bmpArray->surface, x, y, (Uint32)color_value);
++                CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, (Uint32)color_value);
+             }
+ 
+             // number of transparent pixels to draw now (1 Byte)
+@@ -1089,17 +1089,17 @@ bool CFile::read_bob02()
+             // loop for drawing the transparent pixels to the surface
+             for(int k = 0; k < count_trans; k++, x++)
+             {
+-                CSurface::DrawPixel_RGBA(bmpArray->surface, x, y, 0, 0, 0, 0);
++                CSurface::DrawPixel_RGBA(bmpArray->surface.get(), x, y, 0, 0, 0, 0);
+             }
+         }
+ 
+-        // the end of line should be 0xFF, otherwise an error has ocurred (1 Byte)
++        // the end of line should be 0xFF, otherwise an error has occurred (1 Byte)
+         CHECK_READ(libendian::read(&endmark, 1, fp));
+         if(endmark != 0xFF)
+             return false;
+     }
+ 
+-    // at the end of the block (after the last line) there should be another 0xFF, otherwise an error has ocurred (1 Byte)
++    // at the end of the block (after the last line) there should be another 0xFF, otherwise an error has occurred (1 Byte)
+     CHECK_READ(libendian::read(&endmark, 1, fp));
+     if(endmark != 0xFF)
+         return false;
+@@ -1216,19 +1216,19 @@ bool CFile::read_bob04(int player_color)
+         return true;
+     }
+ 
+-    // array for start adresses of picture lines
++    // array for start addresses of picture lines
+     starts = new Uint16[bmpArray->h];
+ 
+-    // read start adresses
++    // read start addresses
+     for(int y = 0; y < bmpArray->h; y++)
+         CHECK_READ(libendian::le_read_us(&starts[y], fp));
+ 
+     // now we are ready to read the picture lines and fill the surface, so lets create one
+-    if((bmpArray->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)) == nullptr)
++    if((bmpArray->surface = makeSdlSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)) == nullptr)
+         return false;
+ 
+-    SDL_SetPalette(bmpArray->surface, SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
+-    SDL_SetColorKey(bmpArray->surface, SDL_SRCCOLORKEY, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
++    SDL_SetPalette(bmpArray->surface.get(), SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
++    SDL_SetColorKey(bmpArray->surface.get(), SDL_SRCCOLORKEY, SDL_MapRGB(bmpArray->surface->format, 0, 0, 0));
+ 
+     // main loop for reading picture lines
+     for(int y = 0; y < bmpArray->h; y++)
+@@ -1237,7 +1237,7 @@ bool CFile::read_bob04(int player_color)
+         fseek(fp, starting_point + (Uint32)starts[y], SEEK_SET);
+ 
+         // loop for reading pixels of the actual picture line
+-        //(cause of a kind of RLE-Compression we cannot read the pixels sequentielly)
++        //(cause of a kind of RLE-Compression we cannot read the pixels sequentially)
+         //'x' will be incremented WITHIN the loop
+         for(int x = 0; x < bmpArray->w;)
+         {
+@@ -1248,7 +1248,7 @@ bool CFile::read_bob04(int player_color)
+             {
+                 for(int i = 1; i <= shift; i++, x++)
+                 {
+-                    CSurface::DrawPixel_RGBA(bmpArray->surface, x, y, 0, 0, 0, 0);
++                    CSurface::DrawPixel_RGBA(bmpArray->surface.get(), x, y, 0, 0, 0, 0);
+                 }
+             } else if(shift < 0x81)
+             {
+@@ -1256,7 +1256,7 @@ bool CFile::read_bob04(int player_color)
+ 
+                 for(int i = 1; i <= shift - 0x40; i++, x++)
+                 {
+-                    CSurface::DrawPixel_Color(bmpArray->surface, x, y, /*0x80 - 0x40*/ +(Uint32)color_value);
++                    CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, /*0x80 - 0x40*/ +(Uint32)color_value);
+                 }
+             } else if(shift < 0xC1)
+             {
+@@ -1264,7 +1264,7 @@ bool CFile::read_bob04(int player_color)
+ 
+                 for(int i = 1; i <= shift - 0x80; i++, x++)
+                 {
+-                    CSurface::DrawPixel_Color(bmpArray->surface, x, y, player_color + (Uint32)color_value);
++                    CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, player_color + (Uint32)color_value);
+                 }
+             } else // if (shift > 0xC0)
+             {
+@@ -1272,7 +1272,7 @@ bool CFile::read_bob04(int player_color)
+ 
+                 for(int i = 1; i <= shift - 0xC0; i++, x++)
+                 {
+-                    CSurface::DrawPixel_Color(bmpArray->surface, x, y, (Uint32)color_value);
++                    CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, (Uint32)color_value);
+                 }
+             }
+         }
+@@ -1355,17 +1355,17 @@ bool CFile::read_bob07()
+         return true;
+     }
+ 
+-    // array for start adresses of picture lines
++    // array for start addresses of picture lines
+     starts = new Uint16[shadowArray->h];
+ 
+-    // read start adresses
++    // read start addresses
+     for(int y = 0; y < shadowArray->h; y++)
+         CHECK_READ(libendian::le_read_us(&starts[y], fp));
+ 
+     // now we are ready to read the picture lines and fill the surface, so lets create one
+-    if((shadowArray->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, shadowArray->w, shadowArray->h, 8, 0, 0, 0, 0)) == nullptr)
++    if((shadowArray->surface = makeSdlSurface(SDL_SWSURFACE, shadowArray->w, shadowArray->h, 8, 0, 0, 0, 0)) == nullptr)
+         return false;
+-    SDL_SetPalette(shadowArray->surface, SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
++    SDL_SetPalette(shadowArray->surface.get(), SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
+     // SDL_SetAlpha(shadowArray->surface, SDL_SRCALPHA, 128);
+ 
+     // main loop for reading picture lines
+@@ -1375,7 +1375,7 @@ bool CFile::read_bob07()
+         fseek(fp, starting_point + (Uint32)starts[y], SEEK_SET);
+ 
+         // loop for reading pixels of the actual picture line
+-        //(cause of a kind of RLE-Compression we cannot read the pixels sequentielly)
++        //(cause of a kind of RLE-Compression we cannot read the pixels sequentially)
+         //'x' will be incremented WITHIN the loop
+         for(int x = 0; x < shadowArray->w;)
+         {
+@@ -1386,7 +1386,7 @@ bool CFile::read_bob07()
+             for(int k = 0; k < count_black; k++, x++)
+             {
+                 // draw
+-                CSurface::DrawPixel_RGBA(shadowArray->surface, x, y, 0, 0, 0, 0x40);
++                CSurface::DrawPixel_RGBA(shadowArray->surface.get(), x, y, 0, 0, 0, 0x40);
+             }
+ 
+             // number of transparent pixels to draw now (1 Byte)
+@@ -1395,17 +1395,17 @@ bool CFile::read_bob07()
+             // loop for drawing the transparent pixels to the surface
+             for(int k = 0; k < count_trans; k++, x++)
+             {
+-                CSurface::DrawPixel_RGBA(shadowArray->surface, x, y, 0, 0, 0, 0);
++                CSurface::DrawPixel_RGBA(shadowArray->surface.get(), x, y, 0, 0, 0, 0);
+             }
+         }
+ 
+-        // the end of line should be 0xFF, otherwise an error has ocurred (1 Byte)
++        // the end of line should be 0xFF, otherwise an error has occurred (1 Byte)
+         CHECK_READ(libendian::read(&endmark, 1, fp));
+         if(endmark != 0xFF)
+             return false;
+     }
+ 
+-    // at the end of the block (after the last line) there should be another 0xFF, otherwise an error has ocurred (1 Byte)
++    // at the end of the block (after the last line) there should be another 0xFF, otherwise an error has occurred (1 Byte)
+     CHECK_READ(libendian::read(&endmark, 1, fp));
+     if(endmark != 0xFF)
+         return false;
+@@ -1453,9 +1453,9 @@ bool CFile::read_bob14()
+     data_start = ftell(fp);
+     // jump to first offset after data block
+     fseek(fp, length, SEEK_CUR);
+-    // coordinate for zeropoint x (2 Bytes)
++    // coordinate for zero point x (2 Bytes)
+     CHECK_READ(libendian::le_read_us(&(bmpArray->nx), fp));
+-    // coordinate for zeropoint y (2 Bytes)
++    // coordinate for zero point y (2 Bytes)
+     CHECK_READ(libendian::le_read_us(&(bmpArray->ny), fp));
+     // width of picture (2 Bytes)
+     CHECK_READ(libendian::le_read_us(&(bmpArray->w), fp));
+@@ -1472,9 +1472,9 @@ bool CFile::read_bob14()
+         return true;
+ 
+     // now we are ready to read the picture lines and fill the surface, so lets create one
+-    if((bmpArray->surface = SDL_CreateRGBSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)) == nullptr)
++    if((bmpArray->surface = makeSdlSurface(SDL_SWSURFACE, bmpArray->w, bmpArray->h, 8, 0, 0, 0, 0)) == nullptr)
+         return false;
+-    SDL_SetPalette(bmpArray->surface, SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
++    SDL_SetPalette(bmpArray->surface.get(), SDL_LOGPAL, palActual->colors.data(), 0, palActual->colors.size());
+ 
+     // set fp to back to the first offset of data block
+     fseek(fp, data_start, SEEK_SET);
+@@ -1488,7 +1488,7 @@ bool CFile::read_bob14()
+             // read color value (1 Byte)
+             CHECK_READ(libendian::read(&color_value, 1, fp));
+             // draw
+-            CSurface::DrawPixel_Color(bmpArray->surface, x, y, (Uint32)color_value);
++            CSurface::DrawPixel_Color(bmpArray->surface.get(), x, y, (Uint32)color_value);
+         }
+     }
+ 
+diff --git a/CIO/CMenu.cpp b/CIO/CMenu.cpp
+index dcd6962..2873a99 100644
+--- a/CIO/CMenu.cpp
++++ b/CIO/CMenu.cpp
+@@ -337,8 +337,8 @@ bool CMenu::render()
+     }
+ 
+     // CSurface::Draw(Surf_Menu, global::bmpArray[pic_background].surface, 0, 0);
+-    SDL_Surface* surfBG = global::bmpArray[pic_background].surface;
+-    sge_TexturedRect(Surf_Menu, 0, 0, Surf_Menu->w - 1, 0, 0, Surf_Menu->h - 1, Surf_Menu->w - 1, Surf_Menu->h - 1, surfBG, 0, 0,
++    auto& surfBG = global::bmpArray[pic_background].surface;
++    sge_TexturedRect(Surf_Menu, 0, 0, Surf_Menu->w - 1, 0, 0, Surf_Menu->h - 1, Surf_Menu->w - 1, Surf_Menu->h - 1, surfBG.get(), 0, 0,
+                      surfBG->w - 1, 0, 0, surfBG->h - 1, surfBG->w - 1, surfBG->h - 1);
+ 
+     for(auto& static_picture : static_pictures)
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0522844..97c67f5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,11 +6,7 @@ find_package(Boost 1.64 REQUIRED)
+ 
+ add_subdirectory(SGE)
+ 
+-option(RTTR_EDITOR_EDITORMODE "In editor mode it is possible to load, edit and save created maps" ON)
+ option(RTTR_EDITOR_ADMINMODE "In admin mode there are some key combos to open debugger, resource viewer and so on" OFF)
+-if(RTTR_EDITOR_EDITORMODE)
+-	add_definitions(-D_EDITORMODE)
+-endif()
+ if(RTTR_EDITOR_ADMINMODE)
+ 	add_definitions(-D_ADMINMODE)
+ endif()
+diff --git a/CMap.cpp b/CMap.cpp
+index 59ecd0e..a0cbc1a 100644
+--- a/CMap.cpp
++++ b/CMap.cpp
+@@ -466,8 +466,7 @@ void CMap::unloadMapPics()
+ {
+     for(int i = MAPPIC_ARROWCROSS_YELLOW; i <= MAPPIC_LAST_ENTRY; i++)
+     {
+-        SDL_FreeSurface(global::bmpArray[i].surface);
+-        global::bmpArray[i].surface = nullptr;
++        global::bmpArray[i].surface.reset();
+     }
+     // set back bmpArray-pointer, cause MAP0x.LST is no longer needed
+     CFile::set_bmpArray(&global::bmpArray[MAPPIC_ARROWCROSS_YELLOW]);
+@@ -1103,7 +1102,7 @@ void CMap::render()
+ {
+     std::array<char, 100> textBuffer;
+ 
+-    // check if gameresolution has been changed
++    // check if game resolution has been changed
+     if(displayRect.getSize() != global::s2->GameResolution)
+     {
+         displayRect.setSize(global::s2->GameResolution);
+diff --git a/CSurface.cpp b/CSurface.cpp
+index 1673088..22c3348 100644
+--- a/CSurface.cpp
++++ b/CSurface.cpp
+@@ -63,6 +63,21 @@ bool CSurface::Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y)
+     return true;
+ }
+ 
++bool CSurface::Draw(SDL_Surface* Surf_Dest, SdlSurface& Surf_Src, int X, int Y)
++{
++    return Draw(Surf_Dest, Surf_Src.get(), X, Y);
++}
++
++bool CSurface::Draw(SdlSurface& Surf_Dest, SdlSurface& Surf_Src, int X, int Y)
++{
++    return Draw(Surf_Dest.get(), Surf_Src.get(), X, Y);
++}
++
++bool CSurface::Draw(SdlSurface& Surf_Dest, SDL_Surface* Surf_Src, int X, int Y)
++{
++    return Draw(Surf_Dest.get(), Surf_Src, X, Y);
++}
++
+ bool CSurface::Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int angle)
+ {
+     if(!Surf_Dest || !Surf_Src)
+@@ -92,6 +107,11 @@ bool CSurface::Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y,
+     return true;
+ }
+ 
++bool CSurface::Draw(SDL_Surface* Surf_Dest, SdlSurface& Surf_Src, int X, int Y, int angle)
++{
++    return Draw(Surf_Dest, Surf_Src.get(), X, Y, angle);
++}
++
+ bool CSurface::Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H)
+ {
+     if(!Surf_Dest || !Surf_Src)
+@@ -114,7 +134,12 @@ bool CSurface::Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y,
+     return true;
+ }
+ 
+-// this is the example function from the sdl-documentation to draw pixels
++bool CSurface::Draw(SDL_Surface* Surf_Dest, SdlSurface& Surf_Src, int X, int Y, int X2, int Y2, int W, int H)
++{
++    return Draw(Surf_Dest, Surf_Src.get(), X, Y, X2, Y2, W, H);
++}
++
++// this is the example function from the SDL-documentation to draw pixels
+ void CSurface::DrawPixel_Color(SDL_Surface* screen, int x, int y, Uint32 color)
+ {
+     int bpp = screen->format->BytesPerPixel;
+@@ -752,21 +777,20 @@ void CSurface::DrawTriangle(SDL_Surface* display, const DisplayRectangle& displa
+     switch(type)
+     {
+         case MAP_GREENLAND:
++        default:
+             Surf_Tileset =
+-              global::bmpArray[global::s2->getMapObj()->getBitsPerPixel() == 8 ? TILESET_GREENLAND_8BPP : TILESET_GREENLAND_32BPP].surface;
++              global::bmpArray[global::s2->getMapObj()->getBitsPerPixel() == 8 ? TILESET_GREENLAND_8BPP : TILESET_GREENLAND_32BPP]
++                .surface.get();
+             break;
+         case MAP_WASTELAND:
+             Surf_Tileset =
+-              global::bmpArray[global::s2->getMapObj()->getBitsPerPixel() == 8 ? TILESET_WASTELAND_8BPP : TILESET_WASTELAND_32BPP].surface;
++              global::bmpArray[global::s2->getMapObj()->getBitsPerPixel() == 8 ? TILESET_WASTELAND_8BPP : TILESET_WASTELAND_32BPP]
++                .surface.get();
+             break;
+         case MAP_WINTERLAND:
+             Surf_Tileset =
+               global::bmpArray[global::s2->getMapObj()->getBitsPerPixel() == 8 ? TILESET_WINTERLAND_8BPP : TILESET_WINTERLAND_32BPP]
+-                .surface;
+-            break;
+-        default:
+-            Surf_Tileset =
+-              global::bmpArray[global::s2->getMapObj()->getBitsPerPixel() == 8 ? TILESET_GREENLAND_8BPP : TILESET_GREENLAND_32BPP].surface;
++                .surface.get();
+             break;
+     }
+ 
+diff --git a/CSurface.h b/CSurface.h
+index 74df76b..74f58c9 100644
+--- a/CSurface.h
++++ b/CSurface.h
+@@ -2,6 +2,7 @@
+ #define _CSURFACE_H
+ 
+ #include "defines.h"
++#include "SdlSurface.h"
+ #include <SDL.h>
+ 
+ struct vector;
+@@ -13,10 +14,15 @@ class CSurface
+ public:
+     // blits from source on destination to position X,Y
+     static bool Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y);
++    static bool Draw(SDL_Surface* Surf_Dest, SdlSurface& Surf_Src, int X, int Y);
++    static bool Draw(SdlSurface& Surf_Dest, SdlSurface& Surf_Src, int X = 0, int Y = 0);
++    static bool Draw(SdlSurface& Surf_Dest, SDL_Surface* Surf_Src, int X = 0, int Y = 0);
+     // blits from source on destination to position X,Y and rotates (angle --> degrees --> 90, 180, 270)
+     static bool Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int angle);
++    static bool Draw(SDL_Surface* Surf_Dest, SdlSurface& Surf_Src, int X, int Y, int angle);
+     // blits rectangle (X2,Y2,W,H) from source on destination to position X,Y
+     static bool Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y, int X2, int Y2, int W, int H);
++    static bool Draw(SDL_Surface* Surf_Dest, SdlSurface& Surf_Src, int X, int Y, int X2, int Y2, int W, int H);
+     static void DrawPixel_Color(SDL_Surface* screen, int x, int y, Uint32 color);
+     static void DrawPixel_RGB(SDL_Surface* screen, int x, int y, Uint8 R, Uint8 G, Uint8 B);
+     static void DrawPixel_RGBA(SDL_Surface* screen, int x, int y, Uint8 R, Uint8 G, Uint8 B, Uint8 A);
+diff --git a/SdlSurface.h b/SdlSurface.h
+new file mode 100644
+index 0000000..ab4718b
+--- /dev/null
++++ b/SdlSurface.h
+@@ -0,0 +1,19 @@
++#ifndef SdlSurface_h__
++#define SdlSurface_h__
++
++#include <SDL.h>
++#include <memory>
++
++struct SdlSurfaceDeleter
++{
++    void operator()(SDL_Surface* p) { SDL_FreeSurface(p); }
++};
++
++using SdlSurface = std::unique_ptr<SDL_Surface, SdlSurfaceDeleter>;
++inline auto makeSdlSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask = 0, Uint32 Gmask = 0, Uint32 Bmask = 0,
++                           Uint32 Amask = 0)
++{
++    return SdlSurface(SDL_CreateRGBSurface(flags, width, height, depth, Rmask, Gmask, Bmask, Amask));
++}
++
++#endif // SdlSurface_h__
+diff --git a/callbacks.cpp b/callbacks.cpp
+index 12236eb..a61269c 100644
+--- a/callbacks.cpp
++++ b/callbacks.cpp
+@@ -37,25 +37,18 @@ void callback::PleaseWait(int Param)
+         case INITIALIZING_CALL:
+             if(WNDWait)
+                 break;
+-            WNDWait = new CWindow(PleaseWait, WINDOWQUIT, global::s2->getDisplaySurface()->w / 2 - 106, //-V807
+-                                  global::s2->getDisplaySurface()->h / 2 - 35, 212, 70, "Please wait");
+-            if(global::s2->RegisterWindow(WNDWait))
+-            {
+-                // we don't register this window cause we will destroy it manually if we need
+-                // global::s2->RegisterCallback(PleaseWait);
+-
+-                WNDWait->addText("Please wait ...", 10, 10, 14);
+-                // we need to render this window NOW, cause the render loop will do it too late (when the operation
+-                // is done and we don't need the "Please wait"-window anymore)
+-                CSurface::Draw(global::s2->getDisplaySurface(), WNDWait->getSurface(), global::s2->getDisplaySurface()->w / 2 - 106,
+-                               global::s2->getDisplaySurface()->h / 2 - 35);
+-                SDL_Flip(global::s2->getDisplaySurface());
+-            } else
+-            {
+-                delete WNDWait;
+-                WNDWait = nullptr;
+-                return;
+-            }
++            WNDWait = global::s2->RegisterWindow(
++              std::make_unique<CWindow>(PleaseWait, WINDOWQUIT, global::s2->getDisplaySurface()->w / 2 - 106, //-V807
++                                        global::s2->getDisplaySurface()->h / 2 - 35, 212, 70, "Please wait"));
++            // we don't register this window cause we will destroy it manually if we need
++            // global::s2->RegisterCallback(PleaseWait);
++
++            WNDWait->addText("Please wait ...", 10, 10, 14);
++            // we need to render this window NOW, cause the render loop will do it too late (when the operation
++            // is done and we don't need the "Please wait"-window anymore)
++            CSurface::Draw(global::s2->getDisplaySurface(), WNDWait->getSurface(), global::s2->getDisplaySurface()->w / 2 - 106,
++                           global::s2->getDisplaySurface()->h / 2 - 35);
++            SDL_Flip(global::s2->getDisplaySurface());
+             break;
+ 
+         case CALL_FROM_GAMELOOP: // This window gives a "Please Wait"-string, so it is shown while there is an intensive operation
+@@ -99,18 +92,10 @@ void callback::ShowStatus(int Param)
+         case INITIALIZING_CALL:
+             if(WND)
+                 break;
+-            WND =
+-              new CWindow(ShowStatus, WINDOWQUIT, global::s2->getDisplaySurface()->w / 2 - 106, global::s2->getDisplaySurface()->h / 2 - 35,
+-                          250, 90, "Status", WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WND))
+-            {
+-                txt = WND->addText("", 26, 20, 14, FONT_YELLOW);
+-            } else
+-            {
+-                delete WND;
+-                WND = nullptr;
+-                return;
+-            }
++            WND = global::s2->RegisterWindow(std::make_unique<CWindow>(ShowStatus, WINDOWQUIT, global::s2->getDisplaySurface()->w / 2 - 106,
++                                                                       global::s2->getDisplaySurface()->h / 2 - 35, 250, 90, "Status",
++                                                                       WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            txt = WND->addText("", 26, 20, 14, FONT_YELLOW);
+             break;
+         case SHOW_SUCCESS:
+             assert(txt);
+@@ -150,13 +135,7 @@ void callback::mainmenu(int Param)
+     switch(Param)
+     {
+         case INITIALIZING_CALL:
+-            MainMenu = new CMenu(SPLASHSCREEN_MAINMENU);
+-            if(!global::s2->RegisterMenu(MainMenu))
+-            {
+-                delete MainMenu;
+-                MainMenu = nullptr;
+-                return;
+-            }
++            MainMenu = global::s2->RegisterMenu(std::make_unique<CMenu>(SPLASHSCREEN_MAINMENU));
+             MainMenu->addButton(mainmenu, ENDGAME, 50, 400, 200, 20, BUTTON_RED1, "Quit program");
+ #ifdef _ADMINMODE
+             MainMenu->addButton(submenu1, INITIALIZING_CALL, 50, 200, 200, 20, BUTTON_GREY, "Submenu_1");
+@@ -177,7 +156,7 @@ void callback::mainmenu(int Param)
+         case STARTEDITOR:
+             assert(MainMenu);
+             PleaseWait(INITIALIZING_CALL);
+-            global::s2->setMapObj(new CMap(""));
++            global::s2->setMapObj(std::make_unique<CMap>(""));
+             MainMenu->setWaste();
+             MainMenu = nullptr;
+             PleaseWait(WINDOW_QUIT_MESSAGE);
+@@ -255,16 +234,7 @@ void callback::submenuOptions(int Param)
+     switch(Param)
+     {
+         case INITIALIZING_CALL:
+-            SubMenu = new CMenu(SPLASHSCREEN_SUBMENU3);
+-            if(!global::s2->RegisterMenu(SubMenu))
+-            {
+-                delete SubMenu;
+-                TextResolution = nullptr;
+-                ButtonFullscreen = nullptr;
+-                SelectBoxRes = nullptr;
+-                SubMenu = nullptr;
+-                return;
+-            }
++            SubMenu = global::s2->RegisterMenu(std::make_unique<CMenu>(SPLASHSCREEN_SUBMENU3));
+             // add button for "back to main menu"
+             SubMenu->addButton(submenuOptions, MAINMENU, (int)(global::s2->GameResolution.x / 2 - 100), 440, 200, 20, BUTTON_RED1, "back");
+             // add menu title
+@@ -625,91 +595,74 @@ void callback::submenuOptions(int Param)
+ 
+ void callback::EditorHelpMenu(int Param)
+ {
+-    // NOTE: This "Please wait"-window is shown until the PleaseWait-callback is called with 'WINDOW_QUIT_MESSAGE'.
+-    //      The window will be registered by the game. To do it the other way (create and then let it automatically
+-    //      destroy by the gameloop), you don't need to register the window, but register the callback.
+-
+     static CWindow* WNDHelp;
+-    static CSelectBox* SelectBoxHelp;
+ 
+     enum
+     {
+         WINDOWQUIT
+     };
+ 
++    CSelectBox* SelectBoxHelp;
+     switch(Param)
+     {
+         case INITIALIZING_CALL:
+             if(WNDHelp)
+                 break;
+-            WNDHelp = new CWindow(EditorHelpMenu, WINDOWQUIT, global::s2->getDisplaySurface()->w / 2 - 320,
+-                                  global::s2->getDisplaySurface()->h / 2 - 240, 640, 380, "Hilfe", WINDOW_GREEN2,
+-                                  WINDOW_CLOSE | WINDOW_MOVE | WINDOW_RESIZE | WINDOW_MINIMIZE);
+-            if(global::s2->RegisterWindow(WNDHelp))
+-            {
+-                // we don't register this window cause we will destroy it manually if we need
+-                // global::s2->RegisterCallback(PleaseWait);
+-
+-                SelectBoxHelp = WNDHelp->addSelectBox(0, 20, 635, 345, 11, FONT_YELLOW, BUTTON_GREEN1);
+-                SelectBoxHelp->setOption(
+-                  "Help-Menu......................................................................................................F1\n");
+-                SelectBoxHelp->setOption(
+-                  "Window/Fullscreen........................................................................................F2\n");
+-                SelectBoxHelp->setOption("Zoom in/normal/out "
+-                                         "(experimental)..............................................................F5/F6/"
+-                                         "F7\n");
+-                SelectBoxHelp->setOption("Scroll..........................................................................................."
+-                                         "..................Arrow keys\n");
+-                SelectBoxHelp->setOption(
+-                  "Cursor size 1-9 (of 11)....................................................................................1-9\n");
+-                SelectBoxHelp->setOption(
+-                  "Make Cursor bigger/smaller........................................................................+/-\n");
+-                SelectBoxHelp->setOption(
+-                  "Scissors-Mode...............................................................................................Ctrl\n");
+-                SelectBoxHelp->setOption(
+-                  "Invert mode....................................................................................................Shift\n");
+-                SelectBoxHelp->setOption("(e.g. Lower altitude, remove player, lower resources)\n");
+-                SelectBoxHelp->setOption(
+-                  "Plane mode.....................................................................................................Alt\n");
+-                SelectBoxHelp->setOption(
+-                  "Reduce/default/enlarge maximum height.....................................................Ins/Pos1/"
+-                  "PageUp\n");
+-                SelectBoxHelp->setOption("(can't increase beyond this)\n");
+-                SelectBoxHelp->setOption("Reduce/default/enlarge minimum "
+-                                         "height......................................................Del/End/"
+-                                         "PageDown\n");
+-                SelectBoxHelp->setOption("(can't decrease below this)\n");
+-                SelectBoxHelp->setOption("Undo............................................................................................."
+-                                         ".......................Q\n");
+-                SelectBoxHelp->setOption("Redo............................................................................................."
+-                                         ".................SHIFT+Q\n");
+-                SelectBoxHelp->setOption("(just actions made with the cursor)\n");
+-                SelectBoxHelp->setOption(
+-                  "Build help on/off.............................................................................................Space\n");
+-                SelectBoxHelp->setOption(
+-                  "Castle-Mode....................................................................................................B\n");
+-                SelectBoxHelp->setOption("(planes the surrounding terrain\n");
+-                SelectBoxHelp->setOption(" so a castle can be build)\n");
+-                SelectBoxHelp->setOption(
+-                  "Harbour-Mode................................................................................................H\n");
+-                SelectBoxHelp->setOption("(changes the surrounding terrain,\n");
+-                SelectBoxHelp->setOption(" so that a harbour can be build)\n");
+-                SelectBoxHelp->setOption("Convert map \"on-the-fly\"  (Greenland/Winterworld/Wasteland).................G/W/O\n");
+-                SelectBoxHelp->setOption(
+-                  "New/Original shadows (experimental)..........................................................P\n");
+-                SelectBoxHelp->setOption(
+-                  "Lock/Unlock horizontal movement................................................................F9\n");
+-                SelectBoxHelp->setOption(
+-                  "Lock/Unlock vertical movement....................................................................F10\n");
+-                SelectBoxHelp->setOption(
+-                  "Turn borders on/off......................................................................................F11\n");
+-            } else
+-            {
+-                delete WNDHelp;
+-                WNDHelp = nullptr;
+-                SelectBoxHelp = nullptr;
+-                return;
+-            }
++            WNDHelp = global::s2->RegisterWindow(std::make_unique<CWindow>(
++              EditorHelpMenu, WINDOWQUIT, global::s2->getDisplaySurface()->w / 2 - 320, global::s2->getDisplaySurface()->h / 2 - 240, 640,
++              380, "Hilfe", WINDOW_GREEN2, WINDOW_CLOSE | WINDOW_MOVE | WINDOW_RESIZE | WINDOW_MINIMIZE));
++
++            SelectBoxHelp = WNDHelp->addSelectBox(0, 20, 635, 345, 11, FONT_YELLOW, BUTTON_GREEN1);
++            SelectBoxHelp->setOption(
++              "Help-Menu......................................................................................................F1\n");
++            SelectBoxHelp->setOption(
++              "Window/Fullscreen........................................................................................F2\n");
++            SelectBoxHelp->setOption("Zoom in/normal/out "
++                                     "(experimental)..............................................................F5/F6/"
++                                     "F7\n");
++            SelectBoxHelp->setOption("Scroll..........................................................................................."
++                                     "..................Arrow keys\n");
++            SelectBoxHelp->setOption(
++              "Cursor size 1-9 (of 11)....................................................................................1-9\n");
++            SelectBoxHelp->setOption(
++              "Make Cursor bigger/smaller........................................................................+/-\n");
++            SelectBoxHelp->setOption(
++              "Scissors-Mode...............................................................................................Ctrl\n");
++            SelectBoxHelp->setOption(
++              "Invert mode....................................................................................................Shift\n");
++            SelectBoxHelp->setOption("(e.g. Lower altitude, remove player, lower resources)\n");
++            SelectBoxHelp->setOption(
++              "Plane mode.....................................................................................................Alt\n");
++            SelectBoxHelp->setOption("Reduce/default/enlarge maximum height.....................................................Ins/Pos1/"
++                                     "PageUp\n");
++            SelectBoxHelp->setOption("(can't increase beyond this)\n");
++            SelectBoxHelp->setOption("Reduce/default/enlarge minimum "
++                                     "height......................................................Del/End/"
++                                     "PageDown\n");
++            SelectBoxHelp->setOption("(can't decrease below this)\n");
++            SelectBoxHelp->setOption("Undo............................................................................................."
++                                     ".......................Q\n");
++            SelectBoxHelp->setOption("Redo............................................................................................."
++                                     ".................SHIFT+Q\n");
++            SelectBoxHelp->setOption("(just actions made with the cursor)\n");
++            SelectBoxHelp->setOption(
++              "Build help on/off.............................................................................................Space\n");
++            SelectBoxHelp->setOption(
++              "Castle-Mode....................................................................................................B\n");
++            SelectBoxHelp->setOption("(planes the surrounding terrain\n");
++            SelectBoxHelp->setOption(" so a castle can be build)\n");
++            SelectBoxHelp->setOption(
++              "Harbour-Mode................................................................................................H\n");
++            SelectBoxHelp->setOption("(changes the surrounding terrain,\n");
++            SelectBoxHelp->setOption(" so that a harbour can be build)\n");
++            SelectBoxHelp->setOption("Convert map \"on-the-fly\"  (Greenland/Winterworld/Wasteland).................G/W/O\n");
++            SelectBoxHelp->setOption("New/Original shadows (experimental)..........................................................P\n");
++            SelectBoxHelp->setOption("Lock/Unlock horizontal movement................................................................F9\n");
++            SelectBoxHelp->setOption(
++              "Lock/Unlock vertical movement....................................................................F10\n");
++            SelectBoxHelp->setOption(
++              "Turn borders on/off......................................................................................F11\n");
++
+             break;
+ 
+         case CALL_FROM_GAMELOOP: break;
+@@ -763,20 +716,13 @@ void callback::EditorMainMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDMain)
+                 break;
+-            WNDMain = new CWindow(EditorMainMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 110,
+-                                  global::s2->GameResolution.y / 2 - 160, 220, 320, "Main menu", WINDOW_GREEN1, WINDOW_CLOSE);
+-            if(global::s2->RegisterWindow(WNDMain))
+-            {
+-                WNDMain->addButton(EditorMainMenu, LOADMENU, 8, 100, 190, 20, BUTTON_GREEN2, "Load map");
+-                WNDMain->addButton(EditorMainMenu, SAVEMENU, 8, 125, 190, 20, BUTTON_GREEN2, "Save map");
++            WNDMain = global::s2->RegisterWindow(
++              std::make_unique<CWindow>(EditorMainMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 110,
++                                        global::s2->GameResolution.y / 2 - 160, 220, 320, "Main menu", WINDOW_GREEN1, WINDOW_CLOSE));
++            WNDMain->addButton(EditorMainMenu, LOADMENU, 8, 100, 190, 20, BUTTON_GREEN2, "Load map");
++            WNDMain->addButton(EditorMainMenu, SAVEMENU, 8, 125, 190, 20, BUTTON_GREEN2, "Save map");
+ 
+-                WNDMain->addButton(EditorMainMenu, QUITMENU, 8, 260, 190, 20, BUTTON_GREEN2, "Leave editor");
+-            } else
+-            {
+-                delete WNDMain;
+-                WNDMain = nullptr;
+-                return;
+-            }
++            WNDMain->addButton(EditorMainMenu, QUITMENU, 8, 260, 190, 20, BUTTON_GREEN2, "Leave editor");
+             break;
+ 
+         case WINDOWQUIT:
+@@ -822,22 +768,15 @@ void callback::EditorLoadMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDLoad)
+                 break;
+-            WNDLoad = new CWindow(EditorLoadMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 140, global::s2->GameResolution.y / 2 - 45,
+-                                  280, 120, "Load", WINDOW_GREEN1, WINDOW_CLOSE);
+-            if(global::s2->RegisterWindow(WNDLoad))
+-            {
+-                MapObj = global::s2->getMapObj();
++            WNDLoad = global::s2->RegisterWindow(
++              std::make_unique<CWindow>(EditorLoadMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 140,
++                                        global::s2->GameResolution.y / 2 - 45, 280, 120, "Load", WINDOW_GREEN1, WINDOW_CLOSE));
++            MapObj = global::s2->getMapObj();
+ 
+-                TXTF_Filename = WNDLoad->addTextfield(10, 10, 21, 1);
+-                TXTF_Filename->setText("MyMap");
+-                WNDLoad->addButton(EditorLoadMenu, LOADMAP, 170, 40, 90, 20, BUTTON_GREY, "Load");
+-                WNDLoad->addButton(EditorLoadMenu, WINDOWQUIT, 170, 65, 90, 20, BUTTON_RED1, "Abort");
+-            } else
+-            {
+-                delete WNDLoad;
+-                WNDLoad = nullptr;
+-                return;
+-            }
++            TXTF_Filename = WNDLoad->addTextfield(10, 10, 21, 1);
++            TXTF_Filename->setText("MyMap");
++            WNDLoad->addButton(EditorLoadMenu, LOADMAP, 170, 40, 90, 20, BUTTON_GREY, "Load");
++            WNDLoad->addButton(EditorLoadMenu, WINDOWQUIT, 170, 65, 90, 20, BUTTON_RED1, "Abort");
+             break;
+ 
+         case WINDOWQUIT:
+@@ -922,10 +861,10 @@ void callback::EditorSaveMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDSave)
+                 break;
+-            WNDSave = new CWindow(EditorSaveMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 140,
+-                                  global::s2->GameResolution.y / 2 - 100, 280, 200, "Save", WINDOW_GREEN1, WINDOW_CLOSE);
+-            if(global::s2->RegisterWindow(WNDSave))
+             {
++                WNDSave = global::s2->RegisterWindow(
++                  std::make_unique<CWindow>(EditorSaveMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 140,
++                                            global::s2->GameResolution.y / 2 - 100, 280, 200, "Save", WINDOW_GREEN1, WINDOW_CLOSE));
+                 MapObj = global::s2->getMapObj();
+ 
+                 WNDSave->addText("Filename", 100, 2, 9);
+@@ -940,14 +879,8 @@ void callback::EditorSaveMenu(int Param)
+                 TXTF_Author->setText(MapObj->getAuthor());
+                 WNDSave->addButton(EditorSaveMenu, SAVEMAP, 170, 120, 90, 20, BUTTON_GREY, "Save");
+                 WNDSave->addButton(EditorSaveMenu, WINDOWQUIT, 170, 145, 90, 20, BUTTON_RED1, "Abort");
+-            } else
+-            {
+-                delete WNDSave;
+-                WNDSave = nullptr;
+-                return;
++                break;
+             }
+-            break;
+-
+         case WINDOWQUIT:
+             if(WNDSave)
+             {
+@@ -1010,18 +943,11 @@ void callback::EditorQuitMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDBackToMainMenu)
+                 break;
+-            WNDBackToMainMenu = new CWindow(EditorQuitMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 106,
+-                                            global::s2->GameResolution.y / 2 - 55, 212, 110, "Exit?");
+-            if(global::s2->RegisterWindow(WNDBackToMainMenu))
+-            {
+-                WNDBackToMainMenu->addButton(EditorQuitMenu, BACKTOMAIN, 0, 0, 100, 80, BUTTON_GREEN2, nullptr, PICTURE_SMALL_TICK);
+-                WNDBackToMainMenu->addButton(EditorQuitMenu, NOTBACKTOMAIN, 100, 0, 100, 80, BUTTON_RED1, nullptr, PICTURE_SMALL_CROSS);
+-            } else
+-            {
+-                delete WNDBackToMainMenu;
+-                WNDBackToMainMenu = nullptr;
+-                return;
+-            }
++            WNDBackToMainMenu =
++              global::s2->RegisterWindow(std::make_unique<CWindow>(EditorQuitMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - 106,
++                                                                   global::s2->GameResolution.y / 2 - 55, 212, 110, "Exit?"));
++            WNDBackToMainMenu->addButton(EditorQuitMenu, BACKTOMAIN, 0, 0, 100, 80, BUTTON_GREEN2, nullptr, PICTURE_SMALL_TICK);
++            WNDBackToMainMenu->addButton(EditorQuitMenu, NOTBACKTOMAIN, 100, 0, 100, 80, BUTTON_RED1, nullptr, PICTURE_SMALL_CROSS);
+             break;
+ 
+         case BACKTOMAIN:
+@@ -1103,50 +1029,42 @@ void callback::EditorTextureMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDTexture)
+                 break;
+-            WNDTexture = new CWindow(EditorTextureMenu, WINDOWQUIT, PosX, PosY, 220, 133, "Terrain", WINDOW_GREEN1,
+-                                     WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDTexture))
+-            {
+-                MapObj = global::s2->getMapObj();
+-                map = MapObj->getMap();
+-                switch(map->type)
+-                {
+-                    case MAP_GREENLAND: textureIndex = PICTURE_GREENLAND_TEXTURE_SNOW; break;
+-                    case MAP_WASTELAND: textureIndex = PICTURE_WASTELAND_TEXTURE_SNOW; break;
+-                    case MAP_WINTERLAND: textureIndex = PICTURE_WINTERLAND_TEXTURE_SNOW; break;
+-                    default: textureIndex = PICTURE_GREENLAND_TEXTURE_SNOW; break;
+-                }
+-                MapObj->setMode(EDITOR_MODE_TEXTURE);
+-                MapObj->setModeContent(TRIANGLE_TEXTURE_SNOW);
+-                lastContent = TRIANGLE_TEXTURE_SNOW;
+-
+-                WNDTexture->addPicture(EditorTextureMenu, PICSNOW, 2, 2, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICSTEPPE, 36, 2, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICSWAMP, 70, 2, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICFLOWER, 104, 2, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMINING1, 138, 2, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMINING2, 172, 2, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMINING3, 2, 36, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMINING4, 36, 36, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICSTEPPE_MEADOW1, 70, 36, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMEADOW1, 104, 36, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMEADOW2, 138, 36, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMEADOW3, 172, 36, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICSTEPPE_MEADOW2, 2, 70, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICMINING_MEADOW, 36, 70, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICWATER, 70, 70, textureIndex++);
+-                WNDTexture->addPicture(EditorTextureMenu, PICLAVA, 104, 70, textureIndex++);
+-                if(map->type != MAP_WASTELAND)
+-                    WNDTexture->addPicture(EditorTextureMenu, PICMEADOW_MIXED, 138, 70, textureIndex);
+-
+-                // WNDTexture->addButton(EditorTextureMenu, HARBOUR, 172, 70, 32, 32, BUTTON_GREY, nullptr, MAPPIC_HOUSE_HARBOUR);
+-                // harbourPictureCross = WNDTexture->addStaticPicture(185, 80, PICTURE_SMALL_CROSS);
+-            } else
+-            {
+-                delete WNDTexture;
+-                WNDTexture = nullptr;
+-                return;
+-            }
++            WNDTexture = global::s2->RegisterWindow(std::make_unique<CWindow>(
++              EditorTextureMenu, WINDOWQUIT, PosX, PosY, 220, 133, "Terrain", WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            MapObj = global::s2->getMapObj();
++            map = MapObj->getMap();
++            switch(map->type)
++            {
++                case MAP_GREENLAND: textureIndex = PICTURE_GREENLAND_TEXTURE_SNOW; break;
++                case MAP_WASTELAND: textureIndex = PICTURE_WASTELAND_TEXTURE_SNOW; break;
++                case MAP_WINTERLAND: textureIndex = PICTURE_WINTERLAND_TEXTURE_SNOW; break;
++                default: textureIndex = PICTURE_GREENLAND_TEXTURE_SNOW; break;
++            }
++            MapObj->setMode(EDITOR_MODE_TEXTURE);
++            MapObj->setModeContent(TRIANGLE_TEXTURE_SNOW);
++            lastContent = TRIANGLE_TEXTURE_SNOW;
++
++            WNDTexture->addPicture(EditorTextureMenu, PICSNOW, 2, 2, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICSTEPPE, 36, 2, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICSWAMP, 70, 2, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICFLOWER, 104, 2, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMINING1, 138, 2, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMINING2, 172, 2, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMINING3, 2, 36, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMINING4, 36, 36, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICSTEPPE_MEADOW1, 70, 36, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMEADOW1, 104, 36, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMEADOW2, 138, 36, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMEADOW3, 172, 36, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICSTEPPE_MEADOW2, 2, 70, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICMINING_MEADOW, 36, 70, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICWATER, 70, 70, textureIndex++);
++            WNDTexture->addPicture(EditorTextureMenu, PICLAVA, 104, 70, textureIndex++);
++            if(map->type != MAP_WASTELAND)
++                WNDTexture->addPicture(EditorTextureMenu, PICMEADOW_MIXED, 138, 70, textureIndex);
++
++            // WNDTexture->addButton(EditorTextureMenu, HARBOUR, 172, 70, 32, 32, BUTTON_GREY, nullptr, MAPPIC_HOUSE_HARBOUR);
++            // harbourPictureCross = WNDTexture->addStaticPicture(185, 80, PICTURE_SMALL_CROSS);
+             break;
+ 
+         case HARBOUR: // harbour mode is active
+@@ -1405,54 +1323,46 @@ void callback::EditorTreeMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDTree)
+                 break;
+-            WNDTree = new CWindow(EditorTreeMenu, WINDOWQUIT, PosX, PosY, 148, 140, "Trees", WINDOW_GREEN1,
+-                                  WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDTree))
+-            {
+-                MapObj = global::s2->getMapObj();
+-                map = MapObj->getMap();
+-                switch(map->type)
+-                {
+-                    case MAP_GREENLAND:
+-                        WNDTree->addPicture(EditorTreeMenu, PICPINE, 2, 2, PICTURE_TREE_PINE);
+-                        WNDTree->addPicture(EditorTreeMenu, PICBIRCH, 36, 2, PICTURE_TREE_BIRCH);
+-                        WNDTree->addPicture(EditorTreeMenu, PICOAK, 70, 2, PICTURE_TREE_OAK);
+-                        WNDTree->addPicture(EditorTreeMenu, PICPALM1, 104, 2, PICTURE_TREE_PALM1);
+-                        WNDTree->addPicture(EditorTreeMenu, PICPALM2, 2, 36, PICTURE_TREE_PALM2);
+-                        WNDTree->addPicture(EditorTreeMenu, PICPINEAPPLE, 36, 36, PICTURE_TREE_PINEAPPLE);
+-                        WNDTree->addPicture(EditorTreeMenu, PICCYPRESS, 70, 36, PICTURE_TREE_CYPRESS);
+-                        WNDTree->addPicture(EditorTreeMenu, PICCHERRY, 104, 36, PICTURE_TREE_CHERRY);
+-                        WNDTree->addPicture(EditorTreeMenu, PICFIR, 2, 72, PICTURE_TREE_FIR);
+-                        WNDTree->addPicture(EditorTreeMenu, PICWOOD_MIXED, 36, 70, PICTURE_TREE_WOOD_MIXED);
+-                        WNDTree->addPicture(EditorTreeMenu, PICPALM_MIXED, 70, 70, PICTURE_TREE_PALM_MIXED);
+-                        break;
+-                    case MAP_WASTELAND:
+-                        WNDTree->addPicture(EditorTreeMenu, PICFLAPHAT, 2, 2, PICTURE_TREE_FLAPHAT);
+-                        WNDTree->addPicture(EditorTreeMenu, PICSPIDER, 36, 2, PICTURE_TREE_SPIDER);
+-                        WNDTree->addPicture(EditorTreeMenu, PICPINEAPPLE, 70, 2, PICTURE_TREE_PINEAPPLE);
+-                        WNDTree->addPicture(EditorTreeMenu, PICCHERRY, 104, 2, PICTURE_TREE_CHERRY);
+-                        break;
+-                    case MAP_WINTERLAND:
+-                        WNDTree->addPicture(EditorTreeMenu, PICPINE, 2, 2, PICTURE_TREE_PINE);
+-                        WNDTree->addPicture(EditorTreeMenu, PICBIRCH, 36, 2, PICTURE_TREE_BIRCH);
+-                        WNDTree->addPicture(EditorTreeMenu, PICCYPRESS, 70, 2, PICTURE_TREE_CYPRESS);
+-                        WNDTree->addPicture(EditorTreeMenu, PICFIR, 104, 2, PICTURE_TREE_FIR);
+-                        WNDTree->addPicture(EditorTreeMenu, PICWOOD_MIXED, 2, 36, PICTURE_TREE_WOOD_MIXED);
+-                        break;
+-                    default: // should not happen
+-                        break;
+-                }
+-                MapObj->setMode(EDITOR_MODE_TREE);
+-                MapObj->setModeContent(0x30);
+-                MapObj->setModeContent2(0xC4);
+-                lastContent = 0x30;
+-                lastContent2 = 0xC4;
+-            } else
+-            {
+-                delete WNDTree;
+-                WNDTree = nullptr;
+-                return;
++            WNDTree = global::s2->RegisterWindow(std::make_unique<CWindow>(EditorTreeMenu, WINDOWQUIT, PosX, PosY, 148, 140, "Trees",
++                                                                           WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            MapObj = global::s2->getMapObj();
++            map = MapObj->getMap();
++            switch(map->type)
++            {
++                case MAP_GREENLAND:
++                    WNDTree->addPicture(EditorTreeMenu, PICPINE, 2, 2, PICTURE_TREE_PINE);
++                    WNDTree->addPicture(EditorTreeMenu, PICBIRCH, 36, 2, PICTURE_TREE_BIRCH);
++                    WNDTree->addPicture(EditorTreeMenu, PICOAK, 70, 2, PICTURE_TREE_OAK);
++                    WNDTree->addPicture(EditorTreeMenu, PICPALM1, 104, 2, PICTURE_TREE_PALM1);
++                    WNDTree->addPicture(EditorTreeMenu, PICPALM2, 2, 36, PICTURE_TREE_PALM2);
++                    WNDTree->addPicture(EditorTreeMenu, PICPINEAPPLE, 36, 36, PICTURE_TREE_PINEAPPLE);
++                    WNDTree->addPicture(EditorTreeMenu, PICCYPRESS, 70, 36, PICTURE_TREE_CYPRESS);
++                    WNDTree->addPicture(EditorTreeMenu, PICCHERRY, 104, 36, PICTURE_TREE_CHERRY);
++                    WNDTree->addPicture(EditorTreeMenu, PICFIR, 2, 72, PICTURE_TREE_FIR);
++                    WNDTree->addPicture(EditorTreeMenu, PICWOOD_MIXED, 36, 70, PICTURE_TREE_WOOD_MIXED);
++                    WNDTree->addPicture(EditorTreeMenu, PICPALM_MIXED, 70, 70, PICTURE_TREE_PALM_MIXED);
++                    break;
++                case MAP_WASTELAND:
++                    WNDTree->addPicture(EditorTreeMenu, PICFLAPHAT, 2, 2, PICTURE_TREE_FLAPHAT);
++                    WNDTree->addPicture(EditorTreeMenu, PICSPIDER, 36, 2, PICTURE_TREE_SPIDER);
++                    WNDTree->addPicture(EditorTreeMenu, PICPINEAPPLE, 70, 2, PICTURE_TREE_PINEAPPLE);
++                    WNDTree->addPicture(EditorTreeMenu, PICCHERRY, 104, 2, PICTURE_TREE_CHERRY);
++                    break;
++                case MAP_WINTERLAND:
++                    WNDTree->addPicture(EditorTreeMenu, PICPINE, 2, 2, PICTURE_TREE_PINE);
++                    WNDTree->addPicture(EditorTreeMenu, PICBIRCH, 36, 2, PICTURE_TREE_BIRCH);
++                    WNDTree->addPicture(EditorTreeMenu, PICCYPRESS, 70, 2, PICTURE_TREE_CYPRESS);
++                    WNDTree->addPicture(EditorTreeMenu, PICFIR, 104, 2, PICTURE_TREE_FIR);
++                    WNDTree->addPicture(EditorTreeMenu, PICWOOD_MIXED, 2, 36, PICTURE_TREE_WOOD_MIXED);
++                    break;
++                default: // should not happen
++                    break;
+             }
++            MapObj->setMode(EDITOR_MODE_TREE);
++            MapObj->setModeContent(0x30);
++            MapObj->setModeContent2(0xC4);
++            lastContent = 0x30;
++            lastContent2 = 0xC4;
+             break;
+ 
+         case PICPINE:
+@@ -1603,26 +1513,19 @@ void callback::EditorResourceMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDResource)
+                 break;
+-            WNDResource = new CWindow(EditorResourceMenu, WINDOWQUIT, PosX, PosY, 148, 55, "Resources", WINDOW_GREEN1,
+-                                      WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDResource))
+-            {
+-                MapObj = global::s2->getMapObj();
++            WNDResource =
++              global::s2->RegisterWindow(std::make_unique<CWindow>(EditorResourceMenu, WINDOWQUIT, PosX, PosY, 148, 55, "Resources",
++                                                                   WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            MapObj = global::s2->getMapObj();
+ 
+-                WNDResource->addPicture(EditorResourceMenu, PICGOLD, 2, 2, PICTURE_RESOURCE_GOLD);
+-                WNDResource->addPicture(EditorResourceMenu, PICORE, 36, 2, PICTURE_RESOURCE_ORE);
+-                WNDResource->addPicture(EditorResourceMenu, PICCOAL, 70, 2, PICTURE_RESOURCE_COAL);
+-                WNDResource->addPicture(EditorResourceMenu, PICGRANITE, 104, 2, PICTURE_RESOURCE_GRANITE);
++            WNDResource->addPicture(EditorResourceMenu, PICGOLD, 2, 2, PICTURE_RESOURCE_GOLD);
++            WNDResource->addPicture(EditorResourceMenu, PICORE, 36, 2, PICTURE_RESOURCE_ORE);
++            WNDResource->addPicture(EditorResourceMenu, PICCOAL, 70, 2, PICTURE_RESOURCE_COAL);
++            WNDResource->addPicture(EditorResourceMenu, PICGRANITE, 104, 2, PICTURE_RESOURCE_GRANITE);
+ 
+-                MapObj->setMode(EDITOR_MODE_RESOURCE_RAISE);
+-                MapObj->setModeContent(0x51);
+-                lastContent = 0x51;
+-            } else
+-            {
+-                delete WNDResource;
+-                WNDResource = nullptr;
+-                return;
+-            }
++            MapObj->setMode(EDITOR_MODE_RESOURCE_RAISE);
++            MapObj->setModeContent(0x51);
++            lastContent = 0x51;
+             break;
+ 
+         case PICGOLD:
+@@ -1714,61 +1617,54 @@ void callback::EditorLandscapeMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDLandscape)
+                 break;
+-            WNDLandscape = new CWindow(EditorLandscapeMenu, WINDOWQUIT, PosX, PosY, 112, 174, "Landscape", WINDOW_GREEN1,
+-                                       WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDLandscape))
+-            {
+-                MapObj = global::s2->getMapObj();
+-                map = MapObj->getMap();
+-                switch(map->type)
+-                {
+-                    case MAP_GREENLAND:
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICGRANITE, 2, 2, PICTURE_LANDSCAPE_GRANITE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICTREEDEAD, 36, 2, PICTURE_LANDSCAPE_TREE_DEAD);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICSTONE, 70, 2, PICTURE_LANDSCAPE_STONE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICCACTUS, 2, 36, PICTURE_LANDSCAPE_CACTUS);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICPEBBLE, 36, 36, PICTURE_LANDSCAPE_PEBBLE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICBUSH, 70, 36, PICTURE_LANDSCAPE_BUSH);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICSHRUB, 2, 70, PICTURE_LANDSCAPE_SHRUB);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICBONE, 36, 70, PICTURE_LANDSCAPE_BONE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICMUSHROOM, 70, 70, PICTURE_LANDSCAPE_MUSHROOM);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICFLOWERS, 5, 107, MAPPIC_FLOWERS);
+-                        break;
+-                    case MAP_WASTELAND:
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICGRANITE, 2, 2, PICTURE_LANDSCAPE_GRANITE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICTREEDEAD, 36, 2, PICTURE_LANDSCAPE_TREE_DEAD);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICSTONE, 70, 2, PICTURE_LANDSCAPE_STONE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICSTALAGMITE, 2, 36, PICTURE_LANDSCAPE_STALAGMITE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICPEBBLE, 36, 36, PICTURE_LANDSCAPE_PEBBLE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICBUSH, 70, 36, PICTURE_LANDSCAPE_BUSH);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICSHRUB, 2, 70, PICTURE_LANDSCAPE_SHRUB);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICBONE, 36, 70, PICTURE_LANDSCAPE_BONE);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICMUSHROOM, 70, 70, PICTURE_LANDSCAPE_MUSHROOM);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICFLOWERS, 5, 107, MAPPIC_FLOWERS);
+-                        break;
+-                    case MAP_WINTERLAND:
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICGRANITE, 2, 2, PICTURE_LANDSCAPE_GRANITE_WINTER);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICTREEDEAD, 36, 2, PICTURE_LANDSCAPE_TREE_DEAD_WINTER);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICSTONE, 70, 2, PICTURE_LANDSCAPE_STONE_WINTER);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICPEBBLE, 2, 36, PICTURE_LANDSCAPE_PEBBLE_WINTER);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICBONE, 36, 36, PICTURE_LANDSCAPE_BONE_WINTER);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICMUSHROOM, 70, 36, PICTURE_LANDSCAPE_MUSHROOM_WINTER);
+-                        WNDLandscape->addPicture(EditorLandscapeMenu, PICFLOWERS, 73, 73, MAPPIC_FLOWERS);
+-                        break;
+-                    default: // should not happen
+-                        break;
+-                }
+-                MapObj->setMode(EDITOR_MODE_LANDSCAPE);
+-                MapObj->setModeContent(0x01);
+-                MapObj->setModeContent2(0xCC);
+-                lastContent = 0x01;
+-                lastContent2 = 0xCC;
+-            } else
+-            {
+-                delete WNDLandscape;
+-                WNDLandscape = nullptr;
+-                return;
++            WNDLandscape =
++              global::s2->RegisterWindow(std::make_unique<CWindow>(EditorLandscapeMenu, WINDOWQUIT, PosX, PosY, 112, 174, "Landscape",
++                                                                   WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            MapObj = global::s2->getMapObj();
++            map = MapObj->getMap();
++            switch(map->type)
++            {
++                case MAP_GREENLAND:
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICGRANITE, 2, 2, PICTURE_LANDSCAPE_GRANITE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICTREEDEAD, 36, 2, PICTURE_LANDSCAPE_TREE_DEAD);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICSTONE, 70, 2, PICTURE_LANDSCAPE_STONE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICCACTUS, 2, 36, PICTURE_LANDSCAPE_CACTUS);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICPEBBLE, 36, 36, PICTURE_LANDSCAPE_PEBBLE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICBUSH, 70, 36, PICTURE_LANDSCAPE_BUSH);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICSHRUB, 2, 70, PICTURE_LANDSCAPE_SHRUB);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICBONE, 36, 70, PICTURE_LANDSCAPE_BONE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICMUSHROOM, 70, 70, PICTURE_LANDSCAPE_MUSHROOM);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICFLOWERS, 5, 107, MAPPIC_FLOWERS);
++                    break;
++                case MAP_WASTELAND:
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICGRANITE, 2, 2, PICTURE_LANDSCAPE_GRANITE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICTREEDEAD, 36, 2, PICTURE_LANDSCAPE_TREE_DEAD);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICSTONE, 70, 2, PICTURE_LANDSCAPE_STONE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICSTALAGMITE, 2, 36, PICTURE_LANDSCAPE_STALAGMITE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICPEBBLE, 36, 36, PICTURE_LANDSCAPE_PEBBLE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICBUSH, 70, 36, PICTURE_LANDSCAPE_BUSH);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICSHRUB, 2, 70, PICTURE_LANDSCAPE_SHRUB);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICBONE, 36, 70, PICTURE_LANDSCAPE_BONE);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICMUSHROOM, 70, 70, PICTURE_LANDSCAPE_MUSHROOM);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICFLOWERS, 5, 107, MAPPIC_FLOWERS);
++                    break;
++                case MAP_WINTERLAND:
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICGRANITE, 2, 2, PICTURE_LANDSCAPE_GRANITE_WINTER);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICTREEDEAD, 36, 2, PICTURE_LANDSCAPE_TREE_DEAD_WINTER);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICSTONE, 70, 2, PICTURE_LANDSCAPE_STONE_WINTER);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICPEBBLE, 2, 36, PICTURE_LANDSCAPE_PEBBLE_WINTER);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICBONE, 36, 36, PICTURE_LANDSCAPE_BONE_WINTER);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICMUSHROOM, 70, 36, PICTURE_LANDSCAPE_MUSHROOM_WINTER);
++                    WNDLandscape->addPicture(EditorLandscapeMenu, PICFLOWERS, 73, 73, MAPPIC_FLOWERS);
++                    break;
++                default: // should not happen
++                    break;
+             }
++            MapObj->setMode(EDITOR_MODE_LANDSCAPE);
++            MapObj->setModeContent(0x01);
++            MapObj->setModeContent2(0xCC);
++            lastContent = 0x01;
++            lastContent2 = 0xCC;
+             break;
+ 
+         case PICGRANITE:
+@@ -1909,27 +1805,19 @@ void callback::EditorAnimalMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDAnimal)
+                 break;
+-            WNDAnimal = new CWindow(EditorAnimalMenu, WINDOWQUIT, PosX, PosY, 116, 106, "Animals", WINDOW_GREEN1,
+-                                    WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDAnimal))
+-            {
+-                WNDAnimal->addPicture(EditorAnimalMenu, PICRABBIT, 2, 2, PICTURE_ANIMAL_RABBIT);
+-                WNDAnimal->addPicture(EditorAnimalMenu, PICFOX, 36, 2, PICTURE_ANIMAL_FOX);
+-                WNDAnimal->addPicture(EditorAnimalMenu, PICSTAG, 70, 2, PICTURE_ANIMAL_STAG);
+-                WNDAnimal->addPicture(EditorAnimalMenu, PICROE, 2, 36, PICTURE_ANIMAL_ROE);
+-                WNDAnimal->addPicture(EditorAnimalMenu, PICDUCK, 36, 36, PICTURE_ANIMAL_DUCK);
+-                WNDAnimal->addPicture(EditorAnimalMenu, PICSHEEP, 70, 36, PICTURE_ANIMAL_SHEEP);
+-
+-                MapObj = global::s2->getMapObj();
+-                MapObj->setMode(EDITOR_MODE_ANIMAL);
+-                MapObj->setModeContent(0x01);
+-                lastContent = 0x01;
+-            } else
+-            {
+-                delete WNDAnimal;
+-                WNDAnimal = nullptr;
+-                return;
+-            }
++            WNDAnimal = global::s2->RegisterWindow(std::make_unique<CWindow>(EditorAnimalMenu, WINDOWQUIT, PosX, PosY, 116, 106, "Animals",
++                                                                             WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            WNDAnimal->addPicture(EditorAnimalMenu, PICRABBIT, 2, 2, PICTURE_ANIMAL_RABBIT);
++            WNDAnimal->addPicture(EditorAnimalMenu, PICFOX, 36, 2, PICTURE_ANIMAL_FOX);
++            WNDAnimal->addPicture(EditorAnimalMenu, PICSTAG, 70, 2, PICTURE_ANIMAL_STAG);
++            WNDAnimal->addPicture(EditorAnimalMenu, PICROE, 2, 36, PICTURE_ANIMAL_ROE);
++            WNDAnimal->addPicture(EditorAnimalMenu, PICDUCK, 36, 36, PICTURE_ANIMAL_DUCK);
++            WNDAnimal->addPicture(EditorAnimalMenu, PICSHEEP, 70, 36, PICTURE_ANIMAL_SHEEP);
++
++            MapObj = global::s2->getMapObj();
++            MapObj->setMode(EDITOR_MODE_ANIMAL);
++            MapObj->setModeContent(0x01);
++            lastContent = 0x01;
+             break;
+ 
+         case PICRABBIT:
+@@ -2024,29 +1912,21 @@ void callback::EditorPlayerMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDPlayer)
+                 break;
+-            WNDPlayer = new CWindow(EditorPlayerMenu, WINDOWQUIT, PosX, PosY, 100, 80, "Players", WINDOW_GREEN1,
+-                                    WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDPlayer))
+-            {
+-                MapObj = global::s2->getMapObj();
+-                tempRect = MapObj->getDisplayRect();
+-                PlayerHQx = MapObj->getPlayerHQx().data();
+-                PlayerHQy = MapObj->getPlayerHQy().data();
++            WNDPlayer = global::s2->RegisterWindow(std::make_unique<CWindow>(EditorPlayerMenu, WINDOWQUIT, PosX, PosY, 100, 80, "Players",
++                                                                             WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            MapObj = global::s2->getMapObj();
++            tempRect = MapObj->getDisplayRect();
++            PlayerHQx = MapObj->getPlayerHQx().data();
++            PlayerHQy = MapObj->getPlayerHQy().data();
+ 
+-                MapObj->setMode(EDITOR_MODE_FLAG);
+-                MapObj->setModeContent(PlayerNumber);
++            MapObj->setMode(EDITOR_MODE_FLAG);
++            MapObj->setModeContent(PlayerNumber);
+ 
+-                WNDPlayer->addButton(EditorPlayerMenu, PLAYER_REDUCE, 0, 0, 20, 20, BUTTON_GREY, "-");
+-                sprintf(puffer.data(), "%d", PlayerNumber + 1);
+-                PlayerNumberText = WNDPlayer->addText(puffer.data(), 26, 4, 14, FONT_ORANGE);
+-                WNDPlayer->addButton(EditorPlayerMenu, PLAYER_RAISE, 40, 0, 20, 20, BUTTON_GREY, "+");
+-                WNDPlayer->addButton(EditorPlayerMenu, GOTO_PLAYER, 0, 20, 60, 20, BUTTON_GREY, "Go to");
+-            } else
+-            {
+-                delete WNDPlayer;
+-                WNDPlayer = nullptr;
+-                return;
+-            }
++            WNDPlayer->addButton(EditorPlayerMenu, PLAYER_REDUCE, 0, 0, 20, 20, BUTTON_GREY, "-");
++            sprintf(puffer.data(), "%d", PlayerNumber + 1);
++            PlayerNumberText = WNDPlayer->addText(puffer.data(), 26, 4, 14, FONT_ORANGE);
++            WNDPlayer->addButton(EditorPlayerMenu, PLAYER_RAISE, 40, 0, 20, 20, BUTTON_GREY, "+");
++            WNDPlayer->addButton(EditorPlayerMenu, GOTO_PLAYER, 0, 20, 60, 20, BUTTON_GREY, "Go to");
+             break;
+ 
+         case PLAYER_REDUCE:
+@@ -2154,31 +2034,23 @@ void callback::EditorCursorMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDCursor)
+                 break;
+-            WNDCursor = new CWindow(EditorCursorMenu, WINDOWQUIT, PosX, PosY, 210, 130, "Cursor", WINDOW_GREEN1,
+-                                    WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE);
+-            if(global::s2->RegisterWindow(WNDCursor))
+-            {
+-                MapObj = global::s2->getMapObj();
+-
+-                WNDCursor->addButton(EditorCursorMenu, TRIANGLE, 2, 66, 32, 32, BUTTON_GREY, nullptr);
+-                trianglePictureArrowUp = WNDCursor->addStaticPicture(8, 74, CURSOR_SYMBOL_ARROW_UP);
+-                trianglePictureArrowDown = WNDCursor->addStaticPicture(17, 77, CURSOR_SYMBOL_ARROW_DOWN);
+-                CursorModeButton = WNDCursor->addButton(EditorCursorMenu, CURSORMODE, 2, 2, 96, 32, BUTTON_GREY, "Hexagon");
+-                CursorRandomButton =
+-                  WNDCursor->addButton(EditorCursorMenu, CURSORRANDOM, 2, 34, 196, 32, BUTTON_GREY, "Cursor-Activity: static");
+-                if(MapObj)
+-                {
+-                    MapObj->setVertexFillRSU(true);
+-                    MapObj->setVertexFillUSD(true);
+-                    MapObj->setVertexFillRandom(false);
+-                    MapObj->setHexagonMode(true);
+-                    MapObj->setVertexActivityRandom(false);
+-                }
+-            } else
++            WNDCursor = global::s2->RegisterWindow(std::make_unique<CWindow>(EditorCursorMenu, WINDOWQUIT, PosX, PosY, 210, 130, "Cursor",
++                                                                             WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MINIMIZE | WINDOW_MOVE));
++            MapObj = global::s2->getMapObj();
++
++            WNDCursor->addButton(EditorCursorMenu, TRIANGLE, 2, 66, 32, 32, BUTTON_GREY, nullptr);
++            trianglePictureArrowUp = WNDCursor->addStaticPicture(8, 74, CURSOR_SYMBOL_ARROW_UP);
++            trianglePictureArrowDown = WNDCursor->addStaticPicture(17, 77, CURSOR_SYMBOL_ARROW_DOWN);
++            CursorModeButton = WNDCursor->addButton(EditorCursorMenu, CURSORMODE, 2, 2, 96, 32, BUTTON_GREY, "Hexagon");
++            CursorRandomButton =
++              WNDCursor->addButton(EditorCursorMenu, CURSORRANDOM, 2, 34, 196, 32, BUTTON_GREY, "Cursor-Activity: static");
++            if(MapObj)
+             {
+-                delete WNDCursor;
+-                WNDCursor = nullptr;
+-                return;
++                MapObj->setVertexFillRSU(true);
++                MapObj->setVertexFillUSD(true);
++                MapObj->setVertexFillRandom(false);
++                MapObj->setHexagonMode(true);
++                MapObj->setVertexActivityRandom(false);
+             }
+             break;
+ 
+@@ -2374,62 +2246,54 @@ void callback::EditorCreateMenu(int Param)
+         case INITIALIZING_CALL:
+             if(WNDCreate)
+                 break;
+-            WNDCreate = new CWindow(EditorCreateMenu, WINDOWQUIT, PosX, PosY, 250, 350, "Create world", WINDOW_GREEN1,
+-                                    WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE);
+-            if(global::s2->RegisterWindow(WNDCreate))
+-            {
+-                MapObj = global::s2->getMapObj();
++            WNDCreate =
++              global::s2->RegisterWindow(std::make_unique<CWindow>(EditorCreateMenu, WINDOWQUIT, PosX, PosY, 250, 350, "Create world",
++                                                                   WINDOW_GREEN1, WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE));
++            MapObj = global::s2->getMapObj();
++
++            WNDCreate->addText("Width", 95, 4, 9, FONT_YELLOW);
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_WIDTH_128, 0, 15, 35, 20, BUTTON_GREY, "128<-");
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_WIDTH_16, 35, 15, 35, 20, BUTTON_GREY, "16<-");
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_WIDTH_2, 70, 15, 25, 20, BUTTON_GREY, "2<-");
++            sprintf(puffer.data(), "%d", width);
++            TextWidth = WNDCreate->addText(puffer.data(), 105, 17, 14, FONT_YELLOW);
++            TextWidth->setText(puffer.data());
++            WNDCreate->addButton(EditorCreateMenu, RAISE_WIDTH_2, 143, 15, 25, 20, BUTTON_GREY, "->2");
++            WNDCreate->addButton(EditorCreateMenu, RAISE_WIDTH_16, 168, 15, 35, 20, BUTTON_GREY, "->16");
++            WNDCreate->addButton(EditorCreateMenu, RAISE_WIDTH_128, 203, 15, 35, 20, BUTTON_GREY, "->128");
++
++            WNDCreate->addText("Height", 100, 40, 9, FONT_YELLOW);
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_HEIGHT_128, 0, 49, 35, 20, BUTTON_GREY, "128<-");
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_HEIGHT_16, 35, 49, 35, 20, BUTTON_GREY, "16<-");
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_HEIGHT_2, 70, 49, 25, 20, BUTTON_GREY, "2<-");
++            sprintf(puffer.data(), "%d", height);
++            TextHeight = WNDCreate->addText(puffer.data(), 105, 51, 14, FONT_YELLOW);
++            TextHeight->setText(puffer.data());
++            WNDCreate->addButton(EditorCreateMenu, RAISE_HEIGHT_2, 143, 49, 25, 20, BUTTON_GREY, "->2");
++            WNDCreate->addButton(EditorCreateMenu, RAISE_HEIGHT_16, 168, 49, 35, 20, BUTTON_GREY, "->16");
++            WNDCreate->addButton(EditorCreateMenu, RAISE_HEIGHT_128, 203, 49, 35, 20, BUTTON_GREY, "->128");
+ 
+-                WNDCreate->addText("Width", 95, 4, 9, FONT_YELLOW);
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_WIDTH_128, 0, 15, 35, 20, BUTTON_GREY, "128<-");
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_WIDTH_16, 35, 15, 35, 20, BUTTON_GREY, "16<-");
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_WIDTH_2, 70, 15, 25, 20, BUTTON_GREY, "2<-");
+-                sprintf(puffer.data(), "%d", width);
+-                TextWidth = WNDCreate->addText(puffer.data(), 105, 17, 14, FONT_YELLOW);
+-                TextWidth->setText(puffer.data());
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_WIDTH_2, 143, 15, 25, 20, BUTTON_GREY, "->2");
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_WIDTH_16, 168, 15, 35, 20, BUTTON_GREY, "->16");
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_WIDTH_128, 203, 15, 35, 20, BUTTON_GREY, "->128");
+-
+-                WNDCreate->addText("Height", 100, 40, 9, FONT_YELLOW);
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_HEIGHT_128, 0, 49, 35, 20, BUTTON_GREY, "128<-");
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_HEIGHT_16, 35, 49, 35, 20, BUTTON_GREY, "16<-");
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_HEIGHT_2, 70, 49, 25, 20, BUTTON_GREY, "2<-");
+-                sprintf(puffer.data(), "%d", height);
+-                TextHeight = WNDCreate->addText(puffer.data(), 105, 51, 14, FONT_YELLOW);
+-                TextHeight->setText(puffer.data());
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_HEIGHT_2, 143, 49, 25, 20, BUTTON_GREY, "->2");
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_HEIGHT_16, 168, 49, 35, 20, BUTTON_GREY, "->16");
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_HEIGHT_128, 203, 49, 35, 20, BUTTON_GREY, "->128");
+-
+-                WNDCreate->addText("Landscape", 85, 80, 9, FONT_YELLOW);
+-                ButtonLandscape =
+-                  WNDCreate->addButton(EditorCreateMenu, CHANGE_LANDSCAPE, 64, 93, 110, 20, BUTTON_GREY,
+-                                       (LandscapeType == 0 ? "Greenland" : (LandscapeType == 1 ? "Wasteland" : "Winterworld")));
+-
+-                WNDCreate->addText("Main area", 82, 120, 9, FONT_YELLOW);
+-                WNDCreate->addButton(EditorCreateMenu, TEXTURE_PREVIOUS, 45, 139, 35, 20, BUTTON_GREY, "-");
+-                PicTextureIndex = WNDCreate->addStaticPicture(102, 133, PicTextureIndexGlobal);
+-                WNDCreate->addButton(EditorCreateMenu, TEXTURE_NEXT, 158, 139, 35, 20, BUTTON_GREY, "+");
+-
+-                WNDCreate->addText("Border size", 103, 175, 9, FONT_YELLOW);
+-                WNDCreate->addButton(EditorCreateMenu, REDUCE_BORDER, 45, 186, 35, 20, BUTTON_GREY, "-");
+-                sprintf(puffer.data(), "%d", border);
+-                TextBorder = WNDCreate->addText(puffer.data(), 112, 188, 14, FONT_YELLOW);
+-                WNDCreate->addButton(EditorCreateMenu, RAISE_BORDER, 158, 186, 35, 20, BUTTON_GREY, "+");
+-
+-                WNDCreate->addText("Border area", 65, 215, 9, FONT_YELLOW);
+-                WNDCreate->addButton(EditorCreateMenu, BORDER_TEXTURE_PREVIOUS, 45, 234, 35, 20, BUTTON_GREY, "-");
+-                PicBorderTextureIndex = WNDCreate->addStaticPicture(102, 228, PicBorderTextureIndexGlobal);
+-                WNDCreate->addButton(EditorCreateMenu, BORDER_TEXTURE_NEXT, 158, 234, 35, 20, BUTTON_GREY, "+");
+-
+-                WNDCreate->addButton(EditorCreateMenu, CREATE_WORLD, 44, 275, 150, 40, BUTTON_GREY, "Create world");
+-            } else
+-            {
+-                delete WNDCreate;
+-                WNDCreate = nullptr;
+-                return;
+-            }
++            WNDCreate->addText("Landscape", 85, 80, 9, FONT_YELLOW);
++            ButtonLandscape = WNDCreate->addButton(EditorCreateMenu, CHANGE_LANDSCAPE, 64, 93, 110, 20, BUTTON_GREY,
++                                                   (LandscapeType == 0 ? "Greenland" : (LandscapeType == 1 ? "Wasteland" : "Winterworld")));
++
++            WNDCreate->addText("Main area", 82, 120, 9, FONT_YELLOW);
++            WNDCreate->addButton(EditorCreateMenu, TEXTURE_PREVIOUS, 45, 139, 35, 20, BUTTON_GREY, "-");
++            PicTextureIndex = WNDCreate->addStaticPicture(102, 133, PicTextureIndexGlobal);
++            WNDCreate->addButton(EditorCreateMenu, TEXTURE_NEXT, 158, 139, 35, 20, BUTTON_GREY, "+");
++
++            WNDCreate->addText("Border size", 103, 175, 9, FONT_YELLOW);
++            WNDCreate->addButton(EditorCreateMenu, REDUCE_BORDER, 45, 186, 35, 20, BUTTON_GREY, "-");
++            sprintf(puffer.data(), "%d", border);
++            TextBorder = WNDCreate->addText(puffer.data(), 112, 188, 14, FONT_YELLOW);
++            WNDCreate->addButton(EditorCreateMenu, RAISE_BORDER, 158, 186, 35, 20, BUTTON_GREY, "+");
++
++            WNDCreate->addText("Border area", 65, 215, 9, FONT_YELLOW);
++            WNDCreate->addButton(EditorCreateMenu, BORDER_TEXTURE_PREVIOUS, 45, 234, 35, 20, BUTTON_GREY, "-");
++            PicBorderTextureIndex = WNDCreate->addStaticPicture(102, 228, PicBorderTextureIndexGlobal);
++            WNDCreate->addButton(EditorCreateMenu, BORDER_TEXTURE_NEXT, 158, 234, 35, 20, BUTTON_GREY, "+");
++
++            WNDCreate->addButton(EditorCreateMenu, CREATE_WORLD, 44, 275, 150, 40, BUTTON_GREY, "Create world");
+             break;
+ 
+         case CALL_FROM_GAMELOOP: break;
+@@ -3108,18 +2972,12 @@ void callback::MinimapMenu(int Param)
+                 //--> 12px is width of left and right window frame and 30px is height of the upper and lower window frame
+                 if((global::s2->getDisplaySurface()->w - 12 < width) || (global::s2->getDisplaySurface()->h - 30 < height))
+                     break;
+-                WNDMinimap = new CWindow(MinimapMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - width / 2 - 6,
+-                                         global::s2->GameResolution.y / 2 - height / 2 - 15, width + 12, height + 30, "Overview",
+-                                         WINDOW_NOTHING, WINDOW_CLOSE | WINDOW_MOVE);
+-                if(global::s2->RegisterWindow(WNDMinimap) && global::s2->RegisterCallback(MinimapMenu))
+-                    WndSurface = WNDMinimap->getSurface();
+-                else
+-                {
+-                    delete WNDMinimap;
+-                    WNDMinimap = nullptr;
+-                    MapObj = nullptr;
+-                    return;
+-                }
++                WNDMinimap = global::s2->RegisterWindow(
++                  std::make_unique<CWindow>(MinimapMenu, WINDOWQUIT, global::s2->GameResolution.x / 2 - width / 2 - 6,
++                                            global::s2->GameResolution.y / 2 - height / 2 - 15, width + 12, height + 30, "Overview",
++                                            WINDOW_NOTHING, WINDOW_CLOSE | WINDOW_MOVE));
++                global::s2->RegisterCallback(MinimapMenu);
++                WndSurface = WNDMinimap->getSurface();
+             }
+             break;
+ 
+@@ -3231,23 +3089,15 @@ void callback::viewer(int Param)
+         case INITIALIZING_CALL:
+             if(WNDViewer)
+                 break;
+-            WNDViewer = new CWindow(viewer, WINDOWQUIT, 0, 0, 250, 140, "Viewer", WINDOW_GREEN1,
+-                                    WINDOW_CLOSE | WINDOW_MOVE | WINDOW_RESIZE | WINDOW_MINIMIZE);
+-            if(global::s2->RegisterWindow(WNDViewer))
+-            {
+-                global::s2->RegisterCallback(viewer);
+-                WNDViewer->addButton(viewer, BACKWARD_100, 0, 0, 35, 20, BUTTON_GREY, "100<-");
+-                WNDViewer->addButton(viewer, BACKWARD_10, 35, 0, 35, 20, BUTTON_GREY, "10<-");
+-                WNDViewer->addButton(viewer, BACKWARD_1, 70, 0, 35, 20, BUTTON_GREY, "1<-");
+-                WNDViewer->addButton(viewer, FORWARD_1, 105, 0, 35, 20, BUTTON_GREY, "->1");
+-                WNDViewer->addButton(viewer, FORWARD_10, 140, 0, 35, 20, BUTTON_GREY, "->10");
+-                WNDViewer->addButton(viewer, FORWARD_100, 175, 0, 35, 20, BUTTON_GREY, "->100");
+-            } else
+-            {
+-                delete WNDViewer;
+-                WNDViewer = nullptr;
+-                return;
+-            }
++            WNDViewer = global::s2->RegisterWindow(std::make_unique<CWindow>(viewer, WINDOWQUIT, 0, 0, 250, 140, "Viewer", WINDOW_GREEN1,
++                                                                             WINDOW_CLOSE | WINDOW_MOVE | WINDOW_RESIZE | WINDOW_MINIMIZE));
++            global::s2->RegisterCallback(viewer);
++            WNDViewer->addButton(viewer, BACKWARD_100, 0, 0, 35, 20, BUTTON_GREY, "100<-");
++            WNDViewer->addButton(viewer, BACKWARD_10, 35, 0, 35, 20, BUTTON_GREY, "10<-");
++            WNDViewer->addButton(viewer, BACKWARD_1, 70, 0, 35, 20, BUTTON_GREY, "1<-");
++            WNDViewer->addButton(viewer, FORWARD_1, 105, 0, 35, 20, BUTTON_GREY, "->1");
++            WNDViewer->addButton(viewer, FORWARD_10, 140, 0, 35, 20, BUTTON_GREY, "->10");
++            WNDViewer->addButton(viewer, FORWARD_100, 175, 0, 35, 20, BUTTON_GREY, "->100");
+             break;
+ 
+         case CALL_FROM_GAMELOOP:
+@@ -3370,13 +3220,7 @@ void callback::submenu1(int Param)
+     switch(Param)
+     {
+         case INITIALIZING_CALL:
+-            SubMenu = new CMenu(SPLASHSCREEN_SUBMENU1);
+-            if(!global::s2->RegisterMenu(SubMenu))
+-            {
+-                delete SubMenu;
+-                SubMenu = nullptr;
+-                return;
+-            }
++            SubMenu = global::s2->RegisterMenu(std::make_unique<CMenu>(SPLASHSCREEN_SUBMENU1));
+             SubMenu->addButton(submenu1, MAINMENU, 400, 440, 200, 20, BUTTON_RED1, "back");
+             greatMoon = SubMenu->addButton(submenu1, GREATMOON, 100, 100, 200, 200, BUTTON_STONE, nullptr, MOON);
+             greatMoon->setMotionParams(GREATMOONENTRY, GREATMOONLEAVE);
+@@ -3443,38 +3287,24 @@ void callback::submenu1(int Param)
+         case CREATEWINDOW:
+             if(!testWindow)
+             {
+-                testWindow = new CWindow(submenu1, TESTWINDOWQUITMESSAGE, 5, 5, 350, 240, "Window", WINDOW_GREEN1,
+-                                         WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE | WINDOW_RESIZE);
+-                if(global::s2->RegisterWindow(testWindow))
+-                {
+-                    testWindow->addText("Text inside the window", 10, 10, 14);
+-                    testWindow->addButton(submenu1, -10, 150, 100, 210, 30, BUTTON_GREEN2, "Button inside the window");
+-                    testWindowPicture = testWindow->addPicture(submenu1, TESTWINDOWPICTURE, 10, 60, MIS2BOBS_FORTRESS);
+-                    testWindowPicture->setMotionParams(TESTWINDOWPICTUREENTRY, TESTWINDOWPICTURELEAVE);
+-                    testTextfield_testWindow = testWindow->addTextfield(130, 30, 10, 3, 14, FONT_RED, BUTTON_GREY, true);
+-                    testTextfield_testWindow->setText(
+-                      "This is a very long test text in order to destroy the text field completely once and for all");
+-                } else
+-                {
+-                    delete testWindow;
+-                    testWindow = nullptr;
+-                    return;
+-                }
++                testWindow = global::s2->RegisterWindow(
++                  std::make_unique<CWindow>(submenu1, TESTWINDOWQUITMESSAGE, 5, 5, 350, 240, "Window", WINDOW_GREEN1,
++                                            WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE | WINDOW_RESIZE));
++                testWindow->addText("Text inside the window", 10, 10, 14);
++                testWindow->addButton(submenu1, -10, 150, 100, 210, 30, BUTTON_GREEN2, "Button inside the window");
++                testWindowPicture = testWindow->addPicture(submenu1, TESTWINDOWPICTURE, 10, 60, MIS2BOBS_FORTRESS);
++                testWindowPicture->setMotionParams(TESTWINDOWPICTUREENTRY, TESTWINDOWPICTURELEAVE);
++                testTextfield_testWindow = testWindow->addTextfield(130, 30, 10, 3, 14, FONT_RED, BUTTON_GREY, true);
++                testTextfield_testWindow->setText(
++                  "This is a very long test text in order to destroy the text field completely once and for all");
+             }
+             if(!testWindow2)
+             {
+-                testWindow2 = new CWindow(submenu1, TESTWINDOW2QUITMESSAGE, 200, 5, 350, 240, "Another Window", WINDOW_GREEN1,
+-                                          WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE | WINDOW_RESIZE);
+-                if(global::s2->RegisterWindow(testWindow2))
+-                {
+-                    testWindow2->addText("Text inside the window", 50, 40, 9);
+-                    testWindow2->addButton(submenu1, -10, 100, 100, 100, 20, BUTTON_GREEN2, "Button");
+-                } else
+-                {
+-                    delete testWindow2;
+-                    testWindow2 = nullptr;
+-                    return;
+-                }
++                testWindow2 = global::s2->RegisterWindow(
++                  std::make_unique<CWindow>(submenu1, TESTWINDOW2QUITMESSAGE, 200, 5, 350, 240, "Another Window", WINDOW_GREEN1,
++                                            WINDOW_CLOSE | WINDOW_MOVE | WINDOW_MINIMIZE | WINDOW_RESIZE));
++                testWindow2->addText("Text inside the window", 50, 40, 9);
++                testWindow2->addButton(submenu1, -10, 100, 100, 100, 20, BUTTON_GREEN2, "Button");
+             }
+             break;
+ 
+diff --git a/defines.h b/defines.h
+index f6cfa88..aee5439 100644
+--- a/defines.h
++++ b/defines.h
+@@ -3,6 +3,7 @@
+ 
+ #include "Point.h"
+ #include "Rect.h"
++#include "SdlSurface.h"
+ #include "gameData/DescIdx.h"
+ #include <SDL.h>
+ #include <array>
+@@ -67,7 +68,7 @@ struct bobBMP
+     Uint16 ny;
+     Uint16 w;
+     Uint16 h;
+-    SDL_Surface* surface = nullptr;
++    SdlSurface surface;
+ };
+ 
+ // Structure for Bobtype 5 (Palette)
+@@ -83,7 +84,7 @@ struct bobSHADOW
+     Uint16 ny;
+     Uint16 w;
+     Uint16 h;
+-    SDL_Surface* surface = nullptr;
++    SdlSurface surface;
+ };
+ 
+ // Datatypes for the Map
+@@ -1174,12 +1175,6 @@ enum
+ #define MAXBOBPAL 100
+ 
+ // maximum values for GUI stuff
+-// maximum number of menus
+-#define MAXMENUS 20
+-// maximum number of windows
+-#define MAXWINDOWS 100
+-// maximum number of callbacks
+-#define MAXCALLBACKS 100
+ // maximum number of buttons that can be created WITHIN a menu or window
+ #define MAXBUTTONS 50
+ // maximum number of texts that can be written WITHIN a menu or window
+diff --git a/globals.h b/globals.h
+index 123b7a9..5d4f2aa 100644
+--- a/globals.h
++++ b/globals.h
+@@ -17,7 +17,7 @@ extern std::vector<bobBMP> bmpArray;
+ extern std::vector<bobSHADOW> shadowArray;
+ // array for all palettes
+ extern std::vector<bobPAL> palArray;
+-// the game objec
++// the game object
+ extern CGame* s2;
+ // Path to game data (must not be empty!)
+ extern std::string gameDataFilePath;

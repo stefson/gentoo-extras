@@ -40,6 +40,9 @@ BDEPEND="app-arch/unzip"
 PATCHES=(
 	# fix for libsamplerate test
 	"${FILESDIR}"/1091.patch
+	# fix for s25client file picker dialog
+	"${FILESDIR}"/7064808191778dcf87c054e36bf7b871ee2ea851.patch
+	"${FILESDIR}"/64d7ba8e726190182c3080ea1ceb48f5ce2a7527.patch
 )
 
 src_prepare() {
