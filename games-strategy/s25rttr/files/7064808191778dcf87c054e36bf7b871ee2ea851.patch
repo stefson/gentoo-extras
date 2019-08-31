@@ -11,10 +11,10 @@ Subject: [PATCH] List all available files in OpenMap dialogue
  callbacks.cpp      | 25 +++++++++++++-------
  5 files changed, 55 insertions(+), 71 deletions(-)
 
-diff --git a/external/s25client/CIO/CFont.cpp b/external/s25client/CIO/CFont.cpp
+diff --git a/external/s25edit/CIO/CFont.cpp b/external/s25edit/CIO/CFont.cpp
 index ec396bd..ca2cb99 100644
---- a/external/s25client/CIO/CFont.cpp
-+++ b/external/s25client/CIO/CFont.cpp
+--- a/external/s25edit/CIO/CFont.cpp
++++ b/external/s25edit/CIO/CFont.cpp
 @@ -11,7 +11,7 @@ CFont::CFont(std::string text, unsigned x, unsigned y, unsigned fontsize, unsign
          this->fontsize_ = 9;
      else
@@ -64,10 +64,10 @@ index ec396bd..ca2cb99 100644
      }
  }
  
-diff --git a/external/s25client/CIO/CFont.h b/external/s25client/CIO/CFont.h
+diff --git a/external/s25edit/CIO/CFont.h b/external/s25edit/CIO/CFont.h
 index bb0ff4b..15fc4b5 100644
---- a/external/s25client/CIO/CFont.h
-+++ b/external/s25client/CIO/CFont.h
+--- a/external/s25edit/CIO/CFont.h
++++ b/external/s25edit/CIO/CFont.h
 @@ -3,6 +3,7 @@
  
  #include "../defines.h"
@@ -99,10 +99,10 @@ index bb0ff4b..15fc4b5 100644
          clickedParam = param;
      }
      void unsetCallback()
-diff --git a/external/s25client/CIO/CSelectBox.cpp b/external/s25client/CIO/CSelectBox.cpp
+diff --git a/external/s25edit/CIO/CSelectBox.cpp b/external/s25edit/CIO/CSelectBox.cpp
 index 59e9913..b11c587 100644
---- a/external/s25client/CIO/CSelectBox.cpp
-+++ b/external/s25client/CIO/CSelectBox.cpp
+--- a/external/s25edit/CIO/CSelectBox.cpp
++++ b/external/s25edit/CIO/CSelectBox.cpp
 @@ -14,49 +14,31 @@ CSelectBox::CSelectBox(Uint16 x, Uint16 y, Uint16 w, Uint16 h, int fontsize, int
      this->fontsize = fontsize;
      this->text_color = text_color;
@@ -223,10 +223,10 @@ index 59e9913..b11c587 100644
      }
  
      CSurface::Draw(Surf_SelectBox, ScrollUpButton->getSurface(), w_ - 1 - 20, 0);
-diff --git a/external/s25client/CIO/CSelectBox.h b/external/s25client/CIO/CSelectBox.h
+diff --git a/external/s25edit/CIO/CSelectBox.h b/external/s25edit/CIO/CSelectBox.h
 index 01a0cdd..e1591cc 100644
---- a/external/s25client/CIO/CSelectBox.h
-+++ b/external/s25client/CIO/CSelectBox.h
+--- a/external/s25edit/CIO/CSelectBox.h
++++ b/external/s25edit/CIO/CSelectBox.h
 @@ -3,20 +3,20 @@
  
  #include "../defines.h"
@@ -275,10 +275,10 @@ index 01a0cdd..e1591cc 100644
  };
  
  #endif
-diff --git a/external/s25client/callbacks.cpp b/external/s25client/callbacks.cpp
+diff --git a/external/s25edit/callbacks.cpp b/external/s25edit/callbacks.cpp
 index a61269c..ef3187a 100644
---- a/external/s25client/callbacks.cpp
-+++ b/external/s25client/callbacks.cpp
+--- a/external/s25edit/callbacks.cpp
++++ b/external/s25edit/callbacks.cpp
 @@ -754,8 +754,8 @@ void callback::EditorMainMenu(int Param)
  void callback::EditorLoadMenu(int Param)
  {

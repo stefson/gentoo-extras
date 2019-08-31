@@ -27,10 +27,10 @@ Subject: [PATCH] Cleanup by using some RAII
  delete mode 100644 CGame_GameLoop.cpp
  create mode 100644 SdlSurface.h
 
-diff --git a/external/s25client/CDebug.cpp b/external/s25client/CDebug.cpp
+diff --git a/external/s25edit/CDebug.cpp b/external/s25edit/CDebug.cpp
 index d31e6a0..bb49672 100644
---- a/external/s25client/CDebug.cpp
-+++ b/external/s25client/CDebug.cpp
+--- a/external/s25edit/CDebug.cpp
++++ b/external/s25edit/CDebug.cpp
 @@ -12,9 +12,8 @@
  
  CDebug::CDebug(void dbgCallback(int), int quitParam)
@@ -84,10 +84,10 @@ index d31e6a0..bb49672 100644
      if(MapObj)
      {
          map = MapObj->map;
-diff --git a/external/s25client/CGame.cpp b/external/s25client/CGame.cpp
+diff --git a/external/s25edit/CGame.cpp b/external/s25edit/CGame.cpp
 index 9a9ceb7..23724d7 100644
---- a/external/s25client/CGame.cpp
-+++ b/external/s25client/CGame.cpp
+--- a/external/s25edit/CGame.cpp
++++ b/external/s25edit/CGame.cpp
 @@ -14,14 +14,10 @@ namespace bfs = boost::filesystem;
  
  //#include <vld.h>
@@ -388,10 +388,10 @@ index 9a9ceb7..23724d7 100644
 -    return 0;
 +    return result;
  }
-diff --git a/external/s25client/CGame.h b/external/s25client/CGame.h
+diff --git a/external/s25edit/CGame.h b/external/s25edit/CGame.h
 index 75b7f2c..9135984 100644
---- a/external/s25client/CGame.h
-+++ b/external/s25client/CGame.h
+--- a/external/s25edit/CGame.h
++++ b/external/s25edit/CGame.h
 @@ -1,10 +1,10 @@
  #ifndef _CGAME_H
  #define _CGAME_H
@@ -470,10 +470,10 @@ index 75b7f2c..9135984 100644
      auto getRes() { return GameResolution; }
  };
  
-diff --git a/external/s25client/CGame_Cleanup.cpp b/external/s25client/CGame_Cleanup.cpp
+diff --git a/external/s25edit/CGame_Cleanup.cpp b/external/s25edit/CGame_Cleanup.cpp
 deleted file mode 100644
 index ec1bbce..0000000
---- a/external/s25client/CGame_Cleanup.cpp
+--- a/external/s25edit/CGame_Cleanup.cpp
 +++ /dev/null
 @@ -1,39 +0,0 @@
 -#include "defines.h"
@@ -515,10 +515,10 @@ index ec1bbce..0000000
 -
 -    SDL_Quit();
 -}
-diff --git a/external/s25client/CGame_Event.cpp b/external/s25client/CGame_Event.cpp
+diff --git a/external/s25edit/CGame_Event.cpp b/external/s25edit/CGame_Event.cpp
 index 40e06ca..4cd6752 100644
---- a/external/s25client/CGame_Event.cpp
-+++ b/external/s25client/CGame_Event.cpp
+--- a/external/s25edit/CGame_Event.cpp
++++ b/external/s25edit/CGame_Event.cpp
 @@ -20,14 +20,13 @@ void CGame::EventHandling(SDL_Event* Event)
              int highestPriority = 0;
              for(auto& Window : Windows)
@@ -626,10 +626,10 @@ index 40e06ca..4cd6752 100644
                      Menu->setMouseData(Event->button);
              }
              break;
-diff --git a/external/s25client/CGame_GameLoop.cpp b/external/s25client/CGame_GameLoop.cpp
+diff --git a/external/s25edit/CGame_GameLoop.cpp b/external/s25edit/CGame_GameLoop.cpp
 deleted file mode 100644
 index 9dc034d..0000000
---- a/external/s25client/CGame_GameLoop.cpp
+--- a/external/s25edit/CGame_GameLoop.cpp
 +++ /dev/null
 @@ -1,22 +0,0 @@
 -#include "CGame.h"
@@ -654,10 +654,10 @@ index 9dc034d..0000000
 -            UnregisterWindow(Windows[i]);
 -    }
 -}
-diff --git a/external/s25client/CGame_Init.cpp b/external/s25client/CGame_Init.cpp
+diff --git a/external/s25edit/CGame_Init.cpp b/external/s25edit/CGame_Init.cpp
 index f463b0f..f74fe53 100644
---- a/external/s25client/CGame_Init.cpp
-+++ b/external/s25client/CGame_Init.cpp
+--- a/external/s25edit/CGame_Init.cpp
++++ b/external/s25edit/CGame_Init.cpp
 @@ -1,5 +1,6 @@
  #include "CGame.h"
  #include "CIO/CFile.h"
@@ -742,10 +742,10 @@ index f463b0f..f74fe53 100644
  
      GameDataLoader gdLoader(global::worldDesc);
      if(!gdLoader.Load())
-diff --git a/external/s25client/CGame_Render.cpp b/external/s25client/CGame_Render.cpp
+diff --git a/external/s25edit/CGame_Render.cpp b/external/s25edit/CGame_Render.cpp
 index 67d3509..5dc9bb7 100644
---- a/external/s25client/CGame_Render.cpp
-+++ b/external/s25client/CGame_Render.cpp
+--- a/external/s25edit/CGame_Render.cpp
++++ b/external/s25edit/CGame_Render.cpp
 @@ -43,15 +43,15 @@ void CGame::Render()
      if(showLoadScreen)
      {
@@ -808,10 +808,10 @@ index 67d3509..5dc9bb7 100644
  
      SDL_Delay(msWait);
  }
-diff --git a/external/s25client/CIO/CFile.cpp b/external/s25client/CIO/CFile.cpp
+diff --git a/external/s25edit/CIO/CFile.cpp b/external/s25edit/CIO/CFile.cpp
 index 3410c12..179c158 100644
---- a/external/s25client/CIO/CFile.cpp
-+++ b/external/s25client/CIO/CFile.cpp
+--- a/external/s25edit/CIO/CFile.cpp
++++ b/external/s25edit/CIO/CFile.cpp
 @@ -435,9 +435,9 @@ bool CFile::open_lbm(const std::string& filename)
      CHECK_READ(libendian::be_read_ui(&length, fp));
  
@@ -1108,10 +1108,10 @@ index 3410c12..179c158 100644
          }
      }
  
-diff --git a/external/s25client/CIO/CMenu.cpp b/external/s25client/CIO/CMenu.cpp
+diff --git a/external/s25edit/CIO/CMenu.cpp b/external/s25edit/CIO/CMenu.cpp
 index dcd6962..2873a99 100644
---- a/external/s25client/CIO/CMenu.cpp
-+++ b/external/s25client/CIO/CMenu.cpp
+--- a/external/s25edit/CIO/CMenu.cpp
++++ b/external/s25edit/CIO/CMenu.cpp
 @@ -337,8 +337,8 @@ bool CMenu::render()
      }
  
@@ -1123,10 +1123,10 @@ index dcd6962..2873a99 100644
                       surfBG->w - 1, 0, 0, surfBG->h - 1, surfBG->w - 1, surfBG->h - 1);
  
      for(auto& static_picture : static_pictures)
-diff --git a/external/s25client/CMakeLists.txt b/external/s25client/CMakeLists.txt
+diff --git a/external/s25edit/CMakeLists.txt b/external/s25edit/CMakeLists.txt
 index 0522844..97c67f5 100644
---- a/external/s25client/CMakeLists.txt
-+++ b/external/s25client/CMakeLists.txt
+--- a/external/s25edit/CMakeLists.txt
++++ b/external/s25edit/CMakeLists.txt
 @@ -6,11 +6,7 @@ find_package(Boost 1.64 REQUIRED)
  
  add_subdirectory(SGE)
@@ -1139,10 +1139,10 @@ index 0522844..97c67f5 100644
  if(RTTR_EDITOR_ADMINMODE)
  	add_definitions(-D_ADMINMODE)
  endif()
-diff --git a/external/s25client/CMap.cpp b/external/s25client/CMap.cpp
+diff --git a/external/s25edit/CMap.cpp b/external/s25edit/CMap.cpp
 index 59ecd0e..a0cbc1a 100644
---- a/external/s25client/CMap.cpp
-+++ b/external/s25client/CMap.cpp
+--- a/external/s25edit/CMap.cpp
++++ b/external/s25edit/CMap.cpp
 @@ -466,8 +466,7 @@ void CMap::unloadMapPics()
  {
      for(int i = MAPPIC_ARROWCROSS_YELLOW; i <= MAPPIC_LAST_ENTRY; i++)
@@ -1162,10 +1162,10 @@ index 59ecd0e..a0cbc1a 100644
      if(displayRect.getSize() != global::s2->GameResolution)
      {
          displayRect.setSize(global::s2->GameResolution);
-diff --git a/external/s25client/CSurface.cpp b/external/s25client/CSurface.cpp
+diff --git a/external/s25edit/CSurface.cpp b/external/s25edit/CSurface.cpp
 index 1673088..22c3348 100644
---- a/external/s25client/CSurface.cpp
-+++ b/external/s25client/CSurface.cpp
+--- a/external/s25edit/CSurface.cpp
++++ b/external/s25edit/CSurface.cpp
 @@ -63,6 +63,21 @@ bool CSurface::Draw(SDL_Surface* Surf_Dest, SDL_Surface* Surf_Src, int X, int Y)
      return true;
  }
@@ -1242,10 +1242,10 @@ index 1673088..22c3348 100644
              break;
      }
  
-diff --git a/external/s25client/CSurface.h b/external/s25client/CSurface.h
+diff --git a/external/s25edit/CSurface.h b/external/s25edit/CSurface.h
 index 74df76b..74f58c9 100644
---- a/external/s25client/CSurface.h
-+++ b/external/s25client/CSurface.h
+--- a/external/s25edit/CSurface.h
++++ b/external/s25edit/CSurface.h
 @@ -2,6 +2,7 @@
  #define _CSURFACE_H
  
@@ -1270,11 +1270,11 @@ index 74df76b..74f58c9 100644
      static void DrawPixel_Color(SDL_Surface* screen, int x, int y, Uint32 color);
      static void DrawPixel_RGB(SDL_Surface* screen, int x, int y, Uint8 R, Uint8 G, Uint8 B);
      static void DrawPixel_RGBA(SDL_Surface* screen, int x, int y, Uint8 R, Uint8 G, Uint8 B, Uint8 A);
-diff --git a/external/s25client/SdlSurface.h b/external/s25client/SdlSurface.h
+diff --git a/external/s25edit/SdlSurface.h b/external/s25edit/SdlSurface.h
 new file mode 100644
 index 0000000..ab4718b
 --- /dev/null
-+++ b/external/s25client/SdlSurface.h
++++ b/external/s25edit/SdlSurface.h
 @@ -0,0 +1,19 @@
 +#ifndef SdlSurface_h__
 +#define SdlSurface_h__
@@ -1295,10 +1295,10 @@ index 0000000..ab4718b
 +}
 +
 +#endif // SdlSurface_h__
-diff --git a/external/s25client/callbacks.cpp b/external/s25client/callbacks.cpp
+diff --git a/external/s25edit/callbacks.cpp b/external/s25edit/callbacks.cpp
 index 12236eb..a61269c 100644
---- a/external/s25client/callbacks.cpp
-+++ b/external/s25client/callbacks.cpp
+--- a/external/s25edit/callbacks.cpp
++++ b/external/s25edit/callbacks.cpp
 @@ -37,25 +37,18 @@ void callback::PleaseWait(int Param)
          case INITIALIZING_CALL:
              if(WNDWait)
@@ -2359,16 +2359,16 @@ index 12236eb..a61269c 100644
              }
              break;
  
-diff --git a/external/s25client/defines.h b/external/s25client/defines.h
+diff --git a/external/s25edit/defines.h b/external/s25edit/defines.h
 index f6cfa88..aee5439 100644
---- a/external/s25client/defines.h
-+++ b/external/s25client/defines.h
+--- a/external/s25edit/defines.h
++++ b/external/s25edit/defines.h
 @@ -3,6 +3,7 @@
  
  #include "Point.h"
  #include "Rect.h"
 +#include "SdlSurface.h"
- #include "gameData/external/s25client/DescIdx.h"
+ #include "gameData/external/s25edit/DescIdx.h"
  #include <SDL.h>
  #include <array>
 @@ -67,7 +68,7 @@ struct bobBMP
@@ -2402,10 +2402,10 @@ index f6cfa88..aee5439 100644
  // maximum number of buttons that can be created WITHIN a menu or window
  #define MAXBUTTONS 50
  // maximum number of texts that can be written WITHIN a menu or window
-diff --git a/external/s25client/globals.h b/external/s25client/globals.h
+diff --git a/external/s25edit/globals.h b/external/s25edit/globals.h
 index 123b7a9..5d4f2aa 100644
---- a/external/s25client/globals.h
-+++ b/external/s25client/globals.h
+--- a/external/s25edit/globals.h
++++ b/external/s25edit/globals.h
 @@ -17,7 +17,7 @@ extern std::vector<bobBMP> bmpArray;
  extern std::vector<bobSHADOW> shadowArray;
  // array for all palettes
