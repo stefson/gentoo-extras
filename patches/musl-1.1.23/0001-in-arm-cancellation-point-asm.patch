@@ -1,0 +1,44 @@
+From e0e8ae754cc7653fcff489a0e229adbbb49fde6c Mon Sep 17 00:00:00 2001
+From: Patrick Oppenlander <patrick.oppenlander@gmail.com>
+Date: Thu, 1 Aug 2019 14:34:59 +1000
+Subject: in arm cancellation point asm, don't unnecessarily preserve link
+ register
+
+The only reason we needed to preserve the link register was because we
+were using a branch-link instruction to branch to __cp_cancel.
+Replacing this with a branch means we can avoid the save/restore as
+the link register is no longer modified.
+---
+ src/thread/arm/syscall_cp.s | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/thread/arm/syscall_cp.s b/src/thread/arm/syscall_cp.s
+index a5730c08..e607dd42 100644
+--- a/src/thread/arm/syscall_cp.s
++++ b/src/thread/arm/syscall_cp.s
+@@ -11,19 +11,19 @@
+ .type __syscall_cp_asm,%function
+ __syscall_cp_asm:
+ 	mov ip,sp
+-	stmfd sp!,{r4,r5,r6,r7,lr}
++	stmfd sp!,{r4,r5,r6,r7}
+ __cp_begin:
+ 	ldr r0,[r0]
+ 	cmp r0,#0
+-	blne __cp_cancel
++	bne __cp_cancel
+ 	mov r7,r1
+ 	mov r0,r2
+ 	mov r1,r3
+ 	ldmfd ip,{r2,r3,r4,r5,r6}
+ 	svc 0
+ __cp_end:
+-	ldmfd sp!,{r4,r5,r6,r7,lr}
++	ldmfd sp!,{r4,r5,r6,r7}
+ 	bx lr
+ __cp_cancel:
+-	ldmfd sp!,{r4,r5,r6,r7,lr}
++	ldmfd sp!,{r4,r5,r6,r7}
+ 	b __cancel
+-- 
+cgit v1.2.1
