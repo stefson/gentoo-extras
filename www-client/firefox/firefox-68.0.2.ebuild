@@ -277,7 +277,10 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"firefox-68.0-dropping-header-on-freebsd.patch
 
-	eapply "${FILESDIR}/"firefox-68.0-fix-arm-enable-neon.patch
+	# XXX there is a bug in rust, which blocks USE="neon" see mozilla #1557350 
+	# error is: The rust compiler host (armv7-unknown-linux-gnueabihf) is not suitable for 
+	# the configure host (armv7-unknown-linux-gnueabihf/thumbv7neon-unknown-linux-gnueabihf).
+	# v67.0 was fine, error is from build/moz.configure/rust.configure
 
 	# XXX sadly, this breaks cross compile. It might be related to '%/usr/include', hence
 	# pulling in systems deps somehow? 
