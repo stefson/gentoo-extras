@@ -4,7 +4,7 @@
 EAPI="6"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
-MOZ_ESR=""
+MOZ_ESR="1"
 
 PYTHON_COMPAT=( python3_{5,6,7} )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
@@ -190,8 +190,8 @@ llvm_check_deps() {
 	fi
 
 	if use pgo ; then
-		if ! has userpriv $FEATURES ; then
-			eerror "Building firefox with USE=pgo and FEATURES=-userpriv is not supported!"
+		if ! has usersandbox $FEATURES ; then
+			eerror "You must enable usersandbox as X server can not run as root!"
 		fi
 	fi
 
@@ -256,7 +256,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	use !wayland && rm -f "${WORKDIR}/firefox/2019_mozilla-bug1539471.patch"
+	rm "${WORKDIR}"/firefox/2013_avoid_noinline_on_GCC_with_skcms.patch
 	eapply "${WORKDIR}/firefox"
 
 	if use arm ; then
@@ -274,8 +274,6 @@ src_prepare() {
 	fi
 
 	eapply "${FILESDIR}/"firefox-68.0-update-mp4parse.patch
-
-	eapply "${FILESDIR}/"firefox-68.0-dropping-header-on-freebsd.patch
 
 	# XXX there is a bug in rust, which blocks USE="neon" see mozilla #1557350 
 	# error is: The rust compiler host (armv7-unknown-linux-gnueabihf) is not suitable for 
@@ -383,6 +381,12 @@ src_configure() {
 
 	# Must pass release in order to properly select linker
 	mozconfig_annotate 'Enable by Gentoo' --enable-release
+
+	if use pgo ; then
+		if ! has userpriv $FEATURES ; then
+			eerror "Building firefox with USE=pgo and FEATURES=-userpriv is not supported!"
+		fi
+	fi
 
 	# Don't let user's LTO flags clash with upstream's flags
 	filter-flags -flto*
