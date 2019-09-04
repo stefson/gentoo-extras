@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR="1"
 
@@ -58,7 +57,7 @@ ASM_DEPEND=">=dev-lang/yasm-1.1"
 RDEPEND="
 	system-icu? ( >=dev-libs/icu-60.2 )
 	jack? ( virtual/jack )
-	>=dev-libs/nss-3.36.7
+	>=dev-libs/nss-3.36.8
 	>=dev-libs/nspr-4.19
 	selinux? ( sec-policy/selinux-mozilla )"
 
@@ -251,7 +250,6 @@ src_configure() {
 
 	# Setup api key for location services
 	echo -n "${_google_api_key}" > "${S}"/google-api-key
-#	mozconfig_annotate '' --with-google-api-keyfile="${S}/google-api-key"
  	mozconfig_annotate '' --with-google-location-service-api-keyfile="${S}/google-api-key"
  	mozconfig_annotate '' --with-google-safebrowsing-api-keyfile="${S}/google-api-key"
 
