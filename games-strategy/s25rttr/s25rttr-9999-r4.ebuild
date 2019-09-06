@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils cmake-utils gnome2-utils git-r3
+inherit eutils cmake-utils git-r3 xdg-utils
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
@@ -136,16 +136,12 @@ src_install() {
 #	doicon -s 64 tools/release/debian/s25rttr.png
 }
 
-pkg_preinst() {
-	gnome2_icon_savelist
-}
-
 pkg_postinst() {
 	elog "Copy your Settlers2 game files into /usr/share/${PN}/S2"
 
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
