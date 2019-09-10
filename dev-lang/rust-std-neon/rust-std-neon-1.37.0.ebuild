@@ -21,7 +21,7 @@ IUSE="+thumbv7-neon-std"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	=dev-lang/rust-bin-1.37.0-r0
+	=dev-lang/rust-bin-1.37.0*
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
