@@ -47,8 +47,10 @@ src_unpack() {
 src_prepare() {
 	default
 	cd "${S}"/rust-std-"${RUSTHOST}"/lib/rustlib/"${RUSTHOST}"/lib || die
-	if use thumbv7-neon-std ; then
-		armv7a-unknown-linux-gnueabihf-strip *.so || die
+	if use amd64 ; then
+		if use thumbv7-neon-std ; then
+			armv7a-unknown-linux-gnueabihf-strip *.so || die
+		fi
 	fi
 }
 
