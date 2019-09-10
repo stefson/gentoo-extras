@@ -12,16 +12,16 @@ HOMEPAGE="https://www.rust-lang.org/"
 
 SRC_URI="thumbv7-neon-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )"
 
-RUST_PROVIDER="rust-bin-1.35.0"
+RUST_PROVIDER="rust-bin-1.34.2"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
-KEYWORDS="~amd64 ~arm"
+KEYWORDS="amd64 ~arm"
 IUSE="+thumbv7-neon-std"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	=dev-lang/rust-bin-1.35.0-r0
+	=dev-lang/rust-bin-1.34.2-r0
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
