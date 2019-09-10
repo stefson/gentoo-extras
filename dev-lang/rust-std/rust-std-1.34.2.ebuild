@@ -15,18 +15,19 @@ SRC_URI="armv5tel-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-armv
 	armv6j-hardfloat-std? ( https://static.rust-lang.org/dist/"${P}"-arm-unknown-linux-gnueabihf.tar.xz )
 	armv7-hardfloat-std? (  https://static.rust-lang.org/dist/"${P}"-armv7-unknown-linux-gnueabihf.tar.xz )
 	aarch64-gnu-std? ( https://static.rust-lang.org/dist/"${P}"-aarch64-unknown-linux-gnu.tar.xz ) 
-	wasm32-unknown-unknown-std? ( https://static.rust-lang.org/dist/"${P}"-wasm32-unknown-unknown.tar.xz )"
+	wasm32-unknown-unknown-std? ( https://static.rust-lang.org/dist/"${P}"-wasm32-unknown-unknown.tar.xz )
+	i686-linux-gnu-std? ( https://static.rust-lang.org/dist/"${P}"-i686-unknown-linux-gnu.tar.xz )"
 
-RUST_PROVIDER="rust-bin-1.35.0"
+RUST_PROVIDER="rust-bin-1.34.2"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="~amd64"
-IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std wasm32-unknown-unknown-std"
+IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std wasm32-unknown-unknown-std i686-linux-gnu-std"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	=dev-lang/rust-bin-1.35.0-r0
+	=dev-lang/rust-bin-1.34.2-r0
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
@@ -45,6 +46,8 @@ pkg_setup() {
 		RUSTHOST=armv7-unknown-linux-gnueabihf
 	elif use aarch64-gnu-std ; then
 		RUSTHOST=aarch64-unknown-linux-gnu
+	elif use i686-linux-gnu-std ; then
+		RUSTHOST=i686-unknown-linux-gnu
 	elif use wasm32-unknown-unknown-std ; then
 		RUSTHOST=wasm32-unknown-unknown
 	fi
@@ -97,4 +100,3 @@ pkg_postinst() {
 pkg_postrm() {
 	eselect rust unset --if-invalid
 }
-
