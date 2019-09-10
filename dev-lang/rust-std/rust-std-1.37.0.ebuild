@@ -27,7 +27,7 @@ IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardflo
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	=dev-lang/rust-bin-1.37.0-r0
+	=dev-lang/rust-bin-1.37.0*
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
