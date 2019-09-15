@@ -275,6 +275,9 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"firefox-68.0-update-mp4parse.patch
 
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1581419
+	eapply "${FILESDIR}/"firefox-69.0-arrayvec.patch
+
 	# XXX there is a bug in rust, which blocks USE="neon" see mozilla #1557350 
 	# error is: The rust compiler host (armv7-unknown-linux-gnueabihf) is not suitable for 
 	# the configure host (armv7-unknown-linux-gnueabihf/thumbv7neon-unknown-linux-gnueabihf).

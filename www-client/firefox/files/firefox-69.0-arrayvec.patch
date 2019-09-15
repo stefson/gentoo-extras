@@ -1,0 +1,36 @@
+--- a/third_party/rust/arrayvec/src/lib.rs
++++ b/third_party/rust/arrayvec/src/lib.rs
+@@ -21,7 +21,7 @@
+ //!
+ //! ## Rust Version
+ //!
+-//! This version of arrayvec requires Rust 1.14 or later.
++//! This version of arrayvec requires Rust 1.13 or later.
+ //!
+ #![doc(html_root_url="https://docs.rs/arrayvec/0.4/")]
+ #![cfg_attr(not(feature="std"), no_std)]
+@@ -306,7 +306,7 @@ impl<A: Array> ArrayVec<A> {
+         unsafe { // infallible
+             // The spot to put the new value
+             {
+-                let p = self.get_unchecked_mut(index) as *mut _;
++                let p: *mut _ = self.get_unchecked_mut(index);
+                 // Shift everything over to make space. (Duplicating the
+                 // `index`th element into two consecutive places.)
+                 ptr::copy(p, p.offset(1), len - index);
+@@ -739,11 +739,10 @@ impl<A: Array> Drop for IntoIter<A> {
+         let len = self.v.len();
+         unsafe {
+             self.v.set_len(0);
+-            let elements = slice::from_raw_parts(self.v.get_unchecked_mut(index),
+-                                                 len - index);
+-            for elt in elements {
+-                ptr::read(elt);
+-            }
++            let elements = slice::from_raw_parts_mut(
++                self.v.get_unchecked_mut(index),
++                len - index);
++            ptr::drop_in_place(elements);
+         }
+     }
+ }
