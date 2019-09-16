@@ -273,7 +273,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"firefox-68.0-update-mp4parse.patch
 
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1581419
-	eapply "${FILESDIR}/"firefox-69.0-arrayvec.patch
+	# disable for now, need to update checksum to 8ceaa8c793bfd36bce13b940b4bd5bde4a6648f247dc594b8d75d23e930fa2c6
+	# eapply "${FILESDIR}/"firefox-69.0-arrayvec.patch
 
 	# XXX there is a bug in rust, which blocks USE="neon" see mozilla #1557350 
 	# error is: The rust compiler host (armv7-unknown-linux-gnueabihf) is not suitable for 
@@ -688,6 +689,9 @@ src_install() {
 			"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
 			|| die
 	done
+
+	# add killswitch for system addons: formautofill  webcompat-reporter fxmonitor webcompat screenshots
+	rm -frv "${BUILD_OBJ_DIR}"/dist/bin/browser/features/* || die
 
 	cd "${S}"
 	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
