@@ -288,6 +288,10 @@ src_prepare() {
 	# hack from debian, to use system-jsoncpp
 	# eapply "${FILESDIR}/"firefox-68.0-system-jsoncpp.patch
 
+	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-data-sharing-infobar.patch
+	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-first-run-privacy-policy.patch
+	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-telemetry.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 

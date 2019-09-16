@@ -1,0 +1,15 @@
+diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
+index 80f16fd..c9315f2 100644
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -2036,10 +2036,6 @@ var gBrowserInit = {
+       MenuTouchModeObserver.init();
+     }
+ 
+-    if (AppConstants.MOZ_DATA_REPORTING) {
+-      gDataNotificationInfoBar.init();
+-    }
+-
+     if (!AppConstants.MOZILLA_OFFICIAL) {
+       DevelopmentHelpers.init();
+     }
