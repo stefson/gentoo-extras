@@ -281,11 +281,6 @@ src_prepare() {
 	# the configure host (armv7-unknown-linux-gnueabihf/thumbv7neon-unknown-linux-gnueabihf).
 	# v67.0 was fine, error is from build/moz.configure/rust.configure
 
-	# XXX sadly, this breaks cross compile. It might be related to '%/usr/include', hence
-	# pulling in systems deps somehow? 
-	# hack from debian, to use system-jsoncpp
-	# eapply "${FILESDIR}/"firefox-68.0-system-jsoncpp.patch
-
 	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-data-sharing-infobar.patch
 	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-first-run-privacy-policy.patch
 	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-telemetry.patch
