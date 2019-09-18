@@ -1,0 +1,53 @@
+From 1ef37aa00ea830dfda76e04e3d941cafa74d8b76 Mon Sep 17 00:00:00 2001
+From: Rich Felker <dalias@aerifal.cx>
+Date: Wed, 11 Sep 2019 15:40:26 -0400
+Subject: fix arm __tlsdesc_dynamic when built as thumb code without
+ __ARM_ARCH>=5
+
+we don't actually support building asm source files as thumb1, but
+it's possible that the condition __ARM_ARCH>=5 would be false on old
+compilers that did not define __ARM_ARCH at all. avoiding that would
+require enumerating all of the possible __ARM_ARCH_*__ macros for
+testing.
+
+as noted in commit 05870abeaac0588fb9115cfd11f96880a0af2108, mov lr,pc
+is not valid for saving a return address when in thumb mode. since
+this code is a hot path (dynamic TLS access), don't do the out-of-line
+bl->bx chaining to save the return value; instead, use the fact that
+this file is preprocessed asm to add the missing thumb bit with an add
+in place of the mov.
+
+the change here does not affect builds for ISA levels new enough to
+have a thread pointer read instruction, or for armv5 and later as long
+as the compiler properly defines __ARM_ARCH, or for any build as arm
+(not thumb) code. it's likely that it makes no difference whatsoever
+to any present-day practical build environments, but nonetheless now
+it's safe.
+
+as an alternative, we could just assume __thumb__ implies availability
+of blx since we don't support building asm source files as thumb1. I
+didn't do that in order to avoid having a wrong assumption here if
+that ever changes.
+---
+ src/ldso/arm/tlsdesc.S | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/ldso/arm/tlsdesc.S b/src/ldso/arm/tlsdesc.S
+index 455eac1d..2bb75a1b 100644
+--- a/src/ldso/arm/tlsdesc.S
++++ b/src/ldso/arm/tlsdesc.S
+@@ -29,8 +29,12 @@ __tlsdesc_dynamic:
+ 2:
+ #if __ARM_ARCH >= 5
+ 	blx r0          // r0 = tp
++#else
++#if __thumb__
++	add lr,pc,#1
+ #else
+ 	mov lr,pc
++#endif
+ 	bx r0
+ #endif
+ #endif
+-- 
+cgit v1.2.1

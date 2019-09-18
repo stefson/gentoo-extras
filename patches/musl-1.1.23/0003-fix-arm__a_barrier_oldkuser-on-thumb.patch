@@ -1,0 +1,36 @@
+From b0301f47f3cf510b0237a024a3a073d55799101f Mon Sep 17 00:00:00 2001
+From: Rich Felker <dalias@aerifal.cx>
+Date: Wed, 11 Sep 2019 13:21:28 -0400
+Subject: fix arm __a_barrier_oldkuser when built as thumb
+
+as noted in commit 05870abeaac0588fb9115cfd11f96880a0af2108, mov lr,pc
+is not a valid method for saving the return address in code that might
+be built as thumb.
+
+this one is unlikely to matter, since any ISA level that has thumb2
+should also have native implementations of atomics that don't involve
+kuser_helper, and the affected code is only used on very old kernels
+to begin with.
+---
+ src/thread/arm/atomics.s | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/thread/arm/atomics.s b/src/thread/arm/atomics.s
+index 101ad391..da50508d 100644
+--- a/src/thread/arm/atomics.s
++++ b/src/thread/arm/atomics.s
+@@ -15,10 +15,10 @@ __a_barrier_oldkuser:
+ 	mov r1,r0
+ 	mov r2,sp
+ 	ldr ip,=0xffff0fc0
+-	mov lr,pc
+-	mov pc,ip
++	bl 1f
+ 	pop {r0,r1,r2,r3,ip,lr}
+ 	bx lr
++1:	bx ip
+ 
+ .global __a_barrier_v6
+ .hidden __a_barrier_v6
+-- 
+cgit v1.2.1

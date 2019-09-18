@@ -1,0 +1,44 @@
+From 05870abeaac0588fb9115cfd11f96880a0af2108 Mon Sep 17 00:00:00 2001
+From: Rich Felker <dalias@aerifal.cx>
+Date: Wed, 11 Sep 2019 13:13:57 -0400
+Subject: fix code path where child function returns in arm __clone built as
+ thumb
+
+mov lr,pc is not a valid way to save the return address in thumb mode
+since it omits the thumb bit. use a chain of bl and bx to emulate blx.
+this could be avoided by converting to a .S file with preprocessor
+conditions to use blx if available, but the time cost here is
+dominated by the syscall anyway.
+
+while making this change, also remove the remnants of support for
+pre-bx ISA levels. commit 9f290a49bf9ee247d540d3c83875288a7991699c
+removed the hack from the parent code paths, but left the unnecessary
+code in the child. keeping it would require rewriting two code paths
+rather than one, and is useless for reasons described in that commit.
+---
+ src/thread/arm/clone.s | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/src/thread/arm/clone.s b/src/thread/arm/clone.s
+index e16b1326..bb0965da 100644
+--- a/src/thread/arm/clone.s
++++ b/src/thread/arm/clone.s
+@@ -20,13 +20,9 @@ __clone:
+ 	bx lr
+ 
+ 1:	mov r0,r6
+-	tst r5,#1
+-	bne 1f
+-	mov lr,pc
+-	mov pc,r5
++	bl 3f
+ 2:	mov r7,#1
+ 	svc 0
+-
+-1:	mov lr,pc
+-	bx r5
+ 	b 2b
++
++3:	bx r5
+-- 
+cgit v1.2.1
