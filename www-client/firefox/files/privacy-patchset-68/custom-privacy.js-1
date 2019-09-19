@@ -15,3 +15,6 @@ pref("startup.homepage_welcome_url","about:blank");
 
 // killswitch for shield studies
 pref("app.shield.optoutstudies.enabled", false);
+
+// killswitch for extension recommendations
+pref("browser.discovery.enabled", false);
