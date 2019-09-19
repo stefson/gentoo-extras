@@ -1,1 +1,14 @@
+// disable check for default browser
+pref("browser.shell.checkDefaultBrowser",false);
+
+// killswitch for activity stream
+pref("browser.newtabpage.activity-stream.feeds.section.highlights", false;
+pref("browser.newtabpage.activity-stream.feeds.section.topstories", false;
+pref("browser.newtabpage.activity-stream.feeds.snippets", false);
+pref("browser.newtabpage.activity-stream.feeds.topsites", false);
+pref("browser.newtabpage.activity-stream.prerender", false);
+pref("browser.newtabpage.enabled", false);
 pref("browser.startup.page",0);
+
+// killswitch for about:welcome
+pref("startup.homepage_welcome_url","about:blank");

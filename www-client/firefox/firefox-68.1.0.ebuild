@@ -694,6 +694,10 @@ src_install() {
 			|| die
 	done
 
+	cat "${FILESDIR}"/privacy-patchset-$(get_major_version)/custom-privacy.js-1 >> \
+	"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
+	|| die
+
 	# add killswitch for system addons: formautofill  webcompat-reporter fxmonitor webcompat screenshots
 	rm -frv "${BUILD_OBJ_DIR}"/dist/bin/browser/features/* || die
 
