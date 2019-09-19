@@ -12,3 +12,6 @@ pref("browser.startup.page",0);
 
 // killswitch for about:welcome
 pref("startup.homepage_welcome_url","about:blank");
+
+// killswitch for shield studies
+pref("app.shield.optoutstudies.enabled", false);
