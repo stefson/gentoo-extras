@@ -27,7 +27,7 @@ pref("identity.fxaccounts.enabled",false);
 
 // disable ping-centre
 pref("browser.ping-centre.telemetry",false);
-pref("browser.ping-centre.production.endpoint",);
-pref("browser.ping-centre.staging.endpoint",);
+pref("browser.ping-centre.production.endpoint", "");
+pref("browser.ping-centre.staging.endpoint", "");
 
 //todo: disable telemetry and healtreport
