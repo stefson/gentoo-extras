@@ -37,4 +37,8 @@ pref("datareporting.healthreport.uploadEnabled",false);
 pref("datdatareporting.healthreport.infoURL","");
 pref("datareporting.policy.dataSubmissionEnabled",false);
 
+// disable extension promotion
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
+
 //todo: disable telemetry and healtreport
