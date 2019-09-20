@@ -41,4 +41,7 @@ pref("datareporting.policy.dataSubmissionEnabled",false);
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons", false);
 pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false);
 
+// enable do not track function
+pref("privacy.donottrackheader.enabled", true);
+
 //todo: disable telemetry and healtreport
