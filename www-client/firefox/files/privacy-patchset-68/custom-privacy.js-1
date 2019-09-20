@@ -33,6 +33,7 @@ pref("browser.ping-centre.staging.endpoint", "");
 
 // disable health report
 pref("datareporting.healthreport.about.reportUrl","");
+pref("datareporting.healthreport.uploadEnabled",false);
 pref("datdatareporting.healthreport.infoURL","");
 pref("datareporting.policy.dataSubmissionEnabled",false);
 
