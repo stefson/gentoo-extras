@@ -31,4 +31,9 @@ pref("browser.ping-centre.telemetry",false);
 pref("browser.ping-centre.production.endpoint", "");
 pref("browser.ping-centre.staging.endpoint", "");
 
+// disable health report
+pref("datareporting.healthreport.about.reportUrl","");
+pref("datdatareporting.healthreport.infoURL","");
+pref("datareporting.policy.dataSubmissionEnabled",false);
+
 //todo: disable telemetry and healtreport
