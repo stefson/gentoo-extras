@@ -21,6 +21,7 @@ pref("browser.discovery.enabled", false);
 
 // killswitch for pocket crap
 pref("extensions.pocket.enabled",false);
+pref("browser.bookmarks.showMobileBookmarks",false);
 
 // disable firefox sync! \o/
 pref("identity.fxaccounts.enabled",false);
