@@ -638,7 +638,7 @@ src_install() {
 #	|| die
 
 	# add killswitch for system addons: formautofill  webcompat-reporter fxmonitor webcompat screenshots
-	rm -frv "${BUILD_OBJ_DIR}"/dist/bin/browser/features/* || die
+	# rm -frv "${BUILD_OBJ_DIR}"/dist/bin/browser/features/* || die
 
 	cd "${S}"
 	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
