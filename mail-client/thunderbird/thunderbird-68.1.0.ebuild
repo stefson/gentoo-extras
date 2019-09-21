@@ -544,8 +544,9 @@ src_configure() {
 
 	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
 
-	# disable webrtc for now, bug 667642
-	use arm && mozconfig_annotate 'broken on arm' --disable-webrtc
+	# disable webrtc, av1 for thunderbird
+	mozconfig_annotate 'not needed for thunderbird' --disable-webrtc
+	mozconfig_annotate 'not needed for thunderbird' --disable-av1
 
 	# allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
