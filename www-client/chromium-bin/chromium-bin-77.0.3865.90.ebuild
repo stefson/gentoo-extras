@@ -6,7 +6,7 @@ EAPI=6
 inherit eutils unpacker versionator
 
 #MY_VERSION="$(get_version_component_range 1-4)"
-MY_VERSION="77.0.3865.75"
+MY_VERSION="77.0.3865.90"
 #MY_PATCH="$(get_version_component_range 5)"
 MY_UBUNTUVERS=18.04.1
 KEYWORDS="~arm"
