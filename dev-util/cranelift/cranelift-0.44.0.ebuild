@@ -14,16 +14,16 @@ arrayref-0.3.5
 arrayvec-0.4.11
 atty-0.2.13
 autocfg-0.1.6
-backtrace-0.3.37
+backtrace-0.3.38
 backtrace-sys-0.1.31
 base64-0.10.1
-bitflags-1.1.0
+bitflags-1.2.0
 blake2b_simd-0.5.8
 byteorder-1.3.2
 capstone-0.6.0
 capstone-sys-0.10.0
 cc-1.0.45
-cfg-if-0.1.9
+cfg-if-0.1.10
 chrono-0.4.9
 clap-2.33.0
 clicolors-control-1.0.1
@@ -31,19 +31,19 @@ cloudabi-0.0.3
 cmake-0.1.42
 console-0.9.0
 constant_time_eq-0.1.4
-cranelift-0.43.1
-cranelift-bforest-0.43.1
-cranelift-codegen-0.43.1
-cranelift-codegen-meta-0.43.1
-cranelift-entity-0.43.1
-cranelift-faerie-0.43.1
-cranelift-frontend-0.43.1
-cranelift-module-0.43.1
-cranelift-native-0.43.1
-cranelift-preopt-0.43.1
-cranelift-reader-0.43.1
-cranelift-simplejit-0.43.1
-cranelift-wasm-0.43.1
+cranelift-0.44.0
+cranelift-bforest-0.44.0
+cranelift-codegen-0.44.0
+cranelift-codegen-meta-0.44.0
+cranelift-entity-0.44.0
+cranelift-faerie-0.44.0
+cranelift-frontend-0.44.0
+cranelift-module-0.44.0
+cranelift-native-0.44.0
+cranelift-preopt-0.44.0
+cranelift-reader-0.44.0
+cranelift-simplejit-0.44.0
+cranelift-wasm-0.44.0
 crc32fast-1.2.0
 crossbeam-utils-0.6.6
 dirs-2.0.2
@@ -85,7 +85,7 @@ parking_lot_core-0.6.2
 plain-0.2.3
 pretty_env_logger-0.3.1
 proc-macro2-0.4.30
-proc-macro2-1.0.3
+proc-macro2-1.0.4
 quick-error-1.2.2
 quote-0.6.13
 quote-1.0.2
@@ -133,7 +133,7 @@ vec_map-0.8.1
 wabt-0.9.2
 wabt-sys-0.7.0
 walkdir-2.2.9
-wasmparser-0.37.2
+wasmparser-0.39.1
 winapi-0.3.8
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.2
@@ -146,7 +146,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=002416975300776c4c20dd0f826c0cb9e16e5ba9
+SRCHASH=d5c34954d9ea94732a1711542c2e42790870adb0
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
