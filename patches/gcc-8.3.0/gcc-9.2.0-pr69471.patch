@@ -37,25 +37,26 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@276148 138bc75d-0d04-0410-961f-8
 
 --- a/gcc/config/aarch64/aarch64.opt
 +++ b/gcc/config/aarch64/aarch64.opt
-@@ -119,15 +119,15 @@ EnumValue
+@@ -116,15 +116,15 @@ EnumValue
  Enum(aarch64_tls_size) String(48) Value(48)
  
  march=
 -Target RejectNegative ToLower Joined Var(aarch64_arch_string)
 +Target RejectNegative Negative(march=) ToLower Joined Var(aarch64_arch_string)
- Use features of architecture ARCH.
+ -march=ARCH	Use features of architecture ARCH.
  
  mcpu=
 -Target RejectNegative ToLower Joined Var(aarch64_cpu_string)
 +Target RejectNegative Negative(mcpu=) ToLower Joined Var(aarch64_cpu_string)
- Use features of and optimize for CPU.
+ -mcpu=CPU	Use features of and optimize for CPU.
  
  mtune=
 -Target RejectNegative ToLower Joined Var(aarch64_tune_string)
 +Target RejectNegative Negative(mtune=) ToLower Joined Var(aarch64_tune_string)
- Optimize for CPU.
+ -mtune=CPU	Optimize for CPU.
  
  mabi=
+
 --- a/gcc/config/arm/arm.opt
 +++ b/gcc/config/arm/arm.opt
 @@ -82,7 +82,7 @@ mapcs-stack-check
@@ -85,5 +86,3 @@ git-svn-id: svn+ssh://gcc.gnu.org/svn/gcc/trunk@276148 138bc75d-0d04-0410-961f-8
  Tune code for the given processor.
  
  mprint-tune-info
--- 
-2.23.0
