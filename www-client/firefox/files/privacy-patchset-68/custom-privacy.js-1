@@ -44,4 +44,8 @@ pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features", false
 // enable do not track function
 pref("privacy.donottrackheader.enabled", true);
 
+// set "system colors" off by default as background color
+// See https://bugzilla.redhat.com/show_bug.cgi?id=1226489
+pref("browser.display.use_system_colors", false);
+
 //todo: disable telemetry and healtreport
