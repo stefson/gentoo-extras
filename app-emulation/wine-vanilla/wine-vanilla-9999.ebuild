@@ -336,22 +336,15 @@ src_unpack() {
 src_prepare() {
 	local md5="$(md5sum server/protocol.def)"
 	local PATCHES=(
-		"${FILESDIR}"/${PN}-1.5.26-winegcc.patch #260726
-		"${FILESDIR}"/${PN}-1.9.5-multilib-portage.patch #395615
-		"${FILESDIR}"/${PN}-1.6-memset-O3.patch #480508
-
-		# https://bugs.winehq.org/show_bug.cgi?id=40488 
-		# https://bugs.winehq.org/show_bug.cgi?id=40488#c32 backports for stable branch
-		# Fix for Medieval Total War battle mode graphic glitches and backport for the mouse click issue from master-branch
-
-		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-1-of-3.patch
-		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-2-of-3.patch
-		"${FILESDIR}"/${PN}-2.0-fix-mouse-issues-in-battlemode-of-Medieval-Total-War-patch-3-of-3.patch
-		"${FILESDIR}"/${PN}-2.2-bug-40488.patch
+		"${PATCHDIR}/patches/${MY_PN}-1.5.26-winegcc.patch" #260726
+		"${PATCHDIR}/patches/${MY_PN}-1.9.5-multilib-portage.patch" #395615
+		"${PATCHDIR}/patches/${MY_PN}-1.6-memset-O3.patch" #480508
+		"${PATCHDIR}/patches/${MY_PN}-2.0-multislot-apploader.patch" #310611
+		"${FILESDIR}/wine-4.0.2-staging-setpixelformat.patch" # for Total War Battle Mode
 
 		# Fix for Napoleon Total War battle mode, this is a hack by me and not yet tested thoroughly
 		# https://bugs.winehq.org/show_bug.cgi?id=18490
-		"${FILESDIR}"/${PN}-2.0-setpixelformat.patch
+		"${FILESDIR}"/${PN}-4.0.2-setpixelformat.patch
 
 	)
 	if use staging; then

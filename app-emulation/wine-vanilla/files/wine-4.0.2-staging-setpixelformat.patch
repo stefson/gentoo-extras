@@ -1,0 +1,39 @@
+From 64e8c4698047a079d4a538d1774f194529570453 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Michael=20M=C3=BCller?= <michael@fds-team.de>
+Date: Wed, 3 Jun 2015 22:57:21 +0200
+Subject: [PATCH] winex11.drv: Allow changing the opengl pixel format on the
+ desktop window.
+
+This patch is not 100% correct because the old behavior was more similar to
+windows. However, Direct3D supports using the desktop window to create a
+context and since Wine translates Direct3D to OpenGL, using the desktop
+window will fail because of this limitation. Unless someone comes up with
+a more correct solution or finds an application that breaks because of this,
+it seems to be a suitable workaround as it fixes multiple applications.
+---
+ dlls/winex11.drv/opengl.c    |  5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/dlls/winex11.drv/opengl.c b/dlls/winex11.drv/opengl.c
+index 01b92e3..0b5abb5 100644
+--- a/dlls/winex11.drv/opengl.c
++++ b/dlls/winex11.drv/opengl.c
+@@ -1455,12 +1455,15 @@ static BOOL set_pixel_format(HDC hdc, int format, BOOL allow_change)
+ 
+     TRACE("(%p,%d)\n", hdc, format);
+ 
+-    if (!hwnd || hwnd == GetDesktopWindow())
++    if (!hwnd)
+     {
+         WARN( "not a valid window DC %p/%p\n", hdc, hwnd );
+         return FALSE;
+     }
+ 
++    if (hwnd == GetDesktopWindow())
++        FIXME("Using desktop window for OpenGL is not supported on windows\n");
++
+     fmt = get_pixel_format(gdi_display, format, FALSE /* Offscreen */);
+     if (!fmt)
+     {
+-- 
+2.7.4
