@@ -7,12 +7,12 @@ inherit eutils cmake-utils git-r3 xdg-utils
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
-#EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-#EGIT_BRANCH="master"
+EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
-EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-EGIT_BRANCH="sanitizers"
+#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+#EGIT_BRANCH="sanitizers"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL2+ GPL-3 Boost-1.0"
