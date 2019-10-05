@@ -58,7 +58,7 @@ src_prepare() {
 
 	# removing win32 causes an error with gcc
 	rm -r tools || die
-#	rm -r data/win32 || die
+	rm -r data/win32 || die
 
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
