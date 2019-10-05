@@ -20,7 +20,7 @@ SLOT="0"
 KEYWORDS="amd64 ~arm"
 IUSE="test"
 
-RDEPEND="app-arch/bzip2
+RDEPEND=">=app-arch/bzip2-1.0.6-r11
 	dev-lang/lua:5.2
 	media-libs/libsamplerate
 	media-libs/libsdl[X,sound,static-libs,opengl,video]
@@ -43,8 +43,9 @@ PATCHES=(
 	# fix for wrong win32 includes
 	"${FILESDIR}"/1097.patch
 	# fix for s25client file picker dialog
-	"${FILESDIR}"/64d7ba8e726190182c3080ea1ceb48f5ce2a7527.patch
-	"${FILESDIR}"/7064808191778dcf87c054e36bf7b871ee2ea851.patch
+#	"${FILESDIR}"/64d7ba8e726190182c3080ea1ceb48f5ce2a7527.patch
+#	"${FILESDIR}"/7064808191778dcf87c054e36bf7b871ee2ea851.patch
+#	fails atm with: CGame.h:77:5: error: extra ‘;’ [-Wpedantic]
 )
 
 src_prepare() {
@@ -54,7 +55,7 @@ src_prepare() {
 	rm -r external/macos || die
 	rm -r external/libsamplerate || die
 
-	rm external/full-contrib-msvc.rar || die
+	rm external/full-contrib-msvc* || die
 
 	# removing win32 causes an error with gcc
 	rm -r tools || die
