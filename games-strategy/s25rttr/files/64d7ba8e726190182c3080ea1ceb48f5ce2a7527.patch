@@ -474,7 +474,7 @@ diff --git a/external/s25edit/CGame_Cleanup.cpp b/external/s25edit/CGame_Cleanup
 deleted file mode 100644
 index ec1bbce..0000000
 --- a/external/s25edit/CGame_Cleanup.cpp
-+++ /dev/null
++++ /external/s25edit/dev/null
 @@ -1,39 +0,0 @@
 -#include "defines.h"
 -#include "CGame.h"
@@ -630,7 +630,7 @@ diff --git a/external/s25edit/CGame_GameLoop.cpp b/external/s25edit/CGame_GameLo
 deleted file mode 100644
 index 9dc034d..0000000
 --- a/external/s25edit/CGame_GameLoop.cpp
-+++ /dev/null
++++ external/s25edit//dev/null
 @@ -1,22 +0,0 @@
 -#include "CGame.h"
 -#include "CIO/CMenu.h"
@@ -2368,7 +2368,7 @@ index f6cfa88..aee5439 100644
  #include "Point.h"
  #include "Rect.h"
 +#include "SdlSurface.h"
- #include "gameData/external/s25edit/DescIdx.h"
+ #include "gameData/DescIdx.h"
  #include <SDL.h>
  #include <array>
 @@ -67,7 +68,7 @@ struct bobBMP
