@@ -7,12 +7,12 @@ inherit eutils cmake-utils git-r3 xdg-utils
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
-EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-EGIT_BRANCH="master"
+#EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+#EGIT_BRANCH="master"
 #EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
 
-#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-#EGIT_BRANCH="sanitizers"
+EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+EGIT_BRANCH="editor_map_list"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL2+ GPL-3 Boost-1.0"
@@ -42,10 +42,6 @@ PATCHES=(
 	"${FILESDIR}"/1091.patch
 	# fix for wrong win32 includes
 	"${FILESDIR}"/1097.patch
-	# fix for s25client file picker dialog
-#	"${FILESDIR}"/64d7ba8e726190182c3080ea1ceb48f5ce2a7527.patch
-#	"${FILESDIR}"/7064808191778dcf87c054e36bf7b871ee2ea851.patch
-#	fails atm with: CGame.h:77:5: error: extra ‘;’ [-Wpedantic]
 )
 
 src_prepare() {
