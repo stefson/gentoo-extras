@@ -122,6 +122,7 @@ src_prepare() {
 	fi
 
 	eapply "${WORKDIR}/firefox"
+	eapply "${FILESDIR}"/firefox-60.9.0-rust-1.38-compat.patch
 
 	# fix rust compile warnings, open bug? 
 	eapply "${FILESDIR}/"${PN}-60.2.0-fix-std-ascii-warning.patch
