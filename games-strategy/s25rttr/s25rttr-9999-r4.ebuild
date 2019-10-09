@@ -43,14 +43,19 @@ src_prepare() {
 
 	# Ensure no bundled libraries are used
 	rm -r external/lua || die
-	rm -r external/macos || die
 	rm -r external/libsamplerate || die
 
 	rm external/full-contrib-msvc* || die
 
-	# removing win32 causes an error with gcc
+	# remove release tools and win32 stuff
 	rm -r tools || die
 	rm -r data/win32 || die
+
+	# remove macos stuff
+	rm -r external/macos || die
+	rm -r extras/macosLauncher || die
+
+	rm -r external/s25update || die
 
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
