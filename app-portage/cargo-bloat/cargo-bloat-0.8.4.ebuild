@@ -5,7 +5,7 @@ EAPI=6
 
 CRATES="
 aho-corasick-0.7.6
-cargo-bloat-0.8.3
+cargo-bloat-0.8.4
 json-0.11.15
 kernel32-sys-0.2.2
 lazy_static-1.3.0
