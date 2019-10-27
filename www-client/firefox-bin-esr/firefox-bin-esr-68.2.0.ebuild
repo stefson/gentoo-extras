@@ -26,9 +26,11 @@ S="${WORKDIR}"
 RDEPEND="app-accessibility/speech-dispatcher
 	app-crypt/mit-krb5
 	dev-libs/expat
-	dev-libs/libgcrypt:11
+	dev-libs/libffi-compat
+	dev-libs/libgcrypt:0/20
 	dev-libs/libpcre
 	dev-libs/libtasn1
+	dev-libs/json-c
 	dev-libs/nspr
 	dev-libs/nss
 	gnome-base/libgnome-keyring
