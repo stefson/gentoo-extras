@@ -5,8 +5,8 @@ EAPI=6
 
 inherit eutils unpacker versionator
 
-MY_VERSION="60.9.0esr"
-MY_DEBVERSION="deb9u1"
+MY_VERSION="68.2.0esr"
+MY_DEBVERSION="deb10u1"
 KEYWORDS="~arm"
 
 SRC_URI="http://security.debian.org/debian-security/pool/updates/main/f/firefox-esr/firefox-esr_${MY_VERSION}-1~${MY_DEBVERSION}_armhf.deb
