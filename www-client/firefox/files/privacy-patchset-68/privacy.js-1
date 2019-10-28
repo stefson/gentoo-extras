@@ -65,3 +65,7 @@ pref("datareporting.policy.dataSubmissionEnabled",false);
 // disable crash reports
 pref("breakpad.reportURL","");
 pref("pdfjs.disabled", true);
+
+// disable clipboard events, this may break stuff
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1591698
+pref("dom.event.clipboardevents.enabled",false);
