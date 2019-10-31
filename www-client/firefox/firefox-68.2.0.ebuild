@@ -205,7 +205,7 @@ llvm_check_deps() {
 		fi
 	fi
 
-	einfo "Will use LLVM slot ${LLVM_SLOT}!"
+	einfo "Will use LLVM slot ${LLVM_SLOT}!" >&2
 }
 
 pkg_setup() {
