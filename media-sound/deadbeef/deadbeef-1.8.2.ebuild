@@ -139,10 +139,10 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${P}"
 
 src_prepare() {
-	if [[ "$(l10n_get_locales disabled)" =~ "ru" ]] ; then
-		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
-		rm -v "${S}/translation/help.ru.txt" || die
-	fi
+#	if [[ "$(l10n_get_locales disabled)" =~ "ru" ]] ; then
+#		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
+#		rm -v "${S}/translation/help.ru.txt" || die
+#	fi
 
 	remove_locale() {
 		sed -e "/${1}/d" \
@@ -159,10 +159,12 @@ src_prepare() {
 
 	if ! use unity ; then
 		# remove unity trash
-		eapply "${FILESDIR}/${P}-remove-unity-trash.patch"
-		eapply "${FILESDIR}/${P}-fix-missmatching-desktop-groups-warnings.patch"
+		eapply "${FILESDIR}/deadbeef-1.8.0-remove-unity-trash.patch"
+		eapply "${FILESDIR}/deadbeef-1.8.0-fix-missmatching-desktop-groups-warnings.patch"
 	fi
 	
+	eapply "${FILESDIR}/deadbeef-9999-issue-2140.patch"
+
 	eapply_user
 
 	config_rpath_update "${S}/config.rpath"
