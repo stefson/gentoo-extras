@@ -162,6 +162,8 @@ src_prepare() {
 		eapply "${FILESDIR}/${P}-remove-unity-trash.patch"
 		eapply "${FILESDIR}/${P}-fix-missmatching-desktop-groups-warnings.patch"
 	fi
+	
+	eapply "${FILESDIR}/deadbeef-9999-issue-2140.patch"
 
 	eapply_user
 
