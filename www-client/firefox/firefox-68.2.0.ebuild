@@ -279,6 +279,9 @@ src_prepare() {
 	# this fixes MAKEOPTS="-j1", backported from v69.0 
 	eapply "${FILESDIR}/"firefox-68.2.0-fix-mozbg-1500436-j1.patch
 
+	# fix for rust-1.39.0
+	eapply "${FILESDIR}/"firefox-68.2.0-rust-1.39+.patch
+
 	# XXX there is a bug in rust, which blocks USE="neon" see mozilla #1557350 
 	# error is: The rust compiler host (armv7-unknown-linux-gnueabihf) is not suitable for 
 	# the configure host (armv7-unknown-linux-gnueabihf/thumbv7neon-unknown-linux-gnueabihf).
