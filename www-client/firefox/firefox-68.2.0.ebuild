@@ -273,7 +273,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"firefox-68.0-update-mp4parse.patch
 
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1581419
-	# disable for now, need to update checksum to 8ceaa8c793bfd36bce13b940b4bd5bde4a6648f247dc594b8d75d23e930fa2c6
 	eapply "${FILESDIR}/"firefox-69.0-arrayvec.patch
 
 	# this fixes MAKEOPTS="-j1", backported from v69.0 
