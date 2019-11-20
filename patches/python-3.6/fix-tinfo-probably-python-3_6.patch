@@ -1,0 +1,28 @@
+--- a/setup.py.old	2019-10-02 21:58:53.806438726 +0000
++++ b/setup.py	2019-10-02 22:03:15.888464157 +0000
+@@ -1390,6 +1390,7 @@
+         curses_defines = []
+         curses_includes = []
+         panel_library = 'panel'
++        tinfo_library = 'tinfo'
+         if curses_library == 'ncursesw':
+             curses_defines.append(('HAVE_NCURSESW', '1'))
+             if not cross_compiling:
+@@ -1397,6 +1398,7 @@
+             # Bug 1464056: If _curses.so links with ncursesw,
+             # _curses_panel.so must link with panelw.
+             panel_library = 'panelw'
++            tinfo_library = 'tinfow'
+             if host_platform == 'darwin':
+                 # On OS X, there is no separate /usr/lib/libncursesw nor
+                 # libpanelw.  If we are here, we found a locally-supplied
+@@ -1412,6 +1414,8 @@
+ 
+         if curses_library.startswith('ncurses'):
+             curses_libs = [curses_library]
++            if (self.compiler.find_library_file(lib_dirs, tinfo_library)):
++                curses_libs.append(tinfo_library)
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+                                    include_dirs=curses_includes,
+                                    define_macros=curses_defines,
+
