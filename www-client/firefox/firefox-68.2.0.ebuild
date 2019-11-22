@@ -602,6 +602,10 @@ src_configure() {
 		mozconfig_annotate 'elf-hack is broken when using Clang' --disable-elf-hack
 	fi
 
+	if [[ ${CHOST} == armv*musl* ]] ; then
+		mozconfig_annotate 'elf-hack is broken on arm and musl' --disable-elf-hack
+	fi
+
 	echo "mk_add_options MOZ_OBJDIR=${BUILD_OBJ_DIR}" >> "${S}"/.mozconfig
 	echo "mk_add_options XARGS=/usr/bin/xargs" >> "${S}"/.mozconfig
 
