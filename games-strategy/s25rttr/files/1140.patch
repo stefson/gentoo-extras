@@ -1,0 +1,25 @@
+From fd5305b4af865d4e778fd851d0ff94b1fb6bbac8 Mon Sep 17 00:00:00 2001
+From: Flamefire <Flamefire@users.noreply.github.com>
+Date: Fri, 22 Nov 2019 23:01:03 +0100
+Subject: [PATCH] Fix assertion failure in loader::GetArchive
+
+Fixes #1139
+---
+ libs/s25main/Loader.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libs/s25main/Loader.cpp b/libs/s25main/Loader.cpp
+index d6be1479a..592065bc9 100644
+--- a/libs/s25main/Loader.cpp
++++ b/libs/s25main/Loader.cpp
+@@ -387,8 +387,9 @@ bool Loader::LoadFilesAtGame(const std::string& mapGfxPath, bool isWinterGFX, co
+ 
+     isWinterGFX_ = isWinterGFX;
+ 
++    // TODO: Only put actually required archives here
+     for(unsigned nation = 0; nation < NUM_NATS; ++nation)
+-        nation_gfx[nation] = &GetArchive(NATION_GFXSET_Z[isWinterGFX ? 1 : 0][nation]);
++        nation_gfx[nation] = &files_[NATION_GFXSET_Z[isWinterGFX ? 1 : 0][nation]].archiv;
+ 
+     return true;
+ }
