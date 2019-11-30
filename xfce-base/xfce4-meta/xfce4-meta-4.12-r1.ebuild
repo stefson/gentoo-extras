@@ -18,6 +18,7 @@ RDEPEND=">=x11-themes/gtk-engines-xfce-3:0
 	>=xfce-base/xfce4-panel-4.12
 	>=xfce-base/xfce4-session-4.12
 	>=xfce-base/xfce4-settings-4.12
+	>=x11-terms/xfce4-terminal-0.8.7.4
 	>=xfce-base/xfdesktop-4.12
 	>=xfce-base/xfwm4-4.12
 	!minimal? (
