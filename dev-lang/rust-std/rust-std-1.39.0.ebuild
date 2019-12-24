@@ -22,12 +22,12 @@ RUST_PROVIDER="rust-bin-1.39.0"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
-#KEYWORDS="~amd64"
+KEYWORDS="~amd64"
 IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std wasm32-unknown-unknown-std i686-linux-gnu-std"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	=dev-lang/rust-bin-1.39.0*
+	~dev-lang/rust-bin-1.39.0
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
