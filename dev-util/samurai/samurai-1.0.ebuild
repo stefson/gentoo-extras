@@ -10,7 +10,12 @@ LICENSE="ISC Apache-2.0 MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~x86"
 
+IUSE="ninja-replace"
+
 src_install() {
-    emake DESTDIR="${D}" PREFIX=/usr install
-    dosym samu /usr/bin/ninja
+	emake DESTDIR="${D}" PREFIX=/usr install
+
+	if use ninja-replace; then
+		dosym samu /usr/bin/ninja
+	fi
 }
