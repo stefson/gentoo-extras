@@ -1,0 +1,42 @@
+From 4f1185d21eaf271d60004eef744ce027ee9b8a04 Mon Sep 17 00:00:00 2001
+From: Jacek Caban <jacek@codeweavers.com>
+Date: Thu, 4 Jul 2019 13:37:45 +0200
+Subject: [PATCH] kernel32: Terminate process in unhandled exception handler.
+
+Signed-off-by: Jacek Caban <jacek@codeweavers.com>
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/kernel32/process.c        | 2 +-
+ dlls/kernel32/tests/debugger.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/dlls/kernel32/process.c b/dlls/kernel32/process.c
+index dffc59ae84..3e33fa7704 100644
+--- a/dlls/kernel32/process.c
++++ b/dlls/kernel32/process.c
+@@ -1260,7 +1260,7 @@ void WINAPI start_process( LPTHREAD_START_ROUTINE entry, PEB *peb )
+     }
+     __EXCEPT(UnhandledExceptionFilter)
+     {
+-        TerminateThread( GetCurrentThread(), GetExceptionCode() );
++        TerminateProcess( GetCurrentProcess(), GetExceptionCode() );
+     }
+     __ENDTRY
+     abort();  /* should not be reached */
+diff --git a/dlls/kernel32/tests/debugger.c b/dlls/kernel32/tests/debugger.c
+index 361513e4e3..3f73f2ee4d 100644
+--- a/dlls/kernel32/tests/debugger.c
++++ b/dlls/kernel32/tests/debugger.c
+@@ -185,6 +185,8 @@ static void doCrash(int argc,  char** argv)
+     SetErrorMode( 0 );
+     SetUnhandledExceptionFilter( NULL );
+ 
++    run_background_thread();
++
+     if (argc >= 4)
+     {
+         crash_blackbox_t blackbox;
+-- 
+2.20.1
+
+

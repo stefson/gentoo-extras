@@ -144,6 +144,7 @@ PATCHES=(
 	"${PATCHDIR}/patches/${MY_PN}-1.6-memset-O3.patch" #480508
 	"${PATCHDIR}/patches/${MY_PN}-2.0-multislot-apploader.patch" #310611
 	"${FILESDIR}/wine-4.0.2-staging-setpixelformat.patch" #18490
+	"${FILESDIR}/wine-5.0-fix-skyrim-hang-on-quit.patch" #34041
 
 )
 PATCHES_BIN=()
