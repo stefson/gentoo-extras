@@ -175,6 +175,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/${PN}-0.7.2-fix-config-with-gettext-0.20.patch"
 
+	rm -fr intl || die
+
 	eapply_user
 
 	config_rpath_update "${S}/config.rpath"
