@@ -7,7 +7,6 @@
 	</maintainer>
 	<use>
 		<flag name='aac'>Advanced Audio Coding (AAC) plugin</flag>
-		<flag name='adplug'>Adplug plugin</flag>
 		<flag name='alac'>Apple Lossless Audio Codec (ALAC) plugin</flag>
 		<flag name='cdda'>Compact Disc Digital Audio (CDDA) plugin</flag>
 		<flag name='converter'>Support for converting media files</flag>
