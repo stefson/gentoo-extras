@@ -139,10 +139,10 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${P}"
 
 src_prepare() {
-#	if [[ "$(l10n_get_locales disabled)" =~ "ru" ]] ; then
-#		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
-#		rm -v "${S}/translation/help.ru.txt" || die
-#	fi
+	if [[ "$(l10n_get_locales disabled)" =~ "ru" ]] ; then
+		eapply "${FILESDIR}/${PN}-1.8.0-remove-ru-help-translation.patch"
+		rm -v "${S}/translation/help.ru.txt" || die
+	fi
 
 	remove_locale() {
 		sed -e "/${1}/d" \

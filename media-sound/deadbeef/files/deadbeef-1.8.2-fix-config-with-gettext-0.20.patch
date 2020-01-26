@@ -1,22 +1,18 @@
-From 38e14e264dcc52573736ec866cbc8fb4e44eb7dc Mon Sep 17 00:00:00 2001
-From: "Jan Chren (rindeal)" <dev.rindeal@gmail.com>
-Date: Wed, 9 Oct 2019 00:40:27 +0200
-Subject: [PATCH 1/2] gettext/intl fixup
+From 70339732d8530570861d8fe26112b9f203077e91 Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Tue, 29 Oct 2019 21:33:26 +0100
+Subject: [PATCH] Use AM_GNU_GETTEXT([external]) for better compatibility
 
 ---
- Makefile.am          |   19 +-
- configure.ac         |   13 +-
- po/Makevars          |   44 +
- po/POTFILES.in       |    1 -
- 4 files changed, 51 insertions(+), 5 deletions(-)
- create mode 100644 po/Makevars
-
+ Makefile.am  | 5 ++---
+ configure.ac | 8 ++------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index e87a059df..053c328f5 100644
+index e87a059df..808d5198a 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -2,21 +2,10 @@ SUBDIRS = pixmaps\
+@@ -2,8 +2,7 @@ SUBDIRS = pixmaps\
  		  icons\
  		  shared\
  		  ${PLUGINS_DIRS}\
@@ -26,65 +22,39 @@ index e87a059df..053c328f5 100644
  
  bin_PROGRAMS = deadbeef
  
--INTLTOOL_FILES = \
--		intltool-extract.in \
--		intltool-merge.in \
--		intltool-update.in
--
--DISTCLEANFILES = \
--		intltool-extract \
--		intltool-merge \
--		intltool-update
--
- deadbeef_SOURCES =\
- 	main.c common.h deadbeef.h\
- 	plugins.c plugins.h moduleconf.h\
-@@ -56,10 +45,10 @@ deadbeef_SOURCES =\
- sdkdir = $(pkgincludedir)
- sdk_HEADERS = deadbeef.h
+@@ -58,7 +57,7 @@ sdk_HEADERS = deadbeef.h
  
--deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
-+deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread @LIBINTL@ plugins/libparser/libparser.a
+ deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
  
- AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
--AM_CPPFLAGS = $(DEPS_CFLAGS)
-+AM_CPPFLAGS = $(DEPS_CFLAGS) -DLOCALEDIR=\"$(localedir)\"
+-AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
++AM_CFLAGS = $(DEPS_CFLAGS) -std=c99 -DLOCALEDIR=\"@localedir@\"
+ AM_CPPFLAGS = $(DEPS_CFLAGS)
  
  docsdir = $(docdir)
- 
-@@ -70,6 +59,6 @@ docs_DATA = README help.txt about.txt translators.txt ChangeLog\
- desktopdir = $(datadir)/applications
- desktop_DATA = deadbeef.desktop
- 
--EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c translation/plugins.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
-+EXTRA_DIST = $(docs_DATA) $(desktop_DATA) translation/extra.c translation/plugins.c sj_to_unicode.h examples/decoder_template.c examples/dsp_template.c yasmwrapper.sh
- 
- ACLOCAL_AMFLAGS = -I m4
 diff --git a/configure.ac b/configure.ac
-index 158839006..e514fc12b 100644
+index 158839006..b218743b5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -17,16 +17,12 @@ AC_PROG_INSTALL
+@@ -17,16 +17,15 @@ AC_PROG_INSTALL
  dnl AC_PROG_LIBTOOL
  AC_CONFIG_MACRO_DIR([m4])
  AC_C_BIGENDIAN
 -AM_GNU_GETTEXT
++AM_GNU_GETTEXT([external])
  PKG_PROG_PKG_CONFIG
  AM_PROG_CC_C_O
-+AM_ICONV
- 
--IT_PROG_INTLTOOL([0.40.0])
--GETTEXT_PACKAGE=deadbeef
--AC_SUBST(GETTEXT_PACKAGE)
 -
--test "$prefix" = NONE && prefix=/usr/local
++AM_ICONV
+ IT_PROG_INTLTOOL([0.40.0])
+ GETTEXT_PACKAGE=deadbeef
+ AC_SUBST(GETTEXT_PACKAGE)
+ 
+ test "$prefix" = NONE && prefix=/usr/local
 -AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
-+AM_GNU_GETTEXT_VERSION([0.18.3])
-+AM_GNU_GETTEXT([external])
  
  case "$host" in
    i686-apple-*)
-@@ -157,8 +153,6 @@ case "$host" in
+@@ -157,8 +156,6 @@ case "$host" in
      ;;
  esac
  
@@ -93,7 +63,7 @@ index 158839006..e514fc12b 100644
  dnl check for yasm
  AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
  
-@@ -948,7 +942,6 @@ plugins/pltbrowser/Makefile
+@@ -948,7 +945,6 @@ plugins/pltbrowser/Makefile
  plugins/sc68/Makefile
  plugins/coreaudio/Makefile
  plugins/rg_scanner/Makefile
@@ -101,104 +71,4 @@ index 158839006..e514fc12b 100644
  po/Makefile.in
  deadbeef.desktop
  ])
-
-
---- /dev/null
-+++ b/po/Makevars
-@@ -0,0 +1,44 @@
-+# Makefile variables for PO directory in any package using GNU gettext.
-+
-+# Usually the message domain is the same as the package name.
-+DOMAIN = $(PACKAGE)
-+
-+# These two variables depend on the location of this directory.
-+subdir = po
-+top_builddir = ..
-+
-+# These options get passed to xgettext.
-+XGETTEXT_OPTIONS = --keyword=_ --keyword=N_ --keyword=P_:1,2 --from-code=UTF-8
-+
-+# This option gets passed to msgmerge.
-+MSGMERGE_OPTIONS = --no-wrap
-+
-+# This is the copyright holder that gets inserted into the header of the
-+# $(DOMAIN).pot file.  Set this to the copyright holder of the surrounding
-+# package.  (Note that the msgstr strings, extracted from the package's
-+# sources, belong to the copyright holder of the package.)  Translators are
-+# expected to transfer the copyright for their translations to this person
-+# or entity, or to disclaim their copyright.  The empty string stands for
-+# the public domain; in this case the translators are expected to disclaim
-+# their copyright.
-+COPYRIGHT_HOLDER = Alexey Yakovenko <waker@users.sourceforge.net>
-+
-+# This is the email address or URL to which the translators shall report
-+# bugs in the untranslated strings:
-+# - Strings which are not entire sentences, see the maintainer guidelines
-+#   in the GNU gettext documentation, section 'Preparing Strings'.
-+# - Strings which use unclear terms or require additional context to be
-+#   understood.
-+# - Strings which make invalid assumptions about notation of date, time or
-+#   money.
-+# - Pluralisation problems.
-+# - Incorrect English spelling.
-+# - Incorrect formatting.
-+# It can be your email address, or a mailing list address where translators
-+# can write to without being subscribed, or the URL of a web page through
-+# which the translators can contact you.
-+MSGID_BUGS_ADDRESS = https://github.com/DeaDBeeF-Player/deadbeef/issues
-+
-+# This is the list of locale categories, beyond LC_MESSAGES, for which the
-+# message catalogs shall be used.  It is usually empty.
-+EXTRA_LOCALE_CATEGORIES =
-diff --git a/po/POTFILES.in b/po/POTFILES.in
-index 07bad9405..ee2d1cff5 100644
---- a/po/POTFILES.in
-+++ b/po/POTFILES.in
-@@ -15,7 +15,6 @@ main.c
- playlist.c
- plugins.c
- deadbeef.desktop.in
--intl/plural.c
- plugins/gtkui/deadbeef.glade
- plugins/wildmidi/wildmidiplug.c
- translation/extra.c
-
-From 34ccd36989ca7c306b91c7127ade975bd530fb64 Mon Sep 17 00:00:00 2001
-From: "Jan Chren (rindeal)" <dev.rindeal@gmail.com>
-Date: Wed, 9 Oct 2019 03:46:40 +0200
-Subject: [PATCH 2/2] use autoreconf
-
----
- scripts/portable_build.sh | 3 ++-
- scripts/static_build.sh   | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/portable_build.sh b/scripts/portable_build.sh
-index 3a11ea99e..add620fdf 100755
---- a/scripts/portable_build.sh
-+++ b/scripts/portable_build.sh
-@@ -7,7 +7,8 @@ export CXX=$AP/apgcc
- 
- export APBUILD_STATIC_LIBGCC=1
- 
--./autogen.sh
-+# ./autogen.sh
-+autoreconf --install --force
- 
- ./configure --enable-staticlink --enable-portable --disable-artwork-imlib2
- sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
-diff --git a/scripts/static_build.sh b/scripts/static_build.sh
-index 74e86b391..1fe42a942 100755
---- a/scripts/static_build.sh
-+++ b/scripts/static_build.sh
-@@ -49,7 +49,8 @@ export CC=$AP/apgcc
- export CXX=$AP/apgcc
- export OBJC=$AP/apgcc
- 
--./autogen.sh || exit 1
-+#./autogen.sh || exit 1
-+autoreconf --install --force || exit 1
- 
- ./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || exit 1
- sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 
