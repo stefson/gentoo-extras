@@ -34,7 +34,7 @@ DEPEND="dev-libs/gobject-introspection-common
 	>=virtual/pkgconfig-0-r1
 	gtk-doc? ( >=dev-util/gtk-doc-1.13 )"
 
-BDEPEND=">=virtual/rust-1.37.0"
+BDEPEND=">=virtual/rust-1.39.0"
 
 # >=gtk-doc-am-1.13, gobject-introspection-common, vala-common needed by eautoreconf
 # >=rust-1.37.0 needed for cargo vendoring to work
