@@ -8,7 +8,7 @@ inherit autotools cargo git-r3
 DESCRIPTION="Scalable Vector Graphics (SVG) rendering library"
 HOMEPAGE="https://wiki.gnome.org/Projects/LibRsvg"
 
-RESTRICT="mirror"
+RESTRICT="mirror network-sandbox"
 LICENSE="LGPL-2"
 SLOT="2"
 KEYWORDS=""
@@ -73,8 +73,8 @@ src_configure() {
 		--disable-tools \
 		$(use_enable gtk-doc) \
 		$(use_enable introspection) \
-		--disable-vala \
-		--enable-pixbuf-loaders
+		--disable-vala 
+#		--enable-pixbuf-loaders
 }
 
 src_compile() {
