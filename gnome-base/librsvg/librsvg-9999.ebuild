@@ -15,8 +15,7 @@ KEYWORDS=""
 
 IUSE="gtk-doc introspection tools"
 
-EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/librsvg.git"
-#EGIT_REPO_URI="https://github.com/GNOME/librsvg.git"
+EGIT_REPO_URI="https://github.com/GNOME/librsvg.git"
 #EGIT_BRANCH=""
 #EGIT_COMMIT=""
 
