@@ -32,7 +32,7 @@ DEPEND="dev-libs/gobject-introspection-common
 	dev-libs/vala-common
 	>=dev-util/gtk-doc-am-1.13
 	>=virtual/pkgconfig-0-r1
-	gtk-doc? ( >=dev-util/gtk-doc-1.13 )"
+	>=dev-util/gtk-doc-1.13"
 
 BDEPEND=">=virtual/rust-1.39.0"
 
@@ -42,18 +42,18 @@ BDEPEND=">=virtual/rust-1.39.0"
 S="${WORKDIR}"/librsvg-${PV}
 
 src_unpack() {
-        if [[ "${PV}" == *9999* ]]; then
-                git-r3_src_unpack
-                cargo_live_src_unpack
-        else
-                cargo_src_unpack
-        fi
+	if [[ "${PV}" == *9999* ]]; then
+		git-r3_src_unpack
+		cargo_live_src_unpack
+	else
+		cargo_src_unpack
+	fi
 }
 
 src_prepare() {
 	default
 
-        if [[ "${PV}" == *9999* ]]; then
+	if [[ "${PV}" == *9999* ]]; then
 	eautoreconf
 	fi
 }
@@ -72,8 +72,8 @@ src_configure() {
 		--disable-tools \
 		$(use_enable gtk-doc) \
 		$(use_enable introspection) \
-		--disable-vala 
-#		--enable-pixbuf-loaders
+		--disable-vala \
+		--enable-pixbuf-loaders
 }
 
 src_compile() {
@@ -84,5 +84,5 @@ src_compile() {
 }
 
 src_install() {
-	dobin bin/blah
+	default
 }
