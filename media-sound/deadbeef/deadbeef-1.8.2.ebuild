@@ -166,6 +166,7 @@ src_prepare() {
 	eapply "${FILESDIR}/deadbeef-9999-issue-2140.patch"
 
 	eapply "${FILESDIR}/${PN}-1.8.2-fix-config-with-gettext-0.20.patch"
+	eapply "${FILESDIR}/${PN}-1.8.2-fix-alsa-deadlocks.patch"
 
 	rm -fr intl || die
 
