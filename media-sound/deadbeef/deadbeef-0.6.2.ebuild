@@ -144,12 +144,12 @@ src_prepare() {
 
 	if ! use unity ; then
 		# remove unity trash
-		epatch "${FILESDIR}/${PN}-0.6.2-or-higher-remove-unity-trash.patch"
+		epatch "${FILESDIR}/${P}-or-higher-remove-unity-trash.patch"
 	fi
 
-	epatch "${FILESDIR}/${PN}-0.6.2-fix-libzip.patch"
-	epatch "${FILESDIR}/${PN}-0.6.2-fix-ffmpeg.patch"
-	epatch "${FILESDIR}/${PN}-0.6.2-fix-musl.patch"
+	epatch "${FILESDIR}/${P}-fix-libzip.patch"
+	epatch "${FILESDIR}/${P}-fix-ffmpeg.patch"
+	epatch "${FILESDIR}/${P}-fix-musl.patch"
 
 
 	config_rpath_update "${S}/config.rpath" || die
