@@ -22,7 +22,6 @@ LICENSE="BSD
 	UNICODE
 	ZLIB
 	aac? ( GPL GPL-2 )
-	adplug? ( LGPL-2.1 ZLIB )
 	alac? ( MIT GPL-2 )
 	alsa? ( GPL-2 )
 	cdda? ( GPL-2 LGPL-2 GPL-3 )
@@ -67,7 +66,7 @@ LICENSE="BSD
 SLOT="0"
 
 IUSE="+alsa +flac +gtk2 +hotkeys +m3u +mp3 +sndfile +vorbis
-	aac adplug alac cdda converter cover cover-imlib2 cover-network curl dts dumb equalizer
+	aac alac cdda converter cover cover-imlib2 cover-network curl dts dumb equalizer
 	ffmpeg gme gtk3 lastfm libnotify libsamplerate mac midi mms mono2stereo musepack nls nullout
 	oss playlist-browser psf pulseaudio shell-exec shn sid tta unity vtx wavpack wma zip"
 
@@ -83,7 +82,6 @@ PDEPEND="media-plugins/deadbeef-plugins-meta"
 
 RDEPEND="dev-libs/glib
 	aac? ( media-libs/faad2 )
-	adplug? ( media-libs/adplug )
 	alsa? ( media-libs/alsa-lib )
 	alac? ( media-libs/faad2 )
 	cdda? ( dev-libs/libcdio media-libs/libcddb )
@@ -171,7 +169,7 @@ src_configure() {
 		--docdir=/usr/share/${PN} \
 		${shell-exec-ui} \
 		$(use_enable aac) \
-		$(use_enable adplug) \
+		--disable adplug \
 		$(use_enable alac) \
 		$(use_enable alsa) \
 		$(use_enable cdda) \
