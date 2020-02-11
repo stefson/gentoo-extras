@@ -166,6 +166,9 @@ src_prepare() {
 	eapply "${FILESDIR}/${P}-fix-config-with-gettext-0.20.patch"
 	eapply "${FILESDIR}/${P}-fix-alsa-deadlocks.patch"
 
+	# this is the real fix, but it needs proper backport
+	# eapply "${FILESDIR}/9923a5d7b16cedafcf23c3d6494f0c1c2df906ab.patch"
+
 	rm -fr intl || die
 
 	eapply_user
