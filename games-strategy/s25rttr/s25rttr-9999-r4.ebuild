@@ -37,7 +37,9 @@ DEPEND="${RDEPEND}
 	test? ( sys-devel/clang )"
 BDEPEND="app-arch/unzip"
 
-PATCHES=( "${FILESDIR}"/libsiedler2-clang-10.patch )
+PATCHES=( "${FILESDIR}"/libsiedler2-clang-10.patch
+	"${FILESDIR}"/s25main-clang-10.patch
+	 )
 
 src_prepare() {
 

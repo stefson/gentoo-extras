@@ -1,0 +1,23 @@
+From e5f33720777a2527fd9f448e1f48ed524f4f430c Mon Sep 17 00:00:00 2001
+From: stefson <herrtimson@yahoo.de>
+Date: Tue, 11 Feb 2020 19:31:44 +0100
+Subject: [PATCH] fix compile with clang-10 in TerrainRenderer
+
+---
+ libs/s25main/TerrainRenderer.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libs/s25main/TerrainRenderer.cpp b/libs/s25main/TerrainRenderer.cpp
+index 8b7b464eb..340f4dce8 100644
+--- a/libs/s25main/TerrainRenderer.cpp
++++ b/libs/s25main/TerrainRenderer.cpp
+@@ -973,7 +973,7 @@ void TerrainRenderer::DrawWays(const PreparedRoads& sorted_roads) const
+     glTexCoordPointer(2, GL_FLOAT, sizeof(Tex2C3Ver2), &vertexData[0].tx);
+     glColorPointer(3, GL_FLOAT, sizeof(Tex2C3Ver2), &vertexData[0].r);
+ 
+-    for(const auto& itRoad : sorted_roads | boost::adaptors::indexed())
++    for(const auto itRoad : sorted_roads | boost::adaptors::indexed())
+     {
+         if(itRoad.value().empty())
+             continue;
+
