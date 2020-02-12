@@ -258,7 +258,7 @@ src_prepare() {
 
 	if use arm ; then
 	# moz 1526653, this copies over missing bits directly from linux headers
-	eapply "${FILESDIR}/"fix-arm-user-include.patch
+	eapply "${FILESDIR}/"firefox-68.0_arm-fp-wasm-fixes.patch
 
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1542622
 	# this is needed to make firefox-67.0 play nicely with rust-1.35.0 + llvm-7 + gcc-8.3.0 + cbindgen-0.8x in cross
