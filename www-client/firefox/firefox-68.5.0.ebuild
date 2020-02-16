@@ -275,6 +275,10 @@ src_prepare() {
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1581419
 	eapply "${FILESDIR}/"firefox-69.0-arrayvec.patch
 
+	# this fixes build with USE="clang" and libstdc++ 
+	# upstream still pending #1594027
+	eapply "${FILESDIR}/"firefox-73.0_fix_llvm9.patch
+
 	# XXX there is a bug in rust, which blocks USE="neon" see mozilla #1557350 
 	# error is: The rust compiler host (armv7-unknown-linux-gnueabihf) is not suitable for 
 	# the configure host (armv7-unknown-linux-gnueabihf/thumbv7neon-unknown-linux-gnueabihf).
