@@ -150,7 +150,6 @@ KEYWORDS="~amd64"
 IUSE="cpu_flags_x86_sse2 test"
 
 DEPEND=">=virtual/rust-1.37.0
-	dev-util/cmake
 	sys-devel/gcc"
 
 RDEPEND=""
