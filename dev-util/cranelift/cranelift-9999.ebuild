@@ -16,13 +16,11 @@ SLOT="0"
 KEYWORDS=""
 IUSE="cpu_flags_x86_sse2 test"
 
-EGIT_REPO_URI="https://github.com/CraneStation/cranelift.git"
+EGIT_REPO_URI="https://github.com/bytecodealliance/wasmtime.git"
 
 DEPEND=">=virtual/rust-1.37.0"
 RDEPEND=""
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
-
-S="${WORKDIR}"/cranelift-${PV}
 
 src_unpack() {
         if [[ "${PV}" == *9999* ]]; then
@@ -39,6 +37,7 @@ src_configure() {
 }
 
 src_compile() {
+	cd "${S}"/cranelift
 	export CARGO_HOME="${ECARGO_HOME}"
 	cargo build -j$(makeopts_jobs) --release || die
 }
