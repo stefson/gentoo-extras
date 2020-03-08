@@ -10,14 +10,15 @@ MY_P="rust-std-${PV}"
 DESCRIPTION="std libraries for rust"
 HOMEPAGE="https://www.rust-lang.org/"
 
-SRC_URI="thumbv7-neon-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )"
+SRC_URI="thumbv7-neon-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )
+	thumbv6m-none-eabi? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-thumbv6m-none-eabi.tar.xz )"
 
 RUST_PROVIDER="rust-bin-1.41.1"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="amd64 ~arm"
-IUSE="+thumbv7-neon-std"
+IUSE="+thumbv7-neon-std thumbv6m-none-eabi"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
@@ -32,6 +33,9 @@ QA_PREBUILT="
 pkg_setup() {
 	if use thumbv7-neon-std ; then
 		RUSTHOST=thumbv7neon-unknown-linux-gnueabihf
+	fi
+	if use thumbv6m-none-eabi ; then
+		RUSTHOST=thumbv6m-none-eabi
 	fi
 
 	ewarn "please make sure to have a full cross-compile"
