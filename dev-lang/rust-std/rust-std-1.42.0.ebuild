@@ -18,7 +18,7 @@ SRC_URI="armv5tel-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-armv
 	wasm32-unknown-unknown-std? ( https://static.rust-lang.org/dist/"${P}"-wasm32-unknown-unknown.tar.xz )
 	i686-linux-gnu-std? ( https://static.rust-lang.org/dist/"${P}"-i686-unknown-linux-gnu.tar.xz )"
 
-RUST_PROVIDER="rust-bin-1.39.0"
+RUST_PROVIDER="rust-bin-1.42.0"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
@@ -27,7 +27,7 @@ IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardflo
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	~dev-lang/rust-bin-1.39.0
+	~dev-lang/rust-bin-1.42.0
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
