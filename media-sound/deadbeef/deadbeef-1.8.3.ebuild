@@ -138,7 +138,7 @@ S="${WORKDIR}/${P}"
 
 src_prepare() {
 	if [[ "$(l10n_get_locales disabled)" =~ "ru" ]] ; then
-		eapply "${FILESDIR}/${PN}-1.8.0-remove-ru-help-translation.patch"
+		eapply "${FILESDIR}/${P}-remove-ru-help-translation.patch"
 		rm -v "${S}/translation/help.ru.txt" || die
 	fi
 
@@ -157,8 +157,8 @@ src_prepare() {
 
 	if ! use unity ; then
 		# remove unity trash
-		eapply "${FILESDIR}/deadbeef-1.8.3-remove-unity-trash.patch"
-		eapply "${FILESDIR}/deadbeef-1.8.3-fix-missmatching-desktop-groups-warnings.patch"
+		eapply "${FILESDIR}/${P}-remove-unity-trash.patch"
+		eapply "${FILESDIR}/${P}-fix-missmatching-desktop-groups-warnings.patch"
 	fi
 	
 	eapply "${FILESDIR}/${P}-fix-config-with-gettext-0.20.patch"
