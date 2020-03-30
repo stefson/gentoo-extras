@@ -655,7 +655,7 @@ src_install() {
 	pax-mark m "${BUILD_OBJ_DIR}"/dist/bin/xpcshell
 
 	# Add our default prefs for firefox
-	cp "${FILESDIR}"/gentoo-default-prefs.js-2 \
+	cp "${FILESDIR}"/gentoo-default-prefs.js-3 \
 		"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
 		|| die
 
@@ -829,7 +829,7 @@ pkg_postinst() {
 	else
 		local replacing_version
 		for replacing_version in ${REPLACING_VERSIONS} ; do
-			if ver_test "${replacing_version}" -lt 68.6.0-r2 ; then
+			if ver_test "${replacing_version}" -lt 68.6.0-r3 ; then
 				# Tell user only once about our Normandy default
 				show_normandy_information=yes
 				break
