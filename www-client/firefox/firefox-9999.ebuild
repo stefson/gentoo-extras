@@ -6,8 +6,8 @@ VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
 
-PYTHON_COMPAT=( python3_{5,6,7} )
-PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
+PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_REQ_USE='ncurses,ssl,threads(+)'
 
 S="${WORKDIR}/firefox"
 
@@ -33,8 +33,8 @@ RESTRICT="!bindist? ( bindist ) mirror"
 ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
-	>=dev-libs/nspr-4.26
-	>=dev-libs/nss-3.50
+	>=dev-libs/nspr-4.25
+	>=dev-libs/nss-3.51
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
@@ -86,9 +86,9 @@ pkg_setup() {
 pkg_pretend() {
 	# Ensure we have enough disk space to compile
 	if use pgo || use debug || use test ; then
-		CHECKREQS_DISK_BUILD="30G"
+		CHECKREQS_DISK_BUILD="10G"
 	else
-		CHECKREQS_DISK_BUILD="20G"
+		CHECKREQS_DISK_BUILD="14G"
 	fi
 	check-reqs_pkg_setup
 }
