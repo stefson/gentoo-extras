@@ -37,7 +37,9 @@ DEPEND="${RDEPEND}
 	test? ( sys-devel/clang )"
 BDEPEND="app-arch/unzip"
 
-#PATCHES=()
+PATCHES=( 
+	"${FILESDIR}"/remove-sdl1-support-from-s25client.patch
+	)
 
 src_prepare() {
 
@@ -61,6 +63,9 @@ src_prepare() {
 	rm -r external/languages/.git/ || die
 	rm external/languages/.gitignore || die
 	rm data/RTTR/LSTS/CREDITS.LST/*.bmp || die
+
+	# remove sdl1 in favour of sdl2
+	rm -r extras/videoDrivers/SDL || die
 
 	CMAKE_BUILD_TYPE="Debug"
 
