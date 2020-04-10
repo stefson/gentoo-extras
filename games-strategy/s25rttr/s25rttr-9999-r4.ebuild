@@ -9,7 +9,7 @@ HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25cl
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 EGIT_BRANCH="master"
-#EGIT_COMMIT="194195c4d614d177ce1f6a16cd0e62d6e4548eec"
+EGIT_COMMIT="ebde28025624a9d4b46ba190edcbf2a1fe7b8145"
 
 #EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
 #EGIT_BRANCH="editor_map_list"
@@ -39,6 +39,7 @@ BDEPEND="app-arch/unzip"
 
 #PATCHES=( 
 #	"${FILESDIR}"/remove-sdl1-support-from-s25client.patch
+#	"${FILESDIR}"/sdl2.patch
 #	)
 
 src_prepare() {
@@ -125,7 +126,7 @@ src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
 	exeinto /usr/"$(get_libdir)"/${PN}/video
-	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
+#	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL.so
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL2.so
 
 	exeinto /usr/"$(get_libdir)"/${PN}/audio
