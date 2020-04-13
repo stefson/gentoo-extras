@@ -4,16 +4,16 @@
 EAPI=6
 
 CRATES="
-cargo-bloat-0.9.1
-json-0.12.0
+cargo-bloat-0.9.3
+json-0.12.4
 kernel32-sys-0.2.2
-libc-0.2.61
-memmap-0.7.0
-multimap-0.5.0
-pico-args-0.2.0
+libc-0.2.68
+memmap2-0.1.0
+multimap-0.8.1
+pico-args-0.3.1
 redox_syscall-0.1.56
-regex-1.3.1
-regex-syntax-0.6.12
+regex-1.3.6
+regex-syntax-0.6.17
 term_size-0.3.1
 time-0.1.42
 winapi-0.2.8
