@@ -7,12 +7,12 @@ inherit eutils cmake-utils git-r3 xdg-utils
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
 
-EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
-EGIT_BRANCH="master"
-EGIT_COMMIT="ebde28025624a9d4b46ba190edcbf2a1fe7b8145"
+#EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
+#EGIT_BRANCH="master"
+#EGIT_COMMIT="ebde28025624a9d4b46ba190edcbf2a1fe7b8145"
 
-#EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-#EGIT_BRANCH="editor_map_list"
+EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
+EGIT_BRANCH="remove_lfs"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL2+ GPL-3 Boost-1.0"
@@ -45,19 +45,15 @@ BDEPEND="app-arch/unzip"
 src_prepare() {
 
 	# Ensure no bundled libraries are used
-	rm -r external/lua || die
+	rm -r external/dev-tools || die
 	rm -r external/libsamplerate || die
-
-	rm external/full-contrib-msvc* || die
+	rm -r extras/macosLauncher || die
 
 	# remove release tools and win32 stuff
 	rm -r tools || die
 	rm -r data/win32 || die
 
-	# remove macos stuff
-	rm -r external/macos || die
-	rm -r extras/macosLauncher || die
-
+	# remove source files for updater
 	rm -r external/s25update || die
 
 	# Prevent installation of git stuff
@@ -91,6 +87,8 @@ src_configure() {
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
 		-DRTTR_BUILD_UPDATER=OFF
+		-DRTTR_BUILD_UPDATER_DEF=OFF
+		-DRTTR_INCLUDE_DEVTOOLS=OFF
 		-DRTTR_USE_SYSTEM_SAMPLERATE=ON
 	)
 
