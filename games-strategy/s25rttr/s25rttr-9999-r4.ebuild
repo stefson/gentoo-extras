@@ -9,10 +9,10 @@ HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25cl
 
 EGIT_REPO_URI="https://github.com/Return-To-The-Roots/s25client.git"
 EGIT_BRANCH="master"
-#EGIT_COMMIT="ebde28025624a9d4b46ba190edcbf2a1fe7b8145"
+EGIT_COMMIT="a01a3ec937ba63e955b0982dc217573d540149a4"
 
 #EGIT_REPO_URI="https://github.com/Flamefire/s25client.git"
-#EGIT_BRANCH="remove_sdl1"
+#EGIT_BRANCH="nowide"
 #EGIT_COMMIT="6487c631ab4695c20814ff9afcd0e09aea7c6830"
 
 LICENSE="GPL2+ GPL-3 Boost-1.0"
