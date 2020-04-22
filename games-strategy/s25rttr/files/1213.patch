@@ -1,0 +1,70 @@
+From dcdc33252c4e1c65ffb8b886c291dc2265499ad9 Mon Sep 17 00:00:00 2001
+From: Flamefire <Flamefire@users.noreply.github.com>
+Date: Mon, 20 Apr 2020 11:20:27 +0200
+Subject: [PATCH] Fix text not being shown in tool-window and main menu
+
+The text/button were to small, adjusted sizes.
+Also limit number of tools to order to 99 not 100 (causing this again)
+Fixes #1207
+---
+ libs/s25main/ingameWindows/iwMainMenu.cpp | 3 +--
+ libs/s25main/ingameWindows/iwTools.cpp    | 8 +++-----
+ 2 files changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/libs/s25main/ingameWindows/iwMainMenu.cpp b/libs/s25main/ingameWindows/iwMainMenu.cpp
+index f87ef0112..dbbbf36bb 100644
+--- a/libs/s25main/ingameWindows/iwMainMenu.cpp
++++ b/libs/s25main/ingameWindows/iwMainMenu.cpp
+@@ -15,7 +15,6 @@
+ // You should have received a copy of the GNU General Public License
+ // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
+ 
+-#include "rttrDefines.h" // IWYU pragma: keep
+ #include "iwMainMenu.h"
+ #include "GamePlayer.h"
+ #include "GlobalGameSettings.h"
+@@ -82,7 +81,7 @@ iwMainMenu::iwMainMenu(GameWorldView& gwv, GameCommandFactory& gcFactory)
+     bool enableAIDebug = true;
+ #endif
+     if(gwv.GetViewer().GetPlayer().isHost && enableAIDebug)
+-        AddTextButton(13, DrawPoint(80, 210), Extent(20, 20), TC_GREY, _("AI"), NormalFont, _("AI Debug Window"));
++        AddTextButton(13, DrawPoint(80, 210), Extent(22, 22), TC_GREY, _("AI"), NormalFont, _("AI Debug Window"));
+ 
+     // Optionen
+     AddImageButton(30, DrawPoint(12, 231), Extent(165, 32), TC_GREY, LOADER.GetImageN("io", 37), _("Options"));
+diff --git a/libs/s25main/ingameWindows/iwTools.cpp b/libs/s25main/ingameWindows/iwTools.cpp
+index 82e08a073..7ec4dcc18 100644
+--- a/libs/s25main/ingameWindows/iwTools.cpp
++++ b/libs/s25main/ingameWindows/iwTools.cpp
+@@ -15,9 +15,7 @@
+ // You should have received a copy of the GNU General Public License
+ // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
+ 
+-#include "rttrDefines.h" // IWYU pragma: keep
+ #include "iwTools.h"
+-
+ #include "GamePlayer.h"
+ #include "GlobalGameSettings.h"
+ #include "Loader.h"
+@@ -56,9 +54,9 @@ iwTools::iwTools(const GameWorldViewer& gwv, GameCommandFactory& gcFactory)
+         for(unsigned i = 0; i < NUM_TOOLS; ++i)
+         {
+             Extent btSize = Extent(20, 13);
+-            ctrlButton* bt = AddImageButton(100 + i * 2, DrawPoint(174, 25 + i * 28), btSize, TC_GREY, LOADER.GetImageN("io", 33), "+1");
++            ctrlButton* bt = AddImageButton(100 + i * 2, DrawPoint(174, 27 + i * 28), btSize, TC_GREY, LOADER.GetImageN("io", 33), "+1");
+             AddImageButton(101 + i * 2, bt->GetPos() + DrawPoint(0, btSize.y), btSize, TC_GREY, LOADER.GetImageN("io", 34), "-1");
+-            AddTextDeepening(200 + i, DrawPoint(151, 4 + bt->GetPos().y), Extent(20, 18), TC_GREY, "", NormalFont, COLOR_YELLOW);
++            AddTextDeepening(200 + i, DrawPoint(151, 4 + bt->GetPos().y), Extent(22, 18), TC_GREY, "", NormalFont, COLOR_YELLOW);
+         }
+         pendingOrderChanges.fill(0);
+         UpdateTexts();
+@@ -175,7 +173,7 @@ void iwTools::Msg_ButtonClick(const unsigned ctrl_id)
+                 return;
+             --pendingOrderChanges[tool];
+             --curOrders;
+-        } else if(curOrders > 99)
++        } else if(curOrders >= 99)
+             return;
+         else
+         {
+
