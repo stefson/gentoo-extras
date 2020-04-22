@@ -6,10 +6,10 @@ EAPI=6
 inherit eutils unpacker versionator
 
 MY_UBUNTUVERS=18.04.1
-KEYWORDS="~arm"
+KEYWORDS="~amd64"
 
-SRC_URI="https://launchpad.net/~canonical-chromium-builds/+archive/ubuntu/stage/+files/chromium-browser_${PV}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb
-	https://launchpad.net/~canonical-chromium-builds/+archive/ubuntu/stage/+files/chromium-codecs-ffmpeg_${PV}-0ubuntu0.${MY_UBUNTUVERS}_armhf.deb"
+SRC_URI="https://launchpad.net/~canonical-chromium-builds/+archive/ubuntu/stage/+files/chromium-browser_${PV}-0ubuntu0.${MY_UBUNTUVERS}_amd64.deb
+	https://launchpad.net/~canonical-chromium-builds/+archive/ubuntu/stage/+files/chromium-codecs-ffmpeg_${PV}-0ubuntu0.${MY_UBUNTUVERS}_amd64.deb"
 
 #SRC_URI="http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-browser_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb
 #	http://ports.ubuntu.com/ubuntu-ports/pool/universe/c/chromium-browser/chromium-codecs-ffmpeg_${MY_VERSION}-0ubuntu0.14.04.${MY_PATCH}_armhf.deb"
