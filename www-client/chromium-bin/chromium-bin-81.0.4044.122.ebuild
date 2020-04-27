@@ -55,5 +55,5 @@ src_prepare() {
 src_install() {
 	mv "${S}"/{usr,etc} "${D}"/ || die
 	dosym /usr/bin/chromium-browser /usr/bin/chromium
-	chmod 4755 "${D}/usr/$(get_libdir)/chromium-browser/chrome-sandbox" || die
+	chmod 4755 "${D}/usr/lib/chromium-browser/chrome-sandbox" || die
 }
