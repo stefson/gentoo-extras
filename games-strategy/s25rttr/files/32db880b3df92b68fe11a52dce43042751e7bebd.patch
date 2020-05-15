@@ -1,0 +1,26 @@
+From 32db880b3df92b68fe11a52dce43042751e7bebd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Matthias=20Mail=C3=A4nder?=
+ <Mailaender@users.noreply.github.com>
+Date: Thu, 14 May 2020 21:19:32 +0200
+Subject: [PATCH] Use less odd library paths on Linux.
+
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 096d4a5dc..765eb7824 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -156,9 +156,9 @@ else()
+         set(RTTR_DOCDIR "${DEFAULT_DOCDIR}" CACHE STRING "Directory for documentation files")
+         if("${RTTR_LIBDIR}" STREQUAL "")
+             # Avoid using absolute path accidentally
+-            set(DEFAULT_DRIVERDIR "driver")
++            set(DEFAULT_DRIVERDIR "s25rttr/driver")
+         else()
+-            set(DEFAULT_DRIVERDIR "${RTTR_LIBDIR}/driver")
++            set(DEFAULT_DRIVERDIR "${RTTR_LIBDIR}/s25rttr/driver")
+         endif()
+         set(RTTR_EXTRA_BINDIR "${CMAKE_INSTALL_LIBEXECDIR}/s25rttr" CACHE STRING "Path to binaries used internally")
+         set(RTTR_DRIVERDIR "${DEFAULT_DRIVERDIR}" CACHE STRING "Directory for driver objects")
