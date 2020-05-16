@@ -41,7 +41,6 @@ src_prepare() {
 
 	# Ensure no bundled libraries are used
 	rm -r external/dev-tools || die
-	rm -r external/libsamplerate || die
 	rm -r extras/macosLauncher || die
 
 	# remove release tools and win32 stuff
