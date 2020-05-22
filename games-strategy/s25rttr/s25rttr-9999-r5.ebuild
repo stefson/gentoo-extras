@@ -17,7 +17,7 @@ EGIT_BRANCH="master"
 
 LICENSE="GPL2+ GPL-3 Boost-1.0"
 SLOT="0"
-#KEYWORDS="amd64 ~arm ~arm64"
+KEYWORDS="amd64 ~arm ~arm64"
 IUSE="test"
 
 RDEPEND=">=app-arch/bzip2-1.0.6-r11
