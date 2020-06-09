@@ -1,3 +1,6 @@
+// todo: checkout what to do about megabar 
+// pref("browser.urlbar.openViewOnFocus", false)
+//
 // todo: enable middle mouse button action 
 // pref("general.autoscroll",true);
 //
