@@ -287,6 +287,9 @@ src_prepare() {
 	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-first-run-privacy-policy.patch
 	eapply "${FILESDIR}/"privacy-patchset-68/firefox-60-disable-telemetry.patch
 
+	# there's a compile error when using internal av1+aom _without_ neon and thumbv2 instructions 
+	eapply "${FILESDIR}/"firefox-68.10.0-use-neon-flags-for-libaom.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
