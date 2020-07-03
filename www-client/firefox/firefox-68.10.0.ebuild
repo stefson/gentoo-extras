@@ -54,7 +54,7 @@ SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="bindist clang cpu_flags_x86_avx2 dbus debug eme-free geckodriver
 	+gmp-autoupdate hardened hwaccel jack lto cpu_flags_arm_neon pgo pulseaudio
-	+screenshot selinux startup-notification system-av1
+	+screenshot selinux startup-notification system-av1 +openh264
 	+system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-sqlite +system-libvpx +system-webp test wayland wifi"
 RESTRICT="!bindist? ( bindist )"
@@ -114,6 +114,7 @@ CDEPEND="
 
 RDEPEND="${CDEPEND}
 	jack? ( virtual/jack )
+	openh264? ( media-libs/openh264:*[plugin] )
 	pulseaudio? ( || ( media-sound/pulseaudio
 		>=media-sound/apulse-0.1.9 ) )
 	selinux? ( sec-policy/selinux-mozilla )"
@@ -292,6 +293,9 @@ src_prepare() {
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
+
+	einfo "Removing pre-built binaries ..."
+	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Enable gnomebreakpad
 	if use debug ; then
