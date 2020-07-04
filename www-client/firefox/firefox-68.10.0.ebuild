@@ -48,7 +48,7 @@ inherit check-reqs eapi7-ver flag-o-matic toolchain-funcs eutils \
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~x86"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -172,15 +172,6 @@ DEPEND="${CDEPEND}
 				=sys-devel/lld-8*
 				sys-devel/llvm:8[gold]
 				pgo? ( =sys-libs/compiler-rt-sanitizers-8*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:7
-			!clang? ( sys-devel/llvm:7 )
-			clang? (
-				=sys-devel/lld-7*
-				sys-devel/llvm:7[gold]
-				pgo? ( =sys-libs/compiler-rt-sanitizers-7*[profile] )
 			)
 		)
 	)
@@ -457,9 +448,6 @@ src_configure() {
 			if [[ $(gcc-major-version) -lt 8 ]] ; then
 				show_old_compiler_warning=1
 			fi
-
-			# Bug 689358
-			append-cxxflags -flto
 
 			if ! use cpu_flags_x86_avx2 ; then
 				local _gcc_version_with_ipa_cdtor_fix="8.3"
