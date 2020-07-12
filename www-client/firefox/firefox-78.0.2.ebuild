@@ -276,6 +276,9 @@ src_unpack() {
 }
 
 src_prepare() {
+	# these were pulled in from debian without proper testing
+	rm "${WORKDIR}"/firefox/0030-bmo-1650299-Unify-the-inclusion-of-the-ICU-data-file.patch
+	rm "${WORKDIR}"/firefox/0031-bmo-1264836-Automatically-convert-the-little-endian-.patch
 	eapply "${WORKDIR}/firefox"
 
 	# Make LTO respect MAKEOPTS
