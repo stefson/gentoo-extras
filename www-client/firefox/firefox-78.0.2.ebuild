@@ -28,7 +28,7 @@ if [[ ${MOZ_ESR} == 1 ]] ; then
 fi
 
 # Patch version
-PATCH="${PN}-78.0-patches-04"
+PATCH="${PN}-78.0-patches-05"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 MOZ_SRC_URI="${MOZ_HTTP_URI}/${MOZ_PV}/source/${PN}-${MOZ_PV}.source.tar.xz"
@@ -277,8 +277,6 @@ src_unpack() {
 
 src_prepare() {
 	# these were pulled in from debian without proper testing
-	rm "${WORKDIR}"/firefox/0030-bmo-1650299-Unify-the-inclusion-of-the-ICU-data-file.patch
-	rm "${WORKDIR}"/firefox/0031-bmo-1264836-Automatically-convert-the-little-endian-.patch
 	eapply "${WORKDIR}/firefox"
 
 	# Make LTO respect MAKEOPTS
