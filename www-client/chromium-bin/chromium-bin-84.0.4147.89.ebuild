@@ -5,7 +5,7 @@ EAPI=6
 
 inherit eutils unpacker versionator
 
-MY_UBUNTUVERS=18.04.1
+MY_UBUNTUVERS=18.04.2
 KEYWORDS="~amd64"
 
 SRC_URI="https://launchpad.net/~canonical-chromium-builds/+archive/ubuntu/stage/+files/chromium-browser_${PV}-0ubuntu0.${MY_UBUNTUVERS}_amd64.deb
