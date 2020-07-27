@@ -28,7 +28,7 @@ if [[ ${MOZ_ESR} == 1 ]] ; then
 fi
 
 # Patch version
-PATCH="${PN}-68.0-patches-14"
+PATCH="${PN}-68.0-patches-15"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 MOZ_SRC_URI="${MOZ_HTTP_URI}/${MOZ_PV}/source/${PN}-${MOZ_PV}.source.tar.xz"
@@ -277,8 +277,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	rm "${WORKDIR}"/firefox/2013_avoid_noinline_on_GCC_with_skcms.patch
-	rm "${WORKDIR}"/firefox/2015_fix_cssparser.patch
 	eapply "${WORKDIR}/firefox"
 
 	if use arm ; then
