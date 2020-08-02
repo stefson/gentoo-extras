@@ -4,7 +4,7 @@
 EAPI="6"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
-MOZ_ESR=""
+MOZ_ESR="1"
 
 PYTHON_COMPAT=( python3_{7,8,9} )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
@@ -142,6 +142,15 @@ DEPEND="${CDEPEND}
 	>=virtual/rust-1.41.0
 	|| (
 		(
+			sys-devel/clang:11
+			!clang? ( sys-devel/llvm:11 )
+			clang? (
+				=sys-devel/lld-11*
+				sys-devel/llvm:11[gold]
+				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
+			)
+		)
+		(
 			sys-devel/clang:10
 			!clang? ( sys-devel/llvm:10 )
 			clang? (
@@ -157,15 +166,6 @@ DEPEND="${CDEPEND}
 				=sys-devel/lld-9*
 				sys-devel/llvm:9[gold]
 				pgo? ( =sys-libs/compiler-rt-sanitizers-9*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:8
-			!clang? ( sys-devel/llvm:8 )
-			clang? (
-				=sys-devel/lld-8*
-				sys-devel/llvm:8[gold]
-				pgo? ( =sys-libs/compiler-rt-sanitizers-8*[profile] )
 			)
 		)
 	)
@@ -277,6 +277,7 @@ src_unpack() {
 
 src_prepare() {
 	# these were pulled in from debian without proper testing
+	rm "${WORKDIR}"/firefox/0029-bmo-1632429-enum34-and-enum-virtualenv-packages-are-.patch
 	eapply "${WORKDIR}/firefox"
 
 	# Make LTO respect MAKEOPTS
