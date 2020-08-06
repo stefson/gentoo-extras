@@ -279,6 +279,7 @@ src_prepare() {
 	# these were pulled in from debian without proper testing
 	rm "${WORKDIR}"/firefox/0029-bmo-1632429-enum34-and-enum-virtualenv-packages-are-.patch
 	eapply "${WORKDIR}/firefox"
+	eapply "${FILESDIR}/firefox-78.0-no-dbus.patch"
 
 	# Make LTO respect MAKEOPTS
 	sed -i \
