@@ -1,0 +1,1254 @@
+From 72fc2ceaa6ae472a809b4d5c02be98c44388c1b7 Mon Sep 17 00:00:00 2001
+From: Alexandre Julliard <julliard@winehq.org>
+Date: Fri, 3 Jul 2020 12:02:58 +0200
+Subject: [PATCH] ntdll: Use pthread mutexes for uninterrupted sections in the
+ Unix library.
+
+Signed-off-by: Alexandre Julliard <julliard@winehq.org>
+---
+ dlls/ntdll/unix/server.c       |  22 ++---
+ dlls/ntdll/unix/signal_i386.c  |  23 ++---
+ dlls/ntdll/unix/unix_private.h |   5 +-
+ dlls/ntdll/unix/virtual.c      | 174 ++++++++++++++++-----------------
+ 4 files changed, 102 insertions(+), 122 deletions(-)
+
+diff --git a/dlls/ntdll/unix/server.c b/dlls/ntdll/unix/server.c
+index d3145a8..c311665 100644
+--- a/dlls/ntdll/unix/server.c
++++ b/dlls/ntdll/unix/server.c
+@@ -112,7 +112,15 @@ timeout_t server_start_time = 0;  /* time of server startup */
+ sigset_t server_block_set;  /* signals to block during server calls */
+ static int fd_socket = -1;  /* socket to exchange file descriptors with the server */
+ static pid_t server_pid;
+-static pthread_mutex_t fd_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
++
++static RTL_CRITICAL_SECTION fd_cache_section;
++static RTL_CRITICAL_SECTION_DEBUG critsect_debug =
++{
++    0, 0, &fd_cache_section,
++    { &critsect_debug.ProcessLocksList, &critsect_debug.ProcessLocksList },
++      0, 0, { (DWORD_PTR)(__FILE__ ": fd_cache_section") }
++};
++static RTL_CRITICAL_SECTION fd_cache_section = { &critsect_debug, -1, 0, 0, 0, 0 };
+ 
+ /* atomically exchange a 64-bit value */
+ static inline LONG64 interlocked_xchg64( LONG64 *dest, LONG64 val )
+@@ -295,19 +303,19 @@ unsigned int CDECL wine_server_call( void *req_ptr )
+ /***********************************************************************
+  *           server_enter_uninterrupted_section
+  */
+-void server_enter_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset )
++void server_enter_uninterrupted_section( RTL_CRITICAL_SECTION *cs, sigset_t *sigset )
+ {
+     pthread_sigmask( SIG_BLOCK, &server_block_set, sigset );
+-    pthread_mutex_lock( mutex );
++    RtlEnterCriticalSection( cs );
+ }
+ 
+ 
+ /***********************************************************************
+  *           server_leave_uninterrupted_section
+  */
+-void server_leave_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset )
++void server_leave_uninterrupted_section( RTL_CRITICAL_SECTION *cs, sigset_t *sigset )
+ {
+-    pthread_mutex_unlock( mutex );
++    RtlLeaveCriticalSection( cs );
+     pthread_sigmask( SIG_SETMASK, sigset, NULL );
+ }
+ 
+@@ -994,7 +1002,7 @@ int server_get_unix_fd( HANDLE handle, unsigned int wanted_access, int *unix_fd,
+     ret = get_cached_fd( handle, &fd, type, &access, options );
+     if (ret != STATUS_INVALID_HANDLE) goto done;
+ 
+-    server_enter_uninterrupted_section( &fd_cache_mutex, &sigset );
++    server_enter_uninterrupted_section( &fd_cache_section, &sigset );
+     ret = get_cached_fd( handle, &fd, type, &access, options );
+     if (ret == STATUS_INVALID_HANDLE)
+     {
+@@ -1022,7 +1030,7 @@ int server_get_unix_fd( HANDLE handle, unsigned int wanted_access, int *unix_fd,
+         }
+         SERVER_END_REQ;
+     }
+-    server_leave_uninterrupted_section( &fd_cache_mutex, &sigset );
++    server_leave_uninterrupted_section( &fd_cache_section, &sigset );
+ 
+ done:
+     if (!ret && ((access & wanted_access) != wanted_access))
+diff --git a/dlls/ntdll/unix/signal_i386.c b/dlls/ntdll/unix/signal_i386.c
+index 22b2a65..730d0b1 100644
+--- a/dlls/ntdll/unix/signal_i386.c
++++ b/dlls/ntdll/unix/signal_i386.c
+@@ -1934,7 +1934,16 @@ struct ldt_copy
+ } __wine_ldt_copy;
+ 
+ static WORD gdt_fs_sel;
+-static pthread_mutex_t ldt_mutex = PTHREAD_MUTEX_INITIALIZER;
++
++static RTL_CRITICAL_SECTION ldt_section;
++static RTL_CRITICAL_SECTION_DEBUG critsect_debug =
++{
++    0, 0, &ldt_section,
++    { &critsect_debug.ProcessLocksList, &critsect_debug.ProcessLocksList },
++      0, 0, { (DWORD_PTR)(__FILE__ ": ldt_section") }
++};
++static RTL_CRITICAL_SECTION ldt_section = { &critsect_debug, -1, 0, 0, 0, 0 };
++
+ static const LDT_ENTRY null_entry;
+ 
+ static inline void *ldt_get_base( LDT_ENTRY ent )
+@@ -2101,10 +2110,10 @@ NTSTATUS WINAPI NtSetLdtEntries( ULONG sel1, LDT_ENTRY entry1, ULONG sel2, LDT_E
+     if (sel1 && (sel1 >> 3) < first_ldt_entry) return STATUS_INVALID_LDT_DESCRIPTOR;
+     if (sel2 && (sel2 >> 3) < first_ldt_entry) return STATUS_INVALID_LDT_DESCRIPTOR;
+ 
+-    server_enter_uninterrupted_section( &ldt_mutex, &sigset );
++    server_enter_uninterrupted_section( &ldt_section, &sigset );
+     if (sel1) ldt_set_entry( sel1, entry1 );
+     if (sel2) ldt_set_entry( sel2, entry2 );
+-    server_leave_uninterrupted_section( &ldt_mutex, &sigset );
++    server_leave_uninterrupted_section( &ldt_section, &sigset );
+    return STATUS_SUCCESS;
+ }
+ 
+@@ -2156,14 +2165,14 @@ NTSTATUS signal_alloc_thread( TEB *teb )
+         }
+         else
+         {
+-            server_enter_uninterrupted_section( &ldt_mutex, &sigset );
++            server_enter_uninterrupted_section( &ldt_section, &sigset );
+             for (idx = first_ldt_entry; idx < LDT_SIZE; idx++)
+             {
+                 if (__wine_ldt_copy.flags[idx]) continue;
+                 ldt_set_entry( (idx << 3) | 7, entry );
+                 break;
+             }
+-            server_leave_uninterrupted_section( &ldt_mutex, &sigset );
++            server_leave_uninterrupted_section( &ldt_section, &sigset );
+             if (idx == LDT_SIZE) return STATUS_TOO_MANY_THREADS;
+         }
+         thread_data->fs = (idx << 3) | 7;
+@@ -2184,9 +2193,9 @@ void signal_free_thread( TEB *teb )
+ 
+     if (gdt_fs_sel) return;
+ 
+-    server_enter_uninterrupted_section( &ldt_mutex, &sigset );
++    server_enter_uninterrupted_section( &ldt_section, &sigset );
+     __wine_ldt_copy.flags[thread_data->fs >> 3] = 0;
+-    server_leave_uninterrupted_section( &ldt_mutex, &sigset );
++    server_leave_uninterrupted_section( &ldt_section, &sigset );
+ }
+ 
+ 
+diff --git a/dlls/ntdll/unix/unix_private.h b/dlls/ntdll/unix/unix_private.h
+index e14da3f..0d08841 100644
+--- a/dlls/ntdll/unix/unix_private.h
++++ b/dlls/ntdll/unix/unix_private.h
+@@ -21,7 +21,6 @@
+ #ifndef __NTDLL_UNIX_PRIVATE_H
+ #define __NTDLL_UNIX_PRIVATE_H
+ 
+-#include <pthread.h>
+ #include "unixlib.h"
+ #include "wine/list.h"
+ 
+@@ -162,8 +161,8 @@ extern void start_server( BOOL debug ) DECLSPEC_HIDDEN;
+ extern ULONG_PTR get_image_address(void) DECLSPEC_HIDDEN;
+ 
+ extern unsigned int server_call_unlocked( void *req_ptr ) DECLSPEC_HIDDEN;
+-extern void server_enter_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset ) DECLSPEC_HIDDEN;
+-extern void server_leave_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset ) DECLSPEC_HIDDEN;
++extern void server_enter_uninterrupted_section( RTL_CRITICAL_SECTION *cs, sigset_t *sigset ) DECLSPEC_HIDDEN;
++extern void server_leave_uninterrupted_section( RTL_CRITICAL_SECTION *cs, sigset_t *sigset ) DECLSPEC_HIDDEN;
+ extern unsigned int server_select( const select_op_t *select_op, data_size_t size, UINT flags,
+                                    timeout_t abs_timeout, CONTEXT *context, RTL_CRITICAL_SECTION *cs,
+                                    user_apc_t *user_apc ) DECLSPEC_HIDDEN;
+diff --git a/dlls/ntdll/unix/unix_private.h.orig b/dlls/ntdll/unix/unix_private.h.orig
+new file mode 100644
+index 0000000..e14da3f
+--- /dev/null
++++ b/dlls/ntdll/unix/unix_private.h.orig
+@@ -0,0 +1,364 @@
++/*
++ * Ntdll Unix private interface
++ *
++ * Copyright (C) 2020 Alexandre Julliard
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++ */
++
++#ifndef __NTDLL_UNIX_PRIVATE_H
++#define __NTDLL_UNIX_PRIVATE_H
++
++#include <pthread.h>
++#include "unixlib.h"
++#include "wine/list.h"
++
++#ifndef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8
++#define InterlockedCompareExchange64(dest,xchg,cmp) RtlInterlockedCompareExchange64(dest,xchg,cmp)
++#endif
++
++#ifdef __i386__
++static const enum cpu_type client_cpu = CPU_x86;
++#elif defined(__x86_64__)
++static const enum cpu_type client_cpu = CPU_x86_64;
++#elif defined(__arm__)
++static const enum cpu_type client_cpu = CPU_ARM;
++#elif defined(__aarch64__)
++static const enum cpu_type client_cpu = CPU_ARM64;
++#endif
++
++struct debug_info
++{
++    unsigned int str_pos;       /* current position in strings buffer */
++    unsigned int out_pos;       /* current position in output buffer */
++    char         strings[1024]; /* buffer for temporary strings */
++    char         output[1024];  /* current output line */
++};
++
++/* thread private data, stored in NtCurrentTeb()->GdiTebBatch */
++struct ntdll_thread_data
++{
++    struct debug_info *debug_info;    /* info for debugstr functions */
++    void              *start_stack;   /* stack for thread startup */
++    int                request_fd;    /* fd for sending server requests */
++    int                reply_fd;      /* fd for receiving server replies */
++    int                wait_fd[2];    /* fd for sleeping server requests */
++    BOOL               wow64_redir;   /* Wow64 filesystem redirection flag */
++    pthread_t          pthread_id;    /* pthread thread id */
++    struct list        entry;         /* entry in TEB list */
++};
++
++C_ASSERT( sizeof(struct ntdll_thread_data) <= sizeof(((TEB *)0)->GdiTebBatch) );
++
++static inline struct ntdll_thread_data *ntdll_get_thread_data(void)
++{
++    return (struct ntdll_thread_data *)&NtCurrentTeb()->GdiTebBatch;
++}
++
++static const UINT_PTR page_size = 0x1000;
++
++/* callbacks to PE ntdll from the Unix side */
++extern void     (WINAPI *pDbgUiRemoteBreakin)( void *arg ) DECLSPEC_HIDDEN;
++extern NTSTATUS (WINAPI *pKiUserExceptionDispatcher)(EXCEPTION_RECORD*,CONTEXT*) DECLSPEC_HIDDEN;
++extern void     (WINAPI *pLdrInitializeThunk)(CONTEXT*,void**,ULONG_PTR,ULONG_PTR) DECLSPEC_HIDDEN;
++extern void     (WINAPI *pRtlUserThreadStart)( PRTL_THREAD_START_ROUTINE entry, void *arg ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlpWaitForCriticalSection( RTL_CRITICAL_SECTION *crit, int timeout ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlpUnWaitCriticalSection( RTL_CRITICAL_SECTION *crit ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlDeleteCriticalSection( RTL_CRITICAL_SECTION *crit ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlTryAcquireSRWLockExclusive( RTL_SRWLOCK *lock ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlAcquireSRWLockExclusive( RTL_SRWLOCK *lock ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlTryAcquireSRWLockShared( RTL_SRWLOCK *lock ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlAcquireSRWLockShared( RTL_SRWLOCK *lock ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlReleaseSRWLockExclusive( RTL_SRWLOCK *lock ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlReleaseSRWLockShared( RTL_SRWLOCK *lock ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlSleepConditionVariableSRW( RTL_CONDITION_VARIABLE *variable, RTL_SRWLOCK *lock,
++                                                         const LARGE_INTEGER *timeout, ULONG flags ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlSleepConditionVariableCS( RTL_CONDITION_VARIABLE *variable,
++                                                        RTL_CRITICAL_SECTION *cs,
++                                                        const LARGE_INTEGER *timeout ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL fast_RtlWakeConditionVariable( RTL_CONDITION_VARIABLE *variable, int count ) DECLSPEC_HIDDEN;
++extern LONGLONG CDECL fast_RtlGetSystemTimePrecise(void) DECLSPEC_HIDDEN;
++
++void CDECL mmap_add_reserved_area( void *addr, SIZE_T size ) DECLSPEC_HIDDEN;
++void CDECL mmap_remove_reserved_area( void *addr, SIZE_T size ) DECLSPEC_HIDDEN;
++int  CDECL mmap_is_in_reserved_area( void *addr, SIZE_T size ) DECLSPEC_HIDDEN;
++int  CDECL mmap_enum_reserved_areas( int (CDECL *enum_func)(void *base, SIZE_T size, void *arg), void *arg,
++                                     int top_down ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL get_initial_environment( WCHAR **wargv[], WCHAR *env, SIZE_T *size ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL get_startup_info( startup_info_t *info, SIZE_T *total_size, SIZE_T *info_size ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL get_dynamic_environment( WCHAR *env, SIZE_T *size ) DECLSPEC_HIDDEN;
++extern void CDECL get_initial_directory( UNICODE_STRING *dir ) DECLSPEC_HIDDEN;
++extern void CDECL get_initial_console( HANDLE *handle, HANDLE *std_in, HANDLE *std_out, HANDLE *std_err ) DECLSPEC_HIDDEN;
++extern USHORT * CDECL get_unix_codepage_data(void) DECLSPEC_HIDDEN;
++extern void CDECL get_locales( WCHAR *sys, WCHAR *user ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL virtual_map_section( HANDLE handle, PVOID *addr_ptr, unsigned short zero_bits_64, SIZE_T commit_size,
++                                           const LARGE_INTEGER *offset_ptr, SIZE_T *size_ptr, ULONG alloc_type,
++                                           ULONG protect, pe_image_info_t *image_info ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL virtual_alloc_thread_stack( INITIAL_TEB *stack, SIZE_T reserve_size, SIZE_T commit_size, SIZE_T *pthread_size ) DECLSPEC_HIDDEN;
++extern ssize_t CDECL virtual_locked_recvmsg( int fd, struct msghdr *hdr, int flags ) DECLSPEC_HIDDEN;
++extern void CDECL virtual_release_address_space(void) DECLSPEC_HIDDEN;
++extern void CDECL virtual_set_large_address_space(void) DECLSPEC_HIDDEN;
++
++extern void CDECL server_send_fd( int fd ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL server_fd_to_handle( int fd, unsigned int access, unsigned int attributes,
++                                           HANDLE *handle ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL server_handle_to_fd( HANDLE handle, unsigned int access, int *unix_fd,
++                                           unsigned int *options ) DECLSPEC_HIDDEN;
++extern void CDECL server_release_fd( HANDLE handle, int unix_fd ) DECLSPEC_HIDDEN;
++extern void CDECL server_init_process_done( void *relay ) DECLSPEC_HIDDEN;
++extern void CDECL DECLSPEC_NORETURN exit_thread( int status ) DECLSPEC_HIDDEN;
++extern void CDECL DECLSPEC_NORETURN exit_process( int status ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL exec_process( UNICODE_STRING *path, UNICODE_STRING *cmdline, NTSTATUS status ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL unwind_builtin_dll( ULONG type, struct _DISPATCHER_CONTEXT *dispatch,
++                                          CONTEXT *context ) DECLSPEC_HIDDEN;
++
++extern NTSTATUS CDECL nt_to_unix_file_name( const UNICODE_STRING *nameW, ANSI_STRING *unix_name_ret,
++                                            UINT disposition, BOOLEAN check_case ) DECLSPEC_HIDDEN;
++extern NTSTATUS CDECL unix_to_nt_file_name( const ANSI_STRING *name, UNICODE_STRING *nt ) DECLSPEC_HIDDEN;
++extern void CDECL set_show_dot_files( BOOL enable ) DECLSPEC_HIDDEN;
++
++extern const char *home_dir DECLSPEC_HIDDEN;
++extern const char *data_dir DECLSPEC_HIDDEN;
++extern const char *build_dir DECLSPEC_HIDDEN;
++extern const char *config_dir DECLSPEC_HIDDEN;
++extern const char *user_name DECLSPEC_HIDDEN;
++extern const char **dll_paths DECLSPEC_HIDDEN;
++extern USHORT *uctable DECLSPEC_HIDDEN;
++extern USHORT *lctable DECLSPEC_HIDDEN;
++extern SIZE_T startup_info_size DECLSPEC_HIDDEN;
++extern int main_argc DECLSPEC_HIDDEN;
++extern char **main_argv DECLSPEC_HIDDEN;
++extern char **main_envp DECLSPEC_HIDDEN;
++extern unsigned int server_cpus DECLSPEC_HIDDEN;
++extern BOOL is_wow64 DECLSPEC_HIDDEN;
++extern HANDLE keyed_event DECLSPEC_HIDDEN;
++extern timeout_t server_start_time DECLSPEC_HIDDEN;
++extern sigset_t server_block_set DECLSPEC_HIDDEN;
++extern SIZE_T signal_stack_size DECLSPEC_HIDDEN;
++extern SIZE_T signal_stack_mask DECLSPEC_HIDDEN;
++extern struct _KUSER_SHARED_DATA *user_shared_data DECLSPEC_HIDDEN;
++#ifdef __i386__
++extern struct ldt_copy __wine_ldt_copy DECLSPEC_HIDDEN;
++#endif
++
++extern void init_environment( int argc, char *argv[], char *envp[] ) DECLSPEC_HIDDEN;
++extern DWORD ntdll_umbstowcs( const char *src, DWORD srclen, WCHAR *dst, DWORD dstlen ) DECLSPEC_HIDDEN;
++extern int ntdll_wcstoumbs( const WCHAR *src, DWORD srclen, char *dst, DWORD dstlen, BOOL strict ) DECLSPEC_HIDDEN;
++extern char **build_envp( const WCHAR *envW ) DECLSPEC_HIDDEN;
++extern NTSTATUS exec_wineloader( char **argv, int socketfd, const pe_image_info_t *pe_info ) DECLSPEC_HIDDEN;
++extern void start_server( BOOL debug ) DECLSPEC_HIDDEN;
++extern ULONG_PTR get_image_address(void) DECLSPEC_HIDDEN;
++
++extern unsigned int server_call_unlocked( void *req_ptr ) DECLSPEC_HIDDEN;
++extern void server_enter_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset ) DECLSPEC_HIDDEN;
++extern void server_leave_uninterrupted_section( pthread_mutex_t *mutex, sigset_t *sigset ) DECLSPEC_HIDDEN;
++extern unsigned int server_select( const select_op_t *select_op, data_size_t size, UINT flags,
++                                   timeout_t abs_timeout, CONTEXT *context, RTL_CRITICAL_SECTION *cs,
++                                   user_apc_t *user_apc ) DECLSPEC_HIDDEN;
++extern unsigned int server_wait( const select_op_t *select_op, data_size_t size, UINT flags,
++                                 const LARGE_INTEGER *timeout ) DECLSPEC_HIDDEN;
++extern unsigned int server_queue_process_apc( HANDLE process, const apc_call_t *call,
++                                              apc_result_t *result ) DECLSPEC_HIDDEN;
++extern int server_get_unix_fd( HANDLE handle, unsigned int wanted_access, int *unix_fd,
++                               int *needs_close, enum server_fd_type *type, unsigned int *options ) DECLSPEC_HIDDEN;
++extern void server_init_process(void) DECLSPEC_HIDDEN;
++extern size_t server_init_thread( void *entry_point, BOOL *suspend ) DECLSPEC_HIDDEN;
++extern int server_pipe( int fd[2] ) DECLSPEC_HIDDEN;
++
++extern NTSTATUS context_to_server( context_t *to, const CONTEXT *from ) DECLSPEC_HIDDEN;
++extern NTSTATUS context_from_server( CONTEXT *to, const context_t *from ) DECLSPEC_HIDDEN;
++extern void DECLSPEC_NORETURN abort_thread( int status ) DECLSPEC_HIDDEN;
++extern void DECLSPEC_NORETURN abort_process( int status ) DECLSPEC_HIDDEN;
++extern void wait_suspend( CONTEXT *context ) DECLSPEC_HIDDEN;
++extern NTSTATUS send_debug_event( EXCEPTION_RECORD *rec, CONTEXT *context, BOOL first_chance ) DECLSPEC_HIDDEN;
++extern NTSTATUS set_thread_context( HANDLE handle, const context_t *context, BOOL *self ) DECLSPEC_HIDDEN;
++extern NTSTATUS get_thread_context( HANDLE handle, context_t *context, unsigned int flags, BOOL *self ) DECLSPEC_HIDDEN;
++extern NTSTATUS alloc_object_attributes( const OBJECT_ATTRIBUTES *attr, struct object_attributes **ret,
++                                         data_size_t *ret_len ) DECLSPEC_HIDDEN;
++
++extern void virtual_init(void) DECLSPEC_HIDDEN;
++extern NTSTATUS virtual_map_ntdll( int fd, void **module ) DECLSPEC_HIDDEN;
++extern ULONG_PTR get_system_affinity_mask(void) DECLSPEC_HIDDEN;
++extern void virtual_get_system_info( SYSTEM_BASIC_INFORMATION *info ) DECLSPEC_HIDDEN;
++extern NTSTATUS virtual_create_builtin_view( void *module ) DECLSPEC_HIDDEN;
++extern TEB *virtual_alloc_first_teb(void) DECLSPEC_HIDDEN;
++extern NTSTATUS virtual_alloc_teb( TEB **ret_teb ) DECLSPEC_HIDDEN;
++extern void virtual_free_teb( TEB *teb ) DECLSPEC_HIDDEN;
++extern NTSTATUS virtual_clear_tls_index( ULONG index ) DECLSPEC_HIDDEN;
++extern void virtual_map_user_shared_data(void) DECLSPEC_HIDDEN;
++extern NTSTATUS virtual_handle_fault( LPCVOID addr, DWORD err, BOOL on_signal_stack ) DECLSPEC_HIDDEN;
++extern unsigned int virtual_locked_server_call( void *req_ptr ) DECLSPEC_HIDDEN;
++extern ssize_t virtual_locked_read( int fd, void *addr, size_t size ) DECLSPEC_HIDDEN;
++extern ssize_t virtual_locked_pread( int fd, void *addr, size_t size, off_t offset ) DECLSPEC_HIDDEN;
++extern BOOL virtual_is_valid_code_address( const void *addr, SIZE_T size ) DECLSPEC_HIDDEN;
++extern int virtual_handle_stack_fault( void *addr ) DECLSPEC_HIDDEN;
++extern BOOL virtual_check_buffer_for_read( const void *ptr, SIZE_T size ) DECLSPEC_HIDDEN;
++extern BOOL virtual_check_buffer_for_write( void *ptr, SIZE_T size ) DECLSPEC_HIDDEN;
++extern SIZE_T virtual_uninterrupted_read_memory( const void *addr, void *buffer, SIZE_T size ) DECLSPEC_HIDDEN;
++extern NTSTATUS virtual_uninterrupted_write_memory( void *addr, const void *buffer, SIZE_T size ) DECLSPEC_HIDDEN;
++extern void virtual_set_force_exec( BOOL enable ) DECLSPEC_HIDDEN;
++extern void virtual_fill_image_information( const pe_image_info_t *pe_info,
++                                            SECTION_IMAGE_INFORMATION *info ) DECLSPEC_HIDDEN;
++
++extern NTSTATUS get_thread_ldt_entry( HANDLE handle, void *data, ULONG len, ULONG *ret_len ) DECLSPEC_HIDDEN;
++extern BOOL get_thread_times( int unix_pid, int unix_tid, LARGE_INTEGER *kernel_time,
++                              LARGE_INTEGER *user_time ) DECLSPEC_HIDDEN;
++extern void signal_init_threading(void) DECLSPEC_HIDDEN;
++extern NTSTATUS signal_alloc_thread( TEB *teb ) DECLSPEC_HIDDEN;
++extern void signal_free_thread( TEB *teb ) DECLSPEC_HIDDEN;
++extern void signal_init_thread( TEB *teb ) DECLSPEC_HIDDEN;
++extern void signal_init_process(void) DECLSPEC_HIDDEN;
++extern void DECLSPEC_NORETURN signal_start_thread( PRTL_THREAD_START_ROUTINE entry, void *arg,
++                                                   BOOL suspend, void *relay, TEB *teb ) DECLSPEC_HIDDEN;
++extern void DECLSPEC_NORETURN signal_exit_thread( int status, void (*func)(int) ) DECLSPEC_HIDDEN;
++
++extern NTSTATUS cdrom_DeviceIoControl( HANDLE device, HANDLE event, PIO_APC_ROUTINE apc, void *apc_user,
++                                       IO_STATUS_BLOCK *io, ULONG code, void *in_buffer,
++                                       ULONG in_size, void *out_buffer, ULONG out_size ) DECLSPEC_HIDDEN;
++extern NTSTATUS serial_DeviceIoControl( HANDLE device, HANDLE event, PIO_APC_ROUTINE apc, void *apc_user,
++                                        IO_STATUS_BLOCK *io, ULONG code, void *in_buffer,
++                                        ULONG in_size, void *out_buffer, ULONG out_size ) DECLSPEC_HIDDEN;
++extern NTSTATUS serial_FlushBuffersFile( int fd ) DECLSPEC_HIDDEN;
++extern NTSTATUS tape_DeviceIoControl( HANDLE device, HANDLE event, PIO_APC_ROUTINE apc, void *apc_user,
++                                      IO_STATUS_BLOCK *io, ULONG code, void *in_buffer,
++                                      ULONG in_size, void *out_buffer, ULONG out_size ) DECLSPEC_HIDDEN;
++
++extern NTSTATUS errno_to_status( int err ) DECLSPEC_HIDDEN;
++extern void init_files(void) DECLSPEC_HIDDEN;
++extern void init_cpu_info(void) DECLSPEC_HIDDEN;
++
++extern void dbg_init(void) DECLSPEC_HIDDEN;
++
++extern void WINAPI call_user_exception_dispatcher(EXCEPTION_RECORD *rec, CONTEXT *context) DECLSPEC_HIDDEN;
++
++#define TICKSPERSEC 10000000
++#define SECS_1601_TO_1970  ((369 * 365 + 89) * (ULONGLONG)86400)
++#define TICKS_1601_TO_1970 (SECS_1601_TO_1970 * TICKSPERSEC)
++
++static inline const char *debugstr_us( const UNICODE_STRING *us )
++{
++    if (!us) return "<null>";
++    return debugstr_wn( us->Buffer, us->Length / sizeof(WCHAR) );
++}
++
++/* convert from straight ASCII to Unicode without depending on the current codepage */
++static inline void ascii_to_unicode( WCHAR *dst, const char *src, size_t len )
++{
++    while (len--) *dst++ = (unsigned char)*src++;
++}
++
++static inline size_t ntdll_wcslen( const WCHAR *str )
++{
++    const WCHAR *s = str;
++    while (*s) s++;
++    return s - str;
++}
++
++static inline WCHAR *ntdll_wcscpy( WCHAR *dst, const WCHAR *src )
++{
++    WCHAR *p = dst;
++    while ((*p++ = *src++));
++    return dst;
++}
++
++static inline WCHAR *ntdll_wcscat( WCHAR *dst, const WCHAR *src )
++{
++    ntdll_wcscpy( dst + ntdll_wcslen(dst), src );
++    return dst;
++}
++
++static inline int ntdll_wcscmp( const WCHAR *str1, const WCHAR *str2 )
++{
++    while (*str1 && (*str1 == *str2)) { str1++; str2++; }
++    return *str1 - *str2;
++}
++
++static inline int ntdll_wcsncmp( const WCHAR *str1, const WCHAR *str2, int n )
++{
++    if (n <= 0) return 0;
++    while ((--n > 0) && *str1 && (*str1 == *str2)) { str1++; str2++; }
++    return *str1 - *str2;
++}
++
++static inline WCHAR *ntdll_wcschr( const WCHAR *str, WCHAR ch )
++{
++    do { if (*str == ch) return (WCHAR *)(ULONG_PTR)str; } while (*str++);
++    return NULL;
++}
++
++static inline WCHAR *ntdll_wcsrchr( const WCHAR *str, WCHAR ch )
++{
++    WCHAR *ret = NULL;
++    do { if (*str == ch) ret = (WCHAR *)(ULONG_PTR)str; } while (*str++);
++    return ret;
++}
++
++static inline WCHAR *ntdll_wcspbrk( const WCHAR *str, const WCHAR *accept )
++{
++    for ( ; *str; str++) if (ntdll_wcschr( accept, *str )) return (WCHAR *)(ULONG_PTR)str;
++    return NULL;
++}
++
++static inline WCHAR ntdll_towupper( WCHAR ch )
++{
++    return ch + uctable[uctable[uctable[ch >> 8] + ((ch >> 4) & 0x0f)] + (ch & 0x0f)];
++}
++
++static inline WCHAR ntdll_towlower( WCHAR ch )
++{
++    return ch + lctable[lctable[lctable[ch >> 8] + ((ch >> 4) & 0x0f)] + (ch & 0x0f)];
++}
++
++static inline WCHAR *ntdll_wcsupr( WCHAR *str )
++{
++    WCHAR *ret;
++    for (ret = str; *str; str++) *str = ntdll_towupper(*str);
++    return ret;
++}
++
++static inline int ntdll_wcsicmp( const WCHAR *str1, const WCHAR *str2 )
++{
++    int ret;
++    for (;;)
++    {
++        if ((ret = ntdll_towupper( *str1 ) - ntdll_towupper( *str2 )) || !*str1) return ret;
++        str1++;
++        str2++;
++    }
++}
++
++static inline int ntdll_wcsnicmp( const WCHAR *str1, const WCHAR *str2, int n )
++{
++    int ret;
++    for (ret = 0; n > 0; n--, str1++, str2++)
++        if ((ret = ntdll_towupper(*str1) - ntdll_towupper(*str2)) || !*str1) break;
++    return ret;
++}
++
++#define wcslen(str)        ntdll_wcslen(str)
++#define wcscpy(dst,src)    ntdll_wcscpy(dst,src)
++#define wcscat(dst,src)    ntdll_wcscat(dst,src)
++#define wcscmp(s1,s2)      ntdll_wcscmp(s1,s2)
++#define wcsncmp(s1,s2,n)   ntdll_wcsncmp(s1,s2,n)
++#define wcschr(str,ch)     ntdll_wcschr(str,ch)
++#define wcsrchr(str,ch)    ntdll_wcsrchr(str,ch)
++#define wcspbrk(str,ac)    ntdll_wcspbrk(str,ac)
++#define wcsicmp(s1, s2)    ntdll_wcsicmp(s1,s2)
++#define wcsnicmp(s1, s2,n) ntdll_wcsnicmp(s1,s2,n)
++#define wcsupr(str)        ntdll_wcsupr(str)
++#define towupper(c)        ntdll_towupper(c)
++#define towlower(c)        ntdll_towlower(c)
++
++#endif /* __NTDLL_UNIX_PRIVATE_H */
+diff --git a/dlls/ntdll/unix/virtual.c b/dlls/ntdll/unix/virtual.c
+index 90dfb62..d998966 100644
+--- a/dlls/ntdll/unix/virtual.c
++++ b/dlls/ntdll/unix/virtual.c
+@@ -122,7 +122,15 @@ static const BYTE VIRTUAL_Win32Flags[16] =
+ };
+ 
+ static struct wine_rb_tree views_tree;
+-static pthread_mutex_t virtual_mutex;
++
++static RTL_CRITICAL_SECTION csVirtual;
++static RTL_CRITICAL_SECTION_DEBUG critsect_debug =
++{
++    0, 0, &csVirtual,
++    { &critsect_debug.ProcessLocksList, &critsect_debug.ProcessLocksList },
++      0, 0, { (DWORD_PTR)(__FILE__ ": csVirtual") }
++};
++static RTL_CRITICAL_SECTION csVirtual = { &critsect_debug, -1, 0, 0, 0, 0 };
+ 
+ static const BOOL is_win64 = (sizeof(void *) > sizeof(int));
+ static const UINT page_shift = 12;
+@@ -189,6 +197,7 @@ static struct file_view *view_block_start, *view_block_end, *next_free_view;
+ static const size_t view_block_size = 0x100000;
+ static void *preload_reserve_start;
+ static void *preload_reserve_end;
++static BOOL use_locks;
+ static BOOL force_exec_prot;  /* whether to force PROT_EXEC on all PROT_READ mmaps */
+ 
+ struct range_entry
+@@ -848,12 +857,12 @@ static void VIRTUAL_Dump(void)
+     struct file_view *view;
+ 
+     TRACE( "Dump of all virtual memory views:\n" );
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     WINE_RB_FOR_EACH_ENTRY( view, &views_tree, struct file_view, entry )
+     {
+         dump_view( view );
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ }
+ #endif
+ 
+@@ -861,7 +870,7 @@ static void VIRTUAL_Dump(void)
+ /***********************************************************************
+  *           find_view
+  *
+- * Find the view containing a given address. virtual_mutex must be held by caller.
++ * Find the view containing a given address. The csVirtual section must be held by caller.
+  *
+  * PARAMS
+  *      addr  [I] Address
+@@ -936,7 +945,7 @@ static inline BOOL is_write_watch_range( const void *addr, size_t size )
+  *           find_view_range
+  *
+  * Find the first view overlapping at least part of the specified range.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static struct file_view *find_view_range( const void *addr, size_t size )
+ {
+@@ -958,7 +967,7 @@ static struct file_view *find_view_range( const void *addr, size_t size )
+  *           find_view_inside_range
+  *
+  * Find first (resp. last, if top_down) view inside a range.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static struct wine_rb_entry *find_view_inside_range( void **base_ptr, void **end_ptr, int top_down )
+ {
+@@ -1027,7 +1036,7 @@ static void* try_map_free_area( void *base, void *end, ptrdiff_t step,
+  *           map_free_area
+  *
+  * Find a free area between views inside the specified range and map it.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static void *map_free_area( void *base, void *end, size_t size, int top_down, int unix_prot )
+ {
+@@ -1079,7 +1088,7 @@ static void *map_free_area( void *base, void *end, size_t size, int top_down, in
+  *           find_reserved_free_area
+  *
+  * Find a free area between views inside the specified range.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  * The range must be inside the preloader reserved range.
+  */
+ static void *find_reserved_free_area( void *base, void *end, size_t size, int top_down )
+@@ -1130,7 +1139,7 @@ static void *find_reserved_free_area( void *base, void *end, size_t size, int to
+  *           add_reserved_area
+  *
+  * Add a reserved area to the list maintained by libwine.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static void add_reserved_area( void *addr, size_t size )
+ {
+@@ -1154,7 +1163,7 @@ static void add_reserved_area( void *addr, size_t size )
+  *           remove_reserved_area
+  *
+  * Remove a reserved area from the list maintained by libwine.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static void remove_reserved_area( void *addr, size_t size )
+ {
+@@ -1189,7 +1198,7 @@ struct area_boundary
+  *
+  * Get lowest boundary address between reserved area and non-reserved area
+  * in the specified region. If no boundaries are found, result is NULL.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static int CDECL get_area_boundary_callback( void *start, SIZE_T size, void *arg )
+ {
+@@ -1228,7 +1237,7 @@ static inline BOOL is_beyond_limit( const void *addr, size_t size, const void *l
+  *           unmap_area
+  *
+  * Unmap an area, or simply replace it by an empty mapping if it is
+- * in a reserved area. virtual_mutex must be held by caller.
++ * in a reserved area. The csVirtual section must be held by caller.
+  */
+ static inline void unmap_area( void *addr, size_t size )
+ {
+@@ -1264,7 +1273,7 @@ static inline void unmap_area( void *addr, size_t size )
+ /***********************************************************************
+  *           alloc_view
+  *
+- * Allocate a new view. virtual_mutex must be held by caller.
++ * Allocate a new view. The csVirtual section must be held by caller.
+  */
+ static struct file_view *alloc_view(void)
+ {
+@@ -1288,7 +1297,7 @@ static struct file_view *alloc_view(void)
+ /***********************************************************************
+  *           delete_view
+  *
+- * Deletes a view. virtual_mutex must be held by caller.
++ * Deletes a view. The csVirtual section must be held by caller.
+  */
+ static void delete_view( struct file_view *view ) /* [in] View */
+ {
+@@ -1305,7 +1314,7 @@ static void delete_view( struct file_view *view ) /* [in] View */
+ /***********************************************************************
+  *           create_view
+  *
+- * Create a view. virtual_mutex must be held by caller.
++ * Create a view. The csVirtual section must be held by caller.
+  */
+ static NTSTATUS create_view( struct file_view **view_ret, void *base, size_t size, unsigned int vprot )
+ {
+@@ -1621,7 +1630,7 @@ static int CDECL alloc_reserved_area_callback( void *start, SIZE_T size, void *a
+  *           map_fixed_area
+  *
+  * mmap the fixed memory area.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static NTSTATUS map_fixed_area( void *base, size_t size, unsigned int vprot )
+ {
+@@ -1678,7 +1687,7 @@ static NTSTATUS map_fixed_area( void *base, size_t size, unsigned int vprot )
+  *           map_view
+  *
+  * Create a view and mmap the corresponding memory area.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static NTSTATUS map_view( struct file_view **view_ret, void *base, size_t size,
+                           int top_down, unsigned int vprot, unsigned short zero_bits_64 )
+@@ -1746,7 +1755,7 @@ done:
+  *           map_file_into_view
+  *
+  * Wrapper for mmap() to map a file into a view, falling back to read if mmap fails.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static NTSTATUS map_file_into_view( struct file_view *view, int fd, size_t start, size_t size,
+                                     off_t offset, unsigned int vprot, BOOL removable )
+@@ -1853,7 +1862,7 @@ static SIZE_T get_committed_size( struct file_view *view, void *base, BYTE *vpro
+  *           decommit_view
+  *
+  * Decommit some pages of a given view.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static NTSTATUS decommit_pages( struct file_view *view, size_t start, size_t size )
+ {
+@@ -1963,7 +1972,7 @@ static NTSTATUS map_pe_header( void *ptr, size_t size, int fd, BOOL *removable )
+  *           map_image_into_view
+  *
+  * Map an executable (PE format) image into an existing view.
+- * virtual_mutex must be held by caller.
++ * The csVirtual section must be held by caller.
+  */
+ static NTSTATUS map_image_into_view( struct file_view *view, int fd, void *orig_base,
+                                      SIZE_T header_size, ULONG image_flags, int shared_fd, BOOL removable )
+@@ -2232,7 +2241,7 @@ NTSTATUS CDECL virtual_map_section( HANDLE handle, PVOID *addr_ptr, unsigned sho
+     }
+ 
+     res = STATUS_INVALID_PARAMETER;
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (sec_flags & SEC_IMAGE)
+     {
+@@ -2310,7 +2319,7 @@ NTSTATUS CDECL virtual_map_section( HANDLE handle, PVOID *addr_ptr, unsigned sho
+     else delete_view( view );
+ 
+ done:
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     if (needs_close) close( unix_handle );
+     if (shared_needs_close) close( shared_fd );
+     if (shared_file) NtClose( shared_file );
+@@ -2347,12 +2356,6 @@ void virtual_init(void)
+     struct alloc_virtual_heap alloc_views;
+     size_t size;
+     int i;
+-    pthread_mutexattr_t attr;
+-
+-    pthread_mutexattr_init( &attr );
+-    pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
+-    pthread_mutex_init( &virtual_mutex, &attr );
+-    pthread_mutexattr_destroy( &attr );
+ 
+     if (preload_info && *preload_info)
+         for (i = 0; (*preload_info)[i].size; i++)
+@@ -2517,7 +2520,7 @@ NTSTATUS virtual_create_builtin_view( void *module )
+ 
+     size = ROUND_SIZE( module, size );
+     base = ROUND_ADDR( module, page_mask );
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    if (use_locks) server_enter_uninterrupted_section( &csVirtual, &sigset );
+     status = create_view( &view, base, size, SEC_IMAGE | SEC_FILE | VPROT_SYSTEM |
+                           VPROT_COMMITTED | VPROT_READ | VPROT_WRITECOPY | VPROT_EXEC );
+     if (!status)
+@@ -2539,7 +2542,7 @@ NTSTATUS virtual_create_builtin_view( void *module )
+         }
+         VIRTUAL_DEBUG_DUMP_VIEW( view );
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    if (use_locks) server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -2594,6 +2597,7 @@ TEB *virtual_alloc_first_teb(void)
+     NtAllocateVirtualMemory( NtCurrentProcess(), (void **)&peb, 0, &peb_size, MEM_COMMIT, PAGE_READWRITE );
+     init_teb( teb, peb );
+     *(ULONG_PTR *)peb->Reserved = get_image_address();
++    use_locks = TRUE;
+     return teb;
+ }
+ 
+@@ -2608,7 +2612,7 @@ NTSTATUS virtual_alloc_teb( TEB **ret_teb )
+     NTSTATUS status = STATUS_SUCCESS;
+     SIZE_T teb_size = signal_stack_mask + 1;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (next_free_teb)
+     {
+         teb = next_free_teb;
+@@ -2625,7 +2629,7 @@ NTSTATUS virtual_alloc_teb( TEB **ret_teb )
+             if ((status = NtAllocateVirtualMemory( NtCurrentProcess(), &addr, 0, &total,
+                                                    MEM_RESERVE, PAGE_READWRITE )))
+             {
+-                server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++                server_leave_uninterrupted_section( &csVirtual, &sigset );
+                 return status;
+             }
+             teb_block = addr;
+@@ -2637,14 +2641,14 @@ NTSTATUS virtual_alloc_teb( TEB **ret_teb )
+     }
+     init_teb( teb, NtCurrentTeb()->Peb );
+     *ret_teb = teb;
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if ((status = signal_alloc_thread( teb )))
+     {
+-        server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++        server_enter_uninterrupted_section( &csVirtual, &sigset );
+         *(TEB **)teb = next_free_teb;
+         next_free_teb = teb;
+-        server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++        server_leave_uninterrupted_section( &csVirtual, &sigset );
+     }
+     return status;
+ }
+@@ -2671,11 +2675,11 @@ void virtual_free_teb( TEB *teb )
+         NtFreeVirtualMemory( GetCurrentProcess(), &thread_data->start_stack, &size, MEM_RELEASE );
+     }
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     list_remove( &thread_data->entry );
+     *(TEB **)teb = next_free_teb;
+     next_free_teb = teb;
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ }
+ 
+ 
+@@ -2689,13 +2693,13 @@ NTSTATUS virtual_clear_tls_index( ULONG index )
+ 
+     if (index < TLS_MINIMUM_AVAILABLE)
+     {
+-        server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++        server_enter_uninterrupted_section( &csVirtual, &sigset );
+         LIST_FOR_EACH_ENTRY( thread_data, &teb_list, struct ntdll_thread_data, entry )
+         {
+             TEB *teb = CONTAINING_RECORD( thread_data, TEB, GdiTebBatch );
+             teb->TlsSlots[index] = 0;
+         }
+-        server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++        server_leave_uninterrupted_section( &csVirtual, &sigset );
+     }
+     else
+     {
+@@ -2703,13 +2707,13 @@ NTSTATUS virtual_clear_tls_index( ULONG index )
+         if (index >= 8 * sizeof(NtCurrentTeb()->Peb->TlsExpansionBitmapBits))
+             return STATUS_INVALID_PARAMETER;
+ 
+-        server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++        server_enter_uninterrupted_section( &csVirtual, &sigset );
+         LIST_FOR_EACH_ENTRY( thread_data, &teb_list, struct ntdll_thread_data, entry )
+         {
+             TEB *teb = CONTAINING_RECORD( thread_data, TEB, GdiTebBatch );
+             if (teb->TlsExpansionSlots) teb->TlsExpansionSlots[index] = 0;
+         }
+-        server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++        server_leave_uninterrupted_section( &csVirtual, &sigset );
+     }
+     return STATUS_SUCCESS;
+ }
+@@ -2737,7 +2741,7 @@ NTSTATUS CDECL virtual_alloc_thread_stack( INITIAL_TEB *stack, SIZE_T reserve_si
+     size = (size + 0xffff) & ~0xffff;  /* round to 64K boundary */
+     if (pthread_size) *pthread_size = extra_size = max( page_size, ROUND_SIZE( 0, *pthread_size ));
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if ((status = map_view( &view, NULL, size + extra_size, FALSE,
+                             VPROT_READ | VPROT_WRITE | VPROT_COMMITTED, 0 )) != STATUS_SUCCESS)
+@@ -2778,7 +2782,7 @@ NTSTATUS CDECL virtual_alloc_thread_stack( INITIAL_TEB *stack, SIZE_T reserve_si
+     stack->StackBase = (char *)view->base + view->size;
+     stack->StackLimit = (char *)view->base + 2 * page_size;
+ done:
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -2839,7 +2843,7 @@ NTSTATUS virtual_handle_fault( LPCVOID addr, DWORD err, BOOL on_signal_stack )
+     sigset_t sigset;
+     BYTE vprot;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     vprot = get_page_vprot( page );
+     if (!on_signal_stack && (vprot & VPROT_GUARD))
+     {
+@@ -2861,7 +2865,7 @@ NTSTATUS virtual_handle_fault( LPCVOID addr, DWORD err, BOOL on_signal_stack )
+                 ret = STATUS_SUCCESS;
+         }
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return ret;
+ }
+ 
+@@ -2904,13 +2908,13 @@ unsigned int virtual_locked_server_call( void *req_ptr )
+ 
+     if (!size) return wine_server_call( req_ptr );
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (!(ret = check_write_access( addr, size, &has_write_watch )))
+     {
+         ret = server_call_unlocked( req );
+         if (has_write_watch) update_write_watches( addr, size, wine_server_reply_size( req ));
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return ret;
+ }
+ 
+@@ -2927,14 +2931,14 @@ ssize_t virtual_locked_read( int fd, void *addr, size_t size )
+     ssize_t ret = read( fd, addr, size );
+     if (ret != -1 || errno != EFAULT) return ret;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (!check_write_access( addr, size, &has_write_watch ))
+     {
+         ret = read( fd, addr, size );
+         err = errno;
+         if (has_write_watch) update_write_watches( addr, size, max( 0, ret ));
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     errno = err;
+     return ret;
+ }
+@@ -2952,14 +2956,14 @@ ssize_t virtual_locked_pread( int fd, void *addr, size_t size, off_t offset )
+     ssize_t ret = pread( fd, addr, size, offset );
+     if (ret != -1 || errno != EFAULT) return ret;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (!check_write_access( addr, size, &has_write_watch ))
+     {
+         ret = pread( fd, addr, size, offset );
+         err = errno;
+         if (has_write_watch) update_write_watches( addr, size, max( 0, ret ));
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     errno = err;
+     return ret;
+ }
+@@ -2978,7 +2982,7 @@ ssize_t CDECL virtual_locked_recvmsg( int fd, struct msghdr *hdr, int flags )
+     ssize_t ret = recvmsg( fd, hdr, flags );
+     if (ret != -1 || errno != EFAULT) return ret;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     for (i = 0; i < hdr->msg_iovlen; i++)
+         if (check_write_access( hdr->msg_iov[i].iov_base, hdr->msg_iov[i].iov_len, &has_write_watch ))
+             break;
+@@ -2990,7 +2994,7 @@ ssize_t CDECL virtual_locked_recvmsg( int fd, struct msghdr *hdr, int flags )
+     if (has_write_watch)
+         while (i--) update_write_watches( hdr->msg_iov[i].iov_base, hdr->msg_iov[i].iov_len, 0 );
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     errno = err;
+     return ret;
+ }
+@@ -3005,10 +3009,10 @@ BOOL virtual_is_valid_code_address( const void *addr, SIZE_T size )
+     BOOL ret = FALSE;
+     sigset_t sigset;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if ((view = find_view( addr, size )))
+         ret = !(view->protect & VPROT_SYSTEM);  /* system views are not visible to the app */
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return ret;
+ }
+ 
+@@ -3027,7 +3031,7 @@ int virtual_handle_stack_fault( void *addr )
+     if ((char *)addr < (char *)NtCurrentTeb()->DeallocationStack) return 0;
+     if ((char *)addr >= (char *)NtCurrentTeb()->Tib.StackBase) return 0;
+ 
+-    pthread_mutex_lock( &virtual_mutex );  /* no need for signal masking inside signal handler */
++    RtlEnterCriticalSection( &csVirtual );  /* no need for signal masking inside signal handler */
+     if (get_page_vprot( addr ) & VPROT_GUARD)
+     {
+         size_t guaranteed = max( NtCurrentTeb()->GuaranteedStackBytes, page_size * (is_win64 ? 2 : 1) );
+@@ -3049,7 +3053,7 @@ int virtual_handle_stack_fault( void *addr )
+         }
+         NtCurrentTeb()->Tib.StackLimit = page;
+     }
+-    pthread_mutex_unlock( &virtual_mutex );
++    RtlLeaveCriticalSection( &csVirtual );
+     return ret;
+ }
+ 
+@@ -3180,7 +3184,7 @@ SIZE_T virtual_uninterrupted_read_memory( const void *addr, void *buffer, SIZE_T
+ 
+     if (!size) return 0;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if ((view = find_view( addr, size )))
+     {
+         if (!(view->protect & VPROT_SYSTEM))
+@@ -3196,7 +3200,7 @@ SIZE_T virtual_uninterrupted_read_memory( const void *addr, void *buffer, SIZE_T
+             }
+         }
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return bytes_read;
+ }
+ 
+@@ -3216,13 +3220,13 @@ NTSTATUS virtual_uninterrupted_write_memory( void *addr, const void *buffer, SIZ
+ 
+     if (!size) return STATUS_SUCCESS;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (!(ret = check_write_access( addr, size, &has_write_watch )))
+     {
+         memcpy( addr, buffer, size );
+         if (has_write_watch) update_write_watches( addr, size, size );
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return ret;
+ }
+ 
+@@ -3237,7 +3241,7 @@ void virtual_set_force_exec( BOOL enable )
+     struct file_view *view;
+     sigset_t sigset;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (!force_exec_prot != !enable)  /* change all existing views */
+     {
+         force_exec_prot = enable;
+@@ -3250,7 +3254,7 @@ void virtual_set_force_exec( BOOL enable )
+             mprotect_range( view->base, view->size, commit, 0 );
+         }
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ }
+ 
+ struct free_range
+@@ -3288,7 +3292,7 @@ void CDECL virtual_release_address_space(void)
+ 
+     if (is_win64) return;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     range.base  = (char *)0x82000000;
+     range.limit = user_space_limit;
+@@ -3312,7 +3316,7 @@ void CDECL virtual_release_address_space(void)
+         while (mmap_enum_reserved_areas( free_reserved_memory, &range, 0 )) /* nothing */;
+     }
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ }
+ 
+ 
+@@ -3418,7 +3422,7 @@ NTSTATUS WINAPI NtAllocateVirtualMemory( HANDLE process, PVOID *ret, ULONG_PTR z
+ 
+     /* Reserve the memory */
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    if (use_locks) server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if ((type & MEM_RESERVE) || !base)
+     {
+@@ -3459,7 +3463,7 @@ NTSTATUS WINAPI NtAllocateVirtualMemory( HANDLE process, PVOID *ret, ULONG_PTR z
+ 
+     if (!status) VIRTUAL_DEBUG_DUMP_VIEW( view );
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    if (use_locks) server_leave_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (status == STATUS_SUCCESS)
+     {
+@@ -3515,7 +3519,7 @@ NTSTATUS WINAPI NtFreeVirtualMemory( HANDLE process, PVOID *addr_ptr, SIZE_T *si
+     /* avoid freeing the DOS area when a broken app passes a NULL pointer */
+     if (!base) return STATUS_INVALID_PARAMETER;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (!(view = find_view( base, size )) || !is_view_valloc( view ))
+     {
+@@ -3548,7 +3552,7 @@ NTSTATUS WINAPI NtFreeVirtualMemory( HANDLE process, PVOID *addr_ptr, SIZE_T *si
+         status = STATUS_INVALID_PARAMETER;
+     }
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -3602,7 +3606,7 @@ NTSTATUS WINAPI NtProtectVirtualMemory( HANDLE process, PVOID *addr_ptr, SIZE_T
+     size = ROUND_SIZE( addr, size );
+     base = ROUND_ADDR( addr, page_mask );
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if ((view = find_view( base, size )))
+     {
+@@ -3618,7 +3622,7 @@ NTSTATUS WINAPI NtProtectVirtualMemory( HANDLE process, PVOID *addr_ptr, SIZE_T
+ 
+     if (!status) VIRTUAL_DEBUG_DUMP_VIEW( view );
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (status == STATUS_SUCCESS)
+     {
+@@ -3714,7 +3718,7 @@ static NTSTATUS get_basic_memory_info( HANDLE process, LPCVOID addr,
+ 
+     /* Find the view containing the address */
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     ptr = views_tree.root;
+     while (ptr)
+     {
+@@ -3783,7 +3787,7 @@ static NTSTATUS get_basic_memory_info( HANDLE process, LPCVOID addr,
+             if ((get_page_vprot( ptr ) ^ vprot) & ~VPROT_WRITEWATCH) break;
+         info->RegionSize = ptr - base;
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (res_len) *res_len = sizeof(*info);
+     return STATUS_SUCCESS;
+@@ -3810,7 +3814,7 @@ static NTSTATUS get_working_set_ex( HANDLE process, LPCVOID addr,
+         if (!once++) WARN( "unable to open /proc/self/pagemap\n" );
+     }
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     for (p = info; (UINT_PTR)(p + 1) <= (UINT_PTR)info + len; p++)
+     {
+         BYTE vprot;
+@@ -3838,7 +3842,7 @@ static NTSTATUS get_working_set_ex( HANDLE process, LPCVOID addr,
+                 p->VirtualAttributes.Win32Protection = get_win32_prot( vprot, view->protect );
+         }
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (f)
+         fclose( f );
+@@ -4057,7 +4061,7 @@ NTSTATUS WINAPI NtUnmapViewOfSection( HANDLE process, PVOID addr )
+         return status;
+     }
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if ((view = find_view( addr, 0 )) && !is_view_valloc( view ))
+     {
+         if (!(view->protect & VPROT_SYSTEM))
+@@ -4077,7 +4081,7 @@ NTSTATUS WINAPI NtUnmapViewOfSection( HANDLE process, PVOID addr )
+             status = STATUS_SUCCESS;
+         }
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -4202,7 +4206,7 @@ NTSTATUS WINAPI NtFlushVirtualMemory( HANDLE process, LPCVOID *addr_ptr,
+         return result.virtual_flush.status;
+     }
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+     if (!(view = find_view( addr, *size_ptr ))) status = STATUS_INVALID_PARAMETER;
+     else
+     {
+@@ -4212,7 +4216,7 @@ NTSTATUS WINAPI NtFlushVirtualMemory( HANDLE process, LPCVOID *addr_ptr,
+         if (msync( addr, *size_ptr, MS_ASYNC )) status = STATUS_NOT_MAPPED_DATA;
+ #endif
+     }
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -4239,7 +4243,7 @@ NTSTATUS WINAPI NtGetWriteWatch( HANDLE process, ULONG flags, PVOID base, SIZE_T
+     TRACE( "%p %x %p-%p %p %lu\n", process, flags, base, (char *)base + size,
+            addresses, *count );
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (is_write_watch_range( base, size ))
+     {
+@@ -4258,7 +4262,7 @@ NTSTATUS WINAPI NtGetWriteWatch( HANDLE process, ULONG flags, PVOID base, SIZE_T
+     }
+     else status = STATUS_INVALID_PARAMETER;
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -4279,14 +4283,14 @@ NTSTATUS WINAPI NtResetWriteWatch( HANDLE process, PVOID base, SIZE_T size )
+ 
+     if (!size) return STATUS_INVALID_PARAMETER;
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     if (is_write_watch_range( base, size ))
+         reset_write_watches( base, size );
+     else
+         status = STATUS_INVALID_PARAMETER;
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
+@@ -4363,7 +4367,7 @@ NTSTATUS WINAPI NtAreMappedFilesTheSame(PVOID addr1, PVOID addr2)
+ 
+     TRACE("%p %p\n", addr1, addr2);
+ 
+-    server_enter_uninterrupted_section( &virtual_mutex, &sigset );
++    server_enter_uninterrupted_section( &csVirtual, &sigset );
+ 
+     view1 = find_view( addr1, 0 );
+     view2 = find_view( addr2, 0 );
+@@ -4387,7 +4391,7 @@ NTSTATUS WINAPI NtAreMappedFilesTheSame(PVOID addr1, PVOID addr2)
+         SERVER_END_REQ;
+     }
+ 
+-    server_leave_uninterrupted_section( &virtual_mutex, &sigset );
++    server_leave_uninterrupted_section( &csVirtual, &sigset );
+     return status;
+ }
+ 
