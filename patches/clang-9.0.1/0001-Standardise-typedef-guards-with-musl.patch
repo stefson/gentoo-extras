@@ -1,0 +1,98 @@
+From f91b8fc0ef56fd31cae7f77e20823fd5e59f5ba8 Mon Sep 17 00:00:00 2001
+From: Sora Lee <saih792@outlook.com>
+Date: Sat, 26 May 2018 19:21:49 +1200
+Subject: [PATCH] Standardise typedef guards with musl.
+
+---
+ lib/Headers/stddef.h | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/lib/Headers/stddef.h b/lib/Headers/stddef.h
+index 7354996..6d231f5 100644
+--- a/lib/Headers/stddef.h
++++ b/lib/Headers/stddef.h
+@@ -43,10 +43,10 @@
+ #endif
+ 
+ #if defined(__need_ptrdiff_t)
+-#if !defined(_PTRDIFF_T) || __has_feature(modules)
++#if !defined(__DEFINED_ptrdiff_t) || __has_feature(modules)
+ /* Always define ptrdiff_t when modules are available. */
+ #if !__has_feature(modules)
+-#define _PTRDIFF_T
++#define __DEFINED_ptrdiff_t
+ #endif
+ typedef __PTRDIFF_TYPE__ ptrdiff_t;
+ #endif
+@@ -54,10 +54,10 @@ typedef __PTRDIFF_TYPE__ ptrdiff_t;
+ #endif /* defined(__need_ptrdiff_t) */
+ 
+ #if defined(__need_size_t)
+-#if !defined(_SIZE_T) || __has_feature(modules)
++#if !defined(__DEFINED_size_t) || __has_feature(modules)
+ /* Always define size_t when modules are available. */
+ #if !__has_feature(modules)
+-#define _SIZE_T
++#define __DEFINED_size_t
+ #endif
+ typedef __SIZE_TYPE__ size_t;
+ #endif
+@@ -68,21 +68,21 @@ typedef __SIZE_TYPE__ size_t;
+ /* ISO9899:2011 7.20 (C11 Annex K): Define rsize_t if __STDC_WANT_LIB_EXT1__ is
+  * enabled. */
+ #if (defined(__STDC_WANT_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ >= 1 && \
+-     !defined(_RSIZE_T)) || __has_feature(modules)
++     !defined(__DEFINED_rsize_t)) || __has_feature(modules)
+ /* Always define rsize_t when modules are available. */
+ #if !__has_feature(modules)
+-#define _RSIZE_T
++#define __DEFINED_rsize_t
+ #endif
+ typedef __SIZE_TYPE__ rsize_t;
+ #endif
+ #endif /* defined(__need_STDDEF_H_misc) */
+ 
+ #if defined(__need_wchar_t)
+-#ifndef __cplusplus
++#if !defined(__cplusplus)
+ /* Always define wchar_t when modules are available. */
+-#if !defined(_WCHAR_T) || __has_feature(modules)
++#if !defined(__DEFINED_wchar_t) || __has_feature(modules)
+ #if !__has_feature(modules)
+-#define _WCHAR_T
++#define __DEFINED_wchar_t
+ #if defined(_MSC_EXTENSIONS)
+ #define _WCHAR_T_DEFINED
+ #endif
+@@ -95,7 +95,7 @@ typedef __WCHAR_TYPE__ wchar_t;
+ 
+ #if defined(__need_NULL)
+ #undef NULL
+-#ifdef __cplusplus
++#if defined(__cplusplus)
+ #  if !defined(__MINGW32__) && !defined(_MSC_VER)
+ #    define NULL __null
+ #  else
+@@ -104,7 +104,7 @@ typedef __WCHAR_TYPE__ wchar_t;
+ #else
+ #  define NULL ((void*)0)
+ #endif
+-#ifdef __cplusplus
++#if defined(__cplusplus)
+ #if defined(_MSC_EXTENSIONS) && defined(_NATIVE_NULLPTR_SUPPORTED)
+ namespace std { typedef decltype(nullptr) nullptr_t; }
+ using ::std::nullptr_t;
+@@ -125,9 +125,9 @@ using ::std::nullptr_t;
+ __WINT_TYPE__ directly; accommodate both by requiring __need_wint_t */
+ #if defined(__need_wint_t)
+ /* Always define wint_t when modules are available. */
+-#if !defined(_WINT_T) || __has_feature(modules)
++#if !defined(__DEFINED_wint_t) || __has_feature(modules)
+ #if !__has_feature(modules)
+-#define _WINT_T
++#define __DEFINED_wint_t
+ #endif
+ typedef __WINT_TYPE__ wint_t;
+ #endif
+-- 
+2.16.1
