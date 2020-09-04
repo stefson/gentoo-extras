@@ -28,7 +28,7 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}"/0001-fix-forecast-url.patch
+	eapply "${FILESDIR}"/0001-Switch-to-locationforecast-product.patch
 }
 
 src_configure() {
