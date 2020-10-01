@@ -274,9 +274,9 @@ src_unpack() {
 }
 
 src_prepare() {
-	rm "${WORKDIR}"/firefox/0029-bmo-1632429-enum34-and-enum-virtualenv-packages-are-.patch
-	eapply "${WORKDIR}/firefox"
-	eapply "${FILESDIR}/firefox-78.0-no-dbus.patch"
+	rm "${WORKDIR}"/firefox-patches/0029-bmo-1632429-enum34-and-enum-virtualenv-packages-are-.patch
+	eapply "${WORKDIR}/firefox-patches"
+	# eapply "${FILESDIR}/firefox-78.0-no-dbus.patch"
 	
 	eapply "${FILESDIR}/privacy-patchset-78/firefox-60-disable-data-sharing-infobar.patch"
 	eapply "${FILESDIR}/privacy-patchset-78/firefox-60-disable-telemetry.patch"
