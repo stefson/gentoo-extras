@@ -732,7 +732,7 @@ src_configure() {
 			elif tc-ld-is-gold ; then
 				append-ldflags -Wl,--no-keep-memory
 			else
-				append-ldflags -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
+				append-ldflags -Wl,--no-keep-memory
 			fi
 			;;
 	esac
