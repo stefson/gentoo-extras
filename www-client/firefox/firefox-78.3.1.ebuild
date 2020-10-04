@@ -445,6 +445,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-telemetry.patch
+	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-data-sharing-infobar.patch
 	use pgo && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
