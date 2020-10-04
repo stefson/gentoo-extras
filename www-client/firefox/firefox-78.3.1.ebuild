@@ -365,7 +365,7 @@ pkg_pretend() {
 
 		# Ensure we have enough disk space to compile
 		if use pgo || use lto || use debug ; then
-			CHECKREQS_DISK_BUILD="13G"
+			CHECKREQS_DISK_BUILD="9G"
 		else
 			CHECKREQS_DISK_BUILD="5G"
 		fi
@@ -384,7 +384,7 @@ pkg_setup() {
 
 		# Ensure we have enough disk space to compile
 		if use pgo || use lto || use debug ; then
-			CHECKREQS_DISK_BUILD="13G"
+			CHECKREQS_DISK_BUILD="9G"
 		else
 			CHECKREQS_DISK_BUILD="5G"
 		fi
@@ -541,8 +541,8 @@ src_configure() {
 			# Linking only works when using ld.gold when LTO is enabled
 			mozconfig_add_options_ac "forcing ld=gold due to USE=lto" --enable-linker=gold
 
-			# ThinLTO is currently broken, see bmo#1644409
-			mozconfig_add_options_ac '+lto' --enable-lto=full
+			# ThinLTO is currently broken but only with gcc-10, see bmo#1644409
+			mozconfig_add_options_ac '+lto' --enable-lto=thin
 		fi
 
 		if use pgo ; then
