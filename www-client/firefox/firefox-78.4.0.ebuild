@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-esr-78-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-esr-78-patches-04.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -448,8 +448,6 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-telemetry.patch
 	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-data-sharing-infobar.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1643201-Cherry-pick-some-servo-changes-to-derive.patch
-	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1653339-Teach-style_derive-s-map_type_params-abo.patch
 	use pgo && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
