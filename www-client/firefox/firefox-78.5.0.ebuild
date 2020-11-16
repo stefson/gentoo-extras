@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-esr-78-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-esr-78-patches-05.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -447,8 +447,6 @@ src_unpack() {
 src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-telemetry.patch
 	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-data-sharing-infobar.patch
-
-	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1663715-Update-syn-and-proc-macro2-so-that-Firef.patch
 
 	use pgo && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
