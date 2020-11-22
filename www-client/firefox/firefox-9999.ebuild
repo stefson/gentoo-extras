@@ -231,6 +231,9 @@ src_configure() {
 		append-cxxflags -fno-stack-protector
 	fi
 
+	# Use system's Python environment
+	export MACH_USE_SYSTEM_PYTHON=1
+	
 	# workaround for funky/broken upstream configure...
 	SHELL="${SHELL:-${EPREFIX%/}/bin/bash}" \
 	# emake -f client.mk configure
