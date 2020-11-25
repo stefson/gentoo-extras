@@ -222,7 +222,7 @@ src_configure() {
 	fi
 
 	echo "mk_add_options MOZ_OBJDIR=${BUILD_OBJ_DIR}" >> "${S}"/.mozconfig
-	echo "mk_add_options XARGS=/usr/bin/xargs" >> "${S}"/.mozconfig
+	echo "mk_add_options XARGS=${EPREFIX}/usr/bin/xargs" >> "${S}"/.mozconfig
 
 	# Finalize and report settings
 	mozconfig_final
