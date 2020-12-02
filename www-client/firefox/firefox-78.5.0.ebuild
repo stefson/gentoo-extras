@@ -527,7 +527,7 @@ src_configure() {
 	export SHELL="${EPREFIX}/bin/bash"
 
 	# for musl: add alpine patch and then uncomment
-	# export RUST_TARGET="armv7a-unknown-linux-musleabihf
+	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 
 	# Set MOZCONFIG
 	export MOZCONFIG="${S}/.mozconfig"
