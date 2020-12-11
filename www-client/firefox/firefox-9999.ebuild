@@ -33,13 +33,13 @@ RESTRICT="!bindist? ( bindist ) mirror"
 ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
-	>=dev-libs/nspr-4.25
-	>=dev-libs/nss-3.51
+	>=dev-libs/nspr-4.26
+	>=dev-libs/nss-3.59
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
-	>=dev-util/cbindgen-0.13.1
-	>=net-libs/nodejs-8.12.0
+	>=dev-util/cbindgen-0.15
+	>=net-libs/nodejs-10.22.1
 	pgo? ( >=sys-devel/gcc-4.5 )
 	|| ( dev-lang/rust dev-lang/rust-bin )
 	sys-devel/clang
@@ -222,7 +222,6 @@ src_configure() {
 	fi
 
 	echo "mk_add_options MOZ_OBJDIR=${BUILD_OBJ_DIR}" >> "${S}"/.mozconfig
-#	echo "mk_add_options XARGS=${EPREFIX}/usr/bin/xargs" >> "${S}"/.mozconfig
 
 	# Finalize and report settings
 	mozconfig_final
