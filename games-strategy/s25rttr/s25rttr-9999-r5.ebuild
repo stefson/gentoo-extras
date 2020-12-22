@@ -53,7 +53,7 @@ src_prepare() {
 	# Prevent installation of git stuff
 	rm -r external/languages/.git/ || die
 	rm external/languages/.gitignore || die
-#	rm data/RTTR/LSTS/CREDITS.LST/*.bmp || die
+	rm data/RTTR/assets/base/credits/*.bmp || die
 
 	# remove sdl1 in favour of sdl2
 	# rm -r extras/videoDrivers/SDL || die
