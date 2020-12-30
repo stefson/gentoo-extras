@@ -51,7 +51,6 @@ src_prepare() {
 	rm -r external/s25update || die
 
 	# Prevent installation of git stuff
-	rm -r .git/ || die
 	rm -r .github/ || die
 	rm -r external/languages/.github/ || die
 	rm external/languages/.gitignore || die
@@ -118,6 +117,10 @@ src_test() {
 src_install() {
 	cd "${CMAKE_BUILD_DIR}" || die
 
+	# disable install of quirky git headers
+	rm -r share/s25rttr/RTTR/MAPS/.git || die
+	rm share/s25rttr/RTTR/MAPS/.gitattributes || die
+	
 	exeinto /usr/"$(get_libdir)"/${PN}/video
 	doexe "$(get_libdir)"/s25rttr/video/libvideoSDL2.so
 
