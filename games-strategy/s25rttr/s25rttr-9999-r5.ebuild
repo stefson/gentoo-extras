@@ -51,12 +51,11 @@ src_prepare() {
 	rm -r external/s25update || die
 
 	# Prevent installation of git stuff
-	rm -r external/languages/.git/ || die
+	rm -r .git/ || die
+	rm -r .github/ || die
+	rm -r external/languages/.github/ || die
 	rm external/languages/.gitignore || die
-	rm data/RTTR/assets/base/credits/*.bmp || die
-
-	# remove sdl1 in favour of sdl2
-	# rm -r extras/videoDrivers/SDL || die
+#	rm data/RTTR/assets/base/credits/*.bmp || die
 
 	CMAKE_BUILD_TYPE="Debug"
 
