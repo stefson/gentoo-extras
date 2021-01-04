@@ -1,0 +1,38 @@
+From df3fbf4fb8f786fb97097e860fccff31face44c7 Mon Sep 17 00:00:00 2001
+From: Flamefire <Flamefire@users.noreply.github.com>
+Date: Mon, 4 Jan 2021 17:51:16 +0100
+Subject: [PATCH] Fix wrong type for GO_Type enum
+
+Prior save games used 2 Bytes instead of 1 (while 1 would have been enough)
+Fixes #1328
+---
+ libs/s25main/SerializedGameData.cpp | 2 +-
+ libs/s25main/gameTypes/GO_Type.h    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libs/s25main/SerializedGameData.cpp b/libs/s25main/SerializedGameData.cpp
+index 9a3ddac97..4a8b5cb3f 100644
+--- a/libs/s25main/SerializedGameData.cpp
++++ b/libs/s25main/SerializedGameData.cpp
+@@ -341,7 +341,7 @@ void SerializedGameData::PushObject_(const GameObject* go, const bool known)
+ 
+     // Objekt nich bekannt? Dann Type-ID noch mit drauf
+     if(!known)
+-        PushEnum<uint8_t>(go->GetGOT());
++        PushEnum<uint16_t>(go->GetGOT());
+ 
+     // Objekt serialisieren
+     if(debugMode)
+diff --git a/libs/s25main/gameTypes/GO_Type.h b/libs/s25main/gameTypes/GO_Type.h
+index e096d1cb2..d54e72377 100644
+--- a/libs/s25main/gameTypes/GO_Type.h
++++ b/libs/s25main/gameTypes/GO_Type.h
+@@ -21,7 +21,7 @@
+ 
+ /// To be able to load old savegames and keep ids unique, please insert new
+ /// items at the end of the list.
+-enum class GO_Type : uint8_t
++enum class GO_Type : uint16_t
+ {
+     Unknown,
+     Nothing,
