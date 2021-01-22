@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-84-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-85-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -474,11 +474,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
-	rm -v "${WORKDIR}"/firefox-patches/0024-VA-API-FFmpeg-support.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-Fix-building-with-PGO-when-using-GCC.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-PipeWire-Add-only-one-item-to-the-device-list-and-le.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1678680-PipeWire-Lock-current_frame_-access-as-i.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
