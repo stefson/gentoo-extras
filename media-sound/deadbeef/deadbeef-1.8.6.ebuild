@@ -10,9 +10,8 @@ PLOCALE_BACKUP="en_GB"
 
 inherit autotools gnome2-utils l10n versionator xdg-utils
 
-SRC_URI="https://github.com/DeaDBeeF-Player/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
-#KEYWORDS="~amd64 ~arm ~x86"
+SRC_URI="https://sourceforge.net/projects/deadbeef/files/travis/linux/1.8.6/deadbeef-1.8.6.tar.bz2/download -> ${P}.tar.bz2"
+KEYWORDS="~amd64 ~arm ~x86"
 
 DESCRIPTION="foobar2k-like music player"
 HOMEPAGE="http://deadbeef.sourceforge.net"
@@ -199,7 +198,7 @@ src_configure() {
 		$(use_enable gtk2) \
 		$(use_enable gtk3) \
 		$(use_enable hotkeys) \
-		--disable-lastfm \
+		--disable-lfm \
 		$(use_enable libnotify notify) \
 		$(use_enable libsamplerate src) \
 		$(use_enable m3u) \
