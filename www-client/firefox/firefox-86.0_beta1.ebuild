@@ -113,7 +113,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.60
+	>=dev-libs/nss-3.61
 	>=dev-libs/nspr-4.29
 	dev-libs/atk
 	dev-libs/expat
@@ -475,6 +475,12 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
+	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1681107-Wayland-Fix-race-condition-of-calling-Co.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1687487-Update-libcubeb-to-4a83932.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-Wayland-Fix-regression-caused-by-bmo-1642949.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1687931-Wayland-Don-t-cache-monitor-scale-factor.patch
+		
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
