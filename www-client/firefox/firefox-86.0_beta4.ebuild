@@ -480,7 +480,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1687487-Update-libcubeb-to-4a83932.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-Wayland-Fix-regression-caused-by-bmo-1642949.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1687931-Wayland-Don-t-cache-monitor-scale-factor.patch
-		
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1678247-Use-nsWindow-scale-factor-for-the-conten.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
