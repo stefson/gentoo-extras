@@ -35,9 +35,7 @@ DEPEND="${RDEPEND}
 	test? ( sys-devel/clang )"
 BDEPEND="app-arch/unzip"
 
-PATCHES=(
-	"${FILESDIR}"/bb2254ba1da82ce6227c0cae1b36fa37b4035412.patch
-)
+#PATCHES=()
 
 src_prepare() {
 
