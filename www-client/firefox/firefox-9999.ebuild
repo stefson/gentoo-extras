@@ -289,7 +289,7 @@ src_install() {
 
 	# Augment this with hwaccel prefs
 	if use hwaccel ; then
-		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-1 >> \
+		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js >> \
 		"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
 		|| die
 	fi
