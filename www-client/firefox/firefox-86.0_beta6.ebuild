@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-85-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-85-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -482,6 +482,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1687931-Wayland-Don-t-cache-monitor-scale-factor.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1678247-Use-nsWindow-scale-factor-for-the-conten.patch
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1679933-Call-EnsureNSSInitializedChromeOrContent.patch
+	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1690152-On-ppc64-properly-skip-parameter-slots-i.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
