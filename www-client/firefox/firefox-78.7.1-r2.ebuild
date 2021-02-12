@@ -60,6 +60,7 @@ IUSE="clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 
 REQUIRED_USE="debug? ( !system-av1 )
 	screencast? ( wayland )
+	x86? ( lto? ( clang ) )
 	wifi? ( dbus )"
 
 BDEPEND="${PYTHON_DEPS}
