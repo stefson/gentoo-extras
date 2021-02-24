@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-85-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-86-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -72,7 +72,7 @@ REQUIRED_USE="debug? ( !system-av1 )
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.16.0
+	>=dev-util/cbindgen-0.17.0
 	>=net-libs/nodejs-10.22.1
 	virtual/pkgconfig
 	>=virtual/rust-1.47.0
@@ -113,7 +113,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.61
+	>=dev-libs/nss-3.62
 	>=dev-libs/nspr-4.29
 	dev-libs/atk
 	dev-libs/expat
@@ -475,14 +475,7 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1681107-Wayland-Fix-race-condition-of-calling-Co.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1687487-Update-libcubeb-to-4a83932.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-Wayland-Fix-regression-caused-by-bmo-1642949.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1687931-Wayland-Don-t-cache-monitor-scale-factor.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1678247-Use-nsWindow-scale-factor-for-the-conten.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1679933-Call-EnsureNSSInitializedChromeOrContent.patch
-	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1690152-On-ppc64-properly-skip-parameter-slots-i.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1631061-Wayland-Clear-clipboard-content-when-gtk.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
