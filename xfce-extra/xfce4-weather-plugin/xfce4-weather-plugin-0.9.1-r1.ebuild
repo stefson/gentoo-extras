@@ -29,6 +29,7 @@ DEPEND="${RDEPEND}
 src_prepare() {
 	default
 	eapply "${FILESDIR}"/0001-Switch-to-locationforecast-product.patch
+	eapply "${FILESDIR}"/0002-update-forecast-api-to-v2.0.patch
 }
 
 src_configure() {

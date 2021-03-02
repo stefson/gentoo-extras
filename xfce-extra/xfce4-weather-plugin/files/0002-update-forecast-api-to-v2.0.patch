@@ -1,0 +1,26 @@
+diff --git a/xfce4-weather-plugin-0.9.1/panel-plugin/weather.c b/xfce4-weather-plugin-0.9.1-r1/panel-plugin/weather.c
+index abd9779..1520e54 100644
+--- a/panel-plugin/weather.c
++++ b/panel-plugin/weather.c
+@@ -656,7 +656,7 @@ update_handler(plugin_data *data)
+         /* build url */
+         url = g_strdup_printf("https://api.met.no"
+                               "/weatherapi/locationforecast/%s/"
+-                              "?lat=%s&lon=%s&msl=%d",
++                              "classic?lat=%s&lon=%s&altitude=%d",
+                               api_version,
+                               data->lat, data->lon, data->msl);
+ 
+diff --git a/xfce4-weather-plugin-0.9.1/panel-plugin/weather.h b/xfce4-weather-plugin-0.9.1-r1/panel-plugin/weather.h
+index 815cfff..3d8d801 100644
+--- a/panel-plugin/weather.h
++++ b/panel-plugin/weather.h
+@@ -31,7 +31,7 @@
+ #define MAX_FORECAST_DAYS 10
+ #define DEFAULT_FORECAST_DAYS 5
+ #define MAX_SCROLLBOX_LINES 10
+-#define FORECAST_API "1.9"
++#define FORECAST_API "2.0"
+ 
+ G_BEGIN_DECLS
+ 
