@@ -1,0 +1,23 @@
+From dac99d17fe1d93b73f66fceeeb7bd964c8a37a69 Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Sun, 7 Mar 2021 12:02:54 +0100
+Subject: [PATCH] fix console --version copyright year (fixes #2547)
+
+---
+ main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main.c b/main.c
+index 7ec6b1b3b..bbcb83435 100644
+--- a/main.c
++++ b/main.c
+@@ -1216,7 +1216,7 @@ main (int argc, char *argv[]) {
+             return 0;
+         }
+         else if (!strcmp (argv[i], "--version")) {
+-            trace ("DeaDBeeF " VERSION " Copyright © 2009-2017 Alexey Yakovenko\n");
++            trace ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
+             return 0;
+         }
+         else if (!strcmp (argv[i], "--gui")) {
+
