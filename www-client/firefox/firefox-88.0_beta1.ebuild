@@ -113,7 +113,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.62
+	>=dev-libs/nss-3.63
 	>=dev-libs/nspr-4.29
 	dev-libs/atk
 	dev-libs/expat
@@ -477,7 +477,6 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/0006-bmo-1559213-Support-system-av1.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0006-bmo-1559213-Support-system-av1.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -630,7 +629,8 @@ src_configure() {
 		einfo "Building without Google API key ..."
 	fi
 
-	mozconfig_use_with system-av1
+#	mozconfig_use_with system-av1
+	mozconfig_add_options_ac '' --disable-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
