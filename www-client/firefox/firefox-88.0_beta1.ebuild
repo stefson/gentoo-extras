@@ -475,7 +475,9 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-#	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1631061-Wayland-Clear-clipboard-content-when-gtk.patch
+	rm -v "${WORKDIR}"/firefox-patches/0006-bmo-1559213-Support-system-av1.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0006-bmo-1559213-Support-system-av1.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
