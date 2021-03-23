@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-86-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-87-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -150,8 +150,8 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.6.8:0=
-		>=media-gfx/graphite2-1.3.13
+		>=media-libs/harfbuzz-2.7.4:0=
+		>=media-gfx/graphite2-1.3.14
 	)
 	system-icu? ( >=dev-libs/icu-67.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
@@ -475,7 +475,7 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1631061-Wayland-Clear-clipboard-content-when-gtk.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1631061-Wayland-Clear-clipboard-content-when-gtk.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
