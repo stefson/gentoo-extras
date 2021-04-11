@@ -38,8 +38,8 @@ RDEPEND="
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
-	>=dev-util/cbindgen-0.16
-	>=net-libs/nodejs-10.22.1
+	>=dev-util/cbindgen-0.19
+	>=net-libs/nodejs-10.23.1
 	pgo? ( >=sys-devel/gcc-4.5 )
 	|| ( dev-lang/rust dev-lang/rust-bin )
 	sys-devel/clang
