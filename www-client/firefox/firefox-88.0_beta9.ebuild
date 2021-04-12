@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-87-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-87-patches-04.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -480,6 +480,7 @@ src_prepare() {
 
 	# upstreamed
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1700520-Use-PREFER_INLINE-on-large-SWGL-function.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1701089-Accept-vp09-codec-string-in-Widevine-man.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
 
