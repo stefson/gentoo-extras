@@ -78,7 +78,8 @@ BDEPEND="${PYTHON_DEPS}
 				=sys-devel/lld-12*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
 			)
-		)		(
+		)
+		(
 			sys-devel/clang:11
 			sys-devel/llvm:11
 			clang? (
@@ -92,14 +93,6 @@ BDEPEND="${PYTHON_DEPS}
 			clang? (
 				=sys-devel/lld-10*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:9
-			sys-devel/llvm:9
-			clang? (
-				=sys-devel/lld-9*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-9*[profile] )
 			)
 		)
 	)
