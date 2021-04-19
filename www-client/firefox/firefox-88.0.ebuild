@@ -475,13 +475,6 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-#	rm -v "${WORKDIR}"/firefox-patches/0006-bmo-1559213-Support-system-av1.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
-
-	# upstreamed
-#	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1700520-Use-PREFER_INLINE-on-large-SWGL-function.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1701089-Accept-vp09-codec-string-in-Widevine-man.patch
-	
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
