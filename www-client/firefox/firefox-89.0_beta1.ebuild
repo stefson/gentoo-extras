@@ -57,7 +57,7 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -113,7 +113,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.63
+	>=dev-libs/nss-3.64
 	>=dev-libs/nspr-4.29
 	dev-libs/atk
 	dev-libs/expat
@@ -474,7 +474,12 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
+	
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1701623-don-t-build-minidump_writer_linux-if-cra.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1693472-Wayland-Always-use-direct-drawing-on-KWi.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1702606-Wayland-Don-t-call-mWaylandDisplay-WaitF.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1703657-Wayland-Use-wayland-focus-workaround-if-.patch
+	
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
