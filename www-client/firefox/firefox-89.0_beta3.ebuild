@@ -475,6 +475,7 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
+	# all upstreamed and fixed in 89.0 beta branch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1701623-don-t-build-minidump_writer_linux-if-cra.patch
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1693472-Wayland-Always-use-direct-drawing-on-KWi.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1702606-Wayland-Don-t-call-mWaylandDisplay-WaitF.patch
