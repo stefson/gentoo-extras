@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-88-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-88-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -105,12 +105,8 @@ BDEPEND="${PYTHON_DEPS}
 	lto? (
 		!clang? ( sys-devel/binutils[gold] )
 	)
-	amd64? ( >=dev-lang/yasm-1.1 )
-	x86? ( >=dev-lang/yasm-1.1 )
-	!system-av1? (
-		amd64? ( >=dev-lang/nasm-2.13 )
-		x86? ( >=dev-lang/nasm-2.13 )
-	)"
+	amd64? ( >=dev-lang/nasm-2.13 )
+	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
 	>=dev-libs/nss-3.64
@@ -476,10 +472,12 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	# all upstreamed and fixed in 89.0 beta branch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1701623-don-t-build-minidump_writer_linux-if-cra.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1693472-Wayland-Always-use-direct-drawing-on-KWi.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1702606-Wayland-Don-t-call-mWaylandDisplay-WaitF.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1703657-Wayland-Use-wayland-focus-workaround-if-.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1701623-don-t-build-minidump_writer_linux-if-cra.patch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1693472-Wayland-Always-use-direct-drawing-on-KWi.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1702606-Wayland-Don-t-call-mWaylandDisplay-WaitF.patch
+	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1703657-Wayland-Use-wayland-focus-workaround-if-.patch
+	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1703763-Wayland-Use-fast-track-clipboard-to-get-.patch
+	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1580595-Wayland-Add-support-for-pointer-lock-via.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
 
