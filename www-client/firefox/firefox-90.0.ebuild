@@ -482,7 +482,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1703657-Wayland-Use-wayland-focus-workaround-if-.patch
 	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1703763-Wayland-Use-fast-track-clipboard-to-get-.patch
 	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1580595-Wayland-Add-support-for-pointer-lock-via.patch
-	
+
+	# upstreamed and fixed in 90.0 alpha branch
+	rm -v "${WORKDIR}"/firefox-patches/0040-bmo-1705048-Wayland-Emulate-X11-popup-parentless-win.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
