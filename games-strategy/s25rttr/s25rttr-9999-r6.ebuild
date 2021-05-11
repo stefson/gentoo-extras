@@ -86,6 +86,9 @@ src_configure() {
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 	)
 
+	# bug #787299
+	append-cxxflags -std=gnu++14
+
 	if ! use test ; then
 		mycmakeargs+=(
 			-DBUILD_TESTING=OFF
