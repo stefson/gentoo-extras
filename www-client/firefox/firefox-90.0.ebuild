@@ -615,8 +615,8 @@ src_configure() {
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)"
 
 	# Set update channel
-	local update_channel=release
-	[[ -n ${MOZ_ESR} ]] && update_channel=esr
+	local update_channel=nightly
+#	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
 	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
