@@ -14,7 +14,7 @@ PiperOrigin-RevId: 372515215
  5 files changed, 37 insertions(+), 19 deletions(-)
 
 diff --git a/third_party/highway/hwy/base.h b/third_party/highway/hwy/base.h
-index f738248..732fe87 100644
+index e7a859f..3875ba7 100644
 --- a/third_party/highway/hwy/base.h
 +++ b/third_party/highway/hwy/base.h
 @@ -203,6 +203,10 @@
@@ -43,10 +43,10 @@ index f738248..732fe87 100644
  
  //------------------------------------------------------------------------------
 diff --git a/third_party/highway/hwy/ops/x86_256-inl.h b/third_party/highway/hwy/ops/x86_256-inl.h
-index 9a54ee0..69ace0a 100644
+index 265632a..c9d1691 100644
 --- a/third_party/highway/hwy/ops/x86_256-inl.h
 +++ b/third_party/highway/hwy/ops/x86_256-inl.h
-@@ -2551,8 +2551,7 @@ HWY_API uint64_t BitsFromMask(hwy::SizeTag<2> /*tag*/, const Mask256<T> mask) {
+@@ -2502,8 +2502,7 @@ HWY_API uint64_t BitsFromMask(hwy::SizeTag<2> /*tag*/, const Mask256<T> mask) {
    const auto compressed =
        _mm256_permute4x64_epi64(sign_bits, _MM_SHUFFLE(3, 1, 2, 0));
    return static_cast<unsigned>(_mm256_movemask_epi8(compressed));
@@ -56,19 +56,6 @@ index 9a54ee0..69ace0a 100644
  }
  
  template <typename T>
-diff --git a/third_party/highway/hwy/ops/x86_512-inl.h b/third_party/highway/hwy/ops/x86_512-inl.h
-index 57eeea3..fe34146 100644
---- a/third_party/highway/hwy/ops/x86_512-inl.h
-+++ b/third_party/highway/hwy/ops/x86_512-inl.h
-@@ -381,7 +381,7 @@ HWY_API Mask512<T> FirstN(const Full512<T> /*tag*/, size_t n) {
-   return Mask512<T>{static_cast<Bits>(_bzhi_u64(~uint64_t(0), n))};
- #else
-   return detail::FirstN<T>(n);
--#endif
-+#endif  // HWY_ARCH_X86_64
- }
- 
- // ------------------------------ IfThenElse
 diff --git a/third_party/highway/hwy/targets.cc b/third_party/highway/hwy/targets.cc
 index 287c497..f910ccd 100644
 --- a/third_party/highway/hwy/targets.cc
@@ -94,10 +81,10 @@ index 287c497..f910ccd 100644
  }  // namespace
  
 diff --git a/third_party/highway/hwy/targets.h b/third_party/highway/hwy/targets.h
-index dc88e48..7a191bb 100644
+index bf2665a..ab5d449 100644
 --- a/third_party/highway/hwy/targets.h
 +++ b/third_party/highway/hwy/targets.h
-@@ -92,6 +92,9 @@
+@@ -90,6 +90,9 @@
  // 0x2000000, 0x4000000, 0x8000000, 0x10000000 reserved
  
  #define HWY_SCALAR 0x20000000
@@ -107,7 +94,7 @@ index dc88e48..7a191bb 100644
  // Cannot use higher values, otherwise HWY_TARGETS computation might overflow.
  
  //------------------------------------------------------------------------------
-@@ -150,33 +153,37 @@
+@@ -145,7 +148,10 @@
  // user to override this without any guarantee of success.
  #ifndef HWY_BASELINE_TARGETS
  
@@ -119,29 +106,7 @@ index dc88e48..7a191bb 100644
  #define HWY_BASELINE_WASM HWY_WASM
  #else
  #define HWY_BASELINE_WASM 0
- #endif
- 
- // Avoid choosing the PPC target until we have an implementation.
--#if defined(__VSX__) && 0
-+#if HWY_ARCH_PPC && defined(__VSX__) && 0
- #define HWY_BASELINE_PPC8 HWY_PPC8
- #else
- #define HWY_BASELINE_PPC8 0
- #endif
- 
--#if defined(__ARM_FEATURE_SVE2) && 0
-+// Avoid choosing the SVE[2] targets the implementation is ready.
-+#if HWY_ARCH_ARM && defined(__ARM_FEATURE_SVE2) && 0
- #define HWY_BASELINE_SVE2 HWY_SVE2
- #else
- #define HWY_BASELINE_SVE2 0
- #endif
- 
--#if defined(__ARM_FEATURE_SVE) && 0
-+#if HWY_ARCH_ARM && defined(__ARM_FEATURE_SVE) && 0
- #define HWY_BASELINE_SVE HWY_SVE
- #else
- #define HWY_BASELINE_SVE 0
+@@ -158,7 +164,7 @@
  #endif
  
  // GCC 4.5.4 only defines the former; 5.4 defines both.
@@ -150,15 +115,7 @@ index dc88e48..7a191bb 100644
  #define HWY_BASELINE_NEON HWY_NEON
  #else
  #define HWY_BASELINE_NEON 0
-@@ -185,25 +192,26 @@
- // MSVC does not set SSE4_1, but it does set AVX; checking for the latter means
- // we at least get SSE4 on machines supporting AVX but not AVX2.
- // https://stackoverflow.com/questions/18563978/
--#if defined(__SSE4_1__) || (HWY_COMPILER_MSVC != 0 && defined(__AVX__))
-+#if HWY_ARCH_X86 && \
-+    (defined(__SSE4_1__) || (HWY_COMPILER_MSVC != 0 && defined(__AVX__)))
- #define HWY_BASELINE_SSE4 HWY_SSE4
- #else
+@@ -170,19 +176,18 @@
  #define HWY_BASELINE_SSE4 0
  #endif
  
@@ -170,8 +127,8 @@ index dc88e48..7a191bb 100644
  #endif
  
 -#ifdef __AVX512F__
+-#define HWY_BASELINE_AVX3 HWY_AVX3
 +#if HWY_ARCH_X86 && defined(__AVX512F__)
- #define HWY_BASELINE_AVX3 HWY_AVX3
  #else
  #define HWY_BASELINE_AVX3 0
  #endif
@@ -181,7 +138,7 @@ index dc88e48..7a191bb 100644
  #define HWY_BASELINE_RVV HWY_RVV
  #else
  #define HWY_BASELINE_RVV 0
-@@ -371,7 +379,7 @@ static inline HWY_MAYBE_UNUSED const char* TargetName(uint32_t target) {
+@@ -346,7 +351,7 @@ static inline HWY_MAYBE_UNUSED const char* TargetName(uint32_t target) {
        return "Scalar";
  
      default:
@@ -190,7 +147,7 @@ index dc88e48..7a191bb 100644
    }
  }
  
-@@ -471,7 +479,12 @@ static inline HWY_MAYBE_UNUSED const char* TargetName(uint32_t target) {
+@@ -454,7 +459,12 @@ static inline HWY_MAYBE_UNUSED const char* TargetName(uint32_t target) {
        nullptr,                   /* reserved */ \
        HWY_CHOOSE_RVV(func_name) /* RVV */
  
