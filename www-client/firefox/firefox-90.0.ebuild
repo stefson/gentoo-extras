@@ -486,6 +486,8 @@ src_prepare() {
 	# upstreamed and fixed in 90.0 alpha branch
 	rm -v "${WORKDIR}"/firefox-patches/0040-bmo-1705048-Wayland-Emulate-X11-popup-parentless-win.patch
 	eapply "${WORKDIR}/firefox-patches"
+	
+#	eapply "${FILESDIR}"/nightly-patches/0001-d81d8bce466a38078afd5773d6c4ebc6353836d1.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
