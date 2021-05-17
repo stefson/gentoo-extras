@@ -608,7 +608,7 @@ src_configure() {
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-png \
-#		--with-system-zlib \
+		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
