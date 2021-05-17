@@ -487,8 +487,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0040-bmo-1705048-Wayland-Emulate-X11-popup-parentless-win.patch
 	eapply "${WORKDIR}/firefox-patches"
 	
-#	eapply "${FILESDIR}"/nightly-patches/0001-d81d8bce466a38078afd5773d6c4ebc6353836d1.patch
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -609,8 +607,8 @@ src_configure() {
 		--with-libclang-path="$(llvm-config --libdir)" \
 		--with-system-nspr \
 		--with-system-nss \
-#		--with-system-png \
-		--with-system-zlib \
+		--with-system-png \
+#		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
@@ -639,7 +637,7 @@ src_configure() {
 		einfo "Building without Google API key ..."
 	fi
 
-#	mozconfig_use_with system-av1
+	mozconfig_use_with system-av1
 	mozconfig_add_options_ac '' --disable-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
