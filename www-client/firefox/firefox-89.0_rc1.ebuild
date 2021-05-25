@@ -146,7 +146,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.7.4:0=
+		>=media-libs/harfbuzz-2.8.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
 	system-icu? ( >=dev-libs/icu-67.1:= )
