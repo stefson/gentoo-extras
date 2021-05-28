@@ -599,8 +599,8 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
-#		--with-system-nspr \
-#		--with-system-nss \
+		--with-system-nspr \
+		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
