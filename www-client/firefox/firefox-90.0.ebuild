@@ -146,11 +146,11 @@ CDEPEND="
 	)
 	screencast? ( media-video/pipewire:0/0.3 )
 	system-av1? (
-		>=media-libs/dav1d-0.3.0:=
+		>=media-libs/dav1d-0.9.0:=
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.7.4:0=
+		>=media-libs/harfbuzz-2.8.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
 	system-icu? ( >=dev-libs/icu-67.1:= )
