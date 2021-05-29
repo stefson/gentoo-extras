@@ -478,6 +478,7 @@ src_prepare() {
 	# upstreamed and fixed in 90.0 alpha branch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1580595-Wayland-Add-support-for-pointer-lock-via.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1705048-Wayland-Emulate-X11-popup-parentless-win.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1711816-Fix-stdc-compat.cpp-compilation-errors-w.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
 	
