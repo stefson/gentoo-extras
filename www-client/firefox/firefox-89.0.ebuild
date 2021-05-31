@@ -473,6 +473,8 @@ src_prepare() {
 	
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}/0001-fix-neon-d16-warnings.patch"
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
