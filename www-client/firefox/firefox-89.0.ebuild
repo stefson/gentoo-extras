@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-89-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-89-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -472,8 +472,6 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}/0001-fix-neon-d16-warnings.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
