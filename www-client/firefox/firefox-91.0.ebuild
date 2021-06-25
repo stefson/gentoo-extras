@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-89-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-89-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -114,7 +114,7 @@ BDEPEND="${PYTHON_DEPS}
 
 CDEPEND="
 	>=dev-libs/nss-3.66
-	>=dev-libs/nspr-4.29
+	>=dev-libs/nspr-4.31
 	dev-libs/atk
 	dev-libs/expat
 	>=x11-libs/cairo-1.10[X]
@@ -479,6 +479,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1580595-Wayland-Add-support-for-pointer-lock-via.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1705048-Wayland-Emulate-X11-popup-parentless-win.patch
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1711816-Fix-stdc-compat.cpp-compilation-errors-w.patch
+	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1712947-Don-t-pass-neon-flags-to-rustc-when-usin.patch
+	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
 	
@@ -600,8 +602,8 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
-		--with-system-nspr \
-		--with-system-nss \
+#		--with-system-nspr \
+#		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
