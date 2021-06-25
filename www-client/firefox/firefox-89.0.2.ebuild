@@ -517,10 +517,11 @@ src_prepare() {
 
 src_configure() {
 	# Show flags set at the beginning
-	einfo "Current CFLAGS:    ${CFLAGS}"
-	einfo "Current CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Current LDFLAGS:   ${LDFLAGS}"
-	einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
+ 	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+ 	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
+ 	einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+ 	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
+ 	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	local have_switched_compiler=
 	if use clang && ! tc-is-clang ; then
@@ -817,10 +818,11 @@ src_configure() {
 	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_DIR}"
 
 	# Show flags we will use
-	einfo "Build CFLAGS:    ${CFLAGS}"
-	einfo "Build CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Build LDFLAGS:   ${LDFLAGS}"
-	einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
+ 	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+ 	einfo "Build CFLAGS:\t\t${CFLAGS:-no value set}"
+ 	einfo "Build CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+ 	einfo "Build LDFLAGS:\t\t${LDFLAGS:-no value set}"
+ 	einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	# Handle EXTRA_CONF and show summary
 	local ac opt hash reason
