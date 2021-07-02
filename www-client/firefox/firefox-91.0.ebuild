@@ -72,7 +72,7 @@ REQUIRED_USE="debug? ( !system-av1 )
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.16.0
+	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.22.1
 	virtual/pkgconfig
 	>=virtual/rust-1.51.0
@@ -113,8 +113,8 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.66
-	>=dev-libs/nspr-4.31
+	>=dev-libs/nss-3.68
+	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
 	>=x11-libs/cairo-1.10[X]
@@ -602,8 +602,8 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
-#		--with-system-nspr \
-#		--with-system-nss \
+		--with-system-nspr \
+		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
