@@ -21,7 +21,7 @@ KEYWORDS="amd64 ~arm ~arm64"
 IUSE="test"
 
 RDEPEND=">=app-arch/bzip2-1.0.6-r11
-	dev-lang/lua:5.2
+	dev-lang/lua:5.3
 	media-libs/libsamplerate
 	>=media-libs/libsdl2-2.0.12-r1[X,sound,static-libs,opengl,video]
 	>=media-libs/sdl2-mixer-2.0.4[vorbis]
