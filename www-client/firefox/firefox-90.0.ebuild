@@ -497,16 +497,7 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed and fixed in 90.0 alpha branch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1580595-Wayland-Add-support-for-pointer-lock-via.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1705048-Wayland-Emulate-X11-popup-parentless-win.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1711816-Fix-stdc-compat.cpp-compilation-errors-w.patch
-	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1712947-Don-t-pass-neon-flags-to-rustc-when-usin.patch
-	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
-
 	eapply "${WORKDIR}/firefox-patches"
-
-#	eapply "${FILESDIR}"/firefox-90-rust-1.54.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
