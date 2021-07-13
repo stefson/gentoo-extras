@@ -497,7 +497,8 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed and fixed in 90.1 beta branch
+	# upstreamed and fixed in 91.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1715254-Deny-clone3-to-force-glibc-fallback.patch
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
 
 	eapply "${WORKDIR}/firefox-patches"
