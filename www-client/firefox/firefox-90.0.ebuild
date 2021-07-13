@@ -37,8 +37,8 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
-inherit autotools check-reqs desktop flag-o-matic gnome2-utils llvm \
-	multiprocessing pax-utils python-any-r1 toolchain-funcs \
+inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
+	llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
@@ -111,11 +111,10 @@ CDEPEND="
 	dev-libs/atk
 	dev-libs/expat
 	>=x11-libs/cairo-1.10[X]
-	>=x11-libs/gtk+-2.18:2
 	>=x11-libs/gtk+-3.4.0:3[X]
 	x11-libs/gdk-pixbuf
 	>=x11-libs/pango-1.22.0
-	>=media-libs/libpng-1.6.37:0=[apng]
+	>=media-libs/libpng-1.6.35:0=[apng]
 	>=media-libs/mesa-10.2:*
 	media-libs/fontconfig
 	>=media-libs/freetype-2.4.10
@@ -143,8 +142,8 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.8.0:0=
-		>=media-gfx/graphite2-1.3.14
+		>=media-libs/harfbuzz-2.7.4:0=
+		>=media-gfx/graphite2-1.3.13
 	)
 	system-icu? ( >=dev-libs/icu-67.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
@@ -194,19 +193,19 @@ fi
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-		ewarn "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 		return 1
 	fi
 
 	if use clang ; then
 		if ! has_version -b "=sys-devel/lld-${LLVM_SLOT}*" ; then
-			ewarn "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			einfo "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
 		if use pgo ; then
 			if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*" ; then
-				ewarn "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+				einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 				return 1
 			fi
 		fi
@@ -475,6 +474,10 @@ pkg_setup() {
 		# Ensure we use C locale when building, bug #746215
 		export LC_ALL=C
 	fi
+
+	CONFIG_CHECK="~SECCOMP"
+	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
+	linux-info_pkg_setup
 }
 
 src_unpack() {
@@ -496,7 +499,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -1178,3 +1180,4 @@ pkg_postinst() {
 		elog "in about:config."
 	fi
 }
+
