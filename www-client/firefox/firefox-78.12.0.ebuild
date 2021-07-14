@@ -468,7 +468,7 @@ src_prepare() {
 
 	use pgo && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1667736-Update-packed_simd-to-compile-on-Rust-1..patch
+	rm -v "${WORKDIR}"/firefox-patches/0046-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
