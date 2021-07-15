@@ -480,6 +480,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
 
 	eapply "${WORKDIR}/firefox-patches"
+
+	eapply "${FILESDIR}"/firefox-92-head-fix-rust-1.54.patch
 	
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
