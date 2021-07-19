@@ -506,8 +506,6 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/firefox-91-rust-1.54.patch
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
