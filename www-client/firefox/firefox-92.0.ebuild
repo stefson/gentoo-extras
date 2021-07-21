@@ -475,7 +475,8 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
-	# this one needs backporting
+	# all upstreamed into firefox-92 branch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1715254-Deny-clone3-to-force-glibc-fallback.patch
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
 
