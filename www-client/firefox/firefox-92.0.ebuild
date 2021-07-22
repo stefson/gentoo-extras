@@ -608,7 +608,8 @@ src_configure() {
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)" \
-		--disable-jxl 
+		--disable-jxl \
+		--disable-bootstrap 
 
 	# Set update channel
 	local update_channel=nightly
