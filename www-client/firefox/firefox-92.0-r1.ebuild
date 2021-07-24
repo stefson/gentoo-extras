@@ -562,9 +562,9 @@ src_configure() {
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
 
-#	# Pass the correct toolchain paths through cbindgen
-#	tc-is-cross-compiler &&
-#	export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
+	# Pass the correct toolchain paths through cbindgen
+	tc-is-cross-compiler &&
+	export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
 
 	# Set MOZILLA_FIVE_HOME
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
@@ -607,7 +607,10 @@ src_configure() {
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)" \
-		--disable-jxl 
+		--disable-jxl \
+		--disable-sysroot
+
+#		error message says to disable bootstrap, but that doesn't have any effect. So disable sysroot entirely.
 
 	# Set update channel
 	local update_channel=nightly
