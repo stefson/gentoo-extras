@@ -607,7 +607,6 @@ src_configure() {
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)" \
-		--disable-jxl \
 		--disable-sysroot
 
 #		error message says to disable bootstrap, but that doesn't have any effect. So disable sysroot entirely.
@@ -633,6 +632,8 @@ src_configure() {
 	else
 		einfo "Building without Google API key ..."
 	fi
+	
+	mozconfig_add_options_ac '' --disable-jxl
 
 	mozconfig_use_with system-av1
 	mozconfig_add_options_ac '' --disable-av1
