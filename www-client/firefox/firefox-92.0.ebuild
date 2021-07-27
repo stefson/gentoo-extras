@@ -482,6 +482,7 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/0001-fix-config.patch
+	eapply "${FILESDIR}"/0002-fix-jpeg-xl-on-aarch64.patch
 	
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -632,8 +633,6 @@ src_configure() {
 		einfo "Building without Google API key ..."
 	fi
 	
-	mozconfig_add_options_ac '' --disable-jxl
-
 	mozconfig_use_with system-av1
 	mozconfig_add_options_ac '' --disable-av1
 	mozconfig_use_with system-harfbuzz
