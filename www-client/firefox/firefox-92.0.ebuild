@@ -480,6 +480,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
 
 	eapply "${WORKDIR}/firefox-patches"
+
+	eapply "${FILESDIR}"/0001-fix-config.patch
 	
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -606,10 +608,7 @@ src_configure() {
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
-		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)" \
-		--disable-sysroot
-
-#		error message says to disable bootstrap, but that doesn't have any effect. So disable sysroot entirely.
+		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)"
 
 	# Set update channel
 	local update_channel=nightly
