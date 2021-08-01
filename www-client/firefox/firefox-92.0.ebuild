@@ -481,7 +481,8 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/0002-fix-jpeg-xl-on-aarch64.patch
+	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
+	eapply "${FILESDIR}"/0002-test-mstransky-fix-for-X11.patch
 	
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
