@@ -97,6 +97,9 @@ src_prepare() {
 	# Apply our patches
 	# eapply "${S}"
 
+	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
+	eapply "${FILESDIR}"/0002-test-mstransky-fix-for-X11.patch
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
