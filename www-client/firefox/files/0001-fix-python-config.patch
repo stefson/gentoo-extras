@@ -1,0 +1,27 @@
+From 535ec6ed7595c33c13ce0537fb730bbbc7346bdc Mon Sep 17 00:00:00 2001
+From: Mike Hommey <mh+mozilla@glandium.org>
+Date: Thu, 29 Jul 2021 22:23:44 +0000
+Subject: [PATCH] Bug 1722442 - Fix the logic that determines when a sysroot
+ was bootstrapped. r=firefox-build-system-reviewers,andi
+
+Bug 1721514 broke what was done in bug 1694884.
+
+Differential Revision: https://phabricator.services.mozilla.com/D120926
+---
+ build/moz.configure/toolchain.configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/moz.configure/toolchain.configure b/build/moz.configure/toolchain.configure
+index 10fe242fdece9..eabd1b282dcac 100755
+--- a/build/moz.configure/toolchain.configure
++++ b/build/moz.configure/toolchain.configure
+@@ -958,7 +958,7 @@ def sysroot_path(host_or_target):
+             path = sysroot_input[0]
+         if path:
+             log.info("Using %s sysroot in %s", host_or_target_str, path)
+-        return namespace(path=path, bootstrapped=bool(sysroot_input))
++        return namespace(path=path, bootstrapped=bool(path and not sysroot_input))
+ 
+     return sysroot_path
+ 
+
