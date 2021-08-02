@@ -1,26 +1,21 @@
-diff --git a/widget/gtk/ScreenHelperGTK.h b/widget/gtk/ScreenHelperGTK.h
---- a/widget/gtk/ScreenHelperGTK.h
-+++ b/widget/gtk/ScreenHelperGTK.h
-@@ -71,6 +71,7 @@
-   explicit MonitorConfig(int aId) : id(aId){};
- };
- 
-+#ifdef MOZ_WAYLAND
- class ScreenGetterWayland : public ScreenGetter {
-  public:
-   ScreenGetterWayland() : mRegistry() {};
-@@ -96,6 +97,7 @@
-   AutoTArray<MonitorConfig, 4> mMonitors;
-   AutoTArray<RefPtr<Screen>, 4> mScreenList;
- };
-+#endif
- 
- class ScreenHelperGTK final : public ScreenManager::Helper {
-  public:
+# HG changeset patch
+# User stransky <stransky@redhat.com>
+# Date 1627933066 0
+# Node ID fa29a9038d42c258c65aebff6426f9b1f87cb991
+# Parent  b383b1d08f02702573f53520796142cbe088ad1e
+Bug 1721707 [Wayland] Build fix for X11 only environment r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D121460
+
 diff --git a/widget/gtk/ScreenHelperGTK.cpp b/widget/gtk/ScreenHelperGTK.cpp
 --- a/widget/gtk/ScreenHelperGTK.cpp
 +++ b/widget/gtk/ScreenHelperGTK.cpp
-@@ -197,6 +197,7 @@
+@@ -192,16 +192,17 @@ void ScreenGetterGtk::RefreshScreens() {
+   for (gint i = 0; i < numScreens; i++) {
+     screenList.AppendElement(MakeScreenGtk(defaultScreen, i));
+   }
+ 
+   ScreenManager& screenManager = ScreenManager::GetSingleton();
    screenManager.Refresh(std::move(screenList));
  }
  
@@ -28,7 +23,17 @@ diff --git a/widget/gtk/ScreenHelperGTK.cpp b/widget/gtk/ScreenHelperGTK.cpp
  static void output_handle_geometry(void* data, struct wl_output* wl_output,
                                     int x, int y, int physical_width,
                                     int physical_height, int subpixel,
-@@ -410,6 +411,7 @@
+                                    const char* make, const char* model,
+                                    int32_t transform) {
+   MonitorConfig* monitor = (MonitorConfig*)data;
+   LOG_SCREEN(("wl_output: geometry position %d %d physical size %d %d", x, y,
+               physical_width, physical_height));
+@@ -405,35 +406,39 @@ void ScreenGetterWayland::GetScreenRectF
+   if (monitor < 0) {
+     // fallback to first monitor
+     monitor = 0;
+   }
+   aRect->x = aRect->y = 0;
    aRect->width = mMonitors[monitor].width;
    aRect->height = mMonitors[monitor].height;
  }
@@ -36,7 +41,16 @@ diff --git a/widget/gtk/ScreenHelperGTK.cpp b/widget/gtk/ScreenHelperGTK.cpp
  
  RefPtr<nsIScreen> ScreenHelperGTK::GetScreenForWindow(nsWindow* aWindow) {
    return gScreenGetter->GetScreenForWindow(aWindow);
-@@ -426,9 +428,12 @@
+ }
+ 
+ void ScreenHelperGTK::GetScreenRectForWindow(nsWindow* aWindow,
+                                              GdkRectangle* aRect) {
+   gScreenGetter->GetScreenRectForWindow(aWindow, aRect);
+ }
+ 
+ gint ScreenHelperGTK::GetGTKMonitorScaleFactor(gint aMonitorNum) {
+   GdkScreen* screen = gdk_screen_get_default();
+   return gdk_screen_get_monitor_scale_factor(screen, aMonitorNum);
  }
  
  ScreenHelperGTK::ScreenHelperGTK() {
@@ -50,10 +64,59 @@ diff --git a/widget/gtk/ScreenHelperGTK.cpp b/widget/gtk/ScreenHelperGTK.cpp
      gScreenGetter = mozilla::MakeUnique<ScreenGetterGtk>();
    }
    gScreenGetter->Init();
+ }
+ 
+ ScreenHelperGTK::~ScreenHelperGTK() { gScreenGetter = nullptr; }
+ 
+ }  // namespace widget
+diff --git a/widget/gtk/ScreenHelperGTK.h b/widget/gtk/ScreenHelperGTK.h
+--- a/widget/gtk/ScreenHelperGTK.h
++++ b/widget/gtk/ScreenHelperGTK.h
+@@ -66,16 +66,17 @@ struct MonitorConfig {
+   int width = 0;
+   int height = 0;
+   int scale = 0;
+ 
+  public:
+   explicit MonitorConfig(int aId) : id(aId){};
+ };
+ 
++#ifdef MOZ_WAYLAND
+ class ScreenGetterWayland : public ScreenGetter {
+  public:
+   ScreenGetterWayland() : mRegistry() {};
+   ~ScreenGetterWayland();
+ 
+   void Init();
+ 
+   MonitorConfig* AddMonitorConfig(int aId);
+@@ -91,16 +92,17 @@ class ScreenGetterWayland : public Scree
+  private:
+   int GetMonitorForWindow(nsWindow* aWindow);
+ 
+  private:
+   void* mRegistry;
+   AutoTArray<MonitorConfig, 4> mMonitors;
+   AutoTArray<RefPtr<Screen>, 4> mScreenList;
+ };
++#endif
+ 
+ class ScreenHelperGTK final : public ScreenManager::Helper {
+  public:
+   ScreenHelperGTK();
+   ~ScreenHelperGTK();
+ 
+   static gint GetGTKMonitorScaleFactor(gint aMonitorNum = 0);
+   static RefPtr<nsIScreen> GetScreenForWindow(nsWindow* aWindow);
 diff --git a/widget/gtk/nsDragService.h b/widget/gtk/nsDragService.h
 --- a/widget/gtk/nsDragService.h
 +++ b/widget/gtk/nsDragService.h
-@@ -14,7 +14,12 @@
+@@ -9,17 +9,22 @@
+ 
+ #include "mozilla/RefPtr.h"
+ #include "nsBaseDragService.h"
+ #include "nsIObserver.h"
+ #include <gtk/gtk.h>
  
  class nsICookieJarSettings;
  class nsWindow;
@@ -66,5 +129,9 @@ diff --git a/widget/gtk/nsDragService.h b/widget/gtk/nsDragService.h
  
  namespace mozilla {
  namespace gfx {
-
+ class SourceSurface;
+ }
+ }  // namespace mozilla
+ 
+ /**
 
