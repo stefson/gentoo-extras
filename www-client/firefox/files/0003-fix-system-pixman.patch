@@ -1,0 +1,50 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1627965661 0
+# Node ID bf24f34634b6b2184765dbc53a34e04cf33e5166
+# Parent  524aef2e3307f6977ba024b560d94441d1c39d05
+Bug 1723389 - Add missing bindgen flags when using --enable-system-pixman. r=firefox-build-system-reviewers,andi
+
+Differential Revision: https://phabricator.services.mozilla.com/D121569
+
+diff --git a/layout/style/extra-bindgen-flags.in b/layout/style/extra-bindgen-flags.in
+--- a/layout/style/extra-bindgen-flags.in
++++ b/layout/style/extra-bindgen-flags.in
+@@ -1,1 +1,1 @@
+-@BINDGEN_SYSTEM_FLAGS@
++@BINDGEN_SYSTEM_FLAGS@ @MOZ_PIXMAN_CFLAGS@
+
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1627965662 0
+# Node ID 49d1f6c595e91d85a410953debdfb9a887cc06a6
+# Parent  bf24f34634b6b2184765dbc53a34e04cf33e5166
+Bug 1723389 - Bump the required version of system pixman. r=firefox-build-system-reviewers,andi
+
+Cairo uses PIXMAN_rgba_float/PIXMAN_rgb_float, which were added in
+pixman 0.36.0.
+
+Differential Revision: https://phabricator.services.mozilla.com/D121570
+
+diff --git a/old-configure.in b/old-configure.in
+--- a/old-configure.in
++++ b/old-configure.in
+@@ -2227,17 +2227,17 @@ MOZ_ARG_ENABLE_BOOL(system-pixman,
+ [ --enable-system-pixman Use system pixman (located with pkgconfig)],
+ MOZ_TREE_PIXMAN=,
+ MOZ_TREE_PIXMAN=force,
+ MOZ_TREE_PIXMAN=1 )
+ 
+ if test "$MOZ_TREE_PIXMAN"; then
+     AC_DEFINE(MOZ_TREE_PIXMAN)
+ else
+-    PKG_CHECK_MODULES(MOZ_PIXMAN, pixman-1 >= 0.19.2)
++    PKG_CHECK_MODULES(MOZ_PIXMAN, pixman-1 >= 0.36.0)
+ fi
+ 
+ if test "$OS_ARCH" = "WINNT"; then
+     # For now we assume that we will have a uint64_t available through
+     # one of the above headers or mozstdint.h.
+     AC_DEFINE(HAVE_UINT64_T)
+ fi
+ 

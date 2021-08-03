@@ -127,7 +127,7 @@ CDEPEND="
 	>=media-libs/freetype-2.4.10
 	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
 	virtual/freedesktop-icon-theme
-	>=x11-libs/pixman-0.19.2
+	>=x11-libs/pixman-0.36.0
 	>=dev-libs/glib-2.26:2
 	>=sys-libs/zlib-1.2.3
 	>=dev-libs/libffi-3.0.10:=
@@ -483,6 +483,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
 	eapply "${FILESDIR}"/0002-test-mstransky-fix-for-X11.patch
+	eapply "${FILESDIR}"/0003-fix-system-pixman.patch
 	
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
