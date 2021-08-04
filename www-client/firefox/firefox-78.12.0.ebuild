@@ -476,8 +476,6 @@ src_prepare() {
 
 	use pgo && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0046-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
