@@ -494,8 +494,6 @@ src_prepare() {
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
 	eapply "${FILESDIR}"/0002-test-another-bootstrap-fix.patch
 	eapply "${FILESDIR}"/0003-fix-nspr-bindgen.patch
-	eapply "${FILESDIR}"/0004-do-not-special-case-declared-unaligned-access-on-ARM.patch
-	eapply "${FILESDIR}"/0005-fix-wasm-neon-issue.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
