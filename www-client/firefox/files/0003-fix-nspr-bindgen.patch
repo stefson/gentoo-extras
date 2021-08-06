@@ -1,0 +1,14 @@
+diff --git a/layout/style/extra-bindgen-flags.in b/layout/style/extra-bindgen-flags.in
+--- a/layout/style/extra-bindgen-flags.in
++++ b/layout/style/extra-bindgen-flags.in
+@@ -1 +1 @@
+-@BINDGEN_SYSTEM_FLAGS@ @MOZ_PIXMAN_CFLAGS@
++@BINDGEN_SYSTEM_FLAGS@ @NSPR_CFLAGS@ @MOZ_PIXMAN_CFLAGS@
+diff --git a/tools/profiler/rust-api/extra-bindgen-flags.in b/tools/profiler/rust-api/extra-bindgen-flags.in
+--- a/tools/profiler/rust-api/extra-bindgen-flags.in
++++ b/tools/profiler/rust-api/extra-bindgen-flags.in
+@@ -1 +1 @@
+-@BINDGEN_SYSTEM_FLAGS@
++@BINDGEN_SYSTEM_FLAGS@ @NSPR_CFLAGS@
+
+
