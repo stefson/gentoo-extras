@@ -486,12 +486,16 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1715254-Deny-clone3-to-force-glibc-fallback.patch
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
+	
+	rm -v "${WORKDIR}"/firefox-patches/0011-bmo-1526653-Include-struct-definitions-for-user_vfp-.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
 	eapply "${FILESDIR}"/0002-test-another-bootstrap-fix.patch
 	eapply "${FILESDIR}"/0003-fix-nspr-bindgen.patch
+	eapply "${FILESDIR}"/0004-do-not-special-case-declared-unaligned-access-on-ARM.patch
+	eapply "${FILESDIR}"/0005-fix-wasm-neon-issue.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
