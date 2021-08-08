@@ -518,8 +518,8 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/0001-fix-glibc-2.34.patch
-	eapply "${FILESDIR}"/0004-do-not-special-case-declared-unaligned-access-on-ARM.patch
-	eapply "${FILESDIR}"/0005-fix-wasm-neon-issue.patch
+	eapply "${FILESDIR}"/0003-do-not-special-case-declared-unaligned-access-on-ARM.patch
+	eapply "${FILESDIR}"/0004-fix-wasm-neon-issue.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

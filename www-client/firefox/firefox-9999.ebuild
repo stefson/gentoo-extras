@@ -98,8 +98,7 @@ src_prepare() {
 	# eapply "${S}"
 
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
-	eapply "${FILESDIR}"/0002-test-another-bootstrap-fix.patch
-	eapply "${FILESDIR}"/0003-fix-nspr-bindgen.patch
+	eapply "${FILESDIR}"/0002-fix-nspr-bindgen.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
