@@ -147,8 +147,6 @@ PATCHES=(
 #	"${FILESDIR}/wine-5.0-fix-directx-installs.patch" #36059
 	"${FILESDIR}/wine-4.0.3-staging-implement-CreateSymbolicLink.patch" #44948
 
-#	upstreamed and fixed in 4.0.4
-#	"${FILESDIR}/wine-5.0-fix-skyrim-hang-on-quit.patch" #34041
 )
 PATCHES_BIN=()
 
