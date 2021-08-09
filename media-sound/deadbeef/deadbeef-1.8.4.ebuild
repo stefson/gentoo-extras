@@ -162,6 +162,7 @@ src_prepare() {
 	fi
 	
 	eapply "${FILESDIR}/${PN}-1.8.3-fix-config-with-gettext-0.20.patch"
+	eapply "${FILESDIR}/${PN}-1.8.7-update-copyright.patch"
 
 	rm -fr intl || die
 
