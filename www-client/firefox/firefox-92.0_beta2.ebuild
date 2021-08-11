@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-90-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-91-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -508,11 +508,9 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed and fixed in 91.0 beta branch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1715254-Deny-clone3-to-force-glibc-fallback.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
-
+	# upstreamed and fixed in 92.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1721326-Allow-dynamic-PTHREAD_STACK_MIN.patch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1721326-Use-small-stack-for-DoClone.patch
 	# upstreamed and fixed in 92.0 alpha branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-bmo-1526653-Include-struct-definitions-for-user_vfp-.patch
 
