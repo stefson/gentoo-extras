@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-90-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-91-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -517,7 +517,6 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/0001-fix-glibc-2.34.patch
 	eapply "${FILESDIR}"/0003-do-not-special-case-declared-unaligned-access-on-ARM.patch
 	eapply "${FILESDIR}"/0004-fix-wasm-neon-issue.patch
 

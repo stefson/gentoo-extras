@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-78esr-patches-15.tar.xz"
+FIREFOX_PATCHSET="firefox-78esr-patches-16.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -475,8 +475,6 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-78/firefox-60-disable-data-sharing-infobar.patch
 
 	use pgo && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
-	rm -v "${WORKDIR}"/firefox-patches/0046-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
