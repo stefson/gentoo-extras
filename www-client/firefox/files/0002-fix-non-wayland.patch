@@ -1,0 +1,39 @@
+diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
+--- a/widget/gtk/nsWindow.h
++++ b/widget/gtk/nsWindow.h
+@@ -382,10 +382,11 @@
+                                             bool aFlippedX, bool aFlippedY);
+   static bool IsToplevelWindowTransparent();
+ 
++  static nsWindow* GetFocusedWindow();
++
+ #ifdef MOZ_WAYLAND
+   bool GetCSDDecorationOffset(int* aDx, int* aDy);
+   void SetEGLNativeWindowSize(const LayoutDeviceIntSize& aEGLWindowSize);
+-  static nsWindow* GetFocusedWindow();
+   void WaylandDragWorkaround(GdkEventButton* aEvent);
+ 
+   wl_display* GetWaylandDisplay();
+diff --git a/widget/gtk/nsWindow.cpp b/widget/gtk/nsWindow.cpp
+--- a/widget/gtk/nsWindow.cpp
++++ b/widget/gtk/nsWindow.cpp
+@@ -9393,6 +9393,8 @@
+   ApplySizeConstraints();
+ }
+ 
++nsWindow* nsWindow::GetFocusedWindow() { return gFocusWindow; }
++
+ #ifdef MOZ_WAYLAND
+ void nsWindow::SetEGLNativeWindowSize(
+     const LayoutDeviceIntSize& aEGLWindowSize) {
+@@ -9403,8 +9405,6 @@
+                                             aEGLWindowSize.height);
+   moz_container_wayland_set_scale_factor(mContainer);
+ }
+-
+-nsWindow* nsWindow::GetFocusedWindow() { return gFocusWindow; }
+ #endif
+ 
+ LayoutDeviceIntSize nsWindow::GetMozContainerSize() {
+
+
