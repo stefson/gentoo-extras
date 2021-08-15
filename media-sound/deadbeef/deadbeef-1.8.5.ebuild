@@ -10,7 +10,7 @@ PLOCALE_BACKUP="en_GB"
 
 inherit autotools gnome2-utils plocale versionator xdg-utils
 
-SRC_URI="https://github.com/DeaDBeeF-Player/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 
 KEYWORDS="~amd64 ~arm ~x86"
 
