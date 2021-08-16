@@ -160,6 +160,10 @@ src_prepare() {
 	
 	eapply "${FILESDIR}/${PN}-1.8.3-fix-config-with-gettext-0.20.patch"
 
+	eapply "${FILESDIR}/alsa-regression/0001-revert-alsa-pulse-setformat-requested-cleanup.patch"
+	eapply "${FILESDIR}/alsa-regression/0002-revert-alsa-setformat-error-handling.patch"
+	eapply "${FILESDIR}/alsa-regression/0003-revert-alsa-move-hwparams-setting-to-the-playback-thread.patch"
+
 	rm -fr intl || die
 
 	eapply_user
