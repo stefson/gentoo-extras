@@ -1,0 +1,43 @@
+From 096c728f3adb2f060a5761a12ac7b4167efe2e9f Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Tue, 6 Jul 2021 23:34:28 +0200
+Subject: [PATCH] ffmpeg: replace avcodec_decode_audio4 with
+ avcodec_receive_frame (fixes #2609)
+
+---
+ plugins/ffmpeg/ffmpeg.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/plugins/ffmpeg/ffmpeg.c b/plugins/ffmpeg/ffmpeg.c
+index 9ef0cb3d6..abd734d94 100644
+--- a/plugins/ffmpeg/ffmpeg.c
++++ b/plugins/ffmpeg/ffmpeg.c
+@@ -291,11 +291,26 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
+ 
+         while (info->left_in_packet > 0 && size > 0) {
+             int out_size = info->buffer_size;
+-            int len;
++            int len = 0;
+             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
+ 
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55, 28, 0)
++            int ret = avcodec_send_packet (info->ctx, &info->pkt);
++            if (ret < 0) {
++                break;
++            }
++            ret = avcodec_receive_frame (info->ctx,info->frame);
++            if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF) {
++                break;
++            }
++            else {
++                len = info->pkt.size;
++            }
++#else
+             int got_frame = 0;
+             len = avcodec_decode_audio4(info->ctx, info->frame, &got_frame, &info->pkt);
++#endif
++
+             if (len > 0) {
+                 if (ensure_buffer (info, info->frame->nb_samples * (_info->fmt.bps >> 3))) {
+                     return -1;
+

@@ -163,8 +163,14 @@ src_prepare() {
 	eapply "${FILESDIR}/alsa-regression/0001-revert-alsa-pulse-setformat-requested-cleanup.patch"
 	eapply "${FILESDIR}/alsa-regression/0002-revert-alsa-setformat-error-handling.patch"
 	eapply "${FILESDIR}/alsa-regression/0003-revert-alsa-move-hwparams-setting-to-the-playback-thread.patch"
+
+	# backported from deadbeef-1.8.9-dev
 	eapply "${FILESDIR}/0004-update-translation.patch"
 	eapply "${FILESDIR}/0005-change-print-version-to-stdout.patch"
+
+	eapply "${FILESDIR}/ffmpeg-git-patches/0006-fix-the-use-of-deprecated-API.patch"
+	eapply "${FILESDIR}/ffmpeg-git-patches/0007-replace-avcodec_decode_audio4-with-avcodec_receive_frame.patch"
+	eapply "${FILESDIR}/ffmpeg-git-patches/0008-ffmpeg-add-fallback-to-support-older-ffmpeg.patch"
 
 	rm -fr intl || die
 
