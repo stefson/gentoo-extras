@@ -1,0 +1,13 @@
+diff --git a/po/de.po b/po/de.po
+index 11303a7..a343ca1 100644
+--- a/po/de.po
++++ b/po/de.po
+@@ -801,7 +743,7 @@ msgstr "Systemleisten-Icon verstecken"
+ 
+ #: ../plugins/gtkui/interface.c:2198 ../plugins/gtkui/deadbeef.glade.h:120
+ msgid "Delete from disk should use Trash"
+-msgstr ""
++msgstr "Gelöschte Dateien in den Papierkorb verschieben"
+ 
+ #: ../plugins/gtkui/interface.c:2202 ../plugins/gtkui/deadbeef.glade.h:121
+ msgid "Enable Japanese SHIFT-JIS detection and recoding"
