@@ -1,0 +1,23 @@
+From e9657f146680e73b987c983a524f87bec236972b Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Mon, 16 Aug 2021 11:32:01 +0200
+Subject: [PATCH] main: print --version info to stdout (fixes #2654)
+
+---
+ main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main.c b/main.c
+index bbcb834352..33caf3d035 100644
+--- a/main.c
++++ b/main.c
+@@ -1216,7 +1216,7 @@ main (int argc, char *argv[]) {
+             return 0;
+         }
+         else if (!strcmp (argv[i], "--version")) {
+-            trace ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
++            printf ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
+             return 0;
+         }
+         else if (!strcmp (argv[i], "--gui")) {
+

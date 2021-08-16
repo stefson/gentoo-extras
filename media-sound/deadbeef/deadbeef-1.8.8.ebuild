@@ -164,6 +164,7 @@ src_prepare() {
 	eapply "${FILESDIR}/alsa-regression/0002-revert-alsa-setformat-error-handling.patch"
 	eapply "${FILESDIR}/alsa-regression/0003-revert-alsa-move-hwparams-setting-to-the-playback-thread.patch"
 	eapply "${FILESDIR}/0004-update-translation.patch"
+	eapply "${FILESDIR}/0005-change-print-version-to-stdout.patch"
 
 	rm -fr intl || die
 
