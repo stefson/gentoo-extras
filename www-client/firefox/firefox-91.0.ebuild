@@ -508,15 +508,16 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed and fixed in 91.0 beta branch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1715254-Deny-clone3-to-force-glibc-fallback.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1719674-Make-packed_simd-compile-with-Rust-1.54.patch
+#	# upstreamed and fixed in 91.0 beta branch
+#	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1646135-Disable-HW-WR-on-Nvidia-prop.-drivers-on.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1715254-Deny-clone3-to-force-glibc-fallback.patch
 
+	# upstreamed and fixed in 91esr branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-bmo-1526653-Include-struct-definitions-for-user_vfp-.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	# all upstreamed and fixed in 91esr branch
 	eapply "${FILESDIR}"/0003-do-not-special-case-declared-unaligned-access-on-ARM.patch
 	eapply "${FILESDIR}"/0004-fix-wasm-neon-issue.patch
 	eapply "${FILESDIR}"/0005-fix-test-crashes-arm-wasm.patch
