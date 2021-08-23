@@ -1,0 +1,76 @@
+# HG changeset patch
+# User Emilio Cobos Álvarez <emilio@crisal.io>
+# Date 1629710329 0
+# Node ID dd6b1ac432afe13a49039233cdf9fd3d16397c30
+# Parent  348a3786a29a5adfffe3c8b0c0bdca91230445e5
+Bug 1726515 - Workaround GCC-calling-into-LLVM ABI issue by making GenericFontFamily larger. r=hiro
+
+This enum being a bit larger doesn't cause many common data structures
+to grow, so this should be fine.
+
+Differential Revision: https://phabricator.services.mozilla.com/D123146
+
+diff --git a/gfx/thebes/gfxTypes.h b/gfx/thebes/gfxTypes.h
+--- a/gfx/thebes/gfxTypes.h
++++ b/gfx/thebes/gfxTypes.h
+@@ -5,17 +5,17 @@
+ 
+ #ifndef GFX_TYPES_H
+ #define GFX_TYPES_H
+ 
+ #include <stdint.h>
+ #include "mozilla/TypedEnumBits.h"
+ 
+ namespace mozilla {
+-enum class StyleGenericFontFamily : uint8_t;
++enum class StyleGenericFontFamily : uint32_t;
+ }
+ 
+ typedef struct _cairo_surface cairo_surface_t;
+ typedef struct _cairo_user_data_key cairo_user_data_key_t;
+ 
+ typedef void (*thebes_destroy_func_t)(void* data);
+ 
+ /**
+diff --git a/servo/components/style/values/computed/font.rs b/servo/components/style/values/computed/font.rs
+--- a/servo/components/style/values/computed/font.rs
++++ b/servo/components/style/values/computed/font.rs
+@@ -377,32 +377,36 @@ fn system_ui_enabled(_: &ParserContext) 
+     static_prefs::pref!("layout.css.system-ui.enabled")
+ }
+ 
+ /// A generic font-family name.
+ ///
+ /// The order here is important, if you change it make sure that
+ /// `gfxPlatformFontList.h`s ranged array and `gfxFontFamilyList`'s
+ /// sSingleGenerics are updated as well.
++///
++/// NOTE(emilio): Should be u8, but it's a u32 because of ABI issues between GCC
++/// and LLVM see https://bugs.llvm.org/show_bug.cgi?id=44228 / bug 1600735 /
++/// bug 1726515.
+ #[derive(
+     Clone,
+     Copy,
+     Debug,
+     Eq,
+     Hash,
+     MallocSizeOf,
+     PartialEq,
+     Parse,
+     ToCss,
+     ToComputedValue,
+     ToResolvedValue,
+     ToShmem,
+ )]
+ #[cfg_attr(feature = "servo", derive(Deserialize, Serialize))]
+-#[repr(u8)]
++#[repr(u32)]
+ #[allow(missing_docs)]
+ pub enum GenericFontFamily {
+     /// No generic family specified, only for internal usage.
+     ///
+     /// NOTE(emilio): Gecko code relies on this variant being zero.
+     #[css(skip)]
+     None = 0,
+     Serif,
+

@@ -522,6 +522,8 @@ src_prepare() {
 	eapply "${FILESDIR}"/0004-fix-wasm-neon-issue.patch
 	eapply "${FILESDIR}"/0005-fix-test-crashes-arm-wasm.patch
 
+	eapply "${FILESDIR}"/0006-fix-gcc-calling-into-llvm-ABI.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
