@@ -487,6 +487,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1721326-Use-small-stack-for-DoClone.patch
 	# upstreamed and fixed in 92.0 alpha branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-bmo-1526653-Include-struct-definitions-for-user_vfp-.patch
+
+	# needs further investigation, fails to apply and area of code under heavy developement
+	rm -v "${WORKDIR}"/firefox-patches/0017-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
 
