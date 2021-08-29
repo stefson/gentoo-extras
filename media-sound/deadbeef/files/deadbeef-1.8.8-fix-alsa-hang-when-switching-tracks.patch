@@ -1,0 +1,31 @@
+From 5ea94be97f7dbe5f3be5957c740cde51e6feb949 Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Sun, 29 Aug 2021 20:22:19 +0200
+Subject: [PATCH] alsa: don't use mutex lock around snd_pcm_drop to avoid
+ deadlock (fixes #2656)
+
+---
+ plugins/alsa/alsa.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/alsa/alsa.c b/plugins/alsa/alsa.c
+index e3f7cdf96b..5eba4d41b9 100644
+--- a/plugins/alsa/alsa.c
++++ b/plugins/alsa/alsa.c
+@@ -541,12 +541,13 @@ palsa_stop (void) {
+     if (!audio) {
+         return 0;
+     }
+-    LOCK;
+ 
++    LOCK;
+     state = DDB_PLAYBACK_STATE_STOPPED;
+-    snd_pcm_drop (audio);
+     UNLOCK;
+ 
++    snd_pcm_drop (audio);
++
+     palsa_free ();
+     return 0;
+ }
+
