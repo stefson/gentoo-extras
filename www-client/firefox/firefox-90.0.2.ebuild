@@ -596,6 +596,13 @@ src_configure() {
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
+	# for musl: add alpine patch and then uncomment
+	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
+
+	# execute binary at runtime with: 
+	# LD_LIBRARY_PATH=/usr/lib/firefox /usr/bin/firefox
+
+
 	# Set MOZCONFIG
 	export MOZCONFIG="${S}/.mozconfig"
 
