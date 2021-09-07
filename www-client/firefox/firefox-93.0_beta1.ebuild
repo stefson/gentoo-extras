@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-91-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-92-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -37,8 +37,8 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
-inherit autotools check-reqs desktop flag-o-matic gnome2-utils llvm \
-	multiprocessing pax-utils python-any-r1 toolchain-funcs \
+inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
+	llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
@@ -57,12 +57,12 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
-	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
+	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx +system-webp wayland wifi"
 
@@ -73,7 +73,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.19.0
-	>=net-libs/nodejs-10.22.1
+	>=net-libs/nodejs-10.23.1
 	virtual/pkgconfig
 	>=virtual/rust-1.51.0
 	|| (
@@ -110,15 +110,8 @@ BDEPEND="${PYTHON_DEPS}
 			)
 		)
 	)
-	lto? (
-		!clang? ( sys-devel/binutils[gold] )
-	)
-	amd64? ( >=dev-lang/yasm-1.1 )
-	x86? ( >=dev-lang/yasm-1.1 )
-	!system-av1? (
-		amd64? ( >=dev-lang/nasm-2.13 )
-		x86? ( >=dev-lang/nasm-2.13 )
-	)"
+	amd64? ( >=dev-lang/nasm-2.13 )
+	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
 	>=dev-libs/nss-3.69
@@ -129,13 +122,13 @@ CDEPEND="
 	>=x11-libs/gtk+-3.4.0:3[X]
 	x11-libs/gdk-pixbuf
 	>=x11-libs/pango-1.22.0
-	>=media-libs/libpng-1.6.37:0=[apng]
+	>=media-libs/libpng-1.6.35:0=[apng]
 	>=media-libs/mesa-10.2:*
 	media-libs/fontconfig
 	>=media-libs/freetype-2.4.10
 	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
 	virtual/freedesktop-icon-theme
-	>=x11-libs/pixman-0.36.0
+	>=x11-libs/pixman-0.19.2
 	>=dev-libs/glib-2.26:2
 	>=sys-libs/zlib-1.2.3
 	>=dev-libs/libffi-3.0.10:=
@@ -153,12 +146,12 @@ CDEPEND="
 	)
 	screencast? ( media-video/pipewire:0/0.3 )
 	system-av1? (
-		>=media-libs/dav1d-0.9.0:=
+		>=media-libs/dav1d-0.8.1:=
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.8.0:0=
-		>=media-gfx/graphite2-1.3.14
+		>=media-libs/harfbuzz-2.8.1:0=
+		>=media-gfx/graphite2-1.3.13
 	)
 	system-icu? ( >=dev-libs/icu-69.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
@@ -173,7 +166,8 @@ CDEPEND="
 		)
 	)
 	jack? ( virtual/jack )
-	selinux? ( sec-policy/selinux-mozilla )"
+	selinux? ( sec-policy/selinux-mozilla )
+	sndio? ( media-sound/sndio )"
 
 RDEPEND="${CDEPEND}
 	jack? ( virtual/jack )
@@ -207,19 +201,19 @@ fi
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-		ewarn "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 		return 1
 	fi
 
 	if use clang ; then
 		if ! has_version -b "=sys-devel/lld-${LLVM_SLOT}*" ; then
-			ewarn "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			einfo "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
 		if use pgo ; then
 			if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*" ; then
-				ewarn "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+				einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 				return 1
 			fi
 		fi
@@ -228,15 +222,15 @@ llvm_check_deps() {
 	einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
-#MOZ_LANGS=(
-#	ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy
-#	da de dsb el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu
-#	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
-#	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
-#	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru
-#	si sk sl son sq sr sv-SE ta te th tl tr trs uk ur uz vi
-#	xh zh-CN zh-TW
-#)
+MOZ_LANGS=(
+	ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy
+	da de dsb el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu
+	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
+	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
+	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru
+	si sk sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi
+	xh zh-CN zh-TW
+)
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
@@ -281,41 +275,41 @@ moz_clear_vendor_checksums() {
 		|| die
 }
 
-#moz_install_xpi() {
-#	debug-print-function ${FUNCNAME} "$@"
+moz_install_xpi() {
+	debug-print-function ${FUNCNAME} "$@"
 
-#	if [[ ${#} -lt 2 ]] ; then
-#		die "${FUNCNAME} requires at least two arguments"
-#	fi
+	if [[ ${#} -lt 2 ]] ; then
+		die "${FUNCNAME} requires at least two arguments"
+	fi
 
-#	local DESTDIR=${1}
-#	shift
+	local DESTDIR=${1}
+	shift
 
-#	insinto "${DESTDIR}"
+	insinto "${DESTDIR}"
 
-#	local emid xpi_file xpi_tmp_dir
-#	for xpi_file in "${@}" ; do
-#		emid=
-#		xpi_tmp_dir=$(mktemp -d --tmpdir="${T}")
+	local emid xpi_file xpi_tmp_dir
+	for xpi_file in "${@}" ; do
+		emid=
+		xpi_tmp_dir=$(mktemp -d --tmpdir="${T}")
 
-#		# Unpack XPI
-#		unzip -qq "${xpi_file}" -d "${xpi_tmp_dir}" || die
+		# Unpack XPI
+		unzip -qq "${xpi_file}" -d "${xpi_tmp_dir}" || die
 
-#		# Determine extension ID
-#		if [[ -f "${xpi_tmp_dir}/install.rdf" ]] ; then
-#			emid=$(sed -n -e '/install-manifest/,$ { /em:id/!d; s/.*[\">]\([^\"<>]*\)[\"<].*/\1/; p; q }' "${xpi_tmp_dir}/install.rdf")
-#			[[ -z "${emid}" ]] && die "failed to determine extension id from install.rdf"
-#		elif [[ -f "${xpi_tmp_dir}/manifest.json" ]] ; then
-#			emid=$(sed -n -e 's/.*"id": "\([^"]*\)".*/\1/p' "${xpi_tmp_dir}/manifest.json")
-#			[[ -z "${emid}" ]] && die "failed to determine extension id from manifest.json"
-#		else
-#			die "failed to determine extension id"
-#		fi
-#
-#		einfo "Installing ${emid}.xpi into ${ED}${DESTDIR} ..."
-#		newins "${xpi_file}" "${emid}.xpi"
-#	done
-#}
+		# Determine extension ID
+		if [[ -f "${xpi_tmp_dir}/install.rdf" ]] ; then
+			emid=$(sed -n -e '/install-manifest/,$ { /em:id/!d; s/.*[\">]\([^\"<>]*\)[\"<].*/\1/; p; q }' "${xpi_tmp_dir}/install.rdf")
+			[[ -z "${emid}" ]] && die "failed to determine extension id from install.rdf"
+		elif [[ -f "${xpi_tmp_dir}/manifest.json" ]] ; then
+			emid=$(sed -n -e 's/.*"id": "\([^"]*\)".*/\1/p' "${xpi_tmp_dir}/manifest.json")
+			[[ -z "${emid}" ]] && die "failed to determine extension id from manifest.json"
+		else
+			die "failed to determine extension id"
+		fi
+
+		einfo "Installing ${emid}.xpi into ${ED}${DESTDIR} ..."
+		newins "${xpi_file}" "${emid}.xpi"
+	done
+}
 
 mozconfig_add_options_ac() {
 	debug-print-function ${FUNCNAME} "$@"
@@ -414,9 +408,19 @@ pkg_setup() {
 			[[ -n ${version_lld} ]] && version_lld=$(ver_cut 1 "${version_lld}")
 			[[ -z ${version_lld} ]] && die "Failed to read ld.lld version!"
 
-			local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
-			[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
-			[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
+			# temp fix for https://bugs.gentoo.org/768543
+			# we can assume that rust 1.{49,50}.0 always uses llvm 11
+			local version_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'release:' | awk '{ print $2 }')
+			[[ -n ${version_rust} ]] && version_rust=$(ver_cut 1-2 "${version_rust}")
+			[[ -z ${version_rust} ]] && die "Failed to read version from rustc!"
+
+			if ver_test "${version_rust}" -ge "1.49" && ver_test "${version_rust}" -le "1.50" ; then
+				local version_llvm_rust="11"
+			else
+				local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
+				[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
+				[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
+			fi
 
 			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
 				eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
@@ -426,6 +430,13 @@ pkg_setup() {
 				eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
 				die "LLVM version used by Rust (${version_llvm_rust}) does not match with ld.lld version (${version_lld})!"
 			fi
+		fi
+
+		if ! use clang && [[ $(gcc-major-version) -eq 11 ]] \
+			&& ! has_version -b ">sys-devel/gcc-11.1.0:11" ; then
+			# bug 792705
+			eerror "Using GCC 11 to compile firefox is currently known to be broken (see bug #792705)."
+			die "Set USE=clang or select <gcc-11 to build ${CATEGORY}/${P}."
 		fi
 
 		python-any-r1_pkg_setup
@@ -457,9 +468,24 @@ pkg_setup() {
 			MOZ_API_KEY_GOOGLE="AIzaSyDEAOvatFogGaPi0eTgsV_ZlEzx0ObmepsMzfAc"
 		fi
 
+		if [[ -z "${MOZ_API_KEY_LOCATION+set}" ]] ; then
+			MOZ_API_KEY_LOCATION="AIzaSyB2h2OuRgGaPicUgy5N-5hsZqiPW6sH3n_rptiQ"
+		fi
+
+		# Mozilla API keys (see https://location.services.mozilla.com/api)
+		# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
+		# get your own set of keys.
+		if [[ -z "${MOZ_API_KEY_MOZILLA+set}" ]] ; then
+			MOZ_API_KEY_MOZILLA="edb3d487-3a84-46m0ap1e3-9dfd-92b5efaaa005"
+		fi
+
 		# Ensure we use C locale when building, bug #746215
 		export LC_ALL=C
 	fi
+
+	CONFIG_CHECK="~SECCOMP"
+	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
+	linux-info_pkg_setup
 }
 
 src_unpack() {
@@ -481,16 +507,10 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-	
-	# upstreamed and fixed in 92.0 beta branch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1721326-Allow-dynamic-PTHREAD_STACK_MIN.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1721326-Use-small-stack-for-DoClone.patch
-	# upstreamed and fixed in 92.0 alpha branch
-	rm -v "${WORKDIR}"/firefox-patches/0011-bmo-1526653-Include-struct-definitions-for-user_vfp-.patch
 
-	# needs further investigation, fails to apply and area of code under heavy developement
-	rm -v "${WORKDIR}"/firefox-patches/0017-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-	
+	rm -v "${WORKDIR}"/firefox-patches/0016-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1728749-Pre-select-OS-dialog-when-using-Pipewire.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
@@ -533,16 +553,19 @@ src_prepare() {
 
 	# Write API keys to disk
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
+	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
+	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
 	xdg_src_prepare
 }
 
 src_configure() {
 	# Show flags set at the beginning
-	einfo "Current CFLAGS:    ${CFLAGS}"
-	einfo "Current CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Current LDFLAGS:   ${LDFLAGS}"
-	einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
+	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
+	einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
+	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	local have_switched_compiler=
 	if use clang && ! tc-is-clang ; then
@@ -577,8 +600,9 @@ src_configure() {
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
 
 	# Pass the correct toolchain paths through cbindgen
-	tc-is-cross-compiler &&
-	export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
+	if tc-is-cross-compiler ; then
+		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
+	fi
 
 	# Set MOZILLA_FIVE_HOME
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
@@ -623,8 +647,8 @@ src_configure() {
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)"
 
 	# Set update channel
-	local update_channel=nightly
-#	[[ -n ${MOZ_ESR} ]] && update_channel=esr
+	local update_channel=release
+	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
 	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
@@ -638,14 +662,36 @@ src_configure() {
 		fi
 
 		mozconfig_add_options_ac "${key_origin}" \
-			--with-google-location-service-api-keyfile="${S}/api-google.key" \
 			--with-google-safebrowsing-api-keyfile="${S}/api-google.key"
 	else
 		einfo "Building without Google API key ..."
 	fi
-	
+
+	if [[ -s "${S}/api-location.key" ]] ; then
+		local key_origin="Gentoo default"
+		if [[ $(cat "${S}/api-location.key" | md5sum | awk '{ print $1 }') != ffb7895e35dedf832eb1c5d420ac7420 ]] ; then
+			key_origin="User value"
+		fi
+
+		mozconfig_add_options_ac "${key_origin}" \
+			--with-google-location-service-api-keyfile="${S}/api-location.key"
+	else
+		einfo "Building without Location API key ..."
+	fi
+
+	if [[ -s "${S}/api-mozilla.key" ]] ; then
+		local key_origin="Gentoo default"
+		if [[ $(cat "${S}/api-mozilla.key" | md5sum | awk '{ print $1 }') != 3927726e9442a8e8fa0e46ccc39caa27 ]] ; then
+			key_origin="User value"
+		fi
+
+		mozconfig_add_options_ac "${key_origin}" \
+			--with-mozilla-api-keyfile="${S}/api-mozilla.key"
+	else
+		einfo "Building without Mozilla API key ..."
+	fi
+
 	mozconfig_use_with system-av1
-	mozconfig_add_options_ac '' --disable-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
@@ -673,6 +719,8 @@ src_configure() {
 		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
 	fi
 
+	mozconfig_use_enable sndio
+
 	mozconfig_use_enable wifi necko-wifi
 
 	if use wayland ; then
@@ -688,8 +736,8 @@ src_configure() {
 
 			mozconfig_add_options_ac '+lto' --enable-lto=cross
 		else
-			# ThinLTO has been removed, see bmo#1644409
-			mozconfig_add_options_ac '+lto' --enable-lto
+			# ThinLTO is currently broken, see bmo#1644409
+			mozconfig_add_options_ac '+lto' --enable-lto=full
 		fi
 
 		if use pgo ; then
@@ -837,10 +885,11 @@ src_configure() {
 	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_DIR}"
 
 	# Show flags we will use
-	einfo "Build CFLAGS:    ${CFLAGS}"
-	einfo "Build CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Build LDFLAGS:   ${LDFLAGS}"
-	einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
+	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+	einfo "Build CFLAGS:\t\t${CFLAGS:-no value set}"
+	einfo "Build CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+	einfo "Build LDFLAGS:\t\t${LDFLAGS:-no value set}"
+	einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	# Handle EXTRA_CONF and show summary
 	local ac opt hash reason
@@ -944,11 +993,11 @@ src_install() {
 		EOF
 	fi
 
-#	# Install language packs
-#	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
-#	if [[ -n "${langpacks}" ]] ; then
-#		moz_install_xpi "${MOZILLA_FIVE_HOME}/distribution/extensions" "${langpacks[@]}"
-#	fi
+	# Install language packs
+	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
+	if [[ -n "${langpacks}" ]] ; then
+		moz_install_xpi "${MOZILLA_FIVE_HOME}/distribution/extensions" "${langpacks[@]}"
+	fi
 
 	# Install geckodriver
 	if use geckodriver ; then
@@ -1145,3 +1194,4 @@ pkg_postinst() {
 		elog "in about:config."
 	fi
 }
+
