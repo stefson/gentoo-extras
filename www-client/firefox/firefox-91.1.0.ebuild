@@ -516,6 +516,8 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}"/firefox-91.0-rust-1.56-support.patch
+
 	# all upstreamed and fixed in 91esr branch
 
 	# Allow user to apply any additional patches without modifing ebuild
