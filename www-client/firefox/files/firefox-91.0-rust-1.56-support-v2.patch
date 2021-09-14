@@ -1,0 +1,29 @@
+From edb1464b71528286a6ce74278af05f19c3e0e820 Mon Sep 17 00:00:00 2001
+From: Lucio Franco <luciofranco14@gmail.com>
+Date: Wed, 7 Jul 2021 16:00:37 -0400
+Subject: [PATCH] derive: Fix unstable fn name collision warning (#499)
+
+---
+ third_party/rust/prost-derive/src/lib.rs | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/third_party/rust/prost-derive/src/lib.rs b/third_party/rust/prost-derive/src/lib.rs
+index 710f3cab..bf2cf3b8 100644
+--- a/third_party/rust/prost-derive/src/lib.rs
++++ b/third_party/rust/prost-derive/src/lib.rs
+@@ -102,11 +102,9 @@ fn try_message(input: TokenStream) -> Result<TokenStream, Error> {
+ 
+     let merge = fields.iter().map(|&(ref field_ident, ref field)| {
+         let merge = field.merge(quote!(value));
+-        let tags = field
+-            .tags()
+-            .into_iter()
+-            .map(|tag| quote!(#tag))
+-            .intersperse(quote!(|));
++        let tags = field.tags().into_iter().map(|tag| quote!(#tag));
++        let tags = Itertools::intersperse(tags, quote!(|));
++
+         quote! {
+             #(#tags)* => {
+                 let mut value = &mut self.#field_ident;
+
