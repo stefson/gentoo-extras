@@ -1,0 +1,36 @@
+diff --git a/third_party/rust/mio/src/sys/unix/tcp.rs b/third_party/rust/mio/src/sys/unix/tcp.rs
+--- a/third_party/rust/mio/src/sys/unix/tcp.rs
++++ b/third_party/rust/mio/src/sys/unix/tcp.rs
+@@ -113,11 +113,11 @@
+     }
+ 
+     pub fn set_linger(&self, dur: Option<Duration>) -> io::Result<()> {
+-        self.inner.set_linger(dur)
++        TcpStreamExt::set_linger(&self.inner, dur)
+     }
+ 
+     pub fn linger(&self) -> io::Result<Option<Duration>> {
+-        self.inner.linger()
++        TcpStreamExt::linger(&self.inner)
+     }
+ 
+     pub fn take_error(&self) -> io::Result<Option<io::Error>> {
+diff --git a/third_party/rust/mio/src/sys/windows/tcp.rs b/third_party/rust/mio/src/sys/windows/tcp.rs
+--- a/third_party/rust/mio/src/sys/windows/tcp.rs
++++ b/third_party/rust/mio/src/sys/windows/tcp.rs
+@@ -188,11 +188,11 @@
+     }
+ 
+     pub fn set_linger(&self, dur: Option<Duration>) -> io::Result<()> {
+-        self.imp.inner.socket.set_linger(dur)
++        Net2TcpExt::set_linger(&self.imp.inner.socket, dur)
+     }
+ 
+     pub fn linger(&self) -> io::Result<Option<Duration>> {
+-        self.imp.inner.socket.linger()
++        Net2TcpExt::linger(&self.imp.inner.socket)
+     }
+ 
+     pub fn take_error(&self) -> io::Result<Option<io::Error>> {
+
+
