@@ -1,0 +1,54 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1631692400 0
+# Node ID 7ade904df34a97c02dfc07ce6547555117d6912c
+# Parent  b92a5957119422f6c1c94b139608e9b62d292db9
+Bug 1730397 - Remove unnecessary semi-colons in some macros. r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D125503
+
+diff --git a/servo/components/style/stylesheets/viewport_rule.rs b/servo/components/style/stylesheets/viewport_rule.rs
+--- a/servo/components/style/stylesheets/viewport_rule.rs
++++ b/servo/components/style/stylesheets/viewport_rule.rs
+@@ -747,17 +747,17 @@ impl MaybeNew for ViewportConstraints {
+                     };
+ 
+                     Some(match $min {
+                         Some(min) => cmp::max(min, max),
+                         None => max,
+                     })
+                 } else {
+                     None
+-                };
++                }
+             };
+         }
+ 
+         let width = resolve!(min_width, max_width, initial_viewport.width);
+         let height = resolve!(min_height, max_height, initial_viewport.height);
+ 
+         // DEVICE-ADAPT § 6.2.5 Resolve width value
+         let width = if width.is_none() && height.is_none() {
+diff --git a/servo/components/style/values/generics/mod.rs b/servo/components/style/values/generics/mod.rs
+--- a/servo/components/style/values/generics/mod.rs
++++ b/servo/components/style/values/generics/mod.rs
+@@ -146,17 +146,17 @@ impl SpecifiedValueInfo for CounterStyle
+     fn collect_completion_keywords(f: KeywordsCollectFn) {
+         // XXX The best approach for implementing this is probably
+         // having a CounterStyleName type wrapping CustomIdent, and
+         // put the predefined list for that type in counter_style mod.
+         // But that's a non-trivial change itself, so we use a simpler
+         // approach here.
+         macro_rules! predefined {
+             ($($name:expr,)+) => {
+-                f(&["symbols", $($name,)+]);
++                f(&["symbols", $($name,)+])
+             }
+         }
+         include!("../../counter_style/predefined.rs");
+     }
+ }
+ 
+ /// A wrapper of Non-negative values.
+ #[cfg_attr(feature = "servo", derive(Deserialize, Serialize))]
+
