@@ -11,14 +11,10 @@ to our copy of prost 0.6.1.
 Differential Revision: https://phabricator.services.mozilla.com/D125507
 
 diff --git a/Cargo.lock b/Cargo.lock
+index 20fab1f..486ffcc 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -3884,18 +3884,16 @@ checksum = "ce49aefe0a6144a45de32927c77b
- dependencies = [
-  "bytes 0.5.6",
-  "prost-derive",
- ]
- 
+@@ -3836,8 +3836,6 @@ dependencies = [
  [[package]]
  name = "prost-derive"
  version = "0.6.1"
@@ -27,39 +23,28 @@ diff --git a/Cargo.lock b/Cargo.lock
  dependencies = [
   "anyhow",
   "itertools 0.8.2",
-  "proc-macro2",
-  "quote",
-  "syn",
- ]
- 
 diff --git a/Cargo.toml b/Cargo.toml
+index 8615b99..cf8de78 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -102,8 +102,11 @@ rev = "824fa69756523f2b6d49029fe25de9413
- [patch.crates-io.autocfg]
- path = "third_party/rust/autocfg"
- 
- 
- # Patch mio 0.6 to use winapi 0.3 and miow 0.3, getting rid of winapi 0.2.
- # There is not going to be new version of mio 0.6, mio now being >= 0.7.11.
+@@ -103,6 +103,9 @@ path = "third_party/rust/autocfg"
  [patch.crates-io.mio]
  path = "third_party/rust/mio"
-+
+ 
 +[patch.crates-io.prost-derive]
 +path = "third_party/rust/prost-derive"
++
+ # Patch failure 0.1.8 to disable the backtrace feature by default. See bug 1608157.
+ [patch.crates-io.failure]
+ path = "third_party/rust/failure"
 diff --git a/third_party/rust/prost-derive/src/lib.rs b/third_party/rust/prost-derive/src/lib.rs
+index c359621..28d7aae 100644
 --- a/third_party/rust/prost-derive/src/lib.rs
 +++ b/third_party/rust/prost-derive/src/lib.rs
-@@ -99,21 +99,18 @@ fn try_message(input: TokenStream) -> Re
-         .map(|&(ref field_ident, ref field)| field.encoded_len(quote!(self.#field_ident)));
- 
-     let encode = fields
-         .iter()
-         .map(|&(ref field_ident, ref field)| field.encode(quote!(self.#field_ident)));
- 
+@@ -105,10 +105,8 @@ fn try_message(input: TokenStream) -> Result<TokenStream, Error> {
      let merge = fields.iter().map(|&(ref field_ident, ref field)| {
          let merge = field.merge(quote!(value));
--        let tags = field
+         let tags = field
 -            .tags()
 -            .into_iter()
 -            .map(|tag| quote!(#tag))
@@ -69,10 +54,3 @@ diff --git a/third_party/rust/prost-derive/src/lib.rs b/third_party/rust/prost-d
          quote! {
              #(#tags)* => {
                  let mut value = &mut self.#field_ident;
-                 #merge.map_err(|mut error| {
-                     error.push(STRUCT_NAME, stringify!(#field_ident));
-                     error
-                 })
-             },
-
-
