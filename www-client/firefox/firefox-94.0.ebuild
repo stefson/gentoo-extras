@@ -492,7 +492,6 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -612,8 +611,8 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
-		--with-system-nspr \
-		--with-system-nss \
+#		--with-system-nspr \
+#		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
