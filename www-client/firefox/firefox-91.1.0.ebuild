@@ -516,10 +516,11 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/firefox-91.0-rust-1.56-support.patch
-	eapply "${FILESDIR}"/firefox-91.0-rust-1.56-support-v2.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v3.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v4.patch
+	eapply "${FILESDIR}"/upstream-rust-1.56-support.patch
+#	eapply "${FILESDIR}"/firefox-91.0-rust-1.56-support.patch
+#	eapply "${FILESDIR}"/firefox-91.0-rust-1.56-support-v2.patch
+#	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v3.patch
+#	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v4.patch
 
 	# all upstreamed and fixed in 91esr branch
 
