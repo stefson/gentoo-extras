@@ -103,11 +103,11 @@ RDEPEND="dev-libs/glib:2
 	flac? ( media-libs/flac:0 )
 	gme? ( sys-libs/zlib:0 )
 	gtk2? ( dev-libs/atk:0
-		dev-libs/jansson:0
+		dev-libs/jansson:=
 		x11-libs/cairo:0
 		x11-libs/gtk+:2
 		x11-libs/pango:0 )
-	gtk3? ( dev-libs/jansson:0
+	gtk3? ( dev-libs/jansson:=
 		x11-libs/gtk+:3 )
 	hotkeys? ( x11-libs/libX11:0 )
 	libnotify? ( sys-apps/dbus:0 )
