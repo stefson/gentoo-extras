@@ -16,6 +16,7 @@ SRC_URI="armv5tel-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-armv
 	armv7-hardfloat-std? (  https://static.rust-lang.org/dist/"${P}"-armv7-unknown-linux-gnueabihf.tar.xz )
 	aarch64-gnu-std? ( https://static.rust-lang.org/dist/"${P}"-aarch64-unknown-linux-gnu.tar.xz ) 
 	wasm32-unknown-unknown-std? ( https://static.rust-lang.org/dist/"${P}"-wasm32-unknown-unknown.tar.xz )
+	wasm32-wasi-std? ( https://static.rust-lang.org/dist/"${P}"-wasm32-wasi.tar.xz )
 	i686-linux-gnu-std? ( https://static.rust-lang.org/dist/"${P}"-i686-unknown-linux-gnu.tar.xz )"
 
 RUST_PROVIDER="rust-bin-${PV}"
@@ -23,7 +24,7 @@ RUST_PROVIDER="rust-bin-${PV}"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="~amd64"
-IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std wasm32-unknown-unknown-std i686-linux-gnu-std"
+IUSE="aarch64-gnu-std armv5tel-softfloat-std armv6j-softfloat-std armv6j-hardfloat-std +armv7-hardfloat-std wasm32-unknown-unknown-std wasm32-wasi-std i686-linux-gnu-std"
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
