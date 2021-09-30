@@ -121,7 +121,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.70
+	>=dev-libs/nss-3.71
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
@@ -609,9 +609,9 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
-#		--with-system-nspr \
-#		--with-system-nss \
-#		--with-system-png \
+		--with-system-nspr \
+		--with-system-nss \
+		--with-system-png \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
