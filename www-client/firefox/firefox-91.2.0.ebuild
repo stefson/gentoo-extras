@@ -57,7 +57,7 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -515,10 +515,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1726515-Workaround-for-GCC-calling-into-LLVM-ABI.patch
 
 	eapply "${WORKDIR}/firefox-patches"
-
-#	eapply "${FILESDIR}"/upstream-rust-1.56-support.patch
-
-	# all upstreamed and fixed in 91esr branch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
