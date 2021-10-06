@@ -5,7 +5,7 @@ EAPI="7"
 
 FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
 
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=12
 
 PYTHON_COMPAT=( python3_{7..10} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -78,14 +78,6 @@ BDEPEND="${PYTHON_DEPS}
 	>=virtual/rust-1.51.0
 	|| (
 		(
-			sys-devel/clang:13
-			sys-devel/llvm:13
-			clang? (
-				=sys-devel/lld-13*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
-			)
-		)
-		(
 			sys-devel/clang:12
 			sys-devel/llvm:12
 			clang? (
@@ -139,7 +131,6 @@ CDEPEND="
 	x11-libs/libXext
 	x11-libs/libXfixes
 	x11-libs/libXrender
-	x11-libs/libXt
 	dbus? (
 		sys-apps/dbus
 		dev-libs/dbus-glib
@@ -227,7 +218,7 @@ MOZ_LANGS=(
 	da de dsb el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu
 	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
 	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
-	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru
+	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco
 	si sk sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi
 	xh zh-CN zh-TW
 )
@@ -507,19 +498,7 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
-#	rm -v "${WORKDIR}"/firefox-patches/0016-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1728749-Pre-select-OS-dialog-when-using-Pipewire.patch
-
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
-	eapply "${FILESDIR}"/0002-fix-aarch-wasm.patch
-
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v2.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v3.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v4.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1034,82 +1013,43 @@ src_install() {
 		newicon -s ${size} "${icon}" ${PN}.png
 	done
 
-	# Install menus
-	local wrapper_wayland="${PN}-wayland.sh"
-	local wrapper_x11="${PN}-x11.sh"
-	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
-	local display_protocols="auto X11"
+	# Install menu
+	local app_name="Mozilla ${MOZ_PN^}"
+	local desktop_file="${FILESDIR}/icon/${PN}-r3.desktop"
+	local desktop_filename="${PN}.desktop"
+	local exec_command="${PN}"
 	local icon="${PN}"
-	local name="Mozilla ${MOZ_PN^}"
 	local use_wayland="false"
 
 	if use wayland ; then
-		display_protocols+=" Wayland"
 		use_wayland="true"
 	fi
 
-	local app_name desktop_filename display_protocol exec_command
-	for display_protocol in ${display_protocols} ; do
-		app_name="${name} on ${display_protocol}"
-		desktop_filename="${PN}-${display_protocol,,}.desktop"
+	cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
 
-		case ${display_protocol} in
-			Wayland)
-				exec_command="${PN}-wayland --name ${PN}-wayland"
-				newbin "${FILESDIR}/${wrapper_wayland}" ${PN}-wayland
-				;;
-			X11)
-				if ! use wayland ; then
-					# Exit loop here because there's no choice so
-					# we don't need wrapper/.desktop file for X11.
-					continue
-				fi
+	sed -i \
+		-e "s:@NAME@:${app_name}:" \
+		-e "s:@EXEC@:${exec_command}:" \
+		-e "s:@ICON@:${icon}:" \
+		"${WORKDIR}/${PN}.desktop-template" \
+		|| die
 
-				exec_command="${PN}-x11 --name ${PN}-x11"
-				newbin "${FILESDIR}/${wrapper_x11}" ${PN}-x11
-				;;
-			*)
-				app_name="${name}"
-				desktop_filename="${PN}.desktop"
-				exec_command="${PN}"
-				;;
-		esac
+	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
 
-		cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
+	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-		sed -i \
-			-e "s:@NAME@:${app_name}:" \
-			-e "s:@EXEC@:${exec_command}:" \
-			-e "s:@ICON@:${icon}:" \
-			"${WORKDIR}/${PN}.desktop-template" \
-			|| die
-
-		newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
-
-		rm "${WORKDIR}/${PN}.desktop-template" || die
-	done
-
-	# Install generic wrapper script
+	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
-	newbin "${FILESDIR}/${PN}.sh" ${PN}
+	newbin "${FILESDIR}/${PN}-r1.sh" ${PN}
 
 	# Update wrapper
-	local wrapper
-	for wrapper in \
+	sed -i \
+		-e "s:@PREFIX@:${EPREFIX}/usr:" \
+		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
+		-e "s:@APULSELIB_DIR@:${apulselib}:" \
+		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}" \
-		"${ED}/usr/bin/${PN}-x11" \
-		"${ED}/usr/bin/${PN}-wayland" \
-	; do
-		[[ ! -f "${wrapper}" ]] && continue
-
-		sed -i \
-			-e "s:@PREFIX@:${EPREFIX}/usr:" \
-			-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
-			-e "s:@APULSELIB_DIR@:${apulselib}:" \
-			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-			"${wrapper}" \
-			|| die
-	done
+		|| die
 }
 
 pkg_preinst() {
@@ -1152,23 +1092,20 @@ pkg_postinst() {
 		elog
 	fi
 
-	local show_doh_information show_normandy_information
+	local show_doh_information show_normandy_information show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
 		# New install; Tell user that DoH is disabled by default
 		show_doh_information=yes
 		show_normandy_information=yes
+		show_shortcut_information=no
 	else
 		local replacing_version
 		for replacing_version in ${REPLACING_VERSIONS} ; do
-			if ver_test "${replacing_version}" -lt 70 ; then
-				# Tell user only once about our DoH default
-				show_doh_information=yes
-			fi
-
-			if ver_test "${replacing_version}" -lt 74.0-r2 ; then
-				# Tell user only once about our Normandy default
-				show_normandy_information=yes
+			if ver_test "${replacing_version}" -lt 91.0 ; then
+				# Tell user that we no longer install a shortcut
+				# per supported display protocol
+				show_shortcut_information=yes
 			fi
 		done
 	fi
@@ -1198,6 +1135,15 @@ pkg_postinst() {
 		elog "    app.normandy.enabled=true"
 		elog
 		elog "in about:config."
+	fi
+
+	if [[ -n "${show_shortcut_information}" ]] ; then
+		elog
+		elog "Since firefox-91.0 we no longer install multiple shortcuts for"
+		elog "each supported display protocol.  Instead we will only install"
+		elog "one generic Mozilla Firefox shortcut."
+		elog "If you still want to be able to select between running Mozilla Firefox"
+		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
 	fi
 }
 
