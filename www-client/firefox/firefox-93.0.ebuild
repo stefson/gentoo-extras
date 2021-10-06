@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-92-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -508,8 +508,8 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0016-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1728749-Pre-select-OS-dialog-when-using-Pipewire.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0016-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1728749-Pre-select-OS-dialog-when-using-Pipewire.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
