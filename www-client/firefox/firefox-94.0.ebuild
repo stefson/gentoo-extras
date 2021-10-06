@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-92-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -482,12 +482,8 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
-	# upstreamed and fixed in 93.0 alpha branch
-
-	# needs further investigation, fails to apply and area of code under heavy developement
-	# rm -v "${WORKDIR}"/firefox-patches/0017-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-	rm -v "${WORKDIR}"/firefox-patches/0016-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1728749-Pre-select-OS-dialog-when-using-Pipewire.patch
+	# upstreamed and fixed in 94.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
