@@ -487,8 +487,6 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/0001-fix-disable-av1.patch
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
