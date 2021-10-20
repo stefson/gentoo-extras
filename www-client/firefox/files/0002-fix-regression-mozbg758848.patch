@@ -1,0 +1,16 @@
+diff --git a/widget/gtk/nsAppShell.cpp b/widget/gtk/nsAppShell.cpp
+--- a/widget/gtk/nsAppShell.cpp
++++ b/widget/gtk/nsAppShell.cpp
+@@ -110,8 +110,9 @@
+ }
+ 
+ nsAppShell::~nsAppShell() {
++#ifdef MOZ_ENABLE_DBUS
+   StopDBusListening();
+-
++#endif
+   mozilla::hal::Shutdown();
+ 
+   if (mTag) g_source_remove(mTag);
+
+
