@@ -486,6 +486,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
 
 	eapply "${WORKDIR}/firefox-patches"
+	eapply "${FILESDIR}/0001-revert-mozbg758848.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
