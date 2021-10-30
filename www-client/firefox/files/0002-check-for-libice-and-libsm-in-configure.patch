@@ -1,0 +1,127 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1635373828 0
+# Node ID 14c4c39bc05bd179d3a485dcd0847a7b90fadc0a
+# Parent  e819776339de975959fa508ccb7af50153f1f1bd
+Bug 1736830 - Check for libice and libsm headers during configure. r=firefox-build-system-reviewers,mhentges,andi
+
+Adding them to the pkg_check_modules alone would add a runtime
+dependency on them, which is unwanted (the code using those libraries
+goes the extra mile to dynamically lookup their symbols).
+
+So we modify pkg_check_modules to allow to only check for headers for a
+given set of packages.
+
+Differential Revision: https://phabricator.services.mozilla.com/D129096
+
+diff --git a/build/moz.configure/pkg.configure b/build/moz.configure/pkg.configure
+--- a/build/moz.configure/pkg.configure
++++ b/build/moz.configure/pkg.configure
+@@ -66,17 +66,19 @@ add_old_configure_assignment("PKG_CONFIG
+ #   resolve to such a string or list of strings.
+ # - `when` a depends function that will determine whether to perform
+ #   any checks (default is to always perform checks).
+ # - `allow_missing` If set, failure to fulfill the package description
+ #   will not result in an error or logged message, and any error message
+ #   will be returned to the caller.
+ #   Returns `True` when the package description is fulfilled.
+ @template
+-def pkg_check_modules(var, package_desc, when=always, allow_missing=False, config=True):
++def pkg_check_modules(
++    var, package_desc, when=always, allow_missing=False, config=True, cflags_only=False
++):
+     @depends(dependable(package_desc), when=when)
+     def package_desc(desc):
+         if isinstance(desc, str):
+             desc = [desc]
+         if not isinstance(desc, (tuple, list)):
+             configure_error(
+                 "package_desc must be a string or a tuple or list of strings"
+             )
+@@ -135,24 +137,33 @@ def pkg_check_modules(var, package_desc,
+             sys.exit(1)
+ 
+     @depends(pkg_config, pkg_config_env, package_desc, when=package)
+     @checking("%s_CFLAGS" % var, callback=lambda t: " ".join(t))
+     def pkg_cflags(pkg_config, env, package_desc):
+         flags = check_cmd_output(pkg_config, "--cflags", package_desc, env=env)
+         return tuple(flags.split())
+ 
+-    @depends(pkg_config, pkg_config_env, package_desc, when=package)
+-    @checking("%s_LIBS" % var, callback=lambda t: " ".join(t))
+-    def pkg_libs(pkg_config, env, package_desc):
+-        libs = check_cmd_output(pkg_config, "--libs", package_desc, env=env)
+-        # Remove evil flags like -Wl,--export-dynamic
+-        return tuple(libs.replace("-Wl,--export-dynamic", "").split())
++    if cflags_only:
++
++        @depends(pkg_cflags, when=package)
++        def pkg_info(cflags):
++            return namespace(cflags=cflags)
++
++    else:
+ 
+-    @depends(pkg_cflags, pkg_libs, when=package)
+-    def pkg_info(cflags, libs):
+-        return namespace(cflags=cflags, libs=libs)
++        @depends(pkg_config, pkg_config_env, package_desc, when=package)
++        @checking("%s_LIBS" % var, callback=lambda t: " ".join(t))
++        def pkg_libs(pkg_config, env, package_desc):
++            libs = check_cmd_output(pkg_config, "--libs", package_desc, env=env)
++            # Remove evil flags like -Wl,--export-dynamic
++            return tuple(libs.replace("-Wl,--export-dynamic", "").split())
++
++        @depends(pkg_cflags, pkg_libs, when=package)
++        def pkg_info(cflags, libs):
++            return namespace(cflags=cflags, libs=libs)
+ 
+     if config:
+         set_config("%s_CFLAGS" % var, pkg_cflags)
+-        set_config("%s_LIBS" % var, pkg_libs)
++        if not cflags_only:
++            set_config("%s_LIBS" % var, pkg_libs)
+ 
+     return pkg_info
+diff --git a/toolkit/moz.configure b/toolkit/moz.configure
+--- a/toolkit/moz.configure
++++ b/toolkit/moz.configure
+@@ -1193,16 +1193,17 @@ def x11_libs(webrtc):
+             "xdamage",
+             "xfixes",
+             "xi",
+         ]
+     return libs
+ 
+ 
+ pkg_check_modules("MOZ_X11", x11_libs, when=toolkit_gtk)
++pkg_check_modules("MOZ_X11_SM", ["ice", "sm"], cflags_only=True, when=toolkit_gtk)
+ 
+ 
+ # ASan Reporter Addon
+ # ==============================================================
+ option(
+     "--enable-address-sanitizer-reporter",
+     help="Enable Address Sanitizer Reporter Extension",
+ )
+diff --git a/toolkit/xre/moz.build b/toolkit/xre/moz.build
+--- a/toolkit/xre/moz.build
++++ b/toolkit/xre/moz.build
+@@ -95,16 +95,17 @@ elif CONFIG["MOZ_WIDGET_TOOLKIT"] == "ui
+     UNIFIED_SOURCES += [
+         "nsNativeAppSupportDefault.cpp",
+         "UIKitDirProvider.mm",
+     ]
+ elif CONFIG["MOZ_WIDGET_TOOLKIT"] == "gtk":
+     UNIFIED_SOURCES += [
+         "nsNativeAppSupportUnix.cpp",
+     ]
++    CXXFLAGS += CONFIG["MOZ_X11_SM_CFLAGS"]
+ else:
+     UNIFIED_SOURCES += [
+         "nsNativeAppSupportDefault.cpp",
+     ]
+ 
+ if CONFIG["MOZ_HAS_REMOTE"]:
+     LOCAL_INCLUDES += [
+         "../components/remote",
+
