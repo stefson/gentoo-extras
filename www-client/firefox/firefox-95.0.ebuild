@@ -486,7 +486,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
 
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/0001-fix-regression-mozbg758848.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -610,6 +609,7 @@ src_configure() {
 		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
+		--without-wasm-sandboxed-libraries \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
