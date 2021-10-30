@@ -565,6 +565,8 @@ src_configure() {
 	# execute binary at runtime with: 
 	# LD_LIBRARY_PATH=/usr/lib/firefox /usr/bin/firefox
 
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
 
 	# Set MOZCONFIG
 	export MOZCONFIG="${S}/.mozconfig"
