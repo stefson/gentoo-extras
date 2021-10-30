@@ -512,8 +512,8 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${WORKDIR}/"0001-make-depends-functions-more-convenient.patch
-	eapply "${WORKDIR}/"0002-check-for-libice-and-libsm-in-configure.patch
+	eapply "${FILESDIR}/"0001-make-depends-functions-more-convenient.patch
+	eapply "${FILESDIR}/"0002-check-for-libice-and-libsm-in-configure.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
