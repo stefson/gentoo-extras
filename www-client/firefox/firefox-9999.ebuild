@@ -217,7 +217,7 @@ src_configure() {
 	mozconfig_annotate '' --enable-optimize=-O2
 
 	# needs --with-wasi-sysroot, whatever that is
-	mozconfig_annotate '' --without-wasm-sandboxed-libraries.
+	mozconfig_annotate '' --without-wasm-sandboxed-libraries
 
 	# Allow for a proper pgo build
 	if use pgo; then
