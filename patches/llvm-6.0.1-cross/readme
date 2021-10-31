@@ -1,5 +1,0 @@
-untar, cd and mkdir build, cd build, then: 
-
-cmake .. -G Ninja -DCMAKE_CROSSCOMPILING=True -DCMAKE_INSTALL_PREFIX=/usr/armv7a-unknown-linux-gnueabihf/usr/lib/llvm/6/ -DLLVM_TABLEGEN=/usr/lib/llvm/6/bin/llvm-tblgen -DLLVM_DEFAULT_TARGET_TRIPLE=armv7a-unknown-linux-gnueabihf -DLLVM_TARGET_ARCH=ARM -DLLVM_TARGETS_TO_BUILD=ARM -DLLVM_BUILD_TESTS=no -DLLVM_BUILD_DOCS=no -DCMAKE_TOOLCHAIN_FILE=/tmp/toolchain-armv7a-unknown-linux-gnueabihf -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_LIBXML2=no
-
---> make -jN or ninja if choosen
