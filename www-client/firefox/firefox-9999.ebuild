@@ -216,6 +216,9 @@ src_configure() {
 
 	mozconfig_annotate '' --enable-optimize=-O2
 
+	# needs --with-wasi-sysroot, whatever that is
+	mozconfig_annotate '' --without-wasm-sandboxed-libraries.
+
 	# Allow for a proper pgo build
 	if use pgo; then
 		echo "mk_add_options PROFILE_GEN_SCRIPT='EXTRA_TEST_ARGS=10 \$(MAKE) -C \$(MOZ_OBJDIR) pgo-profile-run'" >> "${S}"/.mozconfig
