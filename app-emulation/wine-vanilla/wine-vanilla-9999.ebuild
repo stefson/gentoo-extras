@@ -14,7 +14,7 @@ MY_P="${MY_PN}-${PV}"
 if [[ ${PV} == "9999" ]] ; then
 	EGIT_REPO_URI="https://source.winehq.org/git/wine.git"
 	EGIT_BRANCH="master"
-	#EGIT_OVERRIDE_COMMIT_WINE=""
+	EGIT_OVERRIDE_COMMIT_WINE="2f2ac792427348b9172a8d269780002a484ab16e"
 	inherit git-r3
 	SRC_URI=""
 	#KEYWORDS=""
