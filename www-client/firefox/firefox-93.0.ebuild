@@ -513,11 +513,6 @@ src_prepare() {
 	eapply "${FILESDIR}"/0001-fix-jpeg-xl-on-aarch64.patch
 	eapply "${FILESDIR}"/0002-fix-aarch-wasm.patch
 
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v2.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v3.patch
-	eapply "${FILESDIR}"/firefox-93.0-rust-1.56-support-v4.patch
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
