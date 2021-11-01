@@ -483,6 +483,7 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	# upstreamed and fixed in 94.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0017-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
 
 	eapply "${WORKDIR}/firefox-patches"
