@@ -21,7 +21,7 @@ else
 	MAJOR_V=$(ver_cut 1)
 	MINOR_V=$(ver_cut 2)
 	SRC_URI="https://dl.winehq.org/wine/source/${MAJOR_V}.${MINOR_V}/${MY_P}.tar.xz"
-	#KEYWORDS="-* amd64 ~x86 ~x86-fbsd"
+	KEYWORDS="-* amd64 ~x86 ~x86-fbsd"
 fi
 S="${WORKDIR}/${MY_P}"
 
@@ -146,6 +146,7 @@ PATCHES=(
 	"${FILESDIR}/wine-4.0.2-staging-setpixelformat.patch" #18490
 #	"${FILESDIR}/wine-5.0-fix-directx-installs.patch" #36059
 	"${FILESDIR}/wine-4.0.3-staging-implement-CreateSymbolicLink.patch" #44948
+	"${FILESDIR}/wine-5.21-fix-autoconf-270.patch" # https://github.com/wine-mirror/wine/commit/d7645b67c350f7179a1eba749ec4524c74948d86
 
 )
 PATCHES_BIN=()
