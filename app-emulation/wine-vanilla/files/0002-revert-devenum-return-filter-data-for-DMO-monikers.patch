@@ -1,0 +1,194 @@
+diff --git a/dlls/devenum/createdevenum.c b/dlls/devenum/createdevenum.c
+index c72bb68..a3b9447 100644
+--- a/dlls/devenum/createdevenum.c
++++ b/dlls/devenum/createdevenum.c
+@@ -351,44 +351,40 @@ static void free_regfilter2(REGFILTER2 *rgf)
+     }
+ }
+ 
+-HRESULT create_filter_data(VARIANT *var, REGFILTER2 *rgf)
++static void write_filter_data(IPropertyBag *prop_bag, REGFILTER2 *rgf)
+ {
++    BYTE *data = NULL, *array;
+     IAMFilterData *fildata;
+-    BYTE *data = NULL;
++    SAFEARRAYBOUND sabound;
++    VARIANT var = {};
+     ULONG size;
+     HRESULT hr;
+ 
+     hr = CoCreateInstance(&CLSID_FilterMapper2, NULL, CLSCTX_INPROC, &IID_IAMFilterData, (void **)&fildata);
+-    if (FAILED(hr))
+-        return hr;
++    if (FAILED(hr)) goto cleanup;
+ 
+     hr = IAMFilterData_CreateFilterData(fildata, rgf, &data, &size);
+-    IAMFilterData_Release(fildata);
+-    if (FAILED(hr))
+-        return hr;
++    if (FAILED(hr)) goto cleanup;
+ 
+-    V_VT(var) = VT_ARRAY | VT_UI1;
+-    if (!(V_ARRAY(var) = SafeArrayCreateVector(VT_UI1, 1, size)))
+-    {
+-        VariantClear(var);
+-        CoTaskMemFree(data);
+-        return E_OUTOFMEMORY;
+-    }
++    V_VT(&var) = VT_ARRAY | VT_UI1;
++    sabound.lLbound = 0;
++    sabound.cElements = size;
++    if (!(V_ARRAY(&var) = SafeArrayCreate(VT_UI1, 1, &sabound)))
++        goto cleanup;
++    hr = SafeArrayAccessData(V_ARRAY(&var), (void *)&array);
++    if (FAILED(hr)) goto cleanup;
+ 
+-    memcpy(V_ARRAY(var)->pvData, data, size);
+-    CoTaskMemFree(data);
+-    return S_OK;
+-}
++    memcpy(array, data, size);
++    hr = SafeArrayUnaccessData(V_ARRAY(&var));
++    if (FAILED(hr)) goto cleanup;
+ 
+-static void write_filter_data(IPropertyBag *prop_bag, REGFILTER2 *rgf)
+-{
+-    VARIANT var;
++    hr = IPropertyBag_Write(prop_bag, L"FilterData", &var);
++    if (FAILED(hr)) goto cleanup;
+ 
+-    if (SUCCEEDED(create_filter_data(&var, rgf)))
+-    {
+-        IPropertyBag_Write(prop_bag, L"FilterData", &var);
+-        VariantClear(&var);
+-    }
++cleanup:
++    VariantClear(&var);
++    CoTaskMemFree(data);
++    IAMFilterData_Release(fildata);
+ }
+ 
+ static void register_legacy_filters(void)
+diff --git a/dlls/devenum/devenum_private.h b/dlls/devenum/devenum_private.h
+index 15c41af..bd018a4 100644
+--- a/dlls/devenum/devenum_private.h
++++ b/dlls/devenum/devenum_private.h
+@@ -54,7 +54,6 @@ struct moniker
+     IPropertyBag IPropertyBag_iface;
+ };
+ 
+-HRESULT create_filter_data(VARIANT *var, REGFILTER2 *rgf) DECLSPEC_HIDDEN;
+ struct moniker *dmo_moniker_create(const GUID class, const GUID clsid) DECLSPEC_HIDDEN;
+ struct moniker *codec_moniker_create(const GUID *class, const WCHAR *name) DECLSPEC_HIDDEN;
+ struct moniker *filter_moniker_create(const GUID *class, const WCHAR *name) DECLSPEC_HIDDEN;
+diff --git a/dlls/devenum/mediacatenum.c b/dlls/devenum/mediacatenum.c
+index 16b729a..85634ea 100644
+--- a/dlls/devenum/mediacatenum.c
++++ b/dlls/devenum/mediacatenum.c
+@@ -28,35 +28,6 @@
+ 
+ WINE_DEFAULT_DEBUG_CHANNEL(devenum);
+ 
+-BOOL array_reserve(void **elements, unsigned int *capacity, unsigned int count, unsigned int size)
+-{
+-    unsigned int max_capacity, new_capacity;
+-    void *new_elements;
+-
+-    if (count <= *capacity)
+-        return TRUE;
+-
+-    max_capacity = ~0u / size;
+-    if (count > max_capacity)
+-        return FALSE;
+-
+-    new_capacity = max(8, *capacity);
+-    while (new_capacity < count && new_capacity <= max_capacity / 2)
+-        new_capacity *= 2;
+-    if (new_capacity < count)
+-        new_capacity = count;
+-
+-    if (!(new_elements = realloc(*elements, new_capacity * size)))
+-    {
+-        ERR("Failed to allocate memory.\n");
+-        return FALSE;
+-    }
+-
+-    *elements = new_elements;
+-    *capacity = new_capacity;
+-    return TRUE;
+-}
+-
+ typedef struct
+ {
+     IEnumMoniker IEnumMoniker_iface;
+@@ -135,70 +106,6 @@ static HRESULT WINAPI property_bag_Read(IPropertyBag *iface,
+             }
+             return hr;
+         }
+-        else if (!wcscmp(name, L"FilterData"))
+-        {
+-            REGFILTERPINS2 reg_pins[2] = {{0}};
+-            REGFILTER2 reg_filter =
+-            {
+-                .dwVersion = 2,
+-                .dwMerit = MERIT_NORMAL + 0x800,
+-                .cPins2 = 2,
+-                .rgPins2 = reg_pins,
+-            };
+-
+-            unsigned int count = 1, input_count, output_count, i;
+-            DMO_PARTIAL_MEDIATYPE *types = NULL;
+-            REGPINTYPES *reg_types;
+-            HRESULT hr;
+-
+-            if (!(types = malloc(2 * count * sizeof(*types))))
+-                return E_OUTOFMEMORY;
+-
+-            while ((hr = DMOGetTypes(&moniker->clsid, count, &input_count, types,
+-                    count, &output_count, types + count)) == S_FALSE)
+-            {
+-                count *= 2;
+-                if (!(types = realloc(types, count * sizeof(*types))))
+-                {
+-                    free(types);
+-                    return E_OUTOFMEMORY;
+-                }
+-            }
+-            if (hr != S_OK)
+-            {
+-                free(types);
+-                return hr;
+-            }
+-
+-            if (!(reg_types = malloc(2 * count * sizeof(*reg_types))))
+-            {
+-                free(types);
+-                return hr;
+-            }
+-
+-            for (i = 0; i < input_count; ++i)
+-            {
+-                reg_types[i].clsMajorType = &types[i].type;
+-                reg_types[i].clsMinorType = &types[i].subtype;
+-            }
+-            for (i = 0; i < output_count; ++i)
+-            {
+-                reg_types[count + i].clsMajorType = &types[count + i].type;
+-                reg_types[count + i].clsMinorType = &types[count + i].subtype;
+-            }
+-            reg_pins[0].cInstances = 1;
+-            reg_pins[0].nMediaTypes = input_count;
+-            reg_pins[0].lpMediaType = reg_types;
+-            reg_pins[1].dwFlags = REG_PINFLAG_B_OUTPUT;
+-            reg_pins[1].cInstances = 1;
+-            reg_pins[1].nMediaTypes = output_count;
+-            reg_pins[1].lpMediaType = reg_types + count;
+-
+-            hr = create_filter_data(var, &reg_filter);
+-            free(reg_types);
+-            free(types);
+-            return hr;
+-        }
+         return HRESULT_FROM_WIN32(ERROR_NOT_FOUND);
+     }
+ 

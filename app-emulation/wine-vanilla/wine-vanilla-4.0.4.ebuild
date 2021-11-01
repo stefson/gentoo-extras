@@ -149,7 +149,6 @@ PATCHES=(
 
 	# build fixes
 	"${FILESDIR}/0001-fix-autoconf-270.patch" # https://github.com/wine-mirror/wine/commit/d7645b67c350f7179a1eba749ec4524c74948d86
-	"${FILESDIR}/0002-fix-crypt32-gcc-10-breakage.patch" # https://github.com/wine-mirror/wine/commit/5740b735cdb44fb89a41f3090dcc3dabf360ab41
 )
 PATCHES_BIN=()
 

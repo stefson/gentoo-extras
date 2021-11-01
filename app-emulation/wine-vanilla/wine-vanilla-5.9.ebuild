@@ -147,6 +147,7 @@ PATCHES=(
 
 	# fix build regression
 	"${FILESDIR}/0001-fix-autoconf-270.patch"
+	"${FILESDIR}/0002-revert-devenum-return-filter-data-for-DMO-monikers.patch"
 )
 PATCHES_BIN=()
 
