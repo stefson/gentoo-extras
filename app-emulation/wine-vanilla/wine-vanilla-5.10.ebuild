@@ -24,7 +24,7 @@ else
 fi
 S="${WORKDIR}/${MY_P}"
 
-GWP_V="20191222"
+GWP_V="20200523"
 PATCHDIR="${WORKDIR}/gentoo-wine-patches"
 
 DESCRIPTION="Free implementation of Windows(tm) on Unix, without external patchsets"
@@ -143,6 +143,7 @@ PATCHES=(
 	"${PATCHDIR}/patches/${MY_PN}-5.0-winegcc.patch" #260726
 	"${PATCHDIR}/patches/${MY_PN}-4.7-multilib-portage.patch" #395615
 	"${PATCHDIR}/patches/${MY_PN}-2.0-multislot-apploader.patch" #310611
+	"${PATCHDIR}/patches/${MY_PN}-5.9-Revert-makedep-Install-also-generated-typelib-for-in.patch"
 
 	# fix build regression
 	"${FILESDIR}/0001-fix-autoconf-270.patch"
@@ -421,10 +422,9 @@ multilib_src_configure() {
 		$(use_with xml xslt)
 	)
 
-	local PKG_CONFIG AR RANLIB
+	local PKG_CONFIG
 	# Avoid crossdev's i686-pc-linux-gnu-pkg-config if building wine32 on amd64; #472038
-	# set AR and RANLIB to make QA scripts happy; #483342
-	tc-export PKG_CONFIG AR RANLIB
+	tc-export PKG_CONFIG
 
 	if use amd64; then
 		if [[ ${ABI} == amd64 ]]; then
