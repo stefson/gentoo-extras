@@ -114,7 +114,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.71
+	>=dev-libs/nss-3.72
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
@@ -638,6 +638,7 @@ src_configure() {
 		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
+		--without-wasm-sandboxed-libraries \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
