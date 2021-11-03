@@ -14,7 +14,7 @@ WANT_AUTOCONF="2.1"
 
 VIRTUALX_REQUIRED="pgo"
 
-MOZ_ESR=1
+MOZ_ESR=yes
 
 MOZ_PV=${PV}
 MOZ_PV_SUFFIX=
@@ -59,7 +59,7 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
-SLOT="0/$(ver_cut 1)"
+SLOT="0/esr$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast sndio selinux
@@ -134,12 +134,12 @@ CDEPEND="
 	>=dev-libs/libffi-3.0.10:=
 	media-video/ffmpeg
 	x11-libs/libX11
+	x11-libs/libxcb
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
 	x11-libs/libXext
 	x11-libs/libXfixes
 	x11-libs/libXrender
-	x11-libs/libXt
 	dbus? (
 		sys-apps/dbus
 		dev-libs/dbus-glib
@@ -181,6 +181,8 @@ RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
+	x11-libs/libICE
+	x11-libs/libSM
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio
@@ -227,7 +229,7 @@ MOZ_LANGS=(
 	da de dsb el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu
 	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
 	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
-	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru
+	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco
 	si sk sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi
 	xh zh-CN zh-TW
 )
@@ -507,7 +509,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -605,12 +606,8 @@ src_configure() {
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
-	# for musl: add alpine patch and then uncomment
-	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
-
-	# execute binary at runtime with: 
-	# LD_LIBRARY_PATH=/usr/lib/firefox /usr/bin/firefox
-
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
 
 	# Set MOZCONFIG
 	export MOZCONFIG="${S}/.mozconfig"
@@ -1030,82 +1027,43 @@ src_install() {
 		newicon -s ${size} "${icon}" ${PN}.png
 	done
 
-	# Install menus
-	local wrapper_wayland="${PN}-wayland.sh"
-	local wrapper_x11="${PN}-x11.sh"
-	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
-	local display_protocols="auto X11"
+	# Install menu
+	local app_name="Mozilla ${MOZ_PN^}"
+	local desktop_file="${FILESDIR}/icon/${PN}-r3.desktop"
+	local desktop_filename="${PN}.desktop"
+	local exec_command="${PN}"
 	local icon="${PN}"
-	local name="Mozilla ${MOZ_PN^}"
 	local use_wayland="false"
 
 	if use wayland ; then
-		display_protocols+=" Wayland"
 		use_wayland="true"
 	fi
 
-	local app_name desktop_filename display_protocol exec_command
-	for display_protocol in ${display_protocols} ; do
-		app_name="${name} on ${display_protocol}"
-		desktop_filename="${PN}-${display_protocol,,}.desktop"
+	cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
 
-		case ${display_protocol} in
-			Wayland)
-				exec_command="${PN}-wayland --name ${PN}-wayland"
-				newbin "${FILESDIR}/${wrapper_wayland}" ${PN}-wayland
-				;;
-			X11)
-				if ! use wayland ; then
-					# Exit loop here because there's no choice so
-					# we don't need wrapper/.desktop file for X11.
-					continue
-				fi
+	sed -i \
+		-e "s:@NAME@:${app_name}:" \
+		-e "s:@EXEC@:${exec_command}:" \
+		-e "s:@ICON@:${icon}:" \
+		"${WORKDIR}/${PN}.desktop-template" \
+		|| die
 
-				exec_command="${PN}-x11 --name ${PN}-x11"
-				newbin "${FILESDIR}/${wrapper_x11}" ${PN}-x11
-				;;
-			*)
-				app_name="${name}"
-				desktop_filename="${PN}.desktop"
-				exec_command="${PN}"
-				;;
-		esac
+	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
 
-		cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
+	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-		sed -i \
-			-e "s:@NAME@:${app_name}:" \
-			-e "s:@EXEC@:${exec_command}:" \
-			-e "s:@ICON@:${icon}:" \
-			"${WORKDIR}/${PN}.desktop-template" \
-			|| die
-
-		newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
-
-		rm "${WORKDIR}/${PN}.desktop-template" || die
-	done
-
-	# Install generic wrapper script
+	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
-	newbin "${FILESDIR}/${PN}.sh" ${PN}
+	newbin "${FILESDIR}/${PN}-r1.sh" ${PN}
 
 	# Update wrapper
-	local wrapper
-	for wrapper in \
+	sed -i \
+		-e "s:@PREFIX@:${EPREFIX}/usr:" \
+		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
+		-e "s:@APULSELIB_DIR@:${apulselib}:" \
+		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}" \
-		"${ED}/usr/bin/${PN}-x11" \
-		"${ED}/usr/bin/${PN}-wayland" \
-	; do
-		[[ ! -f "${wrapper}" ]] && continue
-
-		sed -i \
-			-e "s:@PREFIX@:${EPREFIX}/usr:" \
-			-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
-			-e "s:@APULSELIB_DIR@:${apulselib}:" \
-			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-			"${wrapper}" \
-			|| die
-	done
+		|| die
 }
 
 pkg_preinst() {
@@ -1148,23 +1106,20 @@ pkg_postinst() {
 		elog
 	fi
 
-	local show_doh_information show_normandy_information
+	local show_doh_information show_normandy_information show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
 		# New install; Tell user that DoH is disabled by default
 		show_doh_information=yes
 		show_normandy_information=yes
+		show_shortcut_information=no
 	else
 		local replacing_version
 		for replacing_version in ${REPLACING_VERSIONS} ; do
-			if ver_test "${replacing_version}" -lt 70 ; then
-				# Tell user only once about our DoH default
-				show_doh_information=yes
-			fi
-
-			if ver_test "${replacing_version}" -lt 74.0-r2 ; then
-				# Tell user only once about our Normandy default
-				show_normandy_information=yes
+			if ver_test "${replacing_version}" -lt 91.0 ; then
+				# Tell user that we no longer install a shortcut
+				# per supported display protocol
+				show_shortcut_information=yes
 			fi
 		done
 	fi
@@ -1195,5 +1150,13 @@ pkg_postinst() {
 		elog
 		elog "in about:config."
 	fi
-}
 
+	if [[ -n "${show_shortcut_information}" ]] ; then
+		elog
+		elog "Since firefox-91.0 we no longer install multiple shortcuts for"
+		elog "each supported display protocol.  Instead we will only install"
+		elog "one generic Mozilla Firefox shortcut."
+		elog "If you still want to be able to select between running Mozilla Firefox"
+		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
+	fi
+}
