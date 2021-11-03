@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-94-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -487,7 +487,6 @@ src_prepare() {
 	
 	# upstreamed and fixed in 94.0 beta branch
 	rm -v "${WORKDIR}"/firefox-patches/0017-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
