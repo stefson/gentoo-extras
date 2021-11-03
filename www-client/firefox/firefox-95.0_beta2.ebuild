@@ -67,7 +67,8 @@ IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	+system-libvpx +system-webp wayland wifi"
 
 REQUIRED_USE="debug? ( !system-av1 )
-	screencast? ( wayland )"
+	screencast? ( wayland )
+	wifi? ( dbus )"
 
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
@@ -134,10 +135,12 @@ CDEPEND="
 	>=dev-libs/libffi-3.0.10:=
 	media-video/ffmpeg
 	x11-libs/libX11
+	x11-libs/libxcb
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
 	x11-libs/libXext
 	x11-libs/libXfixes
+	x11-libs/libXrandr
 	x11-libs/libXrender
 	dbus? (
 		sys-apps/dbus
@@ -180,6 +183,8 @@ RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
+	x11-libs/libICE
+	x11-libs/libSM
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio
@@ -507,9 +512,9 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed and fixed in 94.0 beta branch
-#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
-
+ 	# upstreamed and fixed in 94.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
+ 
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -606,6 +611,9 @@ src_configure() {
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
+
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
 
 	# Set MOZCONFIG
 	export MOZCONFIG="${S}/.mozconfig"
@@ -1159,4 +1167,3 @@ pkg_postinst() {
 		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
 	fi
 }
-
