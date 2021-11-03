@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-91-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-91esr-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -507,12 +507,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
-	# upstreamed and fixed in 91esr branch
-	rm -v "${WORKDIR}"/firefox-patches/0011-bmo-1526653-Include-struct-definitions-for-user_vfp-.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1721326-Allow-dynamic-PTHREAD_STACK_MIN.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1721326-Use-small-stack-for-DoClone.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1726515-Workaround-for-GCC-calling-into-LLVM-ABI.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

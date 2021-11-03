@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-94-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -508,7 +508,7 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
 	# upstreamed and fixed in 94.0 beta branch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
