@@ -584,6 +584,9 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}"/privacy-patchset-91/firefox-60-disable-data-sharing-infobar.patch
+	eapply "${FILESDIR}"/privacy-patchset-91/firefox-60-disable-telemetry.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
