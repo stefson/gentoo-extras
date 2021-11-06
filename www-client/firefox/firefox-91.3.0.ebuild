@@ -590,6 +590,7 @@ src_prepare() {
 	# disable unwanted addons and pocket as well
 	eapply "${FILESDIR}"/privacy-patchset-91/remove_addons.patch
 	eapply "${FILESDIR}"/privacy-patchset-91/disable-pocket.patch
+	eapply "${FILESDIR}"/privacy-patchset-91/stop-undesired-requests.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -982,6 +983,14 @@ src_configure() {
 			mozconfig_add_options_ac "EXTRA_ECONF" --${opt#--}
 		done
 	fi
+	
+	### Disable features
+	mozconfig_add_options_ac '' --disable-accessibility
+	mozconfig_add_options_ac '' --disable-address-sanitizer
+	mozconfig_add_options_ac '' --disable-address-sanitizer-reporter
+
+	mozconfig_add_options_ac '' --disable-parental-controls
+	mozconfig_add_options_ac '' --without-pocket-api-keyfile
 
 	echo
 	echo "=========================================================="
