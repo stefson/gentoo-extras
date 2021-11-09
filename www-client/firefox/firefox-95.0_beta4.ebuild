@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-94-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-94-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -512,9 +512,10 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
- 	# upstreamed and fixed in 94.0 beta branch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1725828-Preload-dependencies-for-the-Widevine-CD.patch
- 
+ 	# upstreamed and fixed in 95.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1708718-Update-cubeb-coreaudio-to-5ada876.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735905-Upgrade-cubeb-pulse-to-fix-a-race-condit.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
