@@ -64,7 +64,7 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	dobin "${BUILD_DIR}/examples/jxlinfo"
+	dobin "${BUILD_DIR}/jxlinfo"
 	if ! use static-libs; then
 		rm "${ED}"/usr/$(get_libdir)/libjxl{,_dec}.a || die
 	fi
