@@ -13,7 +13,7 @@ EGIT_SUBMODULES=(third_party/lodepng third_party/skcms)
 
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE="apng doc gif jpeg +man openexr static-libs test viewers"
+IUSE="apng doc gif jpeg man openexr static-libs test viewers"
 
 RDEPEND="app-arch/brotli
 	media-libs/highway
