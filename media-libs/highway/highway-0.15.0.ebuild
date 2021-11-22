@@ -6,7 +6,7 @@ inherit cmake eutils
 
 DESCRIPTION="Efficient and performance-portable SIMD"
 HOMEPAGE="https://github.com/google/highway"
-SRC_URI="https://github.com/google/highway/archive/refs/tags/${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
+SRC_URI="https://github.com/google/highway/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
