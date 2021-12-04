@@ -486,6 +486,7 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	# upstreamed and fixed in 94.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0010-Fix-building-spellchecker-when-using-GCC-and-PGO.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1708718-Update-cubeb-coreaudio-to-5ada876.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735905-Upgrade-cubeb-pulse-to-fix-a-race-condit.patch
