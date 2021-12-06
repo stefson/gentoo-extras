@@ -50,6 +50,10 @@ pref("extensions.pocket.api", "");
 pref("extensions.pocket.site", "");
 pref("extensions.pocket.oAuthConsumerKey", "");
 pref("browser.newtabpage.activity-stream.section.highlights.includePocket",false);
+pref("services.sync.prefs.sync.browser.newtabpage.activity-stream.section.highlights.includePocket",false);
+pref("browser.newtabpage.activity-stream.section.highlights.includePocket",false);
+pref("extensions.pocket.showHome",false);
+pref("extensions.pocket.onSaveRecs",false);
 //pref("browser.bookmarks.showMobileBookmarks",false);
 
 // disable firefox sync! \o/
