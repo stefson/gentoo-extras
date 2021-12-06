@@ -584,8 +584,6 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-91/disable-pocket.patch
 	eapply "${FILESDIR}"/privacy-patchset-91/stop-undesired-requests.patch
 
-	#"${FILESDIR}"/privacy-patchset-91/privacy.js
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -1082,6 +1080,10 @@ src_install() {
 		sticky_pref("gfx.font_rendering.graphite.enabled", true);
 		EOF
 	fi
+
+	cat "${FILESDIR}"/privacy-patchset-91/91.0-privacy.js-1 >> \
+	"${GENTOO_PREFS}" \
+	|| die
 
 	rm -rv "${BUILD_DIR}"/browser/extensions/* || die
 	rm -rv "${BUILD_DIR}"/dist/bin/browser/features/* || die
