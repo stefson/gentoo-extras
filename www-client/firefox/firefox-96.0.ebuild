@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-94-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-95-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -78,6 +78,14 @@ BDEPEND="${PYTHON_DEPS}
 	>=virtual/rust-1.51.0
 	|| (
 		(
+			sys-devel/clang:14
+			sys-devel/llvm:14
+			clang? (
+				=sys-devel/lld-14*
+				pgo? ( =sys-libs/compiler-rt-sanitizers-14*[profile] )
+			)
+		)
+		(
 			sys-devel/clang:13
 			sys-devel/llvm:13
 			clang? (
@@ -89,7 +97,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:12
 			sys-devel/llvm:12
 			clang? (
-				=sys-devel/lld-12*
+				=sys-devel/lld-11*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
 			)
 		)
@@ -99,14 +107,6 @@ BDEPEND="${PYTHON_DEPS}
 			clang? (
 				=sys-devel/lld-11*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
-			clang? (
-				=sys-devel/lld-10*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
 			)
 		)
 	)
@@ -487,9 +487,7 @@ src_prepare() {
 	
 	# upstreamed and fixed in 94.0 beta branch
 	rm -v "${WORKDIR}"/firefox-patches/0010-Fix-building-spellchecker-when-using-GCC-and-PGO.patch
-	rm -v "${WORKDIR}"/firefox-patches/0017-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1708718-Update-cubeb-coreaudio-to-5ada876.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735905-Upgrade-cubeb-pulse-to-fix-a-race-condit.patch
+	rm -v "${WORKDIR}"/firefox-patches/0016-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
