@@ -46,6 +46,9 @@ pref("browser.discovery.enabled",false);
 
 // killswitch for pocket crap
 pref("extensions.pocket.enabled",false);
+pref("extensions.pocket.api", "");
+pref("extensions.pocket.site", "");
+pref("extensions.pocket.oAuthConsumerKey", "");
 pref("browser.newtabpage.activity-stream.section.highlights.includePocket",false);
 //pref("browser.bookmarks.showMobileBookmarks",false);
 
