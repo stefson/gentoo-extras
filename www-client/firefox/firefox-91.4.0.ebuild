@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-91esr-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-91esr-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -57,7 +57,7 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="amd64 arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/esr$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -108,14 +108,6 @@ BDEPEND="${PYTHON_DEPS}
 			clang? (
 				=sys-devel/lld-11*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
-			clang? (
-				=sys-devel/lld-10*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
 			)
 		)
 	)
@@ -592,6 +584,8 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-91/disable-pocket.patch
 	eapply "${FILESDIR}"/privacy-patchset-91/stop-undesired-requests.patch
 
+	#"${FILESDIR}"/privacy-patchset-91/privacy.js
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -818,8 +812,12 @@ src_configure() {
 
 			mozconfig_add_options_ac '+lto' --enable-lto=cross
 		else
+			# ld.gold is known to fail:
+			# /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.1/../../../../x86_64-pc-linux-gnu/bin/ld.gold: internal error in set_xindex, at /var/tmp/portage/sys-devel/	binutils-2.37_p1-r1/work/binutils-2.37/gold/object.h:1050
+			
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
+			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
 		fi
 
 		if use pgo ; then
@@ -955,6 +953,7 @@ src_configure() {
 
 	# Use system's Python environment
 	export MACH_USE_SYSTEM_PYTHON=1
+	export PIP_NO_CACHE_DIR=off
 
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1
@@ -1045,7 +1044,8 @@ src_install() {
 	# Install policy (currently only used to disable application updates)
 	insinto "${MOZILLA_FIVE_HOME}/distribution"
 	newins "${FILESDIR}"/distribution.ini distribution.ini
-	newins "${FILESDIR}"/disable-auto-update.policy.json policies.json
+	# tweaked policy, deletes search engines and sets some sensible defaults
+	newins "${FILESDIR}"/enable-privacy.policy.json policies.json
 
 	# Install system-wide preferences
 	local PREFS_DIR="${MOZILLA_FIVE_HOME}/browser/defaults/preferences"
@@ -1082,6 +1082,9 @@ src_install() {
 		sticky_pref("gfx.font_rendering.graphite.enabled", true);
 		EOF
 	fi
+
+	rm -rv "${BUILD_DIR}"/browser/extensions/* || die
+	rm -rv "${BUILD_DIR}"/dist/bin/browser/features/* || die
 
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
