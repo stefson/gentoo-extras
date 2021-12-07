@@ -821,6 +821,7 @@ src_configure() {
 
 	# Use system's Python environment
 	export MACH_USE_SYSTEM_PYTHON=1
+	export PIP_NO_CACHE_DIR=off
 
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1
