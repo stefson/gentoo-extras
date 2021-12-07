@@ -1,0 +1,46 @@
+# HG changeset patch
+# User Gijs Kruitbosch <gijskruitbosch@gmail.com>
+# Date 1638866113 0
+# Node ID 26c3e7e5467c543fc726f3d35f0a0ab97ca350bd
+# Parent  28315f772b05d2aa856071bb984ef2ca7cf49b78
+Bug 1744665 - un-bust local builds failing with rv being undefined in mach logging code, r=glandium
+
+Differential Revision: https://phabricator.services.mozilla.com/D133062
+
+diff --git a/python/mach/mach/logging.py b/python/mach/mach/logging.py
+--- a/python/mach/mach/logging.py
++++ b/python/mach/mach/logging.py
+@@ -122,30 +122,30 @@ class StructuredTerminalFormatter(Struct
+     def format(self, record):
+         formatted_msg = record.msg.format(**record.params)
+         elapsed_time = (
+             self.terminal.blue(format_seconds(self._time(record))) + " "
+             if self.write_times
+             else ""
+         )
+ 
++        rv = elapsed_time + self._colorize(formatted_msg) + self._sgr0
+         formatted_stack_trace_result = formatted_stack_trace(record, self)
+ 
+         if formatted_stack_trace_result != "":
+-            rv = elapsed_time + self._colorize(formatted_msg) + self.sgr0
+             stack_trace = "\n" + elapsed_time + formatted_stack_trace_result
+             rv += stack_trace.replace("\n", f"\n{elapsed_time}")
+ 
+         # Some processes (notably Clang) don't reset terminal attributes after
+         # printing newlines. This can lead to terminal attributes getting in a
+         # wonky state. Work around this by sending the sgr0 sequence after every
+         # line to reset all attributes. For programs that rely on the next line
+         # inheriting the same attributes, this will prevent that from happening.
+         # But that's better than "corrupting" the terminal.
+-        return rv + self.sgr0
++        return rv + self._sgr0
+ 
+     def _colorize(self, s):
+         if not self.terminal:
+             return s
+ 
+         result = s
+ 
+         reftest = s.startswith("REFTEST ")
+
