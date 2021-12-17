@@ -489,6 +489,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0010-Fix-building-spellchecker-when-using-GCC-and-PGO.patch
 	rm -v "${WORKDIR}"/firefox-patches/0016-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 
+	# Temporary fix to fatal pip check run, #828999
+	eapply "${FILESDIR}"/firefox-95-fix-fatal-pip-invocation.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
