@@ -486,11 +486,12 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	# upstreamed and fixed in 94.0 beta branch
+	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
 	rm -v "${WORKDIR}"/firefox-patches/0010-Fix-building-spellchecker-when-using-GCC-and-PGO.patch
 	rm -v "${WORKDIR}"/firefox-patches/0016-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 
 	# Temporary fix to fatal pip check run, #828999
-	eapply "${FILESDIR}"/firefox-95-fix-fatal-pip-invocation.patch
+	# eapply "${FILESDIR}"/firefox-95-fix-fatal-pip-invocation.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -649,7 +650,8 @@ src_configure() {
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
-	mozconfig_use_with system-libevent system-libevent "${SYSROOT}${EPREFIX}/usr"
+	mozconfig_use_with system-libevent system-libevent
+	# "${SYSROOT}${EPREFIX}/usr"
 	mozconfig_use_with system-libvpx
 	mozconfig_use_with system-webp
 
