@@ -576,6 +576,9 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
+	# Temporary fix to fatal pip check run, #828999
+	eapply "${FILESDIR}"/firefox-95-fix-fatal-pip-invocation.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
