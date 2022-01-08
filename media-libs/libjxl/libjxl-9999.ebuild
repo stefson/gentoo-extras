@@ -16,6 +16,7 @@ SLOT="0"
 IUSE="apng doc gif jpeg man openexr static-libs test viewers"
 
 RDEPEND="app-arch/brotli
+	dev-cpp/gflags
 	media-libs/highway
 	apng? (
 		media-libs/libpng
