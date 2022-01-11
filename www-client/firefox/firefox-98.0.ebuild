@@ -1,13 +1,13 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-95-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-96-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=13
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
@@ -487,12 +487,7 @@ src_prepare() {
 	
 	# upstreamed and fixed in 94.0 beta branch
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
-	rm -v "${WORKDIR}"/firefox-patches/0010-Fix-building-spellchecker-when-using-GCC-and-PGO.patch
-	rm -v "${WORKDIR}"/firefox-patches/0016-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-Make-elfhack-use-toolchain.patch
-
-	# Temporary fix to fatal pip check run, #828999
-	# eapply "${FILESDIR}"/firefox-95-fix-fatal-pip-invocation.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-Make-elfhack-use-toolchain.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
