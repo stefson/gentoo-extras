@@ -121,7 +121,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.74
+	>=dev-libs/nss-3.75
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
@@ -609,8 +609,8 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
-#		--with-system-nspr \
-#		--with-system-nss \
+		--with-system-nspr \
+		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
 		--without-wasm-sandboxed-libraries \
