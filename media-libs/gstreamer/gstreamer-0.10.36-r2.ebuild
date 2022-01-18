@@ -1,7 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 inherit eutils multilib multilib-minimal pax-utils
 
@@ -30,6 +30,7 @@ RDEPEND="${RDEPEND}
 	# ^^ queue2 move, mustn't have both libgstcoreleements.so and libgstqueue2.so at runtime providing the element at once
 
 src_prepare() {
+	default
 	# Disable silly test that's not guaranteed to pass on an arbitrary machine
 	epatch "${FILESDIR}/${PN}-0.10.36-disable-test_fail_abstract_new.patch"
 
