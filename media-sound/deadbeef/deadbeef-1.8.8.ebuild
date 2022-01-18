@@ -180,14 +180,11 @@ src_prepare() {
 }
 
 src_configure() {
-	if use ffmpeg; then
-		ffmpeg_configure="$(use_enable ffmpeg)"
-	fi
 
 	econf --disable-coreaudio \
 		--disable-portable \
 		--disable-static \
-		"${ffmpeg_configure}" \
+		$(use_enable ffmpeg) \
 		$(use_enable aac) \
 		--disable-adplug \
 		$(use_enable alac) \
