@@ -1,0 +1,63 @@
+diff --git a/plugins/gtkui/actionhandlers.c b/plugins/gtkui/actionhandlers.c
+index ae6cc60..b78a7f4 100644
+--- a/plugins/gtkui/actionhandlers.c
++++ b/plugins/gtkui/actionhandlers.c
+@@ -274,10 +274,12 @@ action_add_location_handler_cb (void *user_data) {
+         if (entry) {
+             const char *text = gtk_entry_get_text (entry);
+             if (text) {
++                char *text_copy = strdup(text);
++                char *trimmed_text = gtkui_trim_whitespace(text_copy, strlen(text_copy));
+                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+                 if (!deadbeef->plt_add_files_begin (plt, 0)) {
+                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+-                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, text, NULL, NULL, NULL);
++                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, trimmed_text, NULL, NULL, NULL);
+ #ifndef DISABLE_CUSTOM_TITLE
+                     if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+                         deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
+@@ -294,6 +296,8 @@ action_add_location_handler_cb (void *user_data) {
+                 if (plt) {
+                     deadbeef->plt_unref (plt);
+                 }
++
++                free (text_copy);
+             }
+         }
+     }
+diff --git a/plugins/gtkui/fileman.c b/plugins/gtkui/fileman.c
+index 1b8b765..a15bef6 100644
+--- a/plugins/gtkui/fileman.c
++++ b/plugins/gtkui/fileman.c
+@@ -663,3 +663,17 @@ show_file_chooser (const gchar          *title,
+     destroy_file_chooser (dlg);
+     return lst;
+ }
++
++char *
++gtkui_trim_whitespace(char *p, size_t len) {
++    char *meta = p;
++    while (*meta == ' ') {
++        meta++;
++    }
++    char *tail = p + len - 1;
++    while (tail > p && ((uint8_t)*tail) <= 0x20) {
++        *tail = 0;
++        tail--;
++    }
++    return meta;
++}
+diff --git a/plugins/gtkui/gtkui.h b/plugins/gtkui/gtkui.h
+index e278d5e..3647a9f 100644
+--- a/plugins/gtkui/gtkui.h
++++ b/plugins/gtkui/gtkui.h
+@@ -198,5 +198,9 @@ enum GtkuiFileChooserType {
+ GSList *
+ show_file_chooser (const gchar          *title,
+                    enum GtkuiFileChooserType type,
+                    gboolean             select_multiple);
++
++char *
++gtkui_trim_whitespace(char *p, size_t len);
++
+ #endif

@@ -172,6 +172,9 @@ src_prepare() {
 	eapply "${FILESDIR}/ffmpeg-git-patches/0007-replace-avcodec_decode_audio4-with-avcodec_receive_frame.patch"
 	eapply "${FILESDIR}/ffmpeg-git-patches/0008-ffmpeg-add-fallback-to-support-older-ffmpeg.patch"
 
+	# fix for url plenk in curl-7.78 and above
+	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
+		
 	rm -fr intl || die
 
 	eapply_user
