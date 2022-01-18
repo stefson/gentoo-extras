@@ -1,7 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
 GST_ORG_MODULE="gst-plugins-base"
 inherit eutils gstreamer
@@ -26,6 +26,7 @@ DEPEND="${RDEPEND}
 "
 
 src_prepare() {
+	default
 	# The AC_PATH_XTRA macro unnecessarily pulls in libSM and libICE even
 	# though they are not actually used. This needs to be fixed upstream by
 	# replacing AC_PATH_XTRA with PKG_CONFIG calls.
