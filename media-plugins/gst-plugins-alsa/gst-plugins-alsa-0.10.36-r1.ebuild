@@ -1,7 +1,7 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
 GST_ORG_MODULE=gst-plugins-base
 inherit gstreamer
@@ -13,6 +13,7 @@ RDEPEND=">=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
 
 src_prepare() {
+	default
 	gstreamer_system_link \
 		gst-libs/gst/interfaces:gstreamer-interfaces \
 		gst-libs/gst/audio:gstreamer-audio
