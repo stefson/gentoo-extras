@@ -38,7 +38,6 @@ LICENSE="BSD
 	gtk3? ( GPL-2 )
 	hotkeys? ( ZLIB )
 	lastfm? ( GPL-2 )
-	libav? ( GPL-2 )
 	libnotify? ( GPL-2 )
 	libsamplerate? ( GPL-2 )
 	m3u? ( ZLIB )
@@ -70,7 +69,7 @@ SLOT="0"
 
 IUSE="+alsa +flac +gtk2 +hotkeys +m3u +mad +mp3 +sndfile +vorbis
 	aac alac cdda cdparanoia converter cover cover-imlib2 cover-network curl dts dumb equalizer
-	ffmpeg gme gtk3 lastfm libav libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
+	ffmpeg gme gtk3 lastfm libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
 	nullout opus oss playlist-browser psf pulseaudio sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
 
 REQUIRED_USE="cdparanoia? ( cdda )
@@ -78,9 +77,7 @@ REQUIRED_USE="cdparanoia? ( cdda )
 	cover-imlib2? ( cover )
 	cover-network? ( cover curl )
 	cover? ( || ( gtk2 gtk3 ) )
-	ffmpeg? ( !libav )
 	lastfm? ( curl )
-	libav? ( !ffmpeg )
 	mp3? ( || ( mad mpg123 ) )
 	playlist-browser? ( || ( gtk2 gtk3 ) )
 	shell-exec? ( || ( gtk2 gtk3 ) )
@@ -102,7 +99,6 @@ RDEPEND="dev-libs/glib:2
 	curl? ( net-misc/curl:0 )
 	elibc_musl? ( sys-libs/queue-standalone )
 	ffmpeg? ( media-video/ffmpeg:0= )
-	libav? ( media-video/libav:0= )
 	flac? ( media-libs/flac:0 )
 	gme? ( sys-libs/zlib:0 )
 	gtk2? ( dev-libs/atk:0
@@ -173,10 +169,8 @@ src_prepare() {
 }
 
 src_configure() {
-	if use ffmpeg && ! use libav ; then
+	if use ffmpeg; then
 		ffmpeg_configure="$(use_enable ffmpeg)"
-	elif use libav && ! use ffmpeg ; then
-		ffmpeg_configure="$(use_enable libav ffmpeg)"
 	fi
 
 	econf --disable-coreaudio \
