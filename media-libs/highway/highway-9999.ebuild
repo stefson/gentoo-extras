@@ -20,7 +20,7 @@ SLOT="0"
 
 #IUSE=""
 
-PATCHES=( "${FILESDIR}/${P}-shared-libraries.patch" )
+#PATCHES=( "${FILESDIR}/${P}-shared-libraries.patch" )
 
 #S="${WORKDIR}/${MY_P}"
 
