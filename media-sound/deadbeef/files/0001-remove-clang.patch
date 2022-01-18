@@ -1,0 +1,101 @@
+diff --git a/acinclude.m4 b/acinclude.m4
+index 88bd105..757d07b 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -4,7 +4,7 @@
+ #
+ # SYNOPSIS
+ #
+-#   AX_CHECK_COMPILER_FLAGS(FLAGS, [ACTION-SUCCESS], [ACTION-FAILURE], [EXTRA-FLAGS])
++#   AX_CHECK_COMPILER_FLAGS(FLAGS, [ACTION-SUCCESS], [ACTION-FAILURE]
+ #
+ # DESCRIPTION
+ #
+@@ -53,13 +53,13 @@ dnl Some hackery here since AC_CACHE_VAL can't handle a non-literal varname:
+ AS_LITERAL_IF([$1],
+   [AC_CACHE_VAL(AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1]), [
+       ax_save_FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+-      _AC_LANG_PREFIX[]FLAGS="$1 $4"
++      _AC_LANG_PREFIX[]FLAGS="$1"
+       AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
+         AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=yes,
+         AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=no)
+       _AC_LANG_PREFIX[]FLAGS=$ax_save_FLAGS])],
+   [ax_save_FLAGS=$[]_AC_LANG_PREFIX[]FLAGS
+-   _AC_LANG_PREFIX[]FLAGS="$1 $4"
++   _AC_LANG_PREFIX[]FLAGS="$1"
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
+      eval AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=yes,
+      eval AS_TR_SH(ax_cv_[]_AC_LANG_ABBREV[]_flags_[$1])=no)
+diff --git a/configure.ac b/configure.ac
+index 486b521..92a48bb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -8,7 +8,7 @@ AM_SILENT_RULES([yes])
+ AM_MAINTAINER_MODE()
+ AC_USE_SYSTEM_EXTENSIONS
+ LT_INIT([disable-static])
+-AC_PROG_CC(clang)
++AC_PROG_CC
+ AC_PROG_CXX
+ AC_PROG_OBJC
+ AC_STDC_HEADERS
+@@ -76,9 +76,6 @@ dnl INSANE_CXXFLAGS="-Wcomment -Wchar-subscripts -Wunused-function -Wunused-valu
+ AC_SUBST(INSANE_CFLAGS)
+ AC_SUBST(INSANE_CXXFLAGS)
+ 
+-dnl Check for clang availability
+-AX_CHECK_COMPILER_FLAGS(-fblocks,[],[AC_MSG_ERROR(Clang is required to build DeaDBeeF. Please check the README file.)])
+-
+ AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL output plugin (default: enabled)])], [enable_nullout=$enableval], [enable_nullout=yes])
+ AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
+ AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
+@@ -337,7 +334,7 @@ AS_IF([test "${have_iconv}" = "yes"], [
+     AC_DEFINE(HAVE_LIBICONV,1,[Use libiconv instead of glibc iconv])
+ ])
+ 
+-AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [], -Werror)
++AX_CHECK_COMPILER_FLAGS(-msse2, HAVE_SSE2=1, [])
+ AS_IF([test "${HAVE_SSE2}"], [
+     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
+ ])
+diff --git a/plugins/gtkui/Makefile.am b/plugins/gtkui/Makefile.am
+index dd34276..c8a3111 100644
+--- a/plugins/gtkui/Makefile.am
++++ b/plugins/gtkui/Makefile.am
+@@ -94,9 +94,9 @@ GTKUI_SOURCES_GTK2 = $(GTKUI_SOURCES)
+ ddb_gui_GTK2_la_SOURCES = $(GTKUI_SOURCES_GTK2)
+ ddb_gui_GTK2_la_LDFLAGS = -module -avoid-version
+ 
+-ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la ../../analyzer/libanalyzer.la ../../scope/libscope.la $(JANSSON_LIBS) $(DISPATCH_LIBS)
++ddb_gui_GTK2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la ../../analyzer/libanalyzer.la ../../scope/libscope.la $(JANSSON_LIBS)
+ 
+-ddb_gui_GTK2_la_CFLAGS = -std=c99 -Werror -DGLIB_DISABLE_DEPRECATION_WARNINGS -DGDK_DISABLE_DEPRECATION_WARNINGS -DGTK_DISABLE_DEPRECATION_WARNINGS $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS) $(DISPATCH_CFLAGS) -DDDB_WARN_DEPRECATED=1
++ddb_gui_GTK2_la_CFLAGS = -std=c99 -Werror -DGLIB_DISABLE_DEPRECATION_WARNINGS -DGDK_DISABLE_DEPRECATION_WARNINGS -DGTK_DISABLE_DEPRECATION_WARNINGS $(GTK2_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS) -DDDB_WARN_DEPRECATED=1
+ 
+ endif
+ 
+@@ -106,8 +106,8 @@ GTKUI_SOURCES_GTK3 = deadbeefapp.c deadbeefapp.h $(GTKUI_SOURCES)
+ ddb_gui_GTK3_la_LDFLAGS = -module -avoid-version
+ 
+ ddb_gui_GTK3_la_SOURCES = $(GTKUI_SOURCES_GTK3)
+-ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la ../../analyzer/libanalyzer.la ../../scope/libscope.la $(JANSSON_LIBS) $(DISPATCH_LIBS)
+-ddb_gui_GTK3_la_CFLAGS = -std=c99 -Werror -DGLIB_DISABLE_DEPRECATION_WARNINGS -DGDK_DISABLE_DEPRECATION_WARNINGS -DGTK_DISABLE_DEPRECATION_WARNINGS $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS) $(DISPATCH_CFLAGS) -DDDB_WARN_DEPRECATED=1
++ddb_gui_GTK3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS) $(SM_LIBADD) ../libparser/libparser.la ../../shared/libtrkpropertiesutil.la ../../shared/libeqpreset.la ../../shared/libdeletefromdisk.la ../../shared/libtftintutil.la ../../analyzer/libanalyzer.la ../../scope/libscope.la $(JANSSON_LIBS)
++ddb_gui_GTK3_la_CFLAGS = -std=c99 -Werror -DGLIB_DISABLE_DEPRECATION_WARNINGS -DGDK_DISABLE_DEPRECATION_WARNINGS -DGTK_DISABLE_DEPRECATION_WARNINGS $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS) -DDDB_WARN_DEPRECATED=1
+ ddb_gui_GTK3_la_OBJCFLAGS = $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
+ 
+ nodist_ddb_gui_GTK3_la_SOURCES = gtkui-gresources.c
+diff --git a/plugins/gtkui/gtkui_api.h b/plugins/gtkui/gtkui_api.h
+index 6554404..7f0c2ce 100644
+--- a/plugins/gtkui/gtkui_api.h
++++ b/plugins/gtkui/gtkui_api.h
+@@ -263,7 +263,7 @@ typedef struct {
+     GtkWidget* (*create_pltmenu) (int plt_idx);
+ 
+     /// Obsolete: returns NULL
+-    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data);
++    GdkPixbuf *(*get_cover_art_pixbuf) (const char *uri, const char *artist, const char *album, int size, void (*callback)(void *user_data), void *user_data) DEPRECATED_202;
+     /// Obsolete: returns NULL
+     GdkPixbuf *(*cover_get_default_pixbuf) (void);
+ 

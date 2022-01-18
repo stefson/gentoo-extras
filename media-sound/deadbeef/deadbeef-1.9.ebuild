@@ -158,7 +158,8 @@ src_prepare() {
 
 	# fix for url plenk in curl-7.78 and above
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
-		
+	eapply "${FILESDIR}/0001-remove-clang.patch"
+
 	rm -fr intl || die
 
 	eapply_user
