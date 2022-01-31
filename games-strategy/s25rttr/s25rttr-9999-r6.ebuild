@@ -30,7 +30,7 @@ RDEPEND=">=app-arch/bzip2-1.0.6-r11
 	virtual/libiconv
 	virtual/opengl"
 DEPEND="${RDEPEND}
-	>=dev-libs/boost-1.73.0:0=[nls]
+	>=dev-libs/boost-1.73.0:=[nls]
 	sys-devel/gettext
 	test? ( sys-devel/clang )"
 BDEPEND="app-arch/unzip"
