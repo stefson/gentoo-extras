@@ -89,6 +89,14 @@ BDEPEND="${PYTHON_DEPS}
 	>=virtual/rust-1.53.0
 	|| (
 		(
+			sys-devel/clang:14
+			sys-devel/llvm:14
+			clang? (
+				=sys-devel/lld-14*
+				pgo? ( =sys-libs/compiler-rt-sanitizers-14*[profile] )
+			)
+		)
+		(
 			sys-devel/clang:13
 			sys-devel/llvm:13
 			clang? (
