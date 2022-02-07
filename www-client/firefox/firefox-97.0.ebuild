@@ -156,7 +156,7 @@ CDEPEND="
 		sys-apps/dbus
 		dev-libs/dbus-glib
 	)
-	screencast? ( media-video/pipewire:0/0.3 )
+	screencast? ( media-video/pipewire:= )
 	system-av1? (
 		>=media-libs/dav1d-0.9.3:=
 		>=media-libs/libaom-1.0.0:=
@@ -588,9 +588,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-Make-elfhack-use-toolchain.patch
 	eapply "${WORKDIR}/firefox-patches"
-
-	# Temporary fix to fatal pip check run, #828999
-	# eapply "${FILESDIR}"/firefox-95-fix-fatal-pip-invocation.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
