@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-96-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-97-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -585,8 +585,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-Make-elfhack-use-toolchain.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
