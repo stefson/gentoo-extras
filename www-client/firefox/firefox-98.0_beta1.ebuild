@@ -184,8 +184,6 @@ COMMON_DEPEND="
 	sndio? ( media-sound/sndio )"
 
 RDEPEND="${COMMON_DEPEND}
-	!www-client/firefox:0
-	!www-client/firefox:esr
 	jack? ( virtual/jack )
 	openh264? ( media-libs/openh264:*[plugin] )
 	pulseaudio? (
@@ -449,7 +447,7 @@ pkg_setup() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6400M"
+			CHECKREQS_DISK_BUILD="6500M"
 		fi
 
 		check-reqs_pkg_setup
@@ -826,12 +824,7 @@ src_configure() {
 		else
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
-			if tc-ld-is-gold; then
-				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
-				export MOZ_FORCE_GOLD=1
-			else
-				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
-			fi
+			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
 		fi
 
 		if use pgo ; then
