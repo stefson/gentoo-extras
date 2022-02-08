@@ -63,7 +63,7 @@ SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
-IUSE+=" jack lto +openh264 pgo pulseaudio sndio selinux"
+IUSE+=" jack libproxy lto +openh264 pgo pulseaudio sndio selinux"
 IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png +system-webp"
 IUSE+=" wayland wifi"
 
@@ -121,10 +121,10 @@ BDEPEND="${PYTHON_DEPS}
 			)
 		)
 	)
-	amd64? ( >=dev-lang/nasm-2.13 )
-	x86? ( >=dev-lang/nasm-2.13 )"
+	amd64? ( >=dev-lang/nasm-2.14 )
+	x86? ( >=dev-lang/nasm-2.14 )"
 
-CDEPEND="
+COMMON_DEPEND="
 	>=dev-libs/nss-3.75
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
@@ -135,11 +135,11 @@ CDEPEND="
 	>=x11-libs/pango-1.22.0
 	>=media-libs/mesa-10.2:*
 	media-libs/fontconfig
-	>=media-libs/freetype-2.4.10
+	>=media-libs/freetype-2.9
 	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
 	virtual/freedesktop-icon-theme
 	>=x11-libs/pixman-0.19.2
-	>=dev-libs/glib-2.26:2
+	>=dev-libs/glib-2.42:2
 	>=sys-libs/zlib-1.2.3
 	>=dev-libs/libffi-3.0.10:=
 	media-video/ffmpeg
@@ -156,6 +156,7 @@ CDEPEND="
 		sys-apps/dbus
 		dev-libs/dbus-glib
 	)
+	libproxy? ( net-libs/libproxy )
 	screencast? ( media-video/pipewire:= )
 	system-av1? (
 		>=media-libs/dav1d-0.9.3:=
@@ -182,7 +183,9 @@ CDEPEND="
 	selinux? ( sec-policy/selinux-mozilla )
 	sndio? ( media-sound/sndio )"
 
-RDEPEND="${CDEPEND}
+RDEPEND="${COMMON_DEPEND}
+	!www-client/firefox:0
+	!www-client/firefox:esr
 	jack? ( virtual/jack )
 	openh264? ( media-libs/openh264:*[plugin] )
 	pulseaudio? (
@@ -193,7 +196,7 @@ RDEPEND="${CDEPEND}
 	)
 	selinux? ( sec-policy/selinux-mozilla )"
 
-DEPEND="${CDEPEND}
+DEPEND="${COMMON_DEPEND}
 	x11-libs/libICE
 	x11-libs/libSM
 	pulseaudio? (
@@ -427,7 +430,7 @@ pkg_pretend() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6400M"
+			CHECKREQS_DISK_BUILD="6500M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -585,7 +588,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -703,10 +705,14 @@ src_configure() {
 		--disable-cargo-incremental \
 		--disable-crashreporter \
 		--disable-install-strip \
+		--disable-parental-controls \
 		--disable-strip \
 		--disable-updater \
+		--enable-negotiateauth \
+		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
+		--enable-sandbox \
 		--enable-system-ffi \
 		--enable-system-pixman \
 		--host="${CBUILD:-${CHOST}}" \
@@ -775,12 +781,13 @@ src_configure() {
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
-	mozconfig_use_with system-libevent system-libevent #"${SYSROOT}${EPREFIX}/usr"
+	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
 	mozconfig_use_enable dbus
+	mozconfig_use_enable libproxy
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
@@ -799,7 +806,7 @@ src_configure() {
 		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
 	fi
 
-	# mozconfig_use_enable sndio
+	mozconfig_use_enable sndio
 
 	mozconfig_use_enable wifi necko-wifi
 
@@ -815,13 +822,16 @@ src_configure() {
 			mozconfig_add_options_ac "forcing ld=lld due to USE=clang and USE=lto" --enable-linker=lld
 
 			mozconfig_add_options_ac '+lto' --enable-lto=cross
-		else
-			# ld.gold is known to fail:
-			# /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.1/../../../../x86_64-pc-linux-gnu/bin/ld.gold: internal error in set_xindex, at /var/tmp/portage/sys-devel/binutils-2.37_p1-r1/work/binutils-2.37/gold/object.h:1050
 
+		else
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
-			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			if tc-ld-is-gold; then
+				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
+				export MOZ_FORCE_GOLD=1
+			else
+				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			fi
 		fi
 
 		if use pgo ; then
@@ -838,7 +848,12 @@ src_configure() {
 			# This is upstream's default
 			mozconfig_add_options_ac "forcing ld=lld due to USE=clang" --enable-linker=lld
 		else
-			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			if tc-ld-is-gold; then
+				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
+				export MOZ_FORCE_GOLD=1
+			else
+				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			fi
 		fi
 	fi
 
