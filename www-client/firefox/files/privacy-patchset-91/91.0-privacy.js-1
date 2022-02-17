@@ -158,3 +158,7 @@ pref("browser.search.suggest.enabled", false);
 // this disables pip (video in page overlay crap)
 pref("media.videocontrols.picture-in-picture.enabled",false);
 pref("media.videocontrols.picture-in-picture.video-toggle.enabled",false);
+
+// this disables firefox-mpris caching of video screenshots
+
+pref("media.hardwaremediakeys.enabled",false);
