@@ -1,0 +1,53 @@
+# HG changeset patch
+# User stransky <stransky@redhat.com>
+# Date 1645171739 0
+# Node ID 4787f2d8a8736aa53610d447207b532591ce00d1
+# Parent  1bc937c674f2ee403939c9c0d72cf2a903b1f81d
+Bug 1754752 Remove constexpr from non constant functions r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D139022
+
+diff --git a/dom/animation/TimingParams.h b/dom/animation/TimingParams.h
+--- a/dom/animation/TimingParams.h
++++ b/dom/animation/TimingParams.h
+@@ -26,32 +26,29 @@ namespace mozilla {
+ namespace dom {
+ class UnrestrictedDoubleOrKeyframeEffectOptions;
+ class UnrestrictedDoubleOrKeyframeAnimationOptions;
+ }  // namespace dom
+ 
+ struct TimingParams {
+   constexpr TimingParams() = default;
+ 
+-  constexpr TimingParams(float aDuration, float aDelay, float aIterationCount,
+-                         dom::PlaybackDirection aDirection,
+-                         dom::FillMode aFillMode)
++  TimingParams(float aDuration, float aDelay, float aIterationCount,
++               dom::PlaybackDirection aDirection, dom::FillMode aFillMode)
+       : mIterations(aIterationCount), mDirection(aDirection), mFill(aFillMode) {
+     mDuration.emplace(StickyTimeDuration::FromMilliseconds(aDuration));
+     mDelay = TimeDuration::FromMilliseconds(aDelay);
+     Update();
+   }
+ 
+-  constexpr TimingParams(const TimeDuration& aDuration,
+-                         const TimeDuration& aDelay,
+-                         const TimeDuration& aEndDelay, float aIterations,
+-                         float aIterationStart,
+-                         dom::PlaybackDirection aDirection,
+-                         dom::FillMode aFillMode,
+-                         Maybe<ComputedTimingFunction>&& aFunction)
++  TimingParams(const TimeDuration& aDuration, const TimeDuration& aDelay,
++               const TimeDuration& aEndDelay, float aIterations,
++               float aIterationStart, dom::PlaybackDirection aDirection,
++               dom::FillMode aFillMode,
++               Maybe<ComputedTimingFunction>&& aFunction)
+       : mDelay(aDelay),
+         mEndDelay(aEndDelay),
+         mIterations(aIterations),
+         mIterationStart(aIterationStart),
+         mDirection(aDirection),
+         mFill(aFillMode),
+         mFunction(aFunction) {
+     mDuration.emplace(aDuration);
+
