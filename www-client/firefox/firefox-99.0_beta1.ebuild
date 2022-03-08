@@ -125,7 +125,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.14 )"
 
 COMMON_DEPEND="
-	>=dev-libs/nss-3.75
+	>=dev-libs/nss-3.76
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
@@ -587,12 +587,10 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
+
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}/gcc-12/0001-remove-constexpr-from-non-constant-functions.patch"
-	eapply "${FILESDIR}/gcc-12/0002-use-initializer-lists-in-some-swgl-constructors.patch"
-	eapply "${FILESDIR}/gcc-12/0003-avoid-a-ton-of-warning-spam-when-building-swgl-with-gcc.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
