@@ -483,6 +483,8 @@ src_unpack() {
 }
 
 src_prepare() {
+
+	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	# upstreamed and fixed in 94.0 beta branch
