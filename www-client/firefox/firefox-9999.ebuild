@@ -201,8 +201,6 @@ src_configure() {
 	mozconfig_annotate '' --with-google-location-service-api-keyfile="${S}/google-api-key"
 	mozconfig_annotate '' --with-google-safebrowsing-api-keyfile="${S}/google-api-key"
 
-	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
-
 	if use wayland; then
 		mozconfig_annotate '' --enable-default-toolkit=cairo-gtk3-wayland
 	else
