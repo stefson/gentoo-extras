@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-97-patches-03j.tar.xz"
+FIREFOX_PATCHSET="firefox-98-patches-03j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -582,6 +582,9 @@ src_configure() {
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
+
 	# Set MOZCONFIG
 	export MOZCONFIG="${S}/.mozconfig"
 
@@ -820,7 +823,7 @@ src_configure() {
 	export MOZ_MAKE_FLAGS="${MAKEOPTS}"
 
 	# Use system's Python environment
-	export MACH_USE_SYSTEM_PYTHON=1
+	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
 	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_MACH_SITE=1
 	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_BUILD_SITE=1
 	export PIP_NO_CACHE_DIR=off
