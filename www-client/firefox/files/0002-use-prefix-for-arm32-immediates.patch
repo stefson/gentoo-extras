@@ -1,0 +1,43 @@
+# HG changeset patch
+# User Jan de Mooij <jdemooij@mozilla.com>
+# Date 1646059825 0
+# Node ID b4a2877a21d60444a30417540c6e2c88de89d7f6
+# Parent  5348a5355b78f4f3aceaf898db773af569b6047f
+Bug 1756347 part 2 - Use # prefix for arm32 immediates. r=lth
+
+Depends on D139703
+
+Differential Revision: https://phabricator.services.mozilla.com/D139704
+
+diff --git a/js/src/jit/GenerateAtomicOperations.py b/js/src/jit/GenerateAtomicOperations.py
+--- a/js/src/jit/GenerateAtomicOperations.py
++++ b/js/src/jit/GenerateAtomicOperations.py
+@@ -661,22 +661,22 @@ def gen_copy(fun_name, cpp_type, size, u
+                 insns += fmt_insn("ldrb %w[scratch], [%x[src], OFFSET]")
+                 insns += fmt_insn("strb %w[scratch], [%x[dst], OFFSET]")
+             else:
+                 assert size == 8
+                 insns += fmt_insn("ldr %x[scratch], [%x[src], OFFSET]")
+                 insns += fmt_insn("str %x[scratch], [%x[dst], OFFSET]")
+         elif cpu_arch == "arm":
+             if size == 1:
+-                insns += fmt_insn("ldrb %[scratch], [%[src], OFFSET]")
+-                insns += fmt_insn("strb %[scratch], [%[dst], OFFSET]")
++                insns += fmt_insn("ldrb %[scratch], [%[src], #OFFSET]")
++                insns += fmt_insn("strb %[scratch], [%[dst], #OFFSET]")
+             else:
+                 assert size == 4
+-                insns += fmt_insn("ldr %[scratch], [%[src], OFFSET]")
+-                insns += fmt_insn("str %[scratch], [%[dst], OFFSET]")
++                insns += fmt_insn("ldr %[scratch], [%[src], #OFFSET]")
++                insns += fmt_insn("str %[scratch], [%[dst], #OFFSET]")
+         else:
+             raise Exception("Unexpected arch")
+         insns = insns.replace("OFFSET", str(offset * size))
+ 
+         if direction == "down":
+             offset += 1
+         else:
+             offset -= 1
+
+

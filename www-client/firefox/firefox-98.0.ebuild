@@ -576,6 +576,10 @@ src_prepare() {
 	eapply "${FILESDIR}/gcc-12/0002-use-initializer-lists-in-some-swgl-constructors.patch"
 	eapply "${FILESDIR}/gcc-12/0003-avoid-a-ton-of-warning-spam-when-building-swgl-with-gcc.patch"
 
+	eapply "${FILESDIR}/0001-work-around-a-gcc-issue-with-generated-atomics.patch"
+	eapply "${FILESDIR}/0002-use-prefix-for-arm32-immediates.patch"
+
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
