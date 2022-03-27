@@ -578,7 +578,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/0001-work-around-a-gcc-issue-with-generated-atomics.patch"
 	eapply "${FILESDIR}/0002-use-prefix-for-arm32-immediates.patch"
-
+	eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

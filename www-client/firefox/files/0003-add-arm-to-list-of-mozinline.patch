@@ -1,0 +1,13 @@
+diff --git a/js/src/jit/GenerateAtomicOperations.py b/js/src/jit/GenerateAtomicOperations.py
+index d8a38a0..65f91ab 100644
+--- a/js/src/jit/GenerateAtomicOperations.py
++++ b/js/src/jit/GenerateAtomicOperations.py
+@@ -856,7 +856,7 @@ def generate_atomics_header(c_out):
+ 
+         # Work around a GCC issue on 32-bit x86 by adding MOZ_NEVER_INLINE.
+         # See bug 1756347.
+-        if is_gcc and cpu_arch == "x86":
++        if is_gcc and cpu_arch in ("x86", "arm"):
+             contents = contents.replace("INLINE_ATTR", "MOZ_NEVER_INLINE inline")
+         else:
+             contents = contents.replace("INLINE_ATTR", "inline")
