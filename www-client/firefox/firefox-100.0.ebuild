@@ -492,8 +492,9 @@ src_prepare() {
 	# upstreamed and fixed in 94.0 beta branch
 
 	eapply "${WORKDIR}/firefox-patches"
-
 	eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
+	# needed to build with USE -dbus
+	eapply "${FILESDIR}/0001-revert-mozbg-1760839-and-1761663.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
