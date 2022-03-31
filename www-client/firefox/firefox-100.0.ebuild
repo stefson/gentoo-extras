@@ -484,7 +484,7 @@ src_unpack() {
 
 src_prepare() {
 
-	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
+	# rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
@@ -494,7 +494,7 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 	eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
 	# needed to build with USE -dbus
-	eapply "${FILESDIR}/0001-revert-mozbg-1760839-and-1761663.patch"
+	# eapply "${FILESDIR}/0001-revert-mozbg-1760839-and-1761663.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -674,7 +674,8 @@ src_configure() {
 	mozconfig_use_enable pulseaudio
 	# force the deprecated alsa sound code if pulseaudio is disabled
 	if use kernel_linux && ! use pulseaudio ; then
-		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
+		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
+#		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
 	fi
 
 	mozconfig_use_enable wifi necko-wifi
