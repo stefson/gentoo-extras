@@ -121,7 +121,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.76
+	>=dev-libs/nss-3.76.1
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
@@ -158,7 +158,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.9.1:0=
+		>=media-libs/harfbuzz-3.4.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
 	system-icu? ( >=dev-libs/icu-70.1:= )
@@ -484,7 +484,7 @@ src_unpack() {
 
 src_prepare() {
 
-	# rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
+	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
@@ -674,8 +674,8 @@ src_configure() {
 	mozconfig_use_enable pulseaudio
 	# force the deprecated alsa sound code if pulseaudio is disabled
 	if use kernel_linux && ! use pulseaudio ; then
-		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
-#		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
+#		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
+		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
 	fi
 
 	mozconfig_use_enable wifi necko-wifi
