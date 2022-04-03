@@ -1,17 +1,17 @@
-From beeff52f9277ea1c855846b594cdbac1aac05ebf Mon Sep 17 00:00:00 2001
+From 3dbba3e34c5d7f90591e44724ec9ca3912e3ceb2 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Fri, 8 Sep 2017 00:04:29 -0500
-Subject: [PATCH 02/15] Fix LLVM build
+Subject: [PATCH] Fix LLVM build
 
 ---
  src/bootstrap/lib.rs | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
-index 852316a8d8d..9420aa524c3 100644
+index 24da44b933abc..55b309f66e634 100644
 --- a/src/bootstrap/lib.rs
 +++ b/src/bootstrap/lib.rs
-@@ -818,7 +818,7 @@ impl Build {
+@@ -840,7 +840,7 @@ impl Build {
              .args()
              .iter()
              .map(|s| s.to_string_lossy().into_owned())
@@ -20,6 +20,4 @@ index 852316a8d8d..9420aa524c3 100644
              .collect::<Vec<String>>();
  
          // If we're compiling on macOS then we add a few unconditional flags
--- 
-2.26.2
 
