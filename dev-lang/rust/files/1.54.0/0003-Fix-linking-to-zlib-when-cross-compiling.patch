@@ -1,17 +1,17 @@
-From 7ed740283e772aa952d1b83059b8e17144e35137 Mon Sep 17 00:00:00 2001
+From c4cc7ba716ff714b7b5aad99036abeb5ff8f07a5 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Wed, 10 Jan 2018 13:36:41 -0600
-Subject: [PATCH 03/15] Fix linking to zlib when cross-compiling
+Subject: [PATCH] Fix linking to zlib when cross-compiling
 
 ---
  compiler/rustc_llvm/build.rs | 7 +++----
  1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
-index 7f1e5cf336a..734e40febc3 100644
+index 452d1b19a18a8..5c5f77dd5a2cc 100644
 --- a/compiler/rustc_llvm/build.rs
 +++ b/compiler/rustc_llvm/build.rs
-@@ -192,16 +192,15 @@ fn main() {
+@@ -176,16 +176,15 @@ fn main() {
      // of llvm-config, not the target that we're attempting to link.
      let mut cmd = Command::new(&llvm_config);
      cmd.arg(llvm_link_arg).arg("--libs");
@@ -30,6 +30,5 @@ index 7f1e5cf336a..734e40febc3 100644
 -    cmd.args(&components);
  
      for lib in output(&mut cmd).split_whitespace() {
-         let name = if lib.starts_with("-l") {
--- 
-2.26.2
+         let name = if let Some(stripped) = lib.strip_prefix("-l") {
+
