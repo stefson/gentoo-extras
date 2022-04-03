@@ -136,15 +136,14 @@ PATCHES=(
 	"${FILESDIR}"/${PV}/0006-Remove-musl_root-and-CRT-fallback-from-musl-targets.patch
 	"${FILESDIR}"/${PV}/0007-Prefer-libgcc_eh-over-libunwind-for-musl.patch
 	"${FILESDIR}"/${PV}/0008-Link-libssp_nonshared.a-on-all-musl-targets.patch
-
-#	"${FILESDIR}"/${PV}/0009-test-failed-doctest-output-Fix-normalization.patch
+	"${FILESDIR}"/${PV}/0009-test-failed-doctest-output-Fix-normalization.patch
 	"${FILESDIR}"/${PV}/0010-test-sysroot-crates-are-unstable-Fix-test-when-rpath.patch
 	"${FILESDIR}"/${PV}/0011-test-use-extern-for-plugins-Don-t-assume-multilib.patch
 	"${FILESDIR}"/${PV}/0012-Ignore-broken-and-non-applicable-tests.patch
-
 	"${FILESDIR}"/${PV}/0013-Link-stage-2-tools-dynamically-to-libstd.patch
 	"${FILESDIR}"/${PV}/0014-Move-debugger-scripts-to-usr-share-rust.patch
 	"${FILESDIR}"/${PV}/0015-Add-gentoo-target-specs.patch
+	"${FILESDIR}"/${PV}/0016-fix-ppc32.patch
 	"${FILESDIR}"/${PV}/0035-libc-linkage.patch
 	"${FILESDIR}"/${PV}/0040-rls-atomics.patch
 	"${FILESDIR}"/${PV}/0050-llvm.patch
