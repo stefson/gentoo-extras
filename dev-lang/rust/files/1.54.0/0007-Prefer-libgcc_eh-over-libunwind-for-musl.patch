@@ -1,0 +1,56 @@
+From a4f4ef88121d501e412d04630e995ee6612b6f4e Mon Sep 17 00:00:00 2001
+From: Samuel Holland <samuel@sholland.org>
+Date: Sat, 9 Sep 2017 00:14:16 -0500
+Subject: [PATCH] Prefer libgcc_eh over libunwind for musl
+
+---
+ library/unwind/build.rs   |  4 +---
+ library/unwind/src/lib.rs | 19 +++----------------
+ 2 files changed, 4 insertions(+), 19 deletions(-)
+
+diff --git a/library/unwind/build.rs b/library/unwind/build.rs
+index 0529d24a27408..0da74db729342 100644
+--- a/library/unwind/build.rs
++++ b/library/unwind/build.rs
+@@ -18,9 +18,7 @@ fn main() {
+         llvm_libunwind::compile();
+     } else if target.contains("linux") {
+         // linking for Linux is handled in lib.rs
+-        if target.contains("musl") {
+-            llvm_libunwind::compile();
+-        } else if target.contains("android") {
++        if target.contains("android") {
+             let build = cc::Build::new();
+ 
+             // Since ndk r23 beta 3 `libgcc` was replaced with `libunwind` thus
+diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
+index eaeec72fbb55b..22e40aa31d5c7 100644
+--- a/library/unwind/src/lib.rs
++++ b/library/unwind/src/lib.rs
+@@ -37,22 +37,9 @@ cfg_if::cfg_if! {
+ }
+ 
+ #[cfg(target_env = "musl")]
+-cfg_if::cfg_if! {
+-    if #[cfg(all(feature = "llvm-libunwind", feature = "system-llvm-libunwind"))] {
+-        compile_error!("`llvm-libunwind` and `system-llvm-libunwind` cannot be enabled at the same time");
+-    } else if #[cfg(feature = "llvm-libunwind")] {
+-        #[link(name = "unwind", kind = "static")]
+-        extern "C" {}
+-    } else if #[cfg(feature = "system-llvm-libunwind")] {
+-        #[link(name = "unwind", kind = "static-nobundle", cfg(target_feature = "crt-static"))]
+-        #[link(name = "unwind", cfg(not(target_feature = "crt-static")))]
+-        extern "C" {}
+-    } else {
+-        #[link(name = "unwind", kind = "static", cfg(target_feature = "crt-static"))]
+-        #[link(name = "gcc_s", cfg(not(target_feature = "crt-static")))]
+-        extern "C" {}
+-    }
+-}
++#[link(name = "gcc_eh", kind = "static-nobundle", cfg(target_feature = "crt-static"))]
++#[link(name = "gcc_s", cfg(not(target_feature = "crt-static")))]
++extern "C" {}
+ 
+ // When building with crt-static, we get `gcc_eh` from the `libc` crate, since
+ // glibc needs it, and needs it listed later on the linker command line. We
+
