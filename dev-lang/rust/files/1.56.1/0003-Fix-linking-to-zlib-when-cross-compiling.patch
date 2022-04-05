@@ -1,4 +1,4 @@
-From 8d040544049624f2b1f6e4fd45898a30085db35d Mon Sep 17 00:00:00 2001
+From 3b6975c7bda9dffee601aa4dd9580d3267c8e1ab Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Wed, 10 Jan 2018 13:36:41 -0600
 Subject: [PATCH] Fix linking to zlib when cross-compiling
@@ -8,7 +8,7 @@ Subject: [PATCH] Fix linking to zlib when cross-compiling
  1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
-index 452d1b19a18a8..5c5f77dd5a2cc 100644
+index 964b7cace9cd4..1f5314c30d143 100644
 --- a/compiler/rustc_llvm/build.rs
 +++ b/compiler/rustc_llvm/build.rs
 @@ -176,16 +176,15 @@ fn main() {
@@ -24,7 +24,7 @@ index 452d1b19a18a8..5c5f77dd5a2cc 100644
 +    if target.contains("windows-gnu") {
          println!("cargo:rustc-link-lib=shell32");
          println!("cargo:rustc-link-lib=uuid");
-     } else if target.contains("netbsd") || target.contains("haiku") {
+     } else if target.contains("netbsd") || target.contains("haiku") || target.contains("darwin") {
          println!("cargo:rustc-link-lib=z");
      }
 -    cmd.args(&components);

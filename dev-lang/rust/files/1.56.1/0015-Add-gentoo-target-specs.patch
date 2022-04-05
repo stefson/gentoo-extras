@@ -1,4 +1,4 @@
-From 96f0681ee33013bc356cdc596b525a14a69fbcdd Mon Sep 17 00:00:00 2001
+From 27c11501e84051c9f0e27b0f7f533f5ab21ac5be Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Mon, 17 Sep 2018 02:29:06 +0000
 Subject: [PATCH] Add gentoo target specs
@@ -90,7 +90,7 @@ index 0000000000000..af2c43703e887
 +    base
 +}
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index 0185132ee3698..32a36baef0bc1 100644
+index 273221360b8b5..70aeb1fcb2c1d 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
 @@ -737,7 +737,17 @@ macro_rules! supported_targets {
