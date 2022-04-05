@@ -485,6 +485,7 @@ src_unpack() {
 src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bgo-831903-pip-dont-fail-with-optional-deps.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
