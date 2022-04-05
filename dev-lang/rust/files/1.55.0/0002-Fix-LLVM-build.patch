@@ -1,4 +1,4 @@
-From 55e42a4f9f368e0ebe51d2f91de74aff6b486da1 Mon Sep 17 00:00:00 2001
+From ebffb39e9326575c0d494c959d9585dd1fe42768 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Fri, 8 Sep 2017 00:04:29 -0500
 Subject: [PATCH] Fix LLVM build
@@ -8,10 +8,10 @@ Subject: [PATCH] Fix LLVM build
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
-index 347236c655a02..320b98dcab5c1 100644
+index 245f3eada2af7..148498f2be57a 100644
 --- a/src/bootstrap/lib.rs
 +++ b/src/bootstrap/lib.rs
-@@ -845,7 +845,7 @@ impl Build {
+@@ -954,7 +954,7 @@ impl Build {
              .args()
              .iter()
              .map(|s| s.to_string_lossy().into_owned())

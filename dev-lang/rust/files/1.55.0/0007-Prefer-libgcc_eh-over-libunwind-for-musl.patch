@@ -1,4 +1,4 @@
-From a4f4ef88121d501e412d04630e995ee6612b6f4e Mon Sep 17 00:00:00 2001
+From a62bc8516a8100333bcdddc97fa9c3c4c08e3c50 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sat, 9 Sep 2017 00:14:16 -0500
 Subject: [PATCH] Prefer libgcc_eh over libunwind for musl

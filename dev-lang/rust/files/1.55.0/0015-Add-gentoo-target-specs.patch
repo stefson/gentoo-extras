@@ -1,4 +1,4 @@
-From 441e216c61d07bd48618dd3a0462727df13840ae Mon Sep 17 00:00:00 2001
+From 96f0681ee33013bc356cdc596b525a14a69fbcdd Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Mon, 17 Sep 2018 02:29:06 +0000
 Subject: [PATCH] Add gentoo target specs
@@ -90,10 +90,10 @@ index 0000000000000..af2c43703e887
 +    base
 +}
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index 0f2aaeb533a97..c63e9a0a929e9 100644
+index 0185132ee3698..32a36baef0bc1 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -703,7 +703,17 @@ macro_rules! supported_targets {
+@@ -737,7 +737,17 @@ macro_rules! supported_targets {
      };
  }
  
@@ -111,7 +111,7 @@ index 0f2aaeb533a97..c63e9a0a929e9 100644
      ("x86_64-unknown-linux-gnu", x86_64_unknown_linux_gnu),
      ("x86_64-unknown-linux-gnux32", x86_64_unknown_linux_gnux32),
      ("i686-unknown-linux-gnu", i686_unknown_linux_gnu),
-@@ -729,7 +739,6 @@ supported_targets! {
+@@ -763,7 +773,6 @@ supported_targets! {
      ("sparc64-unknown-linux-gnu", sparc64_unknown_linux_gnu),
      ("arm-unknown-linux-gnueabi", arm_unknown_linux_gnueabi),
      ("arm-unknown-linux-gnueabihf", arm_unknown_linux_gnueabihf),

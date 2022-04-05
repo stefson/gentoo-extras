@@ -1,4 +1,4 @@
-From 90d2eb2e38916d7a35417b03393fbbea84edeec1 Mon Sep 17 00:00:00 2001
+From c4bc5609d8a535df201c700d4f580ecfcdaadda8 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sat, 2 Dec 2017 17:25:44 -0600
 Subject: [PATCH] Fix rustdoc when cross-compiling on musl

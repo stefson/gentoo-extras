@@ -1,4 +1,4 @@
-From eaccd98cc740abfc26e2d3ba6725486c152c5f74 Mon Sep 17 00:00:00 2001
+From 288bb45a0beb75ddaaec8719ac88f11ec6d26c50 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sun, 3 Nov 2019 17:01:32 -0600
 Subject: [PATCH] Link libssp_nonshared.a on all musl targets

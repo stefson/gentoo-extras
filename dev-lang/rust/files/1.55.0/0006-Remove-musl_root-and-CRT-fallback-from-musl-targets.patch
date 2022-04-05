@@ -1,4 +1,4 @@
-From 90734325c9f2dbf8f3b7b99b961f7cb4a313e134 Mon Sep 17 00:00:00 2001
+From 9184b7c6fbb15adf5dab315cdcdacd53c56b2b4e Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Fri, 8 Sep 2017 22:11:14 -0500
 Subject: [PATCH] Remove musl_root and CRT fallback from musl targets
@@ -22,10 +22,10 @@ Subject: [PATCH] Remove musl_root and CRT fallback from musl targets
  15 files changed, 5 insertions(+), 205 deletions(-)
 
 diff --git a/compiler/rustc_codegen_ssa/src/back/link.rs b/compiler/rustc_codegen_ssa/src/back/link.rs
-index 7452598878106..67fa1e084fea8 100644
+index d0d8fdfcb82cc..294eb801a06f2 100644
 --- a/compiler/rustc_codegen_ssa/src/back/link.rs
 +++ b/compiler/rustc_codegen_ssa/src/back/link.rs
-@@ -1560,16 +1560,12 @@ fn detect_self_contained_mingw(sess: &Session) -> bool {
+@@ -1486,16 +1486,12 @@ fn detect_self_contained_mingw(sess: &Session) -> bool {
  
  /// Whether we link to our own CRT objects instead of relying on gcc to pull them.
  /// We only provide such support for a very limited number of targets.
@@ -119,7 +119,7 @@ index 5038a967d0a0f..9931578ba8676 100644
      // These targets statically link libc by default
      base.crt_static_default = true;
 diff --git a/config.toml.example b/config.toml.example
-index 7fa5353d09b89..25ed863f6ed1d 100644
+index 775133f2ab319..16f11571e0de7 100644
 --- a/config.toml.example
 +++ b/config.toml.example
 @@ -475,14 +475,6 @@ changelog-seen = 2
@@ -220,10 +220,10 @@ index e750c2963dddc..ba37a13c1942a 100644
      }
  }
 diff --git a/src/bootstrap/compile.rs b/src/bootstrap/compile.rs
-index 112a6ea939869..292c9ed8769fa 100644
+index 78c9a25262243..bbd53f84b2404 100644
 --- a/src/bootstrap/compile.rs
 +++ b/src/bootstrap/compile.rs
-@@ -180,33 +180,7 @@ fn copy_self_contained_objects(
+@@ -182,33 +182,7 @@ fn copy_self_contained_objects(
  
      // Copies the CRT objects.
      //
@@ -258,7 +258,7 @@ index 112a6ea939869..292c9ed8769fa 100644
          let srcdir = builder
              .wasi_root(target)
              .unwrap_or_else(|| {
-@@ -290,15 +264,6 @@ pub fn std_cargo(builder: &Builder<'_>, target: TargetSelection, stage: u32, car
+@@ -292,15 +266,6 @@ pub fn std_cargo(builder: &Builder<'_>, target: TargetSelection, stage: u32, car
              .arg("--manifest-path")
              .arg(builder.src.join("library/test/Cargo.toml"));
  
@@ -275,10 +275,10 @@ index 112a6ea939869..292c9ed8769fa 100644
              if let Some(p) = builder.wasi_root(target) {
                  let root = format!("native={}/lib/wasm32-wasi", p.to_str().unwrap());
 diff --git a/src/bootstrap/config.rs b/src/bootstrap/config.rs
-index 483816b98d689..695a23101168a 100644
+index 4b3c25b02c278..9abeb53029384 100644
 --- a/src/bootstrap/config.rs
 +++ b/src/bootstrap/config.rs
-@@ -164,8 +164,6 @@ pub struct Config {
+@@ -165,8 +165,6 @@ pub struct Config {
      pub print_step_rusage: bool,
      pub missing_tools: bool,
  
@@ -287,7 +287,7 @@ index 483816b98d689..695a23101168a 100644
      pub prefix: Option<PathBuf>,
      pub sysconfdir: Option<PathBuf>,
      pub datadir: Option<PathBuf>,
-@@ -291,8 +289,6 @@ pub struct Target {
+@@ -292,8 +290,6 @@ pub struct Target {
      pub sanitizers: Option<bool>,
      pub profiler: Option<bool>,
      pub crt_static: Option<bool>,
@@ -296,7 +296,7 @@ index 483816b98d689..695a23101168a 100644
      pub wasi_root: Option<PathBuf>,
      pub qemu_rootfs: Option<PathBuf>,
      pub no_std: bool,
-@@ -481,7 +477,6 @@ struct Rust {
+@@ -482,7 +478,6 @@ struct Rust {
      default_linker: Option<String>,
      channel: Option<String>,
      description: Option<String>,
@@ -304,7 +304,7 @@ index 483816b98d689..695a23101168a 100644
      rpath: Option<bool>,
      verbose_tests: Option<bool>,
      optimize_tests: Option<bool>,
-@@ -524,8 +519,6 @@ struct TomlTarget {
+@@ -525,8 +520,6 @@ struct TomlTarget {
      sanitizers: Option<bool>,
      profiler: Option<bool>,
      crt_static: Option<bool>,
@@ -313,7 +313,7 @@ index 483816b98d689..695a23101168a 100644
      wasi_root: Option<String>,
      qemu_rootfs: Option<String>,
      no_std: Option<bool>,
-@@ -846,7 +839,6 @@ impl Config {
+@@ -855,7 +848,6 @@ impl Config {
              set(&mut config.llvm_tools_enabled, rust.llvm_tools);
              config.rustc_parallel = rust.parallel_compiler.unwrap_or(false);
              config.rustc_default_linker = rust.default_linker;
@@ -321,7 +321,7 @@ index 483816b98d689..695a23101168a 100644
              config.save_toolstates = rust.save_toolstates.map(PathBuf::from);
              set(&mut config.deny_warnings, flags.deny_warnings.or(rust.deny_warnings));
              set(&mut config.backtrace_on_ice, rust.backtrace_on_ice);
-@@ -892,8 +884,6 @@ impl Config {
+@@ -901,8 +893,6 @@ impl Config {
                  target.ranlib = cfg.ranlib.map(PathBuf::from);
                  target.linker = cfg.linker.map(PathBuf::from);
                  target.crt_static = cfg.crt_static;
@@ -331,7 +331,7 @@ index 483816b98d689..695a23101168a 100644
                  target.qemu_rootfs = cfg.qemu_rootfs.map(PathBuf::from);
                  target.sanitizers = cfg.sanitizers;
 diff --git a/src/bootstrap/configure.py b/src/bootstrap/configure.py
-index 999882a1c04b0..7ccc2b73c5d4a 100755
+index 8d9f169e6c50d..5f68e9894359a 100755
 --- a/src/bootstrap/configure.py
 +++ b/src/bootstrap/configure.py
 @@ -109,34 +109,6 @@ def v(*args):
@@ -370,10 +370,10 @@ index 999882a1c04b0..7ccc2b73c5d4a 100755
    "rootfs in qemu testing, you probably don't want to use this")
  v("qemu-aarch64-rootfs", "target.aarch64-unknown-linux-gnu.qemu-rootfs",
 diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
-index 320b98dcab5c1..95778cf4c0788 100644
+index 148498f2be57a..83b04a3a43b58 100644
 --- a/src/bootstrap/lib.rs
 +++ b/src/bootstrap/lib.rs
-@@ -947,25 +947,6 @@ impl Build {
+@@ -1056,25 +1056,6 @@ impl Build {
          }
      }
  
@@ -465,7 +465,7 @@ index cd0f01faa1bfa..6951c9ea9b1b3 100644
  
  ENV SCRIPT \
 diff --git a/src/ci/docker/host-x86_64/dist-various-2/Dockerfile b/src/ci/docker/host-x86_64/dist-various-2/Dockerfile
-index b7f181adf2a09..f4897ff6d4e4b 100644
+index e363c4f79f9cf..7aaf101e4b5ce 100644
 --- a/src/ci/docker/host-x86_64/dist-various-2/Dockerfile
 +++ b/src/ci/docker/host-x86_64/dist-various-2/Dockerfile
 @@ -119,7 +119,6 @@ ENV TARGETS=$TARGETS,i686-unknown-freebsd

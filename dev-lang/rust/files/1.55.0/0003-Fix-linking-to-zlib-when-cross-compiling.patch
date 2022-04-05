@@ -1,4 +1,4 @@
-From c4cc7ba716ff714b7b5aad99036abeb5ff8f07a5 Mon Sep 17 00:00:00 2001
+From 8d040544049624f2b1f6e4fd45898a30085db35d Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Wed, 10 Jan 2018 13:36:41 -0600
 Subject: [PATCH] Fix linking to zlib when cross-compiling
