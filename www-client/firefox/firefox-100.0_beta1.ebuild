@@ -577,7 +577,9 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
+
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -811,7 +813,7 @@ src_configure() {
 	mozconfig_use_enable pulseaudio
 	# force the deprecated alsa sound code if pulseaudio is disabled
 	if use kernel_linux && ! use pulseaudio ; then
-		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
+		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
 	fi
 
 	mozconfig_use_enable sndio
@@ -969,7 +971,7 @@ src_configure() {
 	export MOZ_MAKE_FLAGS="${MAKEOPTS}"
 
 	# Use system's Python environment
-	export MACH_USE_SYSTEM_PYTHON=1
+	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
 	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_MACH_SITE=1
 	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_BUILD_SITE=1
 	export PIP_NO_CACHE_DIR=off
