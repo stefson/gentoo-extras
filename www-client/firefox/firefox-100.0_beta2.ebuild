@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-98-patches-04j.tar.xz"
+FIREFOX_PATCHSET="firefox-99-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -578,7 +578,6 @@ src_unpack() {
 
 src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
