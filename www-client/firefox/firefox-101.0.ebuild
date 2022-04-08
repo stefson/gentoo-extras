@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-98-patches-04j.tar.xz"
+FIREFOX_PATCHSET="firefox-99-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -75,7 +75,7 @@ BDEPEND="${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.20.0
 	>=net-libs/nodejs-10.22.1
 	virtual/pkgconfig
-	>=virtual/rust-1.57.0
+	>=virtual/rust-1.59.0
 	|| (
 		(
 			sys-devel/clang:14
@@ -485,15 +485,14 @@ src_unpack() {
 src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bgo-831903-pip-dont-fail-with-optional-deps.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-resolve-fs-symlinks-bmo1753182.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bgo-831903-pip-dont-fail-with-optional-deps.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
 	# upstreamed and fixed in 94.0 beta branch
 
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
+	# eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
 	# needed to build with USE -dbus
 	# eapply "${FILESDIR}/0001-revert-mozbg-1760839-and-1761663.patch"
 
