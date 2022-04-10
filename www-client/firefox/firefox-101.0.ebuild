@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-99-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-99-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -485,7 +485,7 @@ src_unpack() {
 src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bgo-831903-pip-dont-fail-with-optional-deps.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bgo-831903-pip-dont-fail-with-optional-deps.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	
