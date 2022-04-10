@@ -443,7 +443,33 @@ index d7db2cef24f2b..a791177956db9 100644
          if need_cmake && target.contains("msvc") {
              // There are three builds of cmake on windows: MSVC, MinGW, and
              // Cygwin. The Cygwin build does not have generators for Visual
-diff --git a/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfilemusl-root-mipsel=/musl-mipsel \
+diff --git a/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile b/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile
+index c98fc7dcfff3e..c2f1494f7e292 100644
+--- a/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile
++++ b/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile
+@@ -34,8 +34,6 @@ COPY scripts/cmake.sh /scripts/
+ RUN /scripts/cmake.sh
+ 
+ ENV RUST_CONFIGURE_ARGS \
+-      --musl-root-i586=/musl-i586 \
+-      --musl-root-i686=/musl-i686 \
+       --disable-docs
+ 
+ # Newer binutils broke things on some vms/distros (i.e., linking against
+diff --git a/src/ci/docker/host-x86_64/dist-various-1/Dockerfile b/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
+index cd0f01faa1bfa..6951c9ea9b1b3 100644
+--- a/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
++++ b/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
+@@ -172,14 +172,6 @@ ENV CFLAGS_armv5te_unknown_linux_musleabi="-march=armv5te -marm -mfloat-abi=soft
+     CC_riscv64gc_unknown_none_elf=false
+ 
+ ENV RUST_CONFIGURE_ARGS \
+-      --musl-root-armv5te=/musl-armv5te \
+-      --musl-root-arm=/musl-arm \
+-      --musl-root-armhf=/musl-armhf \
+-      --musl-root-armv7hf=/musl-armv7hf \
+-      --musl-root-mips=/musl-mips \
+-      --musl-root-mipsel=/musl-mipsel \
 -      --musl-root-mips64=/musl-mips64 \
 -      --musl-root-mips64el=/musl-mips64el \
        --disable-docs

@@ -1,4 +1,4 @@
-From 5f98c2dcdaefa782566dcab022cc05d715b9b0eb Mon Sep 17 00:00:00 2001
+From ad2d2086487d4dc4f46fa8c0cc9d4f0e24093869 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sun, 16 Sep 2018 16:38:48 +0000
 Subject: [PATCH] Ignore broken and non-applicable tests

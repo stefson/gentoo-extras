@@ -1,22 +1,23 @@
-From 1eb558f246269606c6d8d73824ef6b44fa10764e Mon Sep 17 00:00:00 2001
+From 2027a74ab6e5a62f61f2223b46b4fff29a3088e3 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sat, 9 Sep 2017 00:14:16 -0500
-Subject: [PATCH 06/16] Prefer libgcc_eh over libunwind for musl
+Subject: [PATCH] Prefer libgcc_eh over libunwind for musl
 
 ---
- library/libunwind/lib.rs | 2 +-
+ library/unwind/src/lib.rs | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
-index 06384b1..49d8fa8 100644
+index e263780bf3879..d32021ecb0619 100644
 --- a/library/unwind/src/lib.rs
 +++ b/library/unwind/src/lib.rs
-@@ -51,7 +51,7 @@ cfg_if::cfg_if! {
+@@ -52,7 +52,7 @@ cfg_if::cfg_if! {
          #[link(name = "unwind", cfg(not(target_feature = "crt-static")))]
          extern "C" {}
      } else {
 -        #[link(name = "unwind", kind = "static", modifiers = "-bundle", cfg(target_feature = "crt-static"))]
-+        #[link(name = "gcc_eh", cfg(target_feature = "crt-static"))]
++        #[link(name = "gcc_eh", kind = "static", modifiers = "-bundle", cfg(target_feature = "crt-static"))]
          #[link(name = "gcc_s", cfg(not(target_feature = "crt-static")))]
          extern "C" {}
      }
+
