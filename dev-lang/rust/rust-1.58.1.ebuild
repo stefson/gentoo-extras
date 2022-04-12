@@ -21,6 +21,9 @@ HOMEPAGE="https://www.rust-lang.org/"
 
 SRC_URI="
 	https://static.rust-lang.org/dist/${SRC}
+	!system-bootstrap? (
+		ppc64? ( $(rust_arch_uri powerpc64-gentoo-linux-musl     rust-${RUST_STAGE0_VERSION} ) )
+	)
 "
 
 # keep in sync with llvm ebuild of the same version as bundled one.
