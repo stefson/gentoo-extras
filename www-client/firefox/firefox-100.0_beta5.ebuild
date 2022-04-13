@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-99-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-99-patches-03j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -578,6 +578,8 @@ src_unpack() {
 
 src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1758610-undefined-reference-to-VideoFramePool.patch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1758610-update-VideoFramePool.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
