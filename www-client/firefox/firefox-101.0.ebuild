@@ -5,7 +5,7 @@ EAPI="7"
 
 FIREFOX_PATCHSET="firefox-99-patches-03j.tar.xz"
 
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=14
 
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -59,7 +59,7 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 
 #KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
-SLOT="0/$(ver_cut 1)"
+SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
