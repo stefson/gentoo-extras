@@ -585,6 +585,7 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
+	eapply "${FILESDIR}/0005-fix-audio_thread_priority-with-dbus.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
