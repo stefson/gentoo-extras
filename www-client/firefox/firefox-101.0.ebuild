@@ -484,6 +484,7 @@ src_unpack() {
 
 src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bgo-831903-pip-dont-fail-with-optional-deps.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1758610-undefined-reference-to-VideoFramePool.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1758610-update-VideoFramePool.patch
@@ -494,8 +495,6 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 	# eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
-	# needed to build with USE -dbus
-	# eapply "${FILESDIR}/0001-revert-mozbg-1760839-and-1761663.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
