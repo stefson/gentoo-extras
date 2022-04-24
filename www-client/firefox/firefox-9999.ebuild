@@ -33,16 +33,17 @@ RESTRICT="!bindist? ( bindist ) mirror"
 ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
-	>=dev-libs/nspr-4.26
-	>=dev-libs/nss-3.59
+	>=dev-libs/nspr-4.33
+	>=dev-libs/nss-3.78
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
-	>=dev-util/cbindgen-0.19
+	>=dev-util/cbindgen-0.23.0
 	>=net-libs/nodejs-10.23.1
 	pgo? ( >=sys-devel/gcc-4.5 )
 	|| ( dev-lang/rust dev-lang/rust-bin )
 	sys-devel/clang
+	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
 	amd64? ( >=dev-lang/yasm-1.1 virtual/opengl )
 	x86? ( >=dev-lang/yasm-1.1 virtual/opengl )"
 
