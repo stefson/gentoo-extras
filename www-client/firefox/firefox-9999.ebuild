@@ -208,6 +208,11 @@ src_configure() {
 	fi
 
 	mozconfig_use_enable pulseaudio
+	# force the deprecated alsa sound code if pulseaudio is disabled
+	if use kernel_linux && ! use pulseaudio ; then
+		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
+	fi
+	
 	mozconfig_use_enable dbus
 	mozconfig_use_enable wifi necko-wifi
 	mozconfig_use_enable geckodriver
@@ -232,7 +237,10 @@ src_configure() {
 	fi
 
 	# Use system's Python environment
-	export MACH_USE_SYSTEM_PYTHON=1
+	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=system
+	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_MACH_SITE=1
+	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_BUILD_SITE=1
+	export PIP_NO_CACHE_DIR=off
 	
 	unset XARGS
 	
