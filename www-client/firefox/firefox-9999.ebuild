@@ -208,11 +208,13 @@ src_configure() {
 		mozconfig_annotate '' --enable-default-toolkit=cairo-gtk3
 	fi
 
-	mozconfig_use_enable pulseaudio
-	# force the deprecated alsa sound code if pulseaudio is disabled
-	if use kernel_linux && ! use pulseaudio ; then
-		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
-	fi
+#	mozconfig_use_enable pulseaudio
+#	# force the deprecated alsa sound code if pulseaudio is disabled
+#	if use kernel_linux && ! use pulseaudio ; then
+#		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
+#	fi
+	
+	mozconfig_annotate '' --enable-audio-backends=alsa
 	
 	mozconfig_use_enable dbus
 	mozconfig_use_enable wifi necko-wifi
