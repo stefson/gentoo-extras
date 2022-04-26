@@ -584,7 +584,6 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
 	eapply "${FILESDIR}/0005-fix-audio_thread_priority-with-dbus.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
