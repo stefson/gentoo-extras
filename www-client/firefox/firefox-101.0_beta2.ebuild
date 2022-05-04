@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-100-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-101-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -83,10 +83,10 @@ REQUIRED_USE+=" screencast? ( wayland )"
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.19.0
+	>=dev-util/cbindgen-0.23.0
 	>=net-libs/nodejs-10.23.1
 	virtual/pkgconfig
-	>=virtual/rust-1.57.0
+	>=virtual/rust-1.59.0
 	|| (
 		(
 			sys-devel/clang:14
@@ -117,7 +117,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.14 )"
 
 COMMON_DEPEND="
-	>=dev-libs/nss-3.76.1
+	>=dev-libs/nss-3.77
 	>=dev-libs/nspr-4.32
 	dev-libs/atk
 	dev-libs/expat
@@ -158,7 +158,7 @@ COMMON_DEPEND="
 		>=media-libs/harfbuzz-3.4.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
-	system-icu? ( >=dev-libs/icu-70.1:= )
+	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
@@ -571,6 +571,9 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1762050-fix-pgo-with-virtualenv.patch
+
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
