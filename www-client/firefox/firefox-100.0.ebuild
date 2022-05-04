@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-100-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-100-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -573,8 +573,6 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}"/0005-fix-audio_thread_priority-with-dbus.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
