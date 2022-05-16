@@ -181,10 +181,8 @@ src_configure() {
 		$(use_enable cdda) \
 		$(use_enable cdparanoia cdda-paranoia) \
 		$(use_enable converter) \
-		--disable-artwork 
-		--disable-artwork-imlib2
-#		$(use_enable cover artwork) \
-#		$(use_enable cover-imlib2 artwork-imlib2) \
+		$(use_enable cover artwork) \
+		$(use_enable cover-imlib2 artwork-imlib2) \
 		$(use_enable cover-network artwork-network) \
 		$(use_enable curl vfs-curl) \
 		$(use_enable dts dca) \
