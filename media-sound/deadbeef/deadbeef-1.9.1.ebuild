@@ -66,13 +66,12 @@ LICENSE="BSD
 SLOT="0"
 
 IUSE="+alsa +flac +gtk2 +hotkeys +m3u +mad +mp3 +sndfile +vorbis
-	aac alac cdda cdparanoia converter cover cover-imlib2 cover-network curl dts dumb equalizer
+	aac alac cdda cdparanoia converter cover cover-network curl dts dumb equalizer
 	ffmpeg gme gtk3 libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
 	nullout opus oss playlist-browser psf pulseaudio sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
 
 REQUIRED_USE="cdparanoia? ( cdda )
 	converter? ( || ( gtk2 gtk3 ) )
-	cover-imlib2? ( cover )
 	cover-network? ( cover curl )
 	cover? ( || ( gtk2 gtk3 ) )
 	mp3? ( || ( mad mpg123 ) )
@@ -89,8 +88,7 @@ RDEPEND="dev-libs/glib:2
 	cdda? ( dev-libs/libcdio:0=
 		media-libs/libcddb:0 )
 	cdparanoia? ( dev-libs/libcdio-paranoia:0 )
-	cover? ( cover-imlib2? ( media-libs/imlib2:0 )
-		media-libs/libpng:0=
+	cover? ( media-libs/libpng:0=
 		virtual/jpeg:0
 		x11-libs/gdk-pixbuf:2[jpeg] )
 	curl? ( net-misc/curl:0 )
@@ -182,7 +180,6 @@ src_configure() {
 		$(use_enable cdparanoia cdda-paranoia) \
 		$(use_enable converter) \
 		$(use_enable cover artwork) \
-		$(use_enable cover-imlib2 artwork-imlib2) \
 		$(use_enable cover-network artwork-network) \
 		$(use_enable curl vfs-curl) \
 		$(use_enable dts dca) \
