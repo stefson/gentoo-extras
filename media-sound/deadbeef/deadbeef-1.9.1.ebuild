@@ -130,10 +130,10 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${P}"
 
 src_prepare() {
-	if [[ "$(plocale_get_locales disabled)" =~ "ru" ]] ; then
-		eapply "${FILESDIR}/${PN}-1.8.3-remove-ru-help-translation.patch"
-		rm -v "${S}/translation/help.ru.txt" || die
-	fi
+#	if [[ "$(plocale_get_locales disabled)" =~ "ru" ]] ; then
+#		eapply "${FILESDIR}/${PN}-1.8.3-remove-ru-help-translation.patch"
+#		rm -v "${S}/translation/help.ru.txt" || die
+#	fi
 
 	remove_locale() {
 		sed -e "/${1}/d" \
@@ -157,8 +157,8 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-1.8.3-fix-config-with-gettext-0.20.patch"
 
 	# fix for url plenk in curl-7.78 and above
-	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
-	eapply "${FILESDIR}/0001-remove-clang.patch"
+#	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
+#	eapply "${FILESDIR}/0001-remove-clang.patch"
 
 	rm -fr intl || die
 
