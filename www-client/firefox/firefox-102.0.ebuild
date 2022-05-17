@@ -122,7 +122,7 @@ BDEPEND="${PYTHON_DEPS}
 
 CDEPEND="
 	>=dev-libs/nss-3.79
-	>=dev-libs/nspr-4.32
+	>=dev-libs/nspr-4.34
 	dev-libs/atk
 	dev-libs/expat
 	>=x11-libs/cairo-1.10[X]
