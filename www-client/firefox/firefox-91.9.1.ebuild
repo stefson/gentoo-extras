@@ -593,6 +593,10 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-91/disable-pocket.patch
 	eapply "${FILESDIR}"/privacy-patchset-91/stop-undesired-requests.patch
 
+	# adds support for gcc-12
+	eapply "${FILESDIR}"/gcc-12/0001-use-initializer-lists-in-some-swgl-constructors.patch
+	eapply "${FILESDIR}"/gcc-12/0002-avoid-a-ton-of-warning-spam-when-building-swgl-with-gcc.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
