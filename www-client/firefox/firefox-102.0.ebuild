@@ -132,7 +132,7 @@ CDEPEND="
 	>=media-libs/libpng-1.6.37:0=[apng]
 	>=media-libs/mesa-10.2:*
 	media-libs/fontconfig
-	>=media-libs/freetype-2.4.10
+	>=media-libs/freetype-2.12.1
 	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
 	virtual/freedesktop-icon-theme
 	>=x11-libs/pixman-0.36.0
@@ -158,7 +158,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-3.4.0:0=
+		>=media-libs/harfbuzz-4.3.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
 	system-icu? ( >=dev-libs/icu-71.1:= )
