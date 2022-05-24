@@ -164,7 +164,7 @@ CDEPEND="
 	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads] )
-	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
+	system-libvpx? ( >=media-libs/libvpx-1.11.0:0=[postproc] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
 	wifi? (
 		kernel_linux? (
