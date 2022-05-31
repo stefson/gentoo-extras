@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-101-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-101-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -475,11 +475,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	rm -v "${WORKDIR}"/firefox-patches/0007-Support-sndio-audio-framework.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bgo-831903-pip-dont-fail-with-optional-deps.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1758610-undefined-reference-to-VideoFramePool.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1758610-update-VideoFramePool.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1765361-resolve_objdir_from_virtualenv_if_mozinfo_not_ancestor.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	

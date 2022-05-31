@@ -571,8 +571,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1762050-fix-pgo-with-virtualenv.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1765361-resolve_objdir_from_virtualenv_if_mozinfo_not_ancestor.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
