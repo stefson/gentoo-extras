@@ -475,6 +475,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1765361-resolve_objdir_from_virtualenv_if_mozinfo_not_ancestor.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
@@ -514,7 +515,7 @@ src_prepare() {
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums target-lexicon-0.9.0
+	# moz_clear_vendor_checksums target-lexicon-0.9.0
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
