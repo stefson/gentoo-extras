@@ -32,7 +32,7 @@ index 8fb105e..c1c376d 100644
  [dependencies.audio_thread_priority]
  version = "0.26.1"
 +default-features = false
-diff --git a/third_party/rust/server/Cargo.toml b/third_party/rust/server/Cargo.toml
+diff --git a/third_party/rust/audioipc-server/Cargo.toml b/third_party/rust/audioipc-server/Cargo.toml
 index 8a578bf..c870b30 100644
 --- a/third_party/rust/audioipc-server/Cargo.toml
 +++ b/third_party/rust/audioipc-server/Cargo.toml

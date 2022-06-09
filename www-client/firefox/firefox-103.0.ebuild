@@ -517,6 +517,11 @@ src_prepare() {
 	# Clearing checksums where we have applied patches
 	# moz_clear_vendor_checksums target-lexicon-0.9.0
 
+	moz_clear_vendor_checksums audioipc
+	moz_clear_vendor_checksums audioipc-client
+	moz_clear_vendor_checksums audioipc-server
+
+
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
 	mkdir -p "${BUILD_DIR}" || die
