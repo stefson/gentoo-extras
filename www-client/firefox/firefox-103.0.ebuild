@@ -479,11 +479,11 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1765361-resolve_objdir_from_virtualenv_if_mozinfo_not_ancestor.patch
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-	
-	# upstreamed and fixed in 94.0 beta branch
 
 	eapply "${WORKDIR}/firefox-patches"
-	# eapply "${FILESDIR}/0003-add-arm-to-list-of-mozinline.patch"
+
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1773336
+	eapply "${FILESDIR}/0001-fix-audiopic-in-nightly.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
