@@ -597,6 +597,9 @@ src_prepare() {
 	eapply "${FILESDIR}"/gcc-12/0001-use-initializer-lists-in-some-swgl-constructors.patch
 	eapply "${FILESDIR}"/gcc-12/0002-avoid-a-ton-of-warning-spam-when-building-swgl-with-gcc.patch
 
+	# unbreaks cbindgen 0.24
+	eapply "${FILESDIR}"/0001-fix-cbindgen-0.24-in-firefox-esr.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
