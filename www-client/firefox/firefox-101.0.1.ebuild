@@ -806,7 +806,7 @@ src_configure() {
 	mozconfig_use_enable wifi necko-wifi
 
 	if use wayland ; then
-		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland
+		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
 	else
 		mozconfig_add_options_ac '' --enable-default-toolkit=cairo-gtk3
 	fi
