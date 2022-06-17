@@ -19,22 +19,28 @@ KEYWORDS=""
 #IUSE=""
 
 DEPEND="
-	sys-devel/llvm
-	sys-devel/clang
+	sys-devel/llvm:14
+	sys-devel/clang:14
 "
 
 src_prepare () {
 
 	default
 	
-	export WASM_CC=/usr/lib/llvm/14/bin/clang
-	export WASM_AR=/usr/lib/llvm/14/bin/llvm-ar
-	export WASM_NM=/usr/lib/llvm/14/bin/llvm-nm
+	export WASM_CC="/usr/lib/llvm/14/bin/clang"
+	export WASM_AR="/usr/lib/llvm/14/bin/llvm-ar"
+	export WASM_NM="/usr/lib/llvm/14/bin/llvm-nm"
 		
 	# Remove bulk memory support
 	# https://bugzilla.mozilla.org/show_bug.cgi?id=1773200#c4
 	export BULK_MEMORY_SOURCES=
     	
+}
+
+src_compile () {
+
+	emake 
+
 }
 
 src_install () {
