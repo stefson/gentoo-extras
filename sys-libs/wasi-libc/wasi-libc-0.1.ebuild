@@ -32,7 +32,7 @@ src_prepare () {
 
 src_compile() {
 
-	SYSROOT="S{S}"
+	SYSROOT="${S}"
 
 	emake CC="clang" \
 	AR="llvm-ar" \
