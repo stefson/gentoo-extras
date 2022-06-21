@@ -31,6 +31,9 @@ src_prepare () {
 }
 
 src_compile() {
+
+	SYSROOT="S{S}"
+
 	emake CC="clang" \
 	AR="llvm-ar" \
 	NM="llvm-nm"
