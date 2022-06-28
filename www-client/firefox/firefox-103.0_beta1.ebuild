@@ -121,7 +121,7 @@ COMMON_DEPEND="
 	dev-libs/atk
 	dev-libs/expat
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.79
+	>=dev-libs/nss-3.80
 	>=dev-libs/nspr-4.32
 	media-libs/alsa-lib
 	media-libs/fontconfig
