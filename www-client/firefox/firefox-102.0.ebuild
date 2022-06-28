@@ -3,7 +3,7 @@
 
 EAPI="8"
 
-FIREFOX_PATCHSET="firefox-101-patches-09j.tar.xz"
+FIREFOX_PATCHSET="firefox-102-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -581,37 +581,6 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1765361-resolve_objdir_from_virtualenv_if_mozinfo_not_ancestor.patch
-
-	# merged into 102-beta branch, p09 later overwritten by p10
-	rm -v "${WORKDIR}"/firefox-patches/0033-p01-bmo-1610199-vaapi-fixes-D144284.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p02-bmo-1770407-vaapi-fixes-D147420.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p03-bmo-1752494-vaapi-fixes-D147874.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p04-bmo-1759784-vaapi-fixes-D146084.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p05-bmo-1759784-vaapi-fixes-D146085.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p06-bmo-1759784-vaapi-fixes-D146086.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p07-bmo-1759784-vaapi-fixes-D146087.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p08-bmo-1768191-vaapi-fixes-D145725.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p09-bmo-1768651-vaapi-fixes-D145966.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p10-bmo-1750388-vaapi-fixes-D145871.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p11-bmo-1769182-vaapi-fixes-D146271.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p12-bmo-1769182-vaapi-fixes-D146271.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p13-bmo-1769182-vaapi-fixes-D146273.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p14-bmo-1769182-vaapi-fixes-D146274.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-p15-bmo-1769182-vaapi-fixes-D146275.patch
-
-	# not backported to 102 branch yet, needs fiddeling: 
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735929-webgl-nvidia-p1-D147635.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735929-webgl-nvidia-p2-D147636.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735929-webgl-nvidia-p3-D147637.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1773968-webgl-memory-leak.patch
-
-	# not backported to 102 branch yet, needs fiddeling: 
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1765350-vaapi-fixes-p2-p1-D147720.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1773377-vaapi-fixes-p2-p2-D148946.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1774075-vaapi-fixes-p2-p3-D149238.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1758948-vaapi-fixes-p2-p4.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1774271-vaapi-fixes-p2-p5.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
