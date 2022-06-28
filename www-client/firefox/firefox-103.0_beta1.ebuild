@@ -581,7 +581,9 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
+	# upstreamed into 103 branch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1765361-resolve_objdir_from_virtualenv_if_mozinfo_not_ancestor.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1773259-cbindgen-root_clip_chain-fix.patch
 
 	# merged into 102-beta branch, p09 later overwritten by p10
 	rm -v "${WORKDIR}"/firefox-patches/0033-p01-bmo-1610199-vaapi-fixes-D144284.patch
@@ -613,7 +615,12 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1758948-vaapi-fixes-p2-p4.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1774271-vaapi-fixes-p2-p5.patch
 
+	rm -v "${WORKDIR}"/firefox-patches/0036*
+
 	eapply "${WORKDIR}/firefox-patches"
+
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1773336
+	eapply "${FILESDIR}"/0001-fix-audiopic-in-nightly.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -648,7 +655,9 @@ src_prepare() {
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums target-lexicon-0.9.0
+	moz_clear_vendor_checksums audioipc
+	moz_clear_vendor_checksums audioipc-client
+	moz_clear_vendor_checksums audioipc-server
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
