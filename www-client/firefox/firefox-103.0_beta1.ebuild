@@ -581,6 +581,7 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
+
 	# upstreamed into 103 branch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1773259-cbindgen-root_clip_chain-fix.patch
 
