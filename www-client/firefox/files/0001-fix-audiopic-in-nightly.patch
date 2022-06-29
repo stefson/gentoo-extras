@@ -12,31 +12,31 @@ audio_thread_priority defaults force it on.
  3 files changed, 3 insertions(+)
 
 diff --git a/third_party/rust/audioipc/Cargo.toml b/third_party/rust/audioipc/Cargo.toml
-index 0c409b8..ad59ed8 100644
+index d69c56d..8a9dd3d 100644
 --- a/third_party/rust/audioipc/Cargo.toml
 +++ b/third_party/rust/audioipc/Cargo.toml
-@@ -29,6 +29,7 @@ arrayvec = "0.7"
+@@ -30,6 +30,7 @@ memmap2 = "0.2"
  
  [target.'cfg(target_os = "linux")'.dependencies.audio_thread_priority]
  version = "0.26.1"
 +default-features = false
  
  [target.'cfg(windows)'.dependencies]
- winapi = { version = "0.3", features = ["combaseapi", "memoryapi", "objbase"] }
+ mio = "0.6.19"
 diff --git a/third_party/rust/audioipc-client/Cargo.toml b/third_party/rust/audioipc-client/Cargo.toml
-index 8fb105e..c1c376d 100644
+index 3ffb268..5dbf5f6 100644
 --- a/third_party/rust/audioipc-client/Cargo.toml
 +++ b/third_party/rust/audioipc-client/Cargo.toml
-@@ -16,3 +16,4 @@ log = "0.4"
+@@ -19,3 +19,4 @@ tokio = { version="0.1", default-features=false, features = ["rt-full"] }
  
  [dependencies.audio_thread_priority]
  version = "0.26.1"
 +default-features = false
 diff --git a/third_party/rust/audioipc-server/Cargo.toml b/third_party/rust/audioipc-server/Cargo.toml
-index 8a578bf..c870b30 100644
+index 2c82fbf..b2b710c 100644
 --- a/third_party/rust/audioipc-server/Cargo.toml
 +++ b/third_party/rust/audioipc-server/Cargo.toml
-@@ -22,3 +22,4 @@ default-features = false
+@@ -24,3 +24,4 @@ default-features = false
  
  [dependencies.audio_thread_priority]
  version = "0.26.1"
