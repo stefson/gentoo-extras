@@ -609,7 +609,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0045-p04-bmo-1772513-build-wayland-only-D148257.patch
 
 	# upstreamed to 103 branch
-	rm -v "${WORKDIR}"/firefox-patches/0047-bmo-1769631-python-3.11-compatibility.patch
+	rm -v "${WORKDIR}"/firefox-patches/0048-bmo-1769631-python-3.11-compatibility.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
