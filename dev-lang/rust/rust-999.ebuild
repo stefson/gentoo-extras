@@ -55,14 +55,12 @@ LLVM_MAX_SLOT=14
 # for example 1.47.x, requires at least 1.46.x, 1.47.x is ok,
 # but it fails to bootstrap with 1.48.x
 # https://github.com/rust-lang/rust/blob/${PV}/src/stage0.txt
-RUST_DEP_PREV="$(ver_cut 1).$(($(ver_cut 2) - 1))*"
-RUST_DEP_CURR="$(ver_cut 1).$(ver_cut 2)*"
+RUST_DEP_PREV="1.62.0"
+#RUST_DEP_PREV="$(ver_cut 1).$(($(ver_cut 2) - 1))*"
+#RUST_DEP_CURR="$(ver_cut 1).$(ver_cut 2)*"
 BOOTSTRAP_DEPEND="||
 	(
 		=dev-lang/rust-"${RUST_DEP_PREV}"
-		=dev-lang/rust-bin-"${RUST_DEP_PREV}"
-		=dev-lang/rust-"${RUST_DEP_CURR}"
-		=dev-lang/rust-bin-"${RUST_DEP_CURR}"
 	)
 "
 
