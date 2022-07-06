@@ -56,11 +56,11 @@ LLVM_DEPEND="
 LLVM_MAX_SLOT=9
 
 COMMON_DEPEND="
-	sys-libs/zlib
+	>=app-arch/xz-utils-5.2
+	net-misc/curl:=[http2,ssl]
+	elibc_musl? ( >=sys-libs/musl-1.2.1-r2 )
+	sys-libs/zlib:=
 	dev-libs/openssl:0=
-	net-libs/libssh2
-	net-libs/http-parser:=
-	net-misc/curl[ssl]
 	system-llvm? (
 		${LLVM_DEPEND}
 	)
