@@ -76,9 +76,7 @@ DEPEND="${COMMON_DEPEND}
 "
 
 RDEPEND="${COMMON_DEPEND}
-	>=app-eselect/eselect-rust-20190311
-	!dev-util/cargo
-	rustfmt? ( !dev-util/rustfmt )
+	app-eselect/eselect-rust
 "
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
