@@ -13,12 +13,11 @@ EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
 EGIT_BRANCH="beta"
 
 EGIT_CHECKOUT_DIR="${MY_P}-src"
-KEYWORDS=""
+#KEYWORDS=""
 
-CHOST_amd64=x86_64-unknown-linux-gnu
-CHOST_x86=i686-unknown-linux-gnu
-CHOST_arm64=aarch64-unknown-linux-gnu
-CHOST_arm=armv7-unknown-linux-gnu
+CHOST_amd64=x86_64-gentoo-linux-musl
+#CHOST_arm64=aarch64-unknown-linux-gnu
+#CHOST_arm=armv7-unknown-linux-gnu
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="https://www.rust-lang.org/"
@@ -32,7 +31,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy cpu_flags_x86_sse2 debug doc rls rustfmt system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc rls rustfmt system-bootstrap system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
 
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling one than more slot
@@ -50,6 +49,22 @@ LLVM_DEPEND="
 	<sys-devel/llvm-14:=
 "
 LLVM_MAX_SLOT=14
+
+# to bootstrap we need at least exactly previous version, or same.
+# most of the time previous versions fail to bootstrap with newer
+# for example 1.47.x, requires at least 1.46.x, 1.47.x is ok,
+# but it fails to bootstrap with 1.48.x
+# https://github.com/rust-lang/rust/blob/${PV}/src/stage0.txt
+RUST_DEP_PREV="$(ver_cut 1).$(($(ver_cut 2) - 1))*"
+RUST_DEP_CURR="$(ver_cut 1).$(ver_cut 2)*"
+BOOTSTRAP_DEPEND="||
+	(
+		=dev-lang/rust-"${RUST_DEP_PREV}"
+		=dev-lang/rust-bin-"${RUST_DEP_PREV}"
+		=dev-lang/rust-"${RUST_DEP_CURR}"
+		=dev-lang/rust-bin-"${RUST_DEP_CURR}"
+	)
+"
 
 COMMON_DEPEND="
 	>=app-arch/xz-utils-5.2
@@ -73,6 +88,7 @@ DEPEND="${COMMON_DEPEND}
 
 RDEPEND="${COMMON_DEPEND}
 	app-eselect/eselect-rust
+	system-bootstrap? ( ${BOOTSTRAP_DEPEND} )
 "
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
@@ -108,6 +124,9 @@ pkg_setup() {
 
 	pre_build_checks
 	python-any-r1_pkg_setup
+	
+	use system-bootstrap && bootstrap_rust_version_check
+	
 	if use system-llvm; then
 		EGIT_SUBMODULES=( "*" "-src/llvm-project" )
 		llvm_pkg_setup
@@ -115,8 +134,11 @@ pkg_setup() {
 }
 
 src_prepare() {
-	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
+	if ! use system-bootstrap; then
+		local rust_stage0_root="${WORKDIR}"/rust-stage0
+
+	fi
 	default
 }
 
@@ -150,7 +172,16 @@ src_configure() {
 		tools="\"miri\",$tools"
 	fi
 
-	local rust_stage0_root="${WORKDIR}"/rust-stage0
+#	local rust_stage0_root="${WORKDIR}"/rust-stage0
+
+	local rust_stage0_root
+	if use system-bootstrap; then
+		local printsysroot
+		printsysroot="$(rustc --print sysroot || die "Can't determine rust's sysroot")"
+		rust_stage0_root="${printsysroot}"
+	else
+		rust_stage0_root="${WORKDIR}"/rust-stage0
+	fi
 
 	rust_target="$(rust_abi)"
 
