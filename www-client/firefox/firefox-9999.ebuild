@@ -6,7 +6,7 @@ VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE='ncurses,ssl,threads(+)'
 
 S="${WORKDIR}/firefox"
@@ -33,12 +33,12 @@ RESTRICT="!bindist? ( bindist ) mirror"
 ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
-	>=dev-libs/nspr-4.33
-	>=dev-libs/nss-3.78
+	>=dev-libs/nspr-4.34
+	>=dev-libs/nss-3.80
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
-	>=dev-util/cbindgen-0.23.0
+	>=dev-util/cbindgen-0.24.0
 	>=net-libs/nodejs-10.23.1
 	pgo? ( >=sys-devel/gcc-4.5 )
 	|| ( dev-lang/rust dev-lang/rust-bin )
