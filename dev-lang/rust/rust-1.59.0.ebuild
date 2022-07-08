@@ -13,7 +13,7 @@ MY_P="rustc-${PV}"
 SRC="${MY_P}-src.tar.xz"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
-RUST_STAGE0_VERSION="1.$(($(ver_cut 2) - 1)).0"
+RUST_STAGE0_VERSION="1.$(($(ver_cut 2) - 1)).1"
 RUST_TOOLCHAIN_BASEURL="https://portage.smaeul.xyz/distfiles/"
 
 DESCRIPTION="Systems programming language from Mozilla"
@@ -21,6 +21,10 @@ HOMEPAGE="https://www.rust-lang.org/"
 
 SRC_URI="
 	https://static.rust-lang.org/dist/${SRC}
+	!system-bootstrap? (
+		arm64? ( $(rust_arch_uri aarch64-gentoo-linux-musl       rust-${RUST_STAGE0_VERSION} ) )
+		ppc64? ( $(rust_arch_uri powerpc64-gentoo-linux-musl     rust-${RUST_STAGE0_VERSION} ) )
+	)
 "
 
 # keep in sync with llvm ebuild of the same version as bundled one.
