@@ -132,7 +132,6 @@ PATCHES=(
 	"${FILESDIR}"/${PV}/0001-Don-t-pass-CFLAGS-to-the-C-compiler.patch
 	"${FILESDIR}"/${PV}/0002-Fix-LLVM-build.patch
 	"${FILESDIR}"/${PV}/0003-Fix-linking-to-zlib-when-cross-compiling.patch
-	# 0004 needs a review, difficult
 	"${FILESDIR}"/${PV}/0004-Fix-rustdoc-when-cross-compiling-on-musl.patch
 	"${FILESDIR}"/${PV}/0005-Use-static-native-libraries-when-linking-static-exec.patch
 	"${FILESDIR}"/${PV}/0006-Remove-musl_root-and-CRT-fallback-from-musl-targets.patch
@@ -141,14 +140,11 @@ PATCHES=(
 	"${FILESDIR}"/${PV}/0009-test-failed-doctest-output-Fix-normalization.patch
 	"${FILESDIR}"/${PV}/0010-test-sysroot-crates-are-unstable-Fix-test-when-rpath.patch
 	"${FILESDIR}"/${PV}/0011-test-use-extern-for-plugins-Don-t-assume-multilib.patch
-	# 0012 is identical to 1.55.0-ignore-broken from gentoo
 	"${FILESDIR}"/${PV}/0012-Ignore-broken-and-non-applicable-tests.patch
 	"${FILESDIR}"/${PV}/0013-Link-stage-2-tools-dynamically-to-libstd.patch
 	"${FILESDIR}"/${PV}/0014-Move-debugger-scripts-to-usr-share-rust.patch
 	"${FILESDIR}"/${PV}/0015-Add-gentoo-target-specs.patch
 	"${FILESDIR}"/${PV}/0016-fix-ppc32.patch
-# 	not needed for 1.59.0
-#	"${FILESDIR}"/${PV}/0039-libc-linkage.patch
 	"${FILESDIR}"/${PV}/0040-rls-atomics.patch
 	"${FILESDIR}"/${PV}/0050-llvm.patch
 	"${FILESDIR}"/${PV}/0051-llvm-powerpc-elfv2.patch
