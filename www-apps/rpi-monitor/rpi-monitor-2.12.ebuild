@@ -155,6 +155,9 @@ src_install() {
 	newins src/etc/rpimonitor/daemon.conf rpimonitord.conf
 
 	use httpd && webapp_src_install
+	
+	keepdir /var/lib/rpi-monitor/custom/net_traffic
+	keepdir /var/lib/rpi-monitor/stat
 }
 
 pkg_postinst() {
