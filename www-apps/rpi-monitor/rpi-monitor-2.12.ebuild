@@ -1,7 +1,7 @@
 # Copyright (c) 2016 Stuart Shelton <stuart@shelton.me>
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
 inherit eutils webapp
 
@@ -33,6 +33,8 @@ RDEPEND="
 S="${WORKDIR}/RPi-Monitor-${PV}"
 
 src_prepare() {
+	default
+
 	local patch
 
 	cp src/etc/rpimonitor/template/raspbian.conf src/etc/rpimonitor/template/gentoo.conf
@@ -120,18 +122,18 @@ src_install() {
 		else
 			INSTROOT="${EROOT}/var/www/localhost/htdocs"
 		fi
-	
+
 		insinto "${MY_HTDOCSDIR}"
 		doins -r src/usr/share/rpimonitor/web/*
 		dodir "${MY_HTDOCSDIR}"/custom/net_traffic
 		dodir "${MY_HTDOCSDIR}"/stat
-	
+
 		webapp_serverowned "${MY_HTDOCSDIR}"/custom
 		webapp_serverowned "${MY_HTDOCSDIR}"/custom/net_traffic
 		webapp_serverowned "${MY_HTDOCSDIR}"/stat
 	else
 		INSTROOT="${EROOT}/usr/share"
-	
+
 		insinto /usr/share/"${PN}"
 		doins -r src/usr/share/rpimonitor/web/*
 		diropts -m 0775 -o nobody -g nogroup
