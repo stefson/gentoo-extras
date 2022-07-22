@@ -504,6 +504,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0044-p03-bmo-1772513-build-wayland-only-D148256.patch
 	rm -v "${WORKDIR}"/firefox-patches/0045-p04-bmo-1772513-build-wayland-only-D148257.patch
 
+	# upstreamed to 104 branch
+	rm -v "${WORKDIR}"/firefox-patches/0046-p05-bmo-1776724-build-wayland-only-D150485.patch
+
 	# upstreamed to 103 branch
 	rm -v "${WORKDIR}"/firefox-patches/0048-bmo-1769631-python-3.11-compatibility.patch
 
