@@ -37,6 +37,12 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext
 	x11-base/xorg-proto"
 
+src_prepare() {
+	default
+
+	eapply "${FILESDIR}"/0001-fix-a-recursive-lock-in-libX11.patch
+}
+
 src_configure() {
 	econf \
 		$(use_enable upower upower-glib) \
