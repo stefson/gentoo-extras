@@ -3,7 +3,7 @@
 
 EAPI="8"
 
-FIREFOX_PATCHSET="firefox-102-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-103-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -102,14 +102,6 @@ BDEPEND="${PYTHON_DEPS}
 			clang? (
 				=sys-devel/lld-13*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-			clang? (
-				=sys-devel/lld-12*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
 			)
 		)
 	)
@@ -582,37 +574,8 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed into 103 branch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1773259-cbindgen-root_clip_chain-fix.patch
-
-	# merged into 103 nightly, but a different approach was chosen
-	# backported patch needs to be refreshed in the 102 patchset, open bug if nothing happens
-	rm -v "${WORKDIR}"/firefox-patches/0032-p03-bmo-1752494-vaapi-fixes-D147874.patch
-
-	# not backported to 103 branch yet, needs fiddeling: 
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1735929-webgl-nvidia-p1-D147635.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1735929-webgl-nvidia-p2-D147636.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1735929-webgl-nvidia-p3-D147637.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1773968-webgl-memory-leak.patch
-
-	# not backported to 103 branch yet, needs fiddeling: 
-	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1758948-vaapi-fixes-p2-p4.patch
-	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1773377-vaapi-fixes-p2-p2-D148946.patch
-	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1774075-vaapi-fixes-p2-p3-D149238.patch
-	rm -v "${WORKDIR}"/firefox-patches/0040-bmo-1774271-vaapi-fixes-p2-p5.patch
-
-	# wayland only fixes, who cares
-	rm -v "${WORKDIR}"/firefox-patches/0041-p01-bmo-1772719-build-wayland-only.patch
-	rm -v "${WORKDIR}"/firefox-patches/0042-p02-bmo-1772721-build-wayland-only-D148496fixed.patch
-	rm -v "${WORKDIR}"/firefox-patches/0043-p02-bmo-1772721-build-wayland-only.patch
-	rm -v "${WORKDIR}"/firefox-patches/0044-p03-bmo-1772513-build-wayland-only-D148256.patch
-	rm -v "${WORKDIR}"/firefox-patches/0045-p04-bmo-1772513-build-wayland-only-D148257.patch
-
-	# upstreamed to 103 branch
-	rm -v "${WORKDIR}"/firefox-patches/0048-bmo-1769631-python-3.11-compatibility.patch
-
 	# upstreamed to 104 branch
-	rm -v "${WORKDIR}"/firefox-patches/0046-p05-bmo-1776724-build-wayland-only-D150485.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-p05-bmo-1776724-build-wayland-only-D150485.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

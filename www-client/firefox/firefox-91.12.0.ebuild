@@ -102,22 +102,6 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
 			)
 		)
-		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-			clang? (
-				=sys-devel/lld-12*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:11
-			sys-devel/llvm:11
-			clang? (
-				=sys-devel/lld-11*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
-			)
-		)
 	)
 	amd64? ( >=dev-lang/nasm-2.13 )
 	x86? ( >=dev-lang/nasm-2.13 )"
