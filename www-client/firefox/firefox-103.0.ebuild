@@ -3,7 +3,7 @@
 
 EAPI="8"
 
-FIREFOX_PATCHSET="firefox-103-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-103-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -575,9 +575,6 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
 	eapply "${WORKDIR}/firefox-patches"
-
-	# https://bugzilla.mozilla.org/show_bug.cgi?id=1773336
-	eapply "${FILESDIR}"/0001-fix-audiopic-in-nightly.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
