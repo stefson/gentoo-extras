@@ -488,6 +488,7 @@ src_prepare() {
 
 	# upstreamed to 104 branch
 	rm -v "${WORKDIR}"/firefox-patches/0032-p05-bmo-1776724-build-wayland-only-D150485.patch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1773336-disable_audio_thread_priority_default_features.patch
 	rm -v "${WORKDIR}"/firefox-patches/0036-vaapi-fixes.patch
 
 	eapply "${WORKDIR}/firefox-patches"
@@ -523,11 +524,6 @@ src_prepare() {
 
 	# Clearing checksums where we have applied patches
 	# moz_clear_vendor_checksums target-lexicon-0.9.0
-
-	moz_clear_vendor_checksums audioipc
-	moz_clear_vendor_checksums audioipc-client
-	moz_clear_vendor_checksums audioipc-server
-
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
