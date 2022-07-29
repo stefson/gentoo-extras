@@ -62,8 +62,8 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
-	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
-	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
+	hardened hwaccel jack libproxy lto +openh264 pgo pulseaudio screencast 
+	selinux +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx +system-webp wayland wifi"
 
 REQUIRED_USE="debug? ( !system-av1 )
@@ -152,6 +152,7 @@ CDEPEND="
 		sys-apps/dbus
 		dev-libs/dbus-glib
 	)
+	libproxy? ( net-libs/libproxy )
 	screencast? ( media-video/pipewire:0/0.3 )
 	system-av1? (
 		>=media-libs/dav1d-0.9.0:=
@@ -656,6 +657,7 @@ src_configure() {
 	mozconfig_use_with system-webp
 
 	mozconfig_use_enable dbus
+	mozconfig_use_enable libproxy
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
