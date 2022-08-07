@@ -399,13 +399,13 @@ src_install() {
 		"${EPYTHON}" ./x.py install -vv --config="${S}"/config.toml -j$(makeopts_jobs) || die
 
 	# bug #689562, #689160
-	rm "${D}/etc/bash_completion.d/cargo" || die
-	rmdir "${D}"/etc{/bash_completion.d,} || die
-	dobashcomp build/tmp/dist/cargo-image/etc/bash_completion.d/cargo
+#	rm "${D}/etc/bash_completion.d/cargo" || die
+#	rmdir "${D}"/etc{/bash_completion.d,} || die
+#	dobashcomp build/tmp/dist/cargo-image/etc/bash_completion.d/cargo
 
 	# fix collision with stable rust #675026
-	rm "${ED}"/usr/share/bash-completion/completions/cargo || die
-	rm "${ED}"/usr/share/zsh/site-functions/_cargo || die
+#	rm "${ED}"/usr/share/bash-completion/completions/cargo || die
+#	rm "${ED}"/usr/share/zsh/site-functions/_cargo || die
 
 	mv "${ED}/usr/bin/rustc" "${ED}/usr/bin/rustc-${PV}" || die
 	mv "${ED}/usr/bin/rustdoc" "${ED}/usr/bin/rustdoc-${PV}" || die
