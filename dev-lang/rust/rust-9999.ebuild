@@ -98,12 +98,19 @@ QA_SONAME="
 	usr/lib.*/${P}/rustlib/.*/lib/lib.*.so.*
 "
 
+# An rmeta file is custom binary format that contains the metadata for the crate.
+# rmeta files do not support linking, since they do not contain compiled object files.
+# so we can safely silence the warning for this QA check.
+QA_EXECSTACK="usr/lib/${PN}/${PV}/lib/rustlib/*/lib*.rlib:lib.rmeta"
+
 # tests need a bit more work, currently they are causing multiple
 # re-compilations and somewhat fragile.
 RESTRICT="test network-sandbox"
 
 
 S="${WORKDIR}/${MY_P}-src"
+
+#PATCHES=( )
 
 toml_usex() {
 	usex "$1" true false
