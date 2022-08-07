@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit bash-completion-r1 check-reqs estack flag-o-matic llvm multiprocessing multilib-build python-any-r1 rust-toolchain toolchain-funcs git-r3
 
@@ -12,7 +12,7 @@ MY_P="rust-git"
 EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
 
 EGIT_CHECKOUT_DIR="${MY_P}-src"
-KEYWORDS=""
+#KEYWORDS=""
 
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
@@ -30,25 +30,24 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy cpu_flags_x86_sse2 debug doc libressl miri parallel-compiler rls rustfmt rust-analyzer system-llvm wasm sanitize ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc miri parallel-compiler rls rustfmt rust-analyzer system-llvm wasm sanitize ${ALL_LLVM_TARGETS[*]}"
 
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
-# we need to *really* make sure we're not pulling more than one slot
+# we need to *really* make sure we're not pulling one than more slot
 # simultaneously.
 
 # How to use it:
 # 1. List all the working slots (with min versions) in ||, newest first.
-# 2. Update the := to specify *max* version, e.g. < 11.
-# 3. Specify LLVM_MAX_SLOT, e.g. 10.
+# 2. Update the := to specify *max* version, e.g. < 9.
+# 3. Specify LLVM_MAX_SLOT, e.g. 8.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:10[${LLVM_TARGET_USEDEPS// /,}]
-		sys-devel/llvm:9[${LLVM_TARGET_USEDEPS// /,}]
+		sys-devel/llvm:14[llvm_targets_WebAssembly?]
+		wasm? ( >=sys-devel/lld-14 )
 	)
-	<sys-devel/llvm-11:=
-	wasm? ( sys-devel/lld )
+	<sys-devel/llvm-14:=
 "
-LLVM_MAX_SLOT=10
+LLVM_MAX_SLOT=14
 
 BDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-rust
@@ -64,14 +63,11 @@ BDEPEND="${PYTHON_DEPS}
 
 # libgit2 should be at least same as bundled into libgit-sys #707746
 DEPEND="
-	>=dev-libs/libgit2-0.99:=
-	net-libs/libssh2:=
-	net-libs/http-parser:=
+	>=app-arch/xz-utils-5.2
 	net-misc/curl:=[http2,ssl]
+	elibc_musl? ( >=sys-libs/musl-1.2.1-r2 )
 	sys-libs/zlib:=
-	!libressl? ( dev-libs/openssl:0= )
-	libressl? ( dev-libs/libressl:0= )
-	elibc_musl? ( sys-libs/libunwind )
+	dev-libs/openssl:0=
 	system-llvm? (
 		${LLVM_DEPEND}
 	)
