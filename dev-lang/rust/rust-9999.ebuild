@@ -45,7 +45,7 @@ LLVM_DEPEND="
 		sys-devel/llvm:14[llvm_targets_WebAssembly?]
 		wasm? ( >=sys-devel/lld-14 )
 	)
-	<sys-devel/llvm-14:=
+	<sys-devel/llvm-15:=
 "
 LLVM_MAX_SLOT=14
 
