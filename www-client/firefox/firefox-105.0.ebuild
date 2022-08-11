@@ -159,7 +159,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-4.3.0:0=
+		>=media-libs/harfbuzz-5.1.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
 	system-icu? ( >=dev-libs/icu-71.1:= )
