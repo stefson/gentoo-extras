@@ -111,7 +111,7 @@ RESTRICT="test network-sandbox"
 S="${WORKDIR}/${MY_P}-src"
 
 #PATCHES=(
-#	"${FILESDIR}/0001-fix-os_info-in-9999.patch"
+#	"${FILESDIR}/"
 #)
 
 toml_usex() {
