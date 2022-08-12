@@ -1,0 +1,23 @@
+diff --git a/src/bootstrap/native.rs b/src/bootstrap/native.rs
+index 977b0e80f..dd7659e41 100644
+--- a/src/bootstrap/native.rs
++++ b/src/bootstrap/native.rs
+@@ -491,7 +491,7 @@ impl Step for Llvm {
+             .define("LLVM_ENABLE_LIBEDIT", "OFF")
+             .define("LLVM_ENABLE_BINDINGS", "OFF")
+             .define("LLVM_ENABLE_Z3_SOLVER", "OFF")
+-            .define("LLVM_PARALLEL_COMPILE_JOBS", builder.jobs().to_string())
++            .define("LLVM_PARALLEL_COMPILE_JOBS", "2")
+             .define("LLVM_TARGET_ARCH", target_native.split('-').next().unwrap())
+             .define("LLVM_DEFAULT_TARGET_TRIPLE", target_native);
+ 
+@@ -797,7 +797,7 @@ fn configure_cmake(
+             .define("CMAKE_ASM_COMPILER", sanitize_cc(cc));
+     }
+ 
+-    cfg.build_arg("-j").build_arg(builder.jobs().to_string());
++    cfg.build_arg("-j").build_arg("2");
+     let mut cflags: OsString = builder.cflags(target, GitRepo::Llvm, CLang::C).join(" ").into();
+     if let Some(ref s) = builder.config.llvm_cflags {
+         cflags.push(" ");
+
