@@ -584,7 +584,7 @@ src_prepare() {
 	eapply "${FILESDIR}"/0001-fix-cbindgen-0.24-in-firefox-esr.patch
 
 	# unbreaks rust-1.63.0
-	eapply "${FILESDIR}"/0001-firefox-91-updated-packed-simd.patch
+	# eapply "${FILESDIR}"/0001-firefox-91-updated-packed-simd.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
