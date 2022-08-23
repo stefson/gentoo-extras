@@ -114,7 +114,7 @@ COMMON_DEPEND="
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.79
+	>=dev-libs/nss-3.79.1
 	>=dev-libs/nspr-4.34
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -137,7 +137,7 @@ COMMON_DEPEND="
 	sndio? ( >=media-sound/sndio-1.8.0-r1 )
 	screencast? ( media-video/pipewire:= )
 	system-av1? (
-		>=media-libs/dav1d-0.9.3:=
+		>=media-libs/dav1d-1.0.0:=
 		>=media-libs/libaom-1.0.0:=
 	)
 	system-harfbuzz? (
