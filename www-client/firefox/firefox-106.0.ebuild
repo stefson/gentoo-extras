@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-103-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-104-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -101,14 +101,6 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
 			)
 		)
-		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-			clang? (
-				=sys-devel/lld-12*
-				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
-			)
-		)
 	)
 	lto? (
 		!clang? ( sys-devel/binutils[gold] )
@@ -121,8 +113,8 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.81
-	>=dev-libs/nspr-4.34
+	>=dev-libs/nss-3.82
+	>=dev-libs/nspr-4.34.1
 	dev-libs/atk
 	dev-libs/expat
 	>=x11-libs/cairo-1.10[X]
@@ -487,10 +479,10 @@ src_prepare() {
 
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# upstreamed to 104 branch
-	rm -v "${WORKDIR}"/firefox-patches/0032-p05-bmo-1776724-build-wayland-only-D150485.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1773336-disable_audio_thread_priority_default_features.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-vaapi-fixes.patch
+	# upstreamed to 105 branch
+
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1773336-disable_audio_thread_priority_default_features.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
