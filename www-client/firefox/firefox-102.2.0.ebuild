@@ -576,6 +576,8 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
+#	eapply "${FILESDIR}"/0001-firefox-102-updated-packed-simd.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
