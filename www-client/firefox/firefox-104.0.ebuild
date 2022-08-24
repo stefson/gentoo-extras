@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="8"
+EAPI=8
 
 FIREFOX_PATCHSET="firefox-104-patches-01j.tar.xz"
 
@@ -48,7 +48,7 @@ if [[ ${PV} == *_rc* ]] ; then
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{juippis,polynomial-c,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~{juippis,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -72,7 +72,6 @@ IUSE+=" geckodriver +gmp-autoupdate screencast +X"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	pgo? ( lto )
-	wayland? ( dbus )
 	wifi? ( dbus )"
 
 # Firefox-only REQUIRED_USE flags
@@ -109,12 +108,12 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.14 )"
 
 COMMON_DEPEND="
-	dev-libs/glib:2
 	dev-libs/atk
 	dev-libs/expat
+	dev-libs/glib:2
 	dev-libs/libffi:=
 	>=dev-libs/nss-3.81
-	>=dev-libs/nspr-4.32
+	>=dev-libs/nspr-4.34.1
 	media-libs/alsa-lib
 	media-libs/fontconfig
 	media-libs/freetype
@@ -470,13 +469,6 @@ pkg_setup() {
 			fi
 		fi
 
-		if ! use clang && [[ $(gcc-major-version) -eq 11 ]] \
-			&& ! has_version -b ">sys-devel/gcc-11.1.0:11" ; then
-			# bug 792705
-			eerror "Using GCC 11 to compile firefox is currently known to be broken (see bug #792705)."
-			die "Set USE=clang or select <gcc-11 to build ${CATEGORY}/${P}."
-		fi
-
 		python-any-r1_pkg_setup
 
 		# Avoid PGO profiling problems due to enviroment leakage
@@ -573,9 +565,9 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
+	
 	# upstreamed to 104 branch
-
+	
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -1278,7 +1270,7 @@ pkg_postinst() {
 	# bug 835078
 	if use hwaccel && has_version "x11-drivers/xf86-video-nouveau"; then
 		ewarn "You have nouveau drivers installed in your system and 'hwaccel' "
-		ewarn "enabled for Firefox. Nouveau / your GPU might not supported the "
+		ewarn "enabled for Firefox. Nouveau / your GPU might not support the "
 		ewarn "required EGL, so either disable 'hwaccel' or try the workaround "
 		ewarn "explained in https://bugs.gentoo.org/835078#c5 if Firefox crashes."
 	fi
@@ -1291,3 +1283,4 @@ pkg_postinst() {
 	elog "See: https://support.mozilla.org/en-US/kb/difficulties-opening-or-using-website-firefox-100"
 	elog
 }
+
