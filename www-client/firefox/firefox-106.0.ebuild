@@ -481,7 +481,7 @@ src_prepare() {
 
 	# upstreamed to 105 branch
 
-#	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1773336-disable_audio_thread_priority_default_features.patch
 
 	eapply "${WORKDIR}/firefox-patches"
