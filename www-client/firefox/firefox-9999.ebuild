@@ -145,11 +145,11 @@ src_prepare() {
 	# Autotools configure is now called old-configure.in
 	# This works because there is still a configure.in that happens to be for the
 	# shell wrapper configure script
-	eautoreconf old-configure.in
+	# eautoreconf old-configure.in
 
 	# Must run autoconf in js/src
-	cd "${S}"/js/src || die
-	autoconf-2.13
+	# cd "${S}"/js/src || die
+	# autoconf-2.13
 }
 
 src_configure() {
