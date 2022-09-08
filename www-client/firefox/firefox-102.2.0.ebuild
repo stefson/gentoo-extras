@@ -578,8 +578,18 @@ src_prepare() {
 
 #	eapply "${FILESDIR}"/0001-firefox-102-updated-packed-simd.patch
 
+	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-data-sharing-infobar.patch
+	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-telemetry.patch
+
+	# disable unwanted addons and pocket as well
+	eapply "${FILESDIR}"/privacy-patchset-102/remove_addons.patch
+	eapply "${FILESDIR}"/privacy-patchset-102/disable-pocket.patch
+	eapply "${FILESDIR}"/privacy-patchset-102/stop-undesired-requests.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
+
+	rm -rv browser/extensions/{doh-rollout,screenshots,webcompat,report-site-issue} || die
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
