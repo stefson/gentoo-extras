@@ -1113,6 +1113,13 @@ src_install() {
 		EOF
 	fi
 
+	cat "${FILESDIR}"/privacy-patchset-102/102.0-privacy.js-1 >> \
+	"${GENTOO_PREFS}" \
+	|| die
+
+	rm -rv "${BUILD_DIR}"/browser/extensions/* || die
+	rm -rv "${BUILD_DIR}"/dist/bin/browser/features/* || die
+
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
