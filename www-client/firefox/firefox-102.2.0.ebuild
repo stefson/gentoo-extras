@@ -1125,8 +1125,8 @@ src_install() {
 	"${GENTOO_PREFS}" \
 	|| die
 
-	rm -rv "${BUILD_DIR}"/browser/extensions/* || die
-	rm -rv "${BUILD_DIR}"/dist/bin/browser/features/* || die
+#	rm -rv "${BUILD_DIR}"/browser/extensions/* || die
+#	rm -rv "${BUILD_DIR}"/dist/bin/browser/features/* || die
 
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
