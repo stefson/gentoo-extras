@@ -96,7 +96,7 @@ RDEPEND="dev-libs/glib:2
 	curl? ( net-misc/curl:0 )
 	elibc_musl? ( sys-libs/queue-standalone )
 	ffmpeg? ( media-video/ffmpeg:0= )
-	flac? ( media-libs/flac:0 )
+	flac? ( media-libs/flac:= )
 	gme? ( sys-libs/zlib:0 )
 	gtk2? ( dev-libs/atk:0
 		dev-libs/jansson:=
