@@ -7,13 +7,11 @@ CMAKE_ECLASS=cmake
 
 inherit cmake-multilib llvm llvm.org
 
-##flag-o-matic
-
 DESCRIPTION="Multi-Level IR Compiler Framework for LLVM"
 HOMEPAGE="https://mlir.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
-SLOT="13"
+SLOT="14"
 KEYWORDS="~amd64"
 IUSE="test"
 
@@ -28,13 +26,8 @@ RDEPEND="${DEPEND}"
 RESTRICT="!test? ( test )"
 
 LLVM_MAX_SLOT=14
-LLVM_COMPONENTS=( mlir )
+LLVM_COMPONENTS=( mlir cmake )
 llvm.org_set_globals
-
-src_unpack() {
-	unpack llvm-project-${PV}.src.tar.xz
-	mv "${WORKDIR}/llvm-project-${PV}.src/mlir" "${WORKDIR}/mlir" || die
-}
 
 multilib_src_configure() {
 	local mycmakeargs=(
