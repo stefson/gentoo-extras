@@ -1,17 +1,17 @@
-From f6b68f5f0e4c3939bf08c7f457714896d8bde2f7 Mon Sep 17 00:00:00 2001
+From 1a5423cf2c7eb0784fcc9b789cdd271efbf43d45 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Fri, 8 Sep 2017 00:04:29 -0500
-Subject: [PATCH 02/15] Fix LLVM build
+Subject: [PATCH] Fix LLVM build
 
 ---
  src/bootstrap/lib.rs | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
-index 8569089f701..faa96b34ad4 100644
+index 3130dcc277bdb..c6ac4f9e636c5 100644
 --- a/src/bootstrap/lib.rs
 +++ b/src/bootstrap/lib.rs
-@@ -948,7 +948,7 @@ fn cflags(&self, target: TargetSelection, which: GitRepo) -> Vec<String> {
+@@ -957,7 +957,7 @@ impl Build {
              .args()
              .iter()
              .map(|s| s.to_string_lossy().into_owned())

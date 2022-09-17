@@ -43,11 +43,11 @@ IUSE="clippy cpu_flags_arm_neon cpu_flags_x86_sse2 debug dist doc miri nightly p
 # 3. Specify LLVM_MAX_SLOT, e.g. 11.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:13[${LLVM_TARGET_USEDEPS// /,}]
+		sys-devel/llvm:14[${LLVM_TARGET_USEDEPS// /,}]
 	)
-	<sys-devel/llvm-14:=
+	<sys-devel/llvm-15:=
 "
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=14
 
 # to bootstrap we need at least exactly previous version, or same.
 # most of the time previous versions fail to bootstrap with newer
@@ -125,22 +125,21 @@ QA_PRESTRIPPED="
 RESTRICT="test"
 
 PATCHES=(
-	"${FILESDIR}"/${PV}/0001-Don-t-pass-CFLAGS-to-the-C-compiler.patch
-	"${FILESDIR}"/${PV}/0002-Fix-LLVM-build.patch
-	"${FILESDIR}"/${PV}/0003-Fix-linking-to-zlib-when-cross-compiling.patch
-	"${FILESDIR}"/${PV}/0004-Fix-rustdoc-when-cross-compiling-on-musl.patch
-	"${FILESDIR}"/${PV}/0005-Use-static-native-libraries-when-linking-static-exec.patch
-	"${FILESDIR}"/${PV}/0006-Remove-musl_root-and-CRT-fallback-from-musl-targets.patch
-	"${FILESDIR}"/${PV}/0007-Prefer-libgcc_eh-over-libunwind-for-musl.patch
-	"${FILESDIR}"/${PV}/0008-Link-libssp_nonshared.a-on-all-musl-targets.patch
-	"${FILESDIR}"/${PV}/0009-test-failed-doctest-output-Fix-normalization.patch
-	"${FILESDIR}"/${PV}/0010-test-sysroot-crates-are-unstable-Fix-test-when-rpath.patch
-	"${FILESDIR}"/${PV}/0011-test-use-extern-for-plugins-Don-t-assume-multilib.patch
-	"${FILESDIR}"/${PV}/0012-Ignore-broken-and-non-applicable-tests.patch
-	"${FILESDIR}"/${PV}/0013-Link-stage-2-tools-dynamically-to-libstd.patch
-	"${FILESDIR}"/${PV}/0014-Move-debugger-scripts-to-usr-share-rust.patch
-	"${FILESDIR}"/${PV}/0015-Add-gentoo-target-specs.patch
-	"${FILESDIR}"/${PV}/0016-fix-ppc32.patch
+	"${FILESDIR}"/${PV}/0001-Fix-LLVM-build.patch
+	"${FILESDIR}"/${PV}/0002-Fix-linking-to-zlib-when-cross-compiling.patch
+	"${FILESDIR}"/${PV}/0003-Fix-rustdoc-when-cross-compiling-on-musl.patch
+	"${FILESDIR}"/${PV}/0004-Use-static-native-libraries-when-linking-static-exec.patch
+	"${FILESDIR}"/${PV}/0005-Remove-musl_root-and-CRT-fallback-from-musl-targets.patch
+	"${FILESDIR}"/${PV}/0006-Prefer-libgcc_eh-over-libunwind-for-musl.patch
+	"${FILESDIR}"/${PV}/0007-Link-libssp_nonshared.a-on-all-musl-targets.patch
+	"${FILESDIR}"/${PV}/0008-test-failed-doctest-output-Fix-normalization.patch
+	"${FILESDIR}"/${PV}/0009-test-sysroot-crates-are-unstable-Fix-test-when-rpath.patch
+	"${FILESDIR}"/${PV}/0010-test-use-extern-for-plugins-Don-t-assume-multilib.patch
+	"${FILESDIR}"/${PV}/0011-Ignore-broken-and-non-applicable-tests.patch
+	"${FILESDIR}"/${PV}/0012-Link-stage-2-tools-dynamically-to-libstd.patch
+	"${FILESDIR}"/${PV}/0013-Move-debugger-scripts-to-usr-share-rust.patch
+	"${FILESDIR}"/${PV}/0014-Add-gentoo-target-specs.patch
+	"${FILESDIR}"/${PV}/0015-fix-ppc32.patch
 	"${FILESDIR}"/${PV}/0040-rls-atomics.patch
 	"${FILESDIR}"/${PV}/0050-llvm.patch
 	"${FILESDIR}"/${PV}/0051-llvm-powerpc-elfv2.patch

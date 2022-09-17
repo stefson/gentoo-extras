@@ -1,31 +1,31 @@
-From efe3315bccb0495f34b1d859a469449e4efb0082 Mon Sep 17 00:00:00 2001
+From e653caa13dce250139440eab3da38c9ec2f641d5 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Fri, 8 Sep 2017 22:11:14 -0500
-Subject: [PATCH 06/15] Remove musl_root and CRT fallback from musl targets
+Subject: [PATCH] Remove musl_root and CRT fallback from musl targets
 
 ---
  compiler/rustc_codegen_ssa/src/back/link.rs   |  6 +--
- compiler/rustc_target/src/spec/crt_objects.rs | 25 ------------
+ compiler/rustc_target/src/spec/crt_objects.rs | 25 -----------
  .../rustc_target/src/spec/linux_musl_base.rs  |  4 --
  config.toml.example                           | 17 --------
- src/bootstrap/cc_detect.rs                    | 27 +------------
- src/bootstrap/compile.rs                      | 40 +------------------
+ src/bootstrap/cc_detect.rs                    | 27 +-----------
+ src/bootstrap/compile.rs                      | 42 +------------------
  src/bootstrap/config.rs                       | 10 -----
  src/bootstrap/configure.py                    | 28 -------------
  src/bootstrap/lib.rs                          | 19 ---------
- src/bootstrap/sanity.rs                       | 23 -----------
+ src/bootstrap/sanity.rs                       | 23 ----------
  .../dist-i586-gnu-i586-i686-musl/Dockerfile   |  2 -
  .../host-x86_64/dist-various-1/Dockerfile     |  8 ----
  .../host-x86_64/dist-various-2/Dockerfile     |  3 +-
  .../host-x86_64/dist-x86_64-musl/Dockerfile   |  1 -
  .../host-x86_64/test-various/Dockerfile       |  1 -
- 15 files changed, 5 insertions(+), 209 deletions(-)
+ 15 files changed, 5 insertions(+), 211 deletions(-)
 
 diff --git a/compiler/rustc_codegen_ssa/src/back/link.rs b/compiler/rustc_codegen_ssa/src/back/link.rs
-index 9c69371e000..33dbc5a373c 100644
+index 93d8a6e868067..a14b0c943e3f5 100644
 --- a/compiler/rustc_codegen_ssa/src/back/link.rs
 +++ b/compiler/rustc_codegen_ssa/src/back/link.rs
-@@ -1517,16 +1517,12 @@ fn detect_self_contained_mingw(sess: &Session) -> bool {
+@@ -1508,16 +1508,12 @@ fn detect_self_contained_mingw(sess: &Session) -> bool {
  
  /// Whether we link to our own CRT objects instead of relying on gcc to pull them.
  /// We only provide such support for a very limited number of targets.
@@ -44,7 +44,7 @@ index 9c69371e000..33dbc5a373c 100644
              sess.host == sess.target
                  && sess.target.vendor != "uwp"
 diff --git a/compiler/rustc_target/src/spec/crt_objects.rs b/compiler/rustc_target/src/spec/crt_objects.rs
-index 2fc9ab29f92..0bf7d197583 100644
+index 2fc9ab29f92f4..0bf7d19758344 100644
 --- a/compiler/rustc_target/src/spec/crt_objects.rs
 +++ b/compiler/rustc_target/src/spec/crt_objects.rs
 @@ -62,28 +62,6 @@ pub(super) fn all(obj: &str) -> CrtObjects {
@@ -92,7 +92,7 @@ index 2fc9ab29f92..0bf7d197583 100644
              "mingw" => CrtObjectsFallback::Mingw,
              "wasm" => CrtObjectsFallback::Wasm,
              _ => return Err(()),
-@@ -147,7 +123,6 @@ fn from_str(s: &str) -> Result<CrtObjectsFallback, ()> {
+@@ -147,7 +123,6 @@ impl FromStr for CrtObjectsFallback {
  impl ToJson for CrtObjectsFallback {
      fn to_json(&self) -> Json {
          match *self {
@@ -101,7 +101,7 @@ index 2fc9ab29f92..0bf7d197583 100644
              CrtObjectsFallback::Wasm => "wasm",
          }
 diff --git a/compiler/rustc_target/src/spec/linux_musl_base.rs b/compiler/rustc_target/src/spec/linux_musl_base.rs
-index 5038a967d0a..9931578ba86 100644
+index 5038a967d0a0f..9931578ba8676 100644
 --- a/compiler/rustc_target/src/spec/linux_musl_base.rs
 +++ b/compiler/rustc_target/src/spec/linux_musl_base.rs
 @@ -1,13 +1,9 @@
@@ -119,10 +119,10 @@ index 5038a967d0a..9931578ba86 100644
      // These targets statically link libc by default
      base.crt_static_default = true;
 diff --git a/config.toml.example b/config.toml.example
-index f24f8e81a79..1b9bddb41fe 100644
+index ad48cc881f3e6..40c7e5ae06d1e 100644
 --- a/config.toml.example
 +++ b/config.toml.example
-@@ -508,14 +508,6 @@ changelog-seen = 2
+@@ -511,14 +511,6 @@ changelog-seen = 2
  # supplementary build information, like distro-specific package versions.
  #description = <none> (string)
  
@@ -137,7 +137,7 @@ index f24f8e81a79..1b9bddb41fe 100644
  # By default the `rustc` executable is built with `-Wl,-rpath` flags on Unix
  # platforms to ensure that the compiler is usable by default from the build
  # directory (as it links to a number of dynamic libraries). This may not be
-@@ -681,15 +673,6 @@ changelog-seen = 2
+@@ -684,15 +676,6 @@ changelog-seen = 2
  # only use static libraries. If unset, the target's default linkage is used.
  #crt-static = <platform-specific> (bool)
  
@@ -154,7 +154,7 @@ index f24f8e81a79..1b9bddb41fe 100644
  # `wasm32-wasi` target. If you are building wasm32-wasi target, make sure to
  # create a `[target.wasm32-wasi]` section and move this field there.
 diff --git a/src/bootstrap/cc_detect.rs b/src/bootstrap/cc_detect.rs
-index e750c2963dd..ba37a13c194 100644
+index 8c47f625d732b..9e3b3e880ec33 100644
 --- a/src/bootstrap/cc_detect.rs
 +++ b/src/bootstrap/cc_detect.rs
 @@ -42,8 +42,6 @@ fn cc2ar(cc: &Path, target: TargetSelection) -> Option<PathBuf> {
@@ -184,7 +184,7 @@ index e750c2963dd..ba37a13c194 100644
              true
          } else {
              // Use an auto-detected compiler (or one configured via `CXX_target_triple` env vars).
-@@ -157,7 +155,6 @@ fn set_compiler(
+@@ -158,7 +156,6 @@ fn set_compiler(
      compiler: Language,
      target: TargetSelection,
      config: Option<&Target>,
@@ -192,7 +192,7 @@ index e750c2963dd..ba37a13c194 100644
  ) {
      match &*target.triple {
          // When compiling for android we may have the NDK configured in the
-@@ -200,26 +197,6 @@ fn set_compiler(
+@@ -201,26 +198,6 @@ fn set_compiler(
              }
          }
  
@@ -220,10 +220,10 @@ index e750c2963dd..ba37a13c194 100644
      }
  }
 diff --git a/src/bootstrap/compile.rs b/src/bootstrap/compile.rs
-index 043b38ecece..e1fe07f3211 100644
+index f05d1dcf4fcdc..f3f04f07dd212 100644
 --- a/src/bootstrap/compile.rs
 +++ b/src/bootstrap/compile.rs
-@@ -200,36 +200,7 @@ fn copy_self_contained_objects(
+@@ -200,38 +200,7 @@ fn copy_self_contained_objects(
  
      // Copies the libc and CRT objects.
      //
@@ -254,14 +254,16 @@ index 043b38ecece..e1fe07f3211 100644
 -            target_deps.push((target, DependencyType::TargetSelfContained));
 -        }
 -
--        let libunwind_path = copy_llvm_libunwind(builder, target, &libdir_self_contained);
--        target_deps.push((libunwind_path, DependencyType::TargetSelfContained));
+-        if !target.starts_with("s390x") {
+-            let libunwind_path = copy_llvm_libunwind(builder, target, &libdir_self_contained);
+-            target_deps.push((libunwind_path, DependencyType::TargetSelfContained));
+-        }
 -    } else if target.ends_with("-wasi") {
 +    if target.ends_with("-wasi") {
          let srcdir = builder
              .wasi_root(target)
              .unwrap_or_else(|| {
-@@ -313,15 +284,6 @@ pub fn std_cargo(builder: &Builder<'_>, target: TargetSelection, stage: u32, car
+@@ -315,15 +284,6 @@ pub fn std_cargo(builder: &Builder<'_>, target: TargetSelection, stage: u32, car
              .arg("--manifest-path")
              .arg(builder.src.join("library/test/Cargo.toml"));
  
@@ -278,10 +280,10 @@ index 043b38ecece..e1fe07f3211 100644
              if let Some(p) = builder.wasi_root(target) {
                  let root = format!("native={}/lib/wasm32-wasi", p.to_str().unwrap());
 diff --git a/src/bootstrap/config.rs b/src/bootstrap/config.rs
-index 5af9248583c..cdf7f48a015 100644
+index d6f77fe6cd6d0..a2be14e5d5aeb 100644
 --- a/src/bootstrap/config.rs
 +++ b/src/bootstrap/config.rs
-@@ -171,8 +171,6 @@ pub struct Config {
+@@ -173,8 +173,6 @@ pub struct Config {
      pub print_step_rusage: bool,
      pub missing_tools: bool,
  
@@ -290,7 +292,7 @@ index 5af9248583c..cdf7f48a015 100644
      pub prefix: Option<PathBuf>,
      pub sysconfdir: Option<PathBuf>,
      pub datadir: Option<PathBuf>,
-@@ -299,8 +297,6 @@ pub struct Target {
+@@ -301,8 +299,6 @@ pub struct Target {
      pub sanitizers: Option<bool>,
      pub profiler: Option<bool>,
      pub crt_static: Option<bool>,
@@ -299,7 +301,7 @@ index 5af9248583c..cdf7f48a015 100644
      pub wasi_root: Option<PathBuf>,
      pub qemu_rootfs: Option<PathBuf>,
      pub no_std: bool,
-@@ -531,7 +527,6 @@ struct Rust {
+@@ -534,7 +530,6 @@ derive_merge! {
          default_linker: Option<String>,
          channel: Option<String>,
          description: Option<String>,
@@ -307,7 +309,7 @@ index 5af9248583c..cdf7f48a015 100644
          rpath: Option<bool>,
          verbose_tests: Option<bool>,
          optimize_tests: Option<bool>,
-@@ -577,8 +572,6 @@ struct TomlTarget {
+@@ -580,8 +575,6 @@ derive_merge! {
          sanitizers: Option<bool>,
          profiler: Option<bool>,
          crt_static: Option<bool>,
@@ -316,7 +318,7 @@ index 5af9248583c..cdf7f48a015 100644
          wasi_root: Option<String>,
          qemu_rootfs: Option<String>,
          no_std: Option<bool>,
-@@ -938,7 +931,6 @@ pub fn parse(args: &[String]) -> Config {
+@@ -943,7 +936,6 @@ impl Config {
              set(&mut config.llvm_tools_enabled, rust.llvm_tools);
              config.rustc_parallel = rust.parallel_compiler.unwrap_or(false);
              config.rustc_default_linker = rust.default_linker;
@@ -324,7 +326,7 @@ index 5af9248583c..cdf7f48a015 100644
              config.save_toolstates = rust.save_toolstates.map(PathBuf::from);
              set(&mut config.deny_warnings, flags.deny_warnings.or(rust.deny_warnings));
              set(&mut config.backtrace_on_ice, rust.backtrace_on_ice);
-@@ -984,8 +976,6 @@ pub fn parse(args: &[String]) -> Config {
+@@ -989,8 +981,6 @@ impl Config {
                  target.ranlib = cfg.ranlib.map(PathBuf::from);
                  target.linker = cfg.linker.map(PathBuf::from);
                  target.crt_static = cfg.crt_static;
@@ -334,10 +336,10 @@ index 5af9248583c..cdf7f48a015 100644
                  target.qemu_rootfs = cfg.qemu_rootfs.map(PathBuf::from);
                  target.sanitizers = cfg.sanitizers;
 diff --git a/src/bootstrap/configure.py b/src/bootstrap/configure.py
-index 94424cb4548..9ae0cc053e3 100755
+index 94424cb4548fa..9ae0cc053e336 100755
 --- a/src/bootstrap/configure.py
 +++ b/src/bootstrap/configure.py
-@@ -114,34 +114,6 @@ v("aarch64-linux-android-ndk", "target.aarch64-linux-android.android-ndk",
+@@ -114,34 +114,6 @@ def v(*args):
    "aarch64-linux-android NDK standalone path")
  v("x86_64-linux-android-ndk", "target.x86_64-linux-android.android-ndk",
    "x86_64-linux-android NDK standalone path")
@@ -373,10 +375,10 @@ index 94424cb4548..9ae0cc053e3 100755
    "rootfs in qemu testing, you probably don't want to use this")
  v("qemu-aarch64-rootfs", "target.aarch64-unknown-linux-gnu.qemu-rootfs",
 diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
-index faa96b34ad4..fcdde34145a 100644
+index c6ac4f9e636c5..d381678b02a88 100644
 --- a/src/bootstrap/lib.rs
 +++ b/src/bootstrap/lib.rs
-@@ -1050,25 +1050,6 @@ fn crt_static(&self, target: TargetSelection) -> Option<bool> {
+@@ -1059,25 +1059,6 @@ impl Build {
          }
      }
  
@@ -403,7 +405,7 @@ index faa96b34ad4..fcdde34145a 100644
      fn wasi_root(&self, target: TargetSelection) -> Option<&Path> {
          self.config.target_config.get(&target).and_then(|t| t.wasi_root.as_ref()).map(|p| &**p)
 diff --git a/src/bootstrap/sanity.rs b/src/bootstrap/sanity.rs
-index d7db2cef24f..a791177956d 100644
+index d7db2cef24f2b..a791177956db9 100644
 --- a/src/bootstrap/sanity.rs
 +++ b/src/bootstrap/sanity.rs
 @@ -11,7 +11,6 @@
@@ -444,7 +446,7 @@ index d7db2cef24f..a791177956d 100644
              // There are three builds of cmake on windows: MSVC, MinGW, and
              // Cygwin. The Cygwin build does not have generators for Visual
 diff --git a/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile b/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile
-index c98fc7dcfff..c2f1494f7e2 100644
+index c98fc7dcfff3e..c2f1494f7e292 100644
 --- a/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile
 +++ b/src/ci/docker/host-x86_64/dist-i586-gnu-i586-i686-musl/Dockerfile
 @@ -34,8 +34,6 @@ COPY scripts/cmake.sh /scripts/
@@ -457,7 +459,7 @@ index c98fc7dcfff..c2f1494f7e2 100644
  
  # Newer binutils broke things on some vms/distros (i.e., linking against
 diff --git a/src/ci/docker/host-x86_64/dist-various-1/Dockerfile b/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
-index cd0f01faa1b..6951c9ea9b1 100644
+index cd0f01faa1bfa..6951c9ea9b1b3 100644
 --- a/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
 +++ b/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
 @@ -172,14 +172,6 @@ ENV CFLAGS_armv5te_unknown_linux_musleabi="-march=armv5te -marm -mfloat-abi=soft
@@ -476,7 +478,7 @@ index cd0f01faa1b..6951c9ea9b1 100644
  
  ENV SCRIPT \
 diff --git a/src/ci/docker/host-x86_64/dist-various-2/Dockerfile b/src/ci/docker/host-x86_64/dist-various-2/Dockerfile
-index e363c4f79f9..7aaf101e4b5 100644
+index e363c4f79f9cf..7aaf101e4b5ce 100644
 --- a/src/ci/docker/host-x86_64/dist-various-2/Dockerfile
 +++ b/src/ci/docker/host-x86_64/dist-various-2/Dockerfile
 @@ -119,7 +119,6 @@ ENV TARGETS=$TARGETS,i686-unknown-freebsd
@@ -489,7 +491,7 @@ index e363c4f79f9..7aaf101e4b5 100644
  
  ENV SCRIPT python3 ../x.py dist --host='' --target $TARGETS
 diff --git a/src/ci/docker/host-x86_64/dist-x86_64-musl/Dockerfile b/src/ci/docker/host-x86_64/dist-x86_64-musl/Dockerfile
-index ef49904b53d..1db4b4aae71 100644
+index 51645a81853fd..b9edb339cc0e5 100644
 --- a/src/ci/docker/host-x86_64/dist-x86_64-musl/Dockerfile
 +++ b/src/ci/docker/host-x86_64/dist-x86_64-musl/Dockerfile
 @@ -37,7 +37,6 @@ RUN sh /scripts/sccache.sh
@@ -501,7 +503,7 @@ index ef49904b53d..1db4b4aae71 100644
        --enable-sanitizers \
        --enable-profiler \
 diff --git a/src/ci/docker/host-x86_64/test-various/Dockerfile b/src/ci/docker/host-x86_64/test-various/Dockerfile
-index 4d554a2852a..919e267724c 100644
+index 4d554a2852a09..919e267724cc1 100644
 --- a/src/ci/docker/host-x86_64/test-various/Dockerfile
 +++ b/src/ci/docker/host-x86_64/test-various/Dockerfile
 @@ -31,7 +31,6 @@ COPY scripts/sccache.sh /scripts/
