@@ -1,4 +1,4 @@
-From 137de7f431c116721de728a121f0c38aa24f58b6 Mon Sep 17 00:00:00 2001
+From 6cd24ed598fae6c0b0ea78671ab9733fcd738ee3 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Mon, 17 Sep 2018 02:09:10 +0000
 Subject: [PATCH] Move debugger scripts to /usr/share/rust
@@ -11,10 +11,10 @@ Subject: [PATCH] Move debugger scripts to /usr/share/rust
  4 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
-index f5ae8103cb057..28c9f3c05bc3b 100644
+index 09ea84a083eb2..b29bcff07066b 100644
 --- a/src/bootstrap/dist.rs
 +++ b/src/bootstrap/dist.rs
-@@ -474,7 +474,7 @@ impl Step for DebuggerScripts {
+@@ -497,7 +497,7 @@ impl Step for DebuggerScripts {
      fn run(self, builder: &Builder<'_>) {
          let host = self.host;
          let sysroot = self.sysroot;
@@ -64,6 +64,4 @@ index bce72f1bad698..8abb012452787 100755
  
  # Call LLDB with the commands added to the argument list
  exec "$lldb" --one-line-before-file "$script_import" --source-before-file "$commands_file" "$@"
--- 
-2.35.1
 

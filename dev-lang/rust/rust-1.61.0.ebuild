@@ -125,6 +125,10 @@ QA_PRESTRIPPED="
 RESTRICT="test"
 
 PATCHES=(
+	"${FILESDIR}"/1.61.0-llvm_addrspacecast.patch
+	"${FILESDIR}"/1.61.0-llvm_selectInterleaveCount.patch
+	"${FILESDIR}"/1.61.0-miri-cow.patch
+
 	"${FILESDIR}"/${PV}/0001-Fix-LLVM-build.patch
 	"${FILESDIR}"/${PV}/0002-Fix-linking-to-zlib-when-cross-compiling.patch
 	"${FILESDIR}"/${PV}/0003-Fix-rustdoc-when-cross-compiling-on-musl.patch

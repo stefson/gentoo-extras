@@ -1,4 +1,4 @@
-From b7ab3ecb6233472afdbb5247b4c48cc8f45ad8ac Mon Sep 17 00:00:00 2001
+From ac874b65e9fc89a6b5e126766c738b0b0e86aef7 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sun, 16 Sep 2018 16:38:48 +0000
 Subject: [PATCH] Ignore broken and non-applicable tests
@@ -56,6 +56,4 @@ index 4548d3339472d..00dd85244d876 100644
  // ignore-android
  // ignore-windows
  // ignore-emscripten no execve
--- 
-2.35.1
 

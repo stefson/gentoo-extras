@@ -1,4 +1,4 @@
-From 26ba9c852ad73dcc0401b74534b34bf33d5b6444 Mon Sep 17 00:00:00 2001
+From 55623eaeacf4095b2ea3c0922ee62000417e58ef Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Mon, 7 Oct 2019 18:36:28 -0500
 Subject: [PATCH] test/failed-doctest-output: Fix normalization
@@ -31,6 +31,4 @@ index 92473b49e1483..ed29b446abafe 100644
  // normalize-stdout-test "finished in \d+\.\d+s" -> "finished in $$TIME"
  // failure-status: 101
  
--- 
-2.35.1
 

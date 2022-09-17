@@ -1,4 +1,4 @@
-From 78ae73f09d07c847ede1dc683b8907f5bd5bd17f Mon Sep 17 00:00:00 2001
+From 58bef2f97b3dbbcae4bf61677241408c6d1bd3bd Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sat, 9 Sep 2017 00:14:16 -0500
 Subject: [PATCH] Prefer libgcc_eh over libunwind for musl
@@ -20,6 +20,4 @@ index 079626f0fea54..590fca0acfab7 100644
          #[link(name = "gcc_s", cfg(not(target_feature = "crt-static")))]
          extern "C" {}
      }
--- 
-2.35.1
 

@@ -1,4 +1,4 @@
-From 976ff1e1bbdbb9c0c0a32a6a27238b51e6467f8f Mon Sep 17 00:00:00 2001
+From 9fa86b84bf55b243fda60206741a098dd8334641 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Sun, 3 Nov 2019 17:01:32 -0600
 Subject: [PATCH] Link libssp_nonshared.a on all musl targets
@@ -18,14 +18,13 @@ index 9931578ba8676..a1cece5733cc1 100644
  pub fn opts() -> TargetOptions {
      let mut base = super::linux_base::opts();
  
-     base.env = "musl".to_string();
+     base.env = "musl".into();
  
 +    // libssp_nonshared.a is needed for __stack_chk_fail_local when using libc.so
-+    base.post_link_args.insert(LinkerFlavor::Gcc, vec!["-lssp_nonshared".to_string()]);
++    base.post_link_args.insert(LinkerFlavor::Gcc, vec!["-lssp_nonshared".into()]);
 +
      // These targets statically link libc by default
      base.crt_static_default = true;
+
  
--- 
-2.35.1
 

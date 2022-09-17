@@ -1,4 +1,4 @@
-From 702ebc6e2283f69e8b024b2cf12899a2bbdf6e8b Mon Sep 17 00:00:00 2001
+From f99a5b23554ecbe007110008f02cce68585c3c91 Mon Sep 17 00:00:00 2001
 From: Samuel Holland <samuel@sholland.org>
 Date: Wed, 10 Jan 2018 13:36:41 -0600
 Subject: [PATCH] Fix linking to zlib when cross-compiling
@@ -8,7 +8,7 @@ Subject: [PATCH] Fix linking to zlib when cross-compiling
  1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/compiler/rustc_llvm/build.rs b/compiler/rustc_llvm/build.rs
-index 3b6808d693f21..4713f550a73ec 100644
+index 943ce589c4f36..ab7606758b513 100644
 --- a/compiler/rustc_llvm/build.rs
 +++ b/compiler/rustc_llvm/build.rs
 @@ -177,16 +177,15 @@ fn main() {
@@ -31,6 +31,4 @@ index 3b6808d693f21..4713f550a73ec 100644
  
      for lib in output(&mut cmd).split_whitespace() {
          let name = if let Some(stripped) = lib.strip_prefix("-l") {
--- 
-2.35.1
 

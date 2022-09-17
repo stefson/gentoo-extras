@@ -37,6 +37,3 @@ index ad3800834b07c..e19b589233e3a 100644
              cmd,
          );
          eprintln!("sysroot: {:?}", sysroot);
--- 
-2.35.1
-
