@@ -64,7 +64,7 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack libproxy lto +openh264 pgo pulseaudio screencast 
 	selinux +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-	+system-libvpx +system-webp wayland wifi"
+	+system-libvpx system-png +system-webp wayland wifi"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	screencast? ( wayland )"
@@ -72,7 +72,7 @@ REQUIRED_USE="debug? ( !system-av1 )
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.24.2
+	>=dev-util/cbindgen-0.24.3
 	>=net-libs/nodejs-10.22.1
 	virtual/pkgconfig
 	>=virtual/rust-1.61.0
@@ -101,9 +101,6 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
 			)
 		)
-	)
-	lto? (
-		!clang? ( sys-devel/binutils[gold] )
 	)
 	amd64? ( >=dev-lang/yasm-1.1 )
 	x86? ( >=dev-lang/yasm-1.1 )
@@ -158,6 +155,7 @@ CDEPEND="
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads] )
 	system-libvpx? ( >=media-libs/libvpx-1.11.0:0=[postproc] )
+	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
 	wifi? (
 		kernel_linux? (
@@ -647,6 +645,7 @@ src_configure() {
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent system-libevent
 	mozconfig_use_with system-libvpx
+	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
 	mozconfig_use_enable dbus
