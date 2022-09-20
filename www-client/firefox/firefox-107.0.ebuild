@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-104-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-105-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -481,7 +481,6 @@ src_prepare() {
 	# upstreamed to 106 branch
 
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1773336-disable_audio_thread_priority_default_features.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
