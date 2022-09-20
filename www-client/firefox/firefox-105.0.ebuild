@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-104-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-105-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -575,9 +575,6 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 104 branch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1773336-disable_audio_thread_priority_default_features.patch
-	
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-firefox-105-allow-mold-linker.patch
