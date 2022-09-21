@@ -494,6 +494,14 @@ pkg_setup() {
 		addpredict /proc/self/oom_score_adj
 
 		if use pgo ; then
+
+			# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with pgo, but not sure
+			# whether that's due to better OOM handling by Firefox (bmo#1771712), or portage
+			# (PORTAGE_SCHEDULING_POLICY) update...
+			addpredict /proc
+			# May need a wider addpredict when using wayland+pgo.
+			# addpredict /dev/dri
+
 			# Allow access to GPU during PGO run
 			local ati_cards mesa_cards nvidia_cards render_cards
 			shopt -s nullglob
