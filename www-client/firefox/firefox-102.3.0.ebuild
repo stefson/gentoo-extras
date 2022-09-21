@@ -584,8 +584,6 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
-#	eapply "${FILESDIR}"/0001-firefox-102-updated-packed-simd.patch
-
 	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-data-sharing-infobar.patch
 	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-telemetry.patch
 
