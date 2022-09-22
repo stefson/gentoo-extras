@@ -581,6 +581,7 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0002-fix-neon-assembler-in-libyuv.patch
+	eapply "${FILESDIR}/"0003-remove-HAVE_SYSCTL-for-aarch64.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
