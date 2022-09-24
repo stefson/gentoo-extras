@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-105-patches-04j.tar.xz"
+FIREFOX_PATCHSET="firefox-105-patches-05j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -586,7 +586,6 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-firefox-105-allow-mold-linker.patch
-	eapply "${FILESDIR}/"0002-fix-neon-assembler-in-libyuv.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
