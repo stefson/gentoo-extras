@@ -580,7 +580,7 @@ src_prepare() {
 	
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}/"0003-remove-HAVE_SYSCTL-for-aarch64.patch
+	eapply "${FILESDIR}/"0001-remove-HAVE_SYSCTL-for-aarch64.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
