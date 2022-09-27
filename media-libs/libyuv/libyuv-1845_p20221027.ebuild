@@ -24,7 +24,6 @@ DEPEND="
 		dev-cpp/gtest
 		dev-cpp/gflags
 	)
-	dev-util/cmake
 "
 
 DOCS=( AUTHORS LICENSE PATENTS README.{md,chromium} )
