@@ -586,6 +586,7 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-firefox-105-allow-mold-linker.patch
+	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
