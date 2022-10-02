@@ -170,7 +170,9 @@ src_prepare() {
 
 	# fix for url plenk in curl-7.78 and above
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
-		
+
+	eapply "${FILESDIR}/deadbeef-1.8.8-fix-ffmpeg-5.0.patch"
+
 	rm -fr intl || die
 
 	eapply_user
