@@ -499,6 +499,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 #	eapply "${FILESDIR}/"0003-revert-cubeb-rs-update-to-0.10.2.patch
 	eapply "${FILESDIR}/"0004-use-c_char-instead-of-i8-to-fix-build-on-aarch64.patch
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1793392
+	eapply "${FILESDIR}/"0005-microgeckoprofiler-decleration-should-be-extern-C.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
