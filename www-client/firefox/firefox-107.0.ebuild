@@ -530,7 +530,7 @@ src_prepare() {
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Clearing checksums where we have applied patches
-	# moz_clear_vendor_checksums target-lexicon-0.9.0
+	moz_clear_vendor_checksums cubeb-backend
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
