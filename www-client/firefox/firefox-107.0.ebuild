@@ -111,9 +111,12 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.82
+	>=dev-libs/nss-3.83
 	>=dev-libs/nspr-4.34.1
-	dev-libs/atk
+	|| (
+		>=app-accessibility/at-spi2-core-2.46.0:2
+		dev-libs/atk
+	)
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
@@ -499,6 +502,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0003-use-c_char-instead-of-i8-to-fix-build-on-aarch64.patch
 	eapply "${FILESDIR}/"0004-microgeckoprofiler-decleration-should-be-extern-C.patch
+	eapply "${FILESDIR}/"0005-fix-i686-add-missing-includes-to-AtomicOperationsGenerated.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
