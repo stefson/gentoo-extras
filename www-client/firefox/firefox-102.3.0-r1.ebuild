@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="8"
+EAPI=8
 
 FIREFOX_PATCHSET="firefox-102esr-patches-03j.tar.xz"
 
@@ -57,7 +57,7 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="amd64 ~arm64 ~ppc64 ~x86"
+#KEYWORDS="amd64 arm64 ~ppc64 x86"
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -68,7 +68,7 @@ IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +
 IUSE+=" wayland wifi"
 
 # Firefox-only IUSE
-IUSE+=" geckodriver +gmp-autoupdate screencast +X"
+IUSE+=" geckodriver +gmp-autoupdate screencast"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	pgo? ( lto )
@@ -76,14 +76,16 @@ REQUIRED_USE="debug? ( !system-av1 )
 	wifi? ( dbus )"
 
 # Firefox-only REQUIRED_USE flags
-REQUIRED_USE+=" || ( X wayland )"
-REQUIRED_USE+=" pgo? ( X )"
 REQUIRED_USE+=" screencast? ( wayland )"
 
+FF_ONLY_DEPEND="!www-client/firefox:0
+	!www-client/firefox:rapid
+	screencast? ( media-video/pipewire:= )
+	selinux? ( sec-policy/selinux-mozilla )"
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.24.0
+	>=dev-util/cbindgen-0.24.3
 	>=net-libs/nodejs-10.23.1
 	virtual/pkgconfig
 	>=virtual/rust-1.59.0
@@ -112,12 +114,11 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
 			)
 		)
-
 	)
 	amd64? ( >=dev-lang/nasm-2.14 )
 	x86? ( >=dev-lang/nasm-2.14 )"
 
-COMMON_DEPEND="
+COMMON_DEPEND="${FF_ONLY_DEPEND}
 	|| (
 		>=app-accessibility/at-spi2-core-2.46.0:2
 		dev-libs/atk
@@ -134,8 +135,19 @@ COMMON_DEPEND="
 	media-video/ffmpeg
 	sys-libs/zlib
 	virtual/freedesktop-icon-theme
-	x11-libs/cairo
+	virtual/opengl
+	x11-libs/cairo[X]
 	x11-libs/gdk-pixbuf
+	x11-libs/gtk+:3[X]
+	x11-libs/libX11
+	x11-libs/libXcomposite
+	x11-libs/libXdamage
+	x11-libs/libXext
+	x11-libs/libXfixes
+	x11-libs/libXrandr
+	x11-libs/libXtst
+	x11-libs/libxcb:=
+	x11-libs/libxkbcommon[X]
 	x11-libs/pango
 	x11-libs/pixman
 	dbus? (
@@ -144,9 +156,7 @@ COMMON_DEPEND="
 	)
 	jack? ( virtual/jack )
 	libproxy? ( net-libs/libproxy )
-	selinux? ( sec-policy/selinux-mozilla )
 	sndio? ( >=media-sound/sndio-1.8.0-r1 )
-	screencast? ( media-video/pipewire:= )
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=
 		>=media-libs/libaom-1.0.0:=
@@ -162,7 +172,6 @@ COMMON_DEPEND="
 	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
 	wayland? (
-		>=media-libs/libepoxy-1.5.10-r1
 		x11-libs/gtk+:3[wayland]
 		x11-libs/libdrm
 		x11-libs/libxkbcommon[wayland]
@@ -173,25 +182,9 @@ COMMON_DEPEND="
 			net-misc/networkmanager
 			sys-apps/dbus
 		)
-	)
-	X? (
-		virtual/opengl
-		x11-libs/cairo[X]
-		x11-libs/gtk+:3[X]
-		x11-libs/libX11
-		x11-libs/libXcomposite
-		x11-libs/libXdamage
-		x11-libs/libXext
-		x11-libs/libXfixes
-		x11-libs/libxkbcommon[X]
-		x11-libs/libXrandr
-		x11-libs/libXtst
-		x11-libs/libxcb:=
 	)"
 
 RDEPEND="${COMMON_DEPEND}
-	!www-client/firefox:0
-	!www-client/firefox:esr
 	jack? ( virtual/jack )
 	openh264? ( media-libs/openh264:*[plugin] )
 	pulseaudio? (
@@ -199,19 +192,16 @@ RDEPEND="${COMMON_DEPEND}
 			media-sound/pulseaudio
 			>=media-sound/apulse-0.1.12-r4
 		)
-	)
-	selinux? ( sec-policy/selinux-mozilla )"
+	)"
 
 DEPEND="${COMMON_DEPEND}
+	x11-libs/libICE
+	x11-libs/libSM
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio
 			>=media-sound/apulse-0.1.12-r4[sdk]
 		)
-	)
-	X? (
-		x11-libs/libICE
-		x11-libs/libSM
 	)"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
@@ -482,13 +472,6 @@ pkg_setup() {
 			fi
 		fi
 
-		if ! use clang && [[ $(gcc-major-version) -eq 11 ]] \
-			&& ! has_version -b ">sys-devel/gcc-11.1.0:11" ; then
-			# bug 792705
-			eerror "Using GCC 11 to compile firefox is currently known to be broken (see bug #792705)."
-			die "Set USE=clang or select <gcc-11 to build ${CATEGORY}/${P}."
-		fi
-
 		python-any-r1_pkg_setup
 
 		# Avoid PGO profiling problems due to enviroment leakage
@@ -584,7 +567,10 @@ src_unpack() {
 }
 
 src_prepare() {
-	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
+	if use lto; then
+		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
+	fi
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-data-sharing-infobar.patch
@@ -630,7 +616,7 @@ src_prepare() {
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums target-lexicon-0.9.0
+#	moz_clear_vendor_checksums target-lexicon-0.9.0
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
@@ -828,10 +814,8 @@ src_configure() {
 
 	mozconfig_use_enable wifi necko-wifi
 
-	if use X && use wayland ; then
+	if use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
-	elif ! use X && use wayland ; then
-		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
 	else
 		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3
 	fi
@@ -1043,11 +1027,7 @@ src_compile() {
 		addpredict /root
 	fi
 
-	if ! use X && use wayland; then
-		local -x GDK_BACKEND=wayland
-	else
-		local -x GDK_BACKEND=x11
-	fi
+	local -x GDK_BACKEND=x11
 
 	${virtx_cmd} ./mach build --verbose \
 		|| die
@@ -1167,7 +1147,7 @@ src_install() {
 	# Install menu
 	local app_name="Mozilla ${MOZ_PN^}"
 	local desktop_file="${FILESDIR}/icon/${PN}-r3.desktop"
-	local desktop_filename="${PN}.desktop"
+	local desktop_filename="${PN}-esr.desktop"
 	local exec_command="${PN}"
 	local icon="${PN}"
 	local use_wayland="false"
@@ -1302,7 +1282,7 @@ pkg_postinst() {
 	# bug 835078
 	if use hwaccel && has_version "x11-drivers/xf86-video-nouveau"; then
 		ewarn "You have nouveau drivers installed in your system and 'hwaccel' "
-		ewarn "enabled for Firefox. Nouveau / your GPU might not supported the "
+		ewarn "enabled for Firefox. Nouveau / your GPU might not support the "
 		ewarn "required EGL, so either disable 'hwaccel' or try the workaround "
 		ewarn "explained in https://bugs.gentoo.org/835078#c5 if Firefox crashes."
 	fi
