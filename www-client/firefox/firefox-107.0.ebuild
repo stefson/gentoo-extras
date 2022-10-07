@@ -501,9 +501,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0003-use-c_char-instead-of-i8-to-fix-build-on-aarch64.patch
-	eapply "${FILESDIR}/"0004-microgeckoprofiler-decleration-should-be-extern-C.patch
-	eapply "${FILESDIR}/"0005-fix-i686-add-missing-includes-to-AtomicOperationsGenerated.patch
-	eapply "${FILESDIR}/"0006-fix-i686-restrict-SIMD_avx2-to-x86_64.patch
+	eapply "${FILESDIR}/"0004-fix-i686-restrict-SIMD_avx2-to-x86_64.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
