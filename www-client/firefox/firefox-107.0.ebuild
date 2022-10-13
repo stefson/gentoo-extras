@@ -501,6 +501,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0003-use-c_char-instead-of-i8-to-fix-build-on-aarch64.patch
+	eapply "${FILESDIR}/"0005-bmo-1559213-fix-system-av1-libs.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
