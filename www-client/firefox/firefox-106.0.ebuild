@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-105-patches-05j.tar.xz"
+FIREFOX_PATCHSET="firefox-106-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -123,8 +123,8 @@ COMMON_DEPEND="
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.82
-	>=dev-libs/nspr-4.34.1
+	>=dev-libs/nss-3.83
+	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
 	media-libs/freetype
@@ -578,14 +578,13 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 106 branch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
+#	not yet fixed in nightly, wait for proper backport
+#	rm -v "${WORKDIR}"/firefox-patches/0037-bgo-877267-rust-opaque-binding-type.patch
 	
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-HAVE_SYSCTL-for-aarch64.patch
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
-	eapply "${FILESDIR}/"0005-bmo-1559213-fix-system-av1-libs.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -618,6 +617,9 @@ src_prepare() {
 
 	einfo "Removing pre-built binaries ..."
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
+
+	# Clearing checksums where we have applied patches
+	moz_clear_vendor_checksums bindgen
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
