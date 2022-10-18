@@ -500,7 +500,6 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
-	eapply "${FILESDIR}/"0003-use-c_char-instead-of-i8-to-fix-build-on-aarch64.patch
 	eapply "${FILESDIR}/"0005-bmo-1559213-fix-system-av1-libs.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -533,7 +532,7 @@ src_prepare() {
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums cubeb-backend
+	# moz_clear_vendor_checksums cubeb-backend
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
