@@ -5,7 +5,7 @@ EAPI=8
 
 FIREFOX_PATCHSET="firefox-106-patches-01j.tar.xz"
 
-LLVM_MAX_SLOT=14
+LLVM_MAX_SLOT=15
 
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -91,6 +91,14 @@ BDEPEND="${PYTHON_DEPS}
 	>=virtual/rust-1.61.0
 	|| (
 		(
+			sys-devel/clang:15
+			sys-devel/llvm:15
+			clang? (
+				sys-devel/lld:15
+				pgo? ( =sys-libs/compiler-rt-sanitizers-14*[profile] )
+			)
+		)
+		(
 			sys-devel/clang:14
 			sys-devel/llvm:14
 			clang? (
@@ -127,7 +135,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.83
+	>=dev-libs/nss-3.84
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -705,6 +713,9 @@ src_configure() {
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
+
+	# for musl: add alpine patch and then uncomment
+	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 
 	# Set state path
 	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
