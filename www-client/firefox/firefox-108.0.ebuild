@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-105-patches-05j.tar.xz"
+FIREFOX_PATCHSET="firefox-106-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -495,12 +495,9 @@ src_prepare() {
 
 	# upstreamed to 106 branch
 
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0002-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
-	eapply "${FILESDIR}/"0005-bmo-1559213-fix-system-av1-libs.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
