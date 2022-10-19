@@ -86,7 +86,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.24.3
-	net-libs/nodejs
+	>=net-libs/nodejs-10.23.1
 	virtual/pkgconfig
 	>=virtual/rust-1.61.0
 	|| (
@@ -97,7 +97,7 @@ BDEPEND="${PYTHON_DEPS}
 				sys-devel/lld:15
 				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
-		)		
+		)
 		(
 			sys-devel/clang:14
 			sys-devel/llvm:14
@@ -163,7 +163,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.13
-		>=media-libs/harfbuzz-2.8.1:0=
+		>=media-libs/harfbuzz-5.1.0:0=
 	)
 	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
