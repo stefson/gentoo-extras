@@ -615,6 +615,8 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
