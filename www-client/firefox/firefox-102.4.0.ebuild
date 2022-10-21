@@ -57,7 +57,7 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="amd64 arm64 ~ppc64 x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -163,7 +163,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.13
-		>=media-libs/harfbuzz-2.8.1:0=
+		>=media-libs/harfbuzz-4.1.0:0=
 	)
 	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
