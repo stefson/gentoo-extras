@@ -86,7 +86,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.24.3
-	net-libs/nodejs
+	>=net-libs/nodejs-12.22.2
 	virtual/pkgconfig
 	>=virtual/rust-1.61.0
 	|| (
