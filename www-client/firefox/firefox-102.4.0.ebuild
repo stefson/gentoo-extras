@@ -573,6 +573,8 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}"/0001-apply-expat-CVE-2022-43680-fix.patch
+
 	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-data-sharing-infobar.patch
 	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-telemetry.patch
 
