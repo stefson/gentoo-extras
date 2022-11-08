@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-106-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-106-patches-03j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -619,7 +619,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}"/0003-apply-expat-CVE-2022-43680-fix.patch
-	eapply "${FILESDIR}"/0004-override-extern-asm-when-building-ffvpx-in-generic.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
