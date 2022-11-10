@@ -488,12 +488,12 @@ src_prepare() {
 	# upstreamed to 108 branch
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
 	rm -v "${WORKDIR}"/firefox-patches/0003-Check-additional-plugins-dir.patch
+	rm -v "${WORKDIR}"/firefox-patches/0007-bmo-878089-Don-t-fail-when-TERM-is-not-set.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fixup-system-nss.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
