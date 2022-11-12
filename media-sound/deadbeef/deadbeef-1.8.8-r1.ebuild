@@ -172,6 +172,7 @@ src_prepare() {
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-ffmpeg-5.0.patch"
 	eapply "${FILESDIR}/deadbeef-1.8.8-fixup-clang-15.patch"
+	eapply "${FILESDIR}/deadbeef-1.8.8-fix-build-with-musl-pthread.patch"
 
 	rm -fr intl || die
 
