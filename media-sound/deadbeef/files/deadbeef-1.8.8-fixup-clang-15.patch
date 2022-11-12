@@ -1,0 +1,13 @@
+diff --git a/plugins/gtkui/prefwin.c b/plugins/gtkui/prefwin.c
+index af88934..66f9256 100644
+--- a/plugins/gtkui/prefwin.c
++++ b/plugins/gtkui/prefwin.c
+@@ -846,7 +846,7 @@ on_plugin_conf_reset_btn_clicked       (GtkButton       *button,
+ {
+     GtkWidget *w = prefwin;
+     GtkTreeView *treeview = GTK_TREE_VIEW (lookup_widget (w, "pref_pluginlist"));
+-    on_pref_pluginlist_cursor_changed(treeview, 1);
++    on_pref_pluginlist_cursor_changed(treeview, (void *)1);
+ }
+ 
+ void
