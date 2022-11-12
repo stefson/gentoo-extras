@@ -98,7 +98,7 @@ RDEPEND="dev-libs/glib:2
 	ffmpeg? ( media-video/ffmpeg:0= )
 	flac? ( media-libs/flac:= )
 	gme? ( sys-libs/zlib:0 )
-	gtk2? ( dev-libs/atk:0
+	gtk2? ( >=app-accessibility/at-spi2-core-2.46.0
 		dev-libs/jansson:=
 		x11-libs/cairo:0
 		x11-libs/gtk+:2
