@@ -489,6 +489,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
 	rm -v "${WORKDIR}"/firefox-patches/0003-Check-additional-plugins-dir.patch
 	rm -v "${WORKDIR}"/firefox-patches/0007-bmo-878089-Don-t-fail-when-TERM-is-not-set.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1769631-python-3.11-compatibility.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
