@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-106-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-107-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -135,7 +135,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.84
+	>=dev-libs/nss-3.85
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-106-patches-03j.tar.xz"
+FIREFOX_PATCHSET="firefox-107-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -614,8 +614,6 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1791275-arm64-glibc-2.36-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1793289-override-EXTERN_ASM-when-building-ffvpx-on-arm.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
