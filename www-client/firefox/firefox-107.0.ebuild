@@ -65,17 +65,17 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
 IUSE+=" jack libproxy lto +openh264 pgo pulseaudio sndio selinux"
 IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
-IUSE+=" wayland wifi"
+IUSE+=" wayland wifi +X"
 
 # Firefox-only IUSE
-IUSE+=" geckodriver +gmp-autoupdate screencast +X"
+IUSE+=" geckodriver +gmp-autoupdate screencast"
 
-REQUIRED_USE="debug? ( !system-av1 )
+REQUIRED_USE="|| ( X wayland )
+	debug? ( !system-av1 )
 	pgo? ( lto )
 	wifi? ( dbus )"
 
 # Firefox-only REQUIRED_USE flags
-REQUIRED_USE+=" || ( X wayland )"
 REQUIRED_USE+=" screencast? ( wayland )"
 
 FF_ONLY_DEPEND="!www-client/firefox:0
@@ -83,12 +83,6 @@ FF_ONLY_DEPEND="!www-client/firefox:0
 	screencast? ( media-video/pipewire:= )
 	selinux? ( sec-policy/selinux-mozilla )"
 BDEPEND="${PYTHON_DEPS}
-	app-arch/unzip
-	app-arch/zip
-	>=dev-util/cbindgen-0.24.3
-	>=net-libs/nodejs-12.22.2
-	virtual/pkgconfig
-	>=virtual/rust-1.61.0
 	|| (
 		(
 			sys-devel/clang:15
@@ -106,15 +100,16 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-14*[profile] )
 			)
 		)
-		(
-			sys-devel/clang:13
-			sys-devel/llvm:13
-			clang? (
-				sys-devel/lld:13
-				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
-			)
-		)
 	)
+	|| (
+		virtual/rust:0/llvm-15
+		virtual/rust:0/llvm-14
+	)
+	app-arch/unzip
+	app-arch/zip
+	>=dev-util/cbindgen-0.24.3
+	net-libs/nodejs
+	virtual/pkgconfig
 	amd64? ( >=dev-lang/nasm-2.14 )
 	x86? ( >=dev-lang/nasm-2.14 )
 	pgo? (
@@ -163,7 +158,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.13
-		>=media-libs/harfbuzz-5.3.0:0=
+		>=media-libs/harfbuzz-2.8.1:0=
 	)
 	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
@@ -652,7 +647,7 @@ src_prepare() {
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums bindgen
+	# moz_clear_vendor_checksums bindgen
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
@@ -675,7 +670,7 @@ src_configure() {
 	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	local have_switched_compiler=
-		if use clang; then
+	if use clang; then
 		# Force clang
 		einfo "Enforcing the use of clang due to USE=clang ..."
 		if tc-is-gcc; then
@@ -704,6 +699,7 @@ src_configure() {
 	fi
 
 	# Ensure we use correct toolchain
+	# AS is used in a non-standard way by upstream, #bmo1654031
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	export AS="$(tc-getCC) -c"
@@ -1006,7 +1002,7 @@ src_configure() {
 	export MOZ_MAKE_FLAGS="${MAKEOPTS}"
 
 	# Use system's Python environment
-	PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
+	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
 
 	if use system-python-libs; then
 		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
