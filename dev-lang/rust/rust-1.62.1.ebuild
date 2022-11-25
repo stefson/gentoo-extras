@@ -149,6 +149,7 @@ PATCHES=(
 	"${FILESDIR}"/${PV}/0013-Move-debugger-scripts-to-usr-share-rust.patch
 	"${FILESDIR}"/${PV}/0014-Add-gentoo-target-specs.patch
 	"${FILESDIR}"/${PV}/0015-fix-ppc32.patch
+	"${FILESDIR}"/${PV}/0016-fix-ppc32-crossbeam-utils.patch
 	"${FILESDIR}"/${PV}/0040-rls-atomics.patch
 	"${FILESDIR}"/${PV}/0050-llvm.patch
 	"${FILESDIR}"/${PV}/0051-llvm-powerpc-elfv2.patch
