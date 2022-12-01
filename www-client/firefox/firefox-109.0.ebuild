@@ -505,6 +505,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0004-support-disable-av1-in-ffvpx-again.patch
+	eapply "${FILESDIR}/"0005-use-av1-codec-only-when-it-is-enabled.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

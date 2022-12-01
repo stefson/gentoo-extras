@@ -1,0 +1,90 @@
+diff --git a/media/ffvpx/libavcodec/allcodecs.c b/media/ffvpx/libavcodec/allcodecs.c
+--- a/media/ffvpx/libavcodec/allcodecs.c
++++ b/media/ffvpx/libavcodec/allcodecs.c
+@@ -755,12 +755,15 @@
+ extern FFCodec ff_libaom_av1_encoder;
+ extern const FFCodec ff_libaribb24_decoder;
+ extern const FFCodec ff_libcelt_decoder;
+ extern const FFCodec ff_libcodec2_encoder;
+ extern const FFCodec ff_libcodec2_decoder;
++#if CONFIG_MOZ_AV1
+ extern const FFCodec ff_libdav1d_decoder;
+ extern const FFCodec ff_libdavs2_decoder;
++extern const FFCodec ff_libuavs3d_decoder;
++#endif
+ extern const FFCodec ff_libfdk_aac_encoder;
+ extern const FFCodec ff_libfdk_aac_decoder;
+ extern const FFCodec ff_libgsm_encoder;
+ extern const FFCodec ff_libgsm_decoder;
+ extern const FFCodec ff_libgsm_ms_encoder;
+@@ -783,11 +786,10 @@
+ extern const FFCodec ff_libspeex_encoder;
+ extern const FFCodec ff_libspeex_decoder;
+ extern const FFCodec ff_libsvtav1_encoder;
+ extern const FFCodec ff_libtheora_encoder;
+ extern const FFCodec ff_libtwolame_encoder;
+-extern const FFCodec ff_libuavs3d_decoder;
+ extern const FFCodec ff_libvo_amrwbenc_encoder;
+ extern const FFCodec ff_libvorbis_encoder;
+ extern const FFCodec ff_libvorbis_decoder;
+ extern const FFCodec ff_libvpx_vp8_encoder;
+ extern const FFCodec ff_libvpx_vp8_decoder;
+diff --git a/media/ffvpx/libavcodec/codec_list.c b/media/ffvpx/libavcodec/codec_list.c
+--- a/media/ffvpx/libavcodec/codec_list.c
++++ b/media/ffvpx/libavcodec/codec_list.c
+@@ -9,12 +9,14 @@
+     &ff_flac_decoder,
+ #endif
+ #if CONFIG_MP3_DECODER
+     &ff_mp3_decoder,
+ #endif
++#if CONFIG_MOZ_AV1
+ #if CONFIG_LIBDAV1D
+     &ff_libdav1d_decoder,
+ #endif
+ #if CONFIG_AV1_DECODER
+     &ff_av1_decoder,
+ #endif
++#endif
+     NULL };
+diff --git a/media/ffvpx/libavcodec/moz.build b/media/ffvpx/libavcodec/moz.build
+--- a/media/ffvpx/libavcodec/moz.build
++++ b/media/ffvpx/libavcodec/moz.build
+@@ -84,11 +84,10 @@
+         'cbs.c',
+         'cbs_av1.c',
+         'golomb.c',
+         'h264pred.c',
+         'imgconvert.c',
+-        'libdav1d.c',
+         'mathtables.c',
+         'qsv_api.c',
+         'raw.c',
+         'videodsp.c',
+         'vp8.c',
+@@ -107,14 +106,19 @@
+         'vp9mvs.c',
+         'vp9prob.c',
+         'vp9recon.c',
+         'vpx_rac.c',
+     ]
+-    USE_LIBS += [
+-        'dav1d',
+-        'media_libdav1d_asm',
+-    ]
++    if CONFIG['MOZ_AV1']:
++        USE_LIBS += [
++            'dav1d',
++            'media_libdav1d_asm',
++        ]
++        SOURCES += [
++            'libdav1d.c',
++        ]
++
+     if CONFIG['MOZ_WAYLAND']:
+         LOCAL_INCLUDES += ['/media/mozva']
+         SOURCES += [
+             'vaapi_av1.c',
+             'vaapi_decode.c',
+
+
