@@ -98,6 +98,9 @@ src_prepare() {
 	# Apply our patches
 	# eapply "${S}"
 
+	eapply "${FILESDIR}/"0004-support-disable-av1-in-ffvpx-again.patch
+	eapply "${FILESDIR}/"0005-use-av1-codec-only-when-it-is-enabled.patch
+
 	# Enable gnomebreakpad
 	if use debug ; then
 		sed -i -e "s:GNOME_DISABLE_CRASH_DIALOG=1:GNOME_DISABLE_CRASH_DIALOG=0:g" \
