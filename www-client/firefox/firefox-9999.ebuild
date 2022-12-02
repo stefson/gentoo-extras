@@ -98,8 +98,8 @@ src_prepare() {
 	# Apply our patches
 	# eapply "${S}"
 
-	eapply "${FILESDIR}/"0004-support-disable-av1-in-ffvpx-again.patch
-	eapply "${FILESDIR}/"0005-use-av1-codec-only-when-it-is-enabled.patch
+	eapply "${FILESDIR}/"0003-support-disable-av1-in-ffvpx-again.patch
+	eapply "${FILESDIR}/"0004-use-av1-codec-only-when-it-is-enabled.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
