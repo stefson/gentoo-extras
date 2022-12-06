@@ -571,6 +571,10 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1773259-cbindgen-root_clip_chain-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1782988-glibc-2.36-fix-p1.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1782988-glibc-2.36-fix-p2.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/privacy-patchset-102/firefox-60-disable-data-sharing-infobar.patch
