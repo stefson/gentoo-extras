@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-107-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-108-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -613,13 +613,9 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-	rm -v "${WORKDIR}"/firefox-patches/0003-Check-additional-plugins-dir.patch
-	rm -v "${WORKDIR}"/firefox-patches/0007-bmo-878089-Don-t-fail-when-TERM-is-not-set.patch
-	rm -v "${WORKDIR}"/firefox-patches/0020-Fix-building-with-PGO-when-using-GCC.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1559213-fix-system-av1-libs.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1769631-python-3.11-compatibility.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
+	rm -v "${WORKDIR}"/firefox-patches/0018-Fix-building-with-PGO-when-using-GCC.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-877267-rust-opaque-binding-type.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
