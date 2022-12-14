@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-102esr-patches-05j.tar.xz"
+FIREFOX_PATCHSET="firefox-102esr-patches-07j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -567,13 +567,8 @@ src_unpack() {
 }
 
 src_prepare() {
-	if use lto; then
-		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
-	fi
-
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1773259-cbindgen-root_clip_chain-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1782988-glibc-2.36-fix-p1.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1782988-glibc-2.36-fix-p2.patch
+	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
+	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
