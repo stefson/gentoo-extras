@@ -2,16 +2,15 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python3_{8,9,10} )
+PYTHON_COMPAT=( python3_{9,10,11} )
 
-inherit eutils distutils-r1 versionator
+inherit eutils distutils-r1
 
-MY_BRANCH="$(get_version_component_range 1-2)"
 DESCRIPTION="Settings editor for LightDM GTK+ greeter"
 HOMEPAGE="https://launchpad.net/lightdm-gtk-greeter-settings"
-SRC_URI="https://launchpad.net/${PN}/${MY_BRANCH}/${PV}/+download/${P}.tar.gz"
+SRC_URI="https://launchpad.net/${PN}/${PV}/+download/${P}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
