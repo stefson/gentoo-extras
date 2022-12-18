@@ -111,7 +111,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.86
+	>=dev-libs/nss-3.87
 	>=dev-libs/nspr-4.35
 	|| (
 		>=app-accessibility/at-spi2-core-2.46.0:2
