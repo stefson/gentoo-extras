@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-108-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-108-patches-03j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -624,6 +624,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0006-make-uniffi-bindgen-more-deterministic-across-platform.patch
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
