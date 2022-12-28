@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI="7"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
@@ -33,8 +33,8 @@ RESTRICT="!bindist? ( bindist ) mirror"
 ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
-	>=dev-libs/nspr-4.34
-	>=dev-libs/nss-3.80
+	>=dev-libs/nspr-4.35
+	>=dev-libs/nss-3.87
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
