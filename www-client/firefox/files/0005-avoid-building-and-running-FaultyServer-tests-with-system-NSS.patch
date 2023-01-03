@@ -1,7 +1,19 @@
+# HG changeset patch
+# User John Schanck <jschanck@mozilla.com>
+# Date 1672768104 0
+# Node ID a5df6a127e9d8117232ec8bc35ba4600ef0e21f3
+# Parent  01301ae3abafdbd8b260982f210c208467e6d151
+Bug 1805371 - avoid building and running FaultyServer tests with system NSS. r=glandium,necko-reviewers,kershaw
+
+Differential Revision: https://phabricator.services.mozilla.com/D164952
+
 diff --git a/netwerk/test/unit/test_retry_0rtt.js b/netwerk/test/unit/test_retry_0rtt.js
 --- a/netwerk/test/unit/test_retry_0rtt.js
 +++ b/netwerk/test/unit/test_retry_0rtt.js
-@@ -16,31 +16,40 @@
+@@ -13,37 +13,46 @@ function listenHandler(metadata, respons
+   info(metadata.path);
+   handlerCallbacks[metadata.path] = (handlerCallbacks[metadata.path] || 0) + 1;
+ }
  
  function handlerCount(path) {
    return handlerCallbacks[path] || 0;
@@ -61,7 +73,13 @@ diff --git a/netwerk/test/unit/test_retry_0rtt.js b/netwerk/test/unit/test_retry
    return new Promise(resolve => {
      do_timeout(time * 1000, resolve);
    });
-@@ -62,46 +71,51 @@
+ }
+ 
+ function makeChan(url) {
+@@ -59,49 +68,54 @@ function makeChan(url) {
+ function channelOpenPromise(chan, flags) {
+   return new Promise(resolve => {
+     chan.asyncOpen(
        new ChannelListener((req, buffer) => resolve([req, buffer]), null, flags)
      );
    });
@@ -150,7 +168,10 @@ diff --git a/netwerk/test/unit/test_retry_0rtt.js b/netwerk/test/unit/test_retry
 diff --git a/security/manager/ssl/tests/unit/tlsserver/cmd/moz.build b/security/manager/ssl/tests/unit/tlsserver/cmd/moz.build
 --- a/security/manager/ssl/tests/unit/tlsserver/cmd/moz.build
 +++ b/security/manager/ssl/tests/unit/tlsserver/cmd/moz.build
-@@ -7,26 +7,39 @@
+@@ -4,29 +4,42 @@
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
  GeckoSimplePrograms(
      [
          "BadCertAndPinningServer",
@@ -202,7 +223,10 @@ diff --git a/security/manager/ssl/tests/unit/tlsserver/cmd/moz.build b/security/
 diff --git a/security/manager/ssl/tests/unit/tlsserver/lib/moz.build b/security/manager/ssl/tests/unit/tlsserver/lib/moz.build
 --- a/security/manager/ssl/tests/unit/tlsserver/lib/moz.build
 +++ b/security/manager/ssl/tests/unit/tlsserver/lib/moz.build
-@@ -7,34 +7,44 @@
+@@ -4,37 +4,47 @@
+ # License, v. 2.0. If a copy of the MPL was not distributed with this
+ # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
  UNIFIED_SOURCES += [
      "OCSPCommon.cpp",
      "TLSServer.cpp",
@@ -271,7 +295,10 @@ diff --git a/security/manager/ssl/tests/unit/tlsserver/lib/moz.build b/security/
 diff --git a/security/moz.build b/security/moz.build
 --- a/security/moz.build
 +++ b/security/moz.build
-@@ -58,14 +58,16 @@
+@@ -55,20 +55,22 @@ elif not CONFIG["MOZ_SYSTEM_NSS"]:
+         "nssutil3",
+         "smime3",
+         "sqlite",
          "ssl3",
      ]
      gyp_vars["nspr_libs"] = "nspr"
@@ -292,5 +319,7 @@ diff --git a/security/moz.build b/security/moz.build
  gyp_vars["mozilla_client"] = 1
  
  # This builds NSS tools in COMM applications that Firefox doesn't build.
-
+ if CONFIG["MOZ_BUILD_APP"].startswith("comm/"):
+     gyp_vars["comm_client"] = 1
+ 
 
