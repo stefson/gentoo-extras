@@ -502,7 +502,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-support-disable-av1-in-ffvpx-again.patch
 	eapply "${FILESDIR}/"0004-use-av1-codec-only-when-it-is-enabled.patch
-	eapply "${FILESDIR}/"0005-avoid-building-and-running-FaultyServer-tests-with-system-NSS.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
