@@ -618,7 +618,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0005-fix-build-warnings-on-non-wayland-systems.patch
-	eapply "${FILESDIR}/"0006-make-uniffi-bindgen-more-deterministic-across-platform.patch
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
