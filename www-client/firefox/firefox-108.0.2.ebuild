@@ -113,6 +113,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.14 )
 	pgo? (
 		X? (
+			x11-base/xorg-proto
 			x11-base/xorg-server[xvfb]
 			x11-apps/xhost
 		)
