@@ -613,6 +613,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0018-Fix-building-with-PGO-when-using-GCC.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-877267-rust-opaque-binding-type.patch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1805371-avoid-building-and-running-FaultyServer-tests-with-system-NSS.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
