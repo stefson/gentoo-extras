@@ -63,8 +63,11 @@ src_prepare() {
 	mv ../SPIRV-Headers-${HASH_SPIRV} include/spirv || die
 	mv ../Vulkan-Headers-${HASH_VULKAN} include/vulkan || die
 	fi
-
+	
 	sed -i "/^basedir=/s|=.*|=${EPREFIX}/usr/lib/${PN}|" setup_d3d8.sh || die
+
+	mv setup_d3d8.sh setup_d8vk.sh || die
+	mv dxvk.conf d8vk.conf || die
 }
 
 src_configure() {
@@ -111,8 +114,8 @@ multilib_src_configure() {
 }
 
 multilib_src_install_all() {
-	dobin setup_d3d8.sh
-	dodoc README.md dxvk.conf
+	dobin setup_d8vk.sh
+	dodoc README.md d8vk.conf
 
 	find "${ED}" -type f -name '*.a' -delete || die
 }
