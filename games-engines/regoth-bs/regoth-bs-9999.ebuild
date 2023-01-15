@@ -36,8 +36,9 @@ src_prepare() {
 
 src_configure() {
 
-#	local mycmakeargs=(
-#	)
+	local mycmakeargs=(
+		-DALSOFT_EXAMPLES=OFF
+	)
 
 	cmake-utils_src_configure
 }
