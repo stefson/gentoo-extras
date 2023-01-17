@@ -492,10 +492,6 @@ src_prepare() {
 
 	# upstreamed to 111 branch
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0018-Fix-building-with-PGO-when-using-GCC.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1559213-fix-system-av1-libs.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-877267-rust-opaque-binding-type.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
