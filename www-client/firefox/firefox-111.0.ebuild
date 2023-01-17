@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-110-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -490,17 +490,17 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 110 branch
-	rm -v "${WORKDIR}"/firefox-patches/0018-Fix-building-with-PGO-when-using-GCC.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1559213-fix-system-av1-libs.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-877267-rust-opaque-binding-type.patch
+	# upstreamed to 111 branch
+	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0018-Fix-building-with-PGO-when-using-GCC.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1559213-fix-system-av1-libs.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-877267-rust-opaque-binding-type.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-support-disable-av1-in-ffvpx-again.patch
 	eapply "${FILESDIR}/"0004-use-av1-codec-only-when-it-is-enabled.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
