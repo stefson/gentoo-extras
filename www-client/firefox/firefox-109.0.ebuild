@@ -1,9 +1,9 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-108-patches-03j.tar.xz"
+FIREFOX_PATCHSET="firefox-109-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -103,6 +103,7 @@ BDEPEND="${PYTHON_DEPS}
 			)
 		)
 	)
+	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.24.3
@@ -113,6 +114,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.14 )
 	pgo? (
 		X? (
+			sys-devel/gettext
 			x11-base/xorg-server[xvfb]
 			x11-apps/xhost
 		)
@@ -194,18 +196,19 @@ RDEPEND="${COMMON_DEPEND}
 	openh264? ( media-libs/openh264:*[plugin] )
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio
+			media-libs/libpulse
 			>=media-sound/apulse-0.1.12-r4
 		)
 	)"
 DEPEND="${COMMON_DEPEND}
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio
+			media-libs/libpulse
 			>=media-sound/apulse-0.1.12-r4[sdk]
 		)
 	)
 	X? (
+		x11-base/xorg-proto
 		x11-libs/libICE
 		x11-libs/libSM
 	)"
@@ -609,12 +612,6 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
-
-	rm -v "${WORKDIR}"/firefox-patches/0018-Fix-building-with-PGO-when-using-GCC.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1787405-fix-offsets-for-row_neon-on-arm.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-877267-rust-opaque-binding-type.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1805371-avoid-building-and-running-FaultyServer-tests-with-system-NSS.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -622,7 +619,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-
+	
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
 
@@ -651,6 +648,9 @@ src_prepare() {
 
 	einfo "Removing pre-built binaries ..."
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
+
+	# Clearing crate checksums where we have applied patches
+	moz_clear_vendor_checksums bindgen
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
@@ -718,7 +718,7 @@ src_configure() {
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
-
+	
 	# for musl: add alpine patch and then uncomment
 	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 
@@ -730,6 +730,7 @@ src_configure() {
 
 	# Initialize MOZCONFIG
 	mozconfig_add_options_ac '' --enable-application=browser
+	mozconfig_add_options_ac '' --enable-project=browser
 
 	# Set Gentoo defaults
 	export MOZILLA_OFFICIAL=1
@@ -741,7 +742,9 @@ src_configure() {
 		--disable-gpsd \
 		--disable-install-strip \
 		--disable-parental-controls \
+		--disable-real-time-tracing \
 		--disable-strip \
+		--disable-tests \
 		--disable-updater \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
@@ -1335,3 +1338,4 @@ pkg_postinst() {
 	elog "See: https://support.mozilla.org/en-US/kb/difficulties-opening-or-using-website-firefox-100"
 	elog
 }
+
