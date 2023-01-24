@@ -1,0 +1,26 @@
+From ccc8b3d174e916984f281f9a991c34017e35b296 Mon Sep 17 00:00:00 2001
+From: Iain Ireland <iireland@mozilla.com>
+Date: Wed, 18 Jan 2023 23:22:41 +0000
+Subject: [PATCH] Bug 1810584: Suppress false positive error for gcc r=mgaudet
+
+Differential Revision: https://phabricator.services.mozilla.com/D167194
+---
+ js/src/irregexp/moz.build | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/js/src/irregexp/moz.build b/js/src/irregexp/moz.build
+index 8acb242494346..ff030ad4bda06 100644
+--- a/js/src/irregexp/moz.build
++++ b/js/src/irregexp/moz.build
+@@ -14,6 +14,10 @@ include("../js-cxxflags.mozbuild")
+ 
+ CXXFLAGS += ["-Wno-error=type-limits", "-Wno-error=return-type"]
+ 
++# Suppress spurious warnings in third-party code. See bug 1810584.
++if CONFIG["CC_TYPE"] == "gcc":
++    CXXFLAGS += ["-Wno-error=nonnull"]
++
+ UNIFIED_SOURCES += [
+     "imported/regexp-bytecode-generator.cc",
+     "imported/regexp-bytecode-peephole.cc",
+
