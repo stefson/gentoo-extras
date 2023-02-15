@@ -126,7 +126,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.86
+	>=dev-libs/nss-3.88
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -611,6 +611,7 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1811714-gcc-13-fixes.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -619,8 +620,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	# 0003 is backport from 111 branch, 109 not affected
-	eapply "${FILESDIR}/"0003-surpress-false-positive-errors-for-gcc.patch
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
