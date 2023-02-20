@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-110-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -491,13 +491,13 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	# upstreamed to 111 branch
-	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1811714-gcc-13-fixes.patch
+	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1810584-suppress-false-positive-errors-with-gcc.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-#	eapply "${FILESDIR}/"0004-use-av1-codec-only-when-it-is-enabled.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
