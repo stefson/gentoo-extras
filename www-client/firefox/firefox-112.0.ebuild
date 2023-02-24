@@ -491,6 +491,7 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	# upstreamed to 111 branch
+	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
 	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1811714-gcc-13-fixes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1810584-suppress-false-positive-errors-with-gcc.patch
 
