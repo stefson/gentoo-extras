@@ -200,6 +200,7 @@ src_configure() {
 		targets = "${LLVM_TARGETS// /;}"
 		experimental-targets = ""
 		link-shared = $(toml_usex system-llvm)
+		download-ci-llvm = false
 		[build]
 		build = "${rust_target}"
 		host = ["${rust_target}"]
