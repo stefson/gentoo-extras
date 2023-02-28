@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
 
@@ -42,12 +42,12 @@ IUSE="clippy cpu_flags_x86_sse2 debug doc miri parallel-compiler rls rustfmt rus
 # 3. Specify LLVM_MAX_SLOT, e.g. 8.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:14[llvm_targets_WebAssembly?]
-		wasm? ( >=sys-devel/lld-14 )
+		sys-devel/llvm:15[llvm_targets_WebAssembly?]
+		wasm? ( >=sys-devel/lld-15 )
 	)
-	<sys-devel/llvm-15:=
+	<sys-devel/llvm-16:=
 "
-LLVM_MAX_SLOT=14
+LLVM_MAX_SLOT=15
 
 BDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-rust
