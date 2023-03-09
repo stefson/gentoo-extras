@@ -111,7 +111,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.88
+	>=dev-libs/nss-3.89
 	>=dev-libs/nspr-4.35
 	>=app-accessibility/at-spi2-core-2.46.0:2
 	dev-libs/expat
@@ -490,8 +490,9 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 111 branch
+	# upstreamed to 112 branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-rhbz-2115253-vaapi-fixes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1811714-gcc-13-fixes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1810584-suppress-false-positive-errors-with-gcc.patch
 
