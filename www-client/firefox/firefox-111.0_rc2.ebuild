@@ -93,15 +93,6 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
 		)
-		(
-			sys-devel/clang:14
-			sys-devel/llvm:14
-			clang? (
-				sys-devel/lld:14
-				virtual/rust:0/llvm-14
-				pgo? ( =sys-libs/compiler-rt-sanitizers-14*[profile] )
-			)
-		)
 	)
 	app-arch/unzip
 	app-arch/zip
