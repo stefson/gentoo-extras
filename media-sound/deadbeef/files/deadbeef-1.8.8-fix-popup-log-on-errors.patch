@@ -1,0 +1,13 @@
+diff --git a/plugins/gtkui/gtkui.c b/plugins/gtkui/gtkui.c
+index 8bcb357..2356daf 100644
+--- a/plugins/gtkui/gtkui.c
++++ b/plugins/gtkui/gtkui.c
+@@ -1252,8 +1252,6 @@ logwindow_addtext_cb (gpointer data) {
+         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
+         gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
+     }
+-    if (!w_logviewer_is_present() && addtext->layers == DDB_LOG_LAYER_DEFAULT)
+-        gtkui_show_log_window_internal(TRUE);
+     free(addtext->str);
+     free(addtext);
+     return FALSE;

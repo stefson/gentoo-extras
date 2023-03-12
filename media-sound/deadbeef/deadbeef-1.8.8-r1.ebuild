@@ -174,6 +174,7 @@ src_prepare() {
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-clang-15.patch"
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-build-with-musl-pthread.patch"
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-clang-16.patch"
+	eapply "${FILESDIR}/deadbeef-1.8.8-fix-popup-log-on-errors.patch"
 
 	rm -fr intl || die
 
