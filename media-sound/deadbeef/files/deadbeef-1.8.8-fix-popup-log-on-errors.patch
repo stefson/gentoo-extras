@@ -1,3 +1,5 @@
+https://github.com/DeaDBeeF-Player/deadbeef/issues/2342#issuecomment-1460461627
+
 diff --git a/plugins/gtkui/gtkui.c b/plugins/gtkui/gtkui.c
 index 8bcb357..2356daf 100644
 --- a/plugins/gtkui/gtkui.c
