@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-110-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -477,8 +477,6 @@ src_prepare() {
 	# upstreamed to 112 branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-rhbz-2115253-vaapi-fixes.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1811714-gcc-13-fixes.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1810584-suppress-false-positive-errors-with-gcc.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
