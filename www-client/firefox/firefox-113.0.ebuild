@@ -593,7 +593,6 @@ src_configure() {
 		--disable-install-strip \
 		--disable-strip \
 		--disable-updater \
-		--disable-wmf-cdm \
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \
