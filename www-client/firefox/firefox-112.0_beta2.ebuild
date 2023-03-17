@@ -641,7 +641,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
 	eapply "${FILESDIR}/"0001-fixup-webaudio-xismd-in-armv7a.patch
-#	eapply "${FILESDIR}/"0002-fixup-xismd-includes-for-armv7a.patch
 	eapply "${FILESDIR}/"0002-fixup-neon-webaudio-xismd-in-armv7a.patch
 	
 	# Allow user to apply any additional patches without modifing ebuild
