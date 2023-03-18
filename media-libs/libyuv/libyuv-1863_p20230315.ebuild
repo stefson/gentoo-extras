@@ -78,12 +78,12 @@ src_compile() {
 
 src_install() {
 	cmake_src_install
-	insinto /usr/$(get_libdir)/pkgconfig
-	cat "${FILESDIR}/${PN}.pc.in" | \
-	sed -e "s|@prefix@|/usr|" \
-		-e "s|@exec_prefix@|\${prefix}|" \
-		-e "s|@libdir@|/usr/$(get_libdir)|" \
-		-e "s|@includedir@|\${prefix}/include|" \
-		-e "s|@version@|${PV//_p*}|" > "${T}/${PN}.pc" || die
-	doins "${T}/${PN}.pc"
+#	insinto /usr/$(get_libdir)/pkgconfig
+#	cat "${FILESDIR}/${PN}.pc.in" | \
+#	sed -e "s|@prefix@|/usr|" \
+#		-e "s|@exec_prefix@|\${prefix}|" \
+#		-e "s|@libdir@|/usr/$(get_libdir)|" \
+#		-e "s|@includedir@|\${prefix}/include|" \
+#		-e "s|@version@|${PV//_p*}|" > "${T}/${PN}.pc" || die
+#	doins "${T}/${PN}.pc"
 }
