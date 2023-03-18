@@ -1,0 +1,67 @@
+# HG changeset patch
+# User Emanuele Rocca <ema@debian.org>
+# Date 1679093990 0
+# Node ID 2e0f02d3955d958b55ca9678aa5fa0296843e67d
+# Parent  7f1ec765803a643bacb054d28c240809ccbab364
+Bug 1822827 - Remove explicit NEON flags from skia build r=glandium
+
+While Firefox builds for Android ARMv7 don't support non-NEON
+processors, downstreams (including non-Android ones) may still want to
+support them.
+
+On the Firefox builds that don't support non-NEON processors, the NEON
+flags are actually already passed globally, and they don't need to be
+explicitly added. NEON_FLAGS is actually only meant to be used for
+sources that specifically need NEON support even when the target doesn't
+support it, for, e.g. specialized code behind runtime CPU detection.
+
+So removing NEON_FLAGS is a no-op in practice when NEON processors are
+already targeted.
+
+Differential Revision: https://phabricator.services.mozilla.com/D172801
+
+diff --git a/gfx/skia/generate_mozbuild.py b/gfx/skia/generate_mozbuild.py
+--- a/gfx/skia/generate_mozbuild.py
++++ b/gfx/skia/generate_mozbuild.py
+@@ -53,18 +53,16 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'wind
+ # We should autogenerate these SSE related flags.
+ 
+ if CONFIG['INTEL_ARCHITECTURE']:
+     SOURCES['skia/src/opts/SkOpts_ssse3.cpp'].flags += ['-mssse3']
+     SOURCES['skia/src/opts/SkOpts_sse41.cpp'].flags += ['-msse4.1']
+     SOURCES['skia/src/opts/SkOpts_sse42.cpp'].flags += ['-msse4.2']
+     SOURCES['skia/src/opts/SkOpts_avx.cpp'].flags += ['-mavx']
+     SOURCES['skia/src/opts/SkOpts_hsw.cpp'].flags += ['-mavx2', '-mf16c', '-mfma']
+-elif CONFIG['CPU_ARCH'] == 'arm' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+-    CXXFLAGS += CONFIG['NEON_FLAGS']
+ elif CONFIG['CPU_ARCH'] == 'aarch64' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+     SOURCES['skia/src/opts/SkOpts_crc32.cpp'].flags += ['-march=armv8-a+crc']
+ 
+ DEFINES['SKIA_IMPLEMENTATION'] = 1
+ 
+ DEFINES['SK_PDF_USE_HARFBUZZ_SUBSETTING'] = 1
+ 
+ if CONFIG['MOZ_TREE_FREETYPE']:
+diff --git a/gfx/skia/moz.build b/gfx/skia/moz.build
+--- a/gfx/skia/moz.build
++++ b/gfx/skia/moz.build
+@@ -449,18 +449,16 @@ if CONFIG['MOZ_WIDGET_TOOLKIT'] == 'wind
+ # We should autogenerate these SSE related flags.
+ 
+ if CONFIG['INTEL_ARCHITECTURE']:
+     SOURCES['skia/src/opts/SkOpts_ssse3.cpp'].flags += ['-mssse3']
+     SOURCES['skia/src/opts/SkOpts_sse41.cpp'].flags += ['-msse4.1']
+     SOURCES['skia/src/opts/SkOpts_sse42.cpp'].flags += ['-msse4.2']
+     SOURCES['skia/src/opts/SkOpts_avx.cpp'].flags += ['-mavx']
+     SOURCES['skia/src/opts/SkOpts_hsw.cpp'].flags += ['-mavx2', '-mf16c', '-mfma']
+-elif CONFIG['CPU_ARCH'] == 'arm' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+-    CXXFLAGS += CONFIG['NEON_FLAGS']
+ elif CONFIG['CPU_ARCH'] == 'aarch64' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+     SOURCES['skia/src/opts/SkOpts_crc32.cpp'].flags += ['-march=armv8-a+crc']
+ 
+ DEFINES['SKIA_IMPLEMENTATION'] = 1
+ 
+ DEFINES['SK_PDF_USE_HARFBUZZ_SUBSETTING'] = 1
+ 
+ if CONFIG['MOZ_TREE_FREETYPE']:
+
