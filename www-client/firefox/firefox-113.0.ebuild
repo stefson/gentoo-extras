@@ -5,7 +5,7 @@ EAPI="7"
 
 FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
 
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=16
 
 PYTHON_COMPAT=( python3_{9..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -78,6 +78,14 @@ BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
 	>=virtual/rust-1.65.0
 	|| (
+		(
+			sys-devel/clang:16
+			sys-devel/llvm:16
+			clang? (
+				sys-devel/lld:16
+				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
+			)
+		)
 		(
 			sys-devel/clang:15
 			sys-devel/llvm:15
