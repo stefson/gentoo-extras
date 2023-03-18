@@ -28,7 +28,7 @@ DEPEND="
 
 DOCS=( AUTHORS LICENSE PATENTS README.{md,chromium} )
 
-#PATCHES="${FILESDIR}/${P//_p*}-cmake-libdir.patch"
+#PATCHES="${FILESDIR}/libyuv-1854-cmake-libdir.patch"
 #S="${WORKDIR}"
 #BUILD_DIR="${S}/build"
 
