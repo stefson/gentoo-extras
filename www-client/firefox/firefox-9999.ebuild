@@ -101,7 +101,7 @@ src_prepare() {
 #	eapply "${FILESDIR}/"0003-support-disable-av1-in-ffvpx-again.patch
 #	eapply "${FILESDIR}/"0004-use-av1-codec-only-when-it-is-enabled.patch
 
-	eapply "${FILESDIR}/"0004-revert-bg1709867.patch
+	eapply "${FILESDIR}/"0004-fix-system-icu-build-error.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then

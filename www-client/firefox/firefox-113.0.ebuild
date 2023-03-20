@@ -492,7 +492,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
 	eapply "${FILESDIR}/"0002-fixup-neon-webaudio-xismd-in-armv7a.patch
-	eapply "${FILESDIR}/"0004-revert-bg1709867.patch
+	eapply "${FILESDIR}/"0004-fix-system-icu-build-error.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
