@@ -1,7 +1,25 @@
+# HG changeset patch
+# User serge-sans-paille <sguelton@mozilla.com>
+# Date 1679317658 0
+# Node ID baf810b7c1046b8456545b17631e81c94311ccd6
+# Parent  bd79cf7201c7b435e502c90d98cc4263f18a8ec9
+Bug 1822901 - Forward declare arch-specific xsimd specialization r=padenot
+
+Otherwise the compiler tries to instantiate the generic version based on
+its current architecture flags, which may not be enough, resulting in
+error along those lines:
+
+        'xsimd::batch<float, xsimd::neon> vgainr' has incomplete type
+
+Differential Revision: https://phabricator.services.mozilla.com/D172864
+
 diff --git a/dom/media/webaudio/AudioNodeEngineGeneric.h b/dom/media/webaudio/AudioNodeEngineGeneric.h
 --- a/dom/media/webaudio/AudioNodeEngineGeneric.h
 +++ b/dom/media/webaudio/AudioNodeEngineGeneric.h
-@@ -5,331 +5,54 @@
+@@ -2,334 +2,57 @@
+ /* this source code form is subject to the terms of the mozilla public
+  * license, v. 2.0. if a copy of the mpl was not distributed with this file,
+  * You can obtain one at http://mozilla.org/MPL/2.0/. */
  
  #ifndef MOZILLA_AUDIONODEENGINEGENERIC_H_
  #define MOZILLA_AUDIONODEENGINEGENERIC_H_
@@ -23,14 +41,14 @@ diff --git a/dom/media/webaudio/AudioNodeEngineGeneric.h b/dom/media/webaudio/Au
 -
  namespace mozilla {
  
--template <class Arch>
+ template <class Arch>
 -static bool is_aligned(const void* ptr) {
 -  return (reinterpret_cast<uintptr_t>(ptr) &
 -          ~(static_cast<uintptr_t>(Arch::alignment()) - 1)) ==
 -         reinterpret_cast<uintptr_t>(ptr);
 -};
 -
- template <class Arch>
+-template <class Arch>
  struct Engine {
    static void AudioBufferAddWithScale(const float* aInput, float aScale,
 -                                      float* aOutput, uint32_t aSize) {
@@ -242,7 +260,8 @@ diff --git a/dom/media/webaudio/AudioNodeEngineGeneric.h b/dom/media/webaudio/Au
 -
 -    uint32_t vLength =
 -        aLength & ~(unroll_factor * xsimd::batch<float, Arch>::size - 1);
--
++                                    float* aOutput, uint32_t aSize);
+ 
 -    for (uint32_t i = 0; i < vLength;
 -         i += unroll_factor * xsimd::batch<float, Arch>::size) {
 -      MOZ_UNROLL(4)
@@ -257,7 +276,7 @@ diff --git a/dom/media/webaudio/AudioNodeEngineGeneric.h b/dom/media/webaudio/Au
 -    for (uint32_t i = vLength; i < aLength; ++i) sum += aInput[i] * aInput[i];
 -    return sum;
 -  };
-+                                    float* aOutput, uint32_t aSize);
++  static float AudioBufferSumOfSquares(const float* aInput, uint32_t aLength);
  
 -  static void NaNToZeroInPlace(float* aSamples, size_t aCount) {
 -    if constexpr (Arch::requires_alignment()) {
@@ -272,8 +291,7 @@ diff --git a/dom/media/webaudio/AudioNodeEngineGeneric.h b/dom/media/webaudio/Au
 -        --aCount;
 -      }
 -    }
-+  static float AudioBufferSumOfSquares(const float* aInput, uint32_t aLength);
- 
+-
 -    MOZ_ASSERT(is_aligned<Arch>(aSamples), "aSamples is aligned");
 -
 -    uint32_t vCount = aCount & ~(xsimd::batch<float, Arch>::size - 1);
@@ -733,5 +751,4 @@ diff --git a/dom/media/webaudio/AudioNodeEngineSSE4_2_FMA3.cpp b/dom/media/webau
  namespace mozilla {
  template struct Engine<xsimd::fma3<xsimd::sse4_2>>;
  }  // namespace mozilla
-
 
