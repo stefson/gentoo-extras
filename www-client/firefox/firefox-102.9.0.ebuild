@@ -577,6 +577,8 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-102/disable-pocket.patch
 	eapply "${FILESDIR}"/privacy-patchset-102/stop-undesired-requests.patch
 
+	eapply "${FILESDIR}"/0003-remove-explicit-neon-flags-from-skia-build.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
