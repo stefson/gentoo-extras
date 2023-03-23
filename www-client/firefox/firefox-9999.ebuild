@@ -100,6 +100,7 @@ src_prepare() {
 
 #	eapply "${FILESDIR}/"0003-support-disable-av1-in-ffvpx-again.patch
 #	eapply "${FILESDIR}/"0004-use-av1-codec-only-when-it-is-enabled.patch
+	eapply "${FILESDIR}/"0004-revert-armv7-bindgen-changes.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
