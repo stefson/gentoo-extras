@@ -490,6 +490,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0004-revert-neqo-crypto-offending-commit.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -522,6 +523,7 @@ src_prepare() {
 
 	# Clearing checksums where we have applied patches
 	moz_clear_vendor_checksums bindgen
+	moz_clear_vendor_checksums neqo-crypto
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"

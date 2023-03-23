@@ -1,0 +1,28 @@
+diff --git a/third_party/rust/neqo-crypto/build.rs b/third_party/rust/neqo-crypto/build.rs
+index 7cbc111..3769ba0 100644
+--- a/third_party/rust/neqo-crypto/build.rs
++++ b/third_party/rust/neqo-crypto/build.rs
+@@ -324,6 +324,8 @@ fn setup_standalone() -> Vec<String> {
+ fn setup_for_gecko() -> Vec<String> {
+     use mozbuild::TOPOBJDIR;
+ 
++    let mut flags: Vec<String> = Vec::new();
++
+     let fold_libs = mozbuild::config::MOZ_FOLD_LIBS;
+     let libs = if fold_libs {
+         vec!["nss3"]
+@@ -369,11 +371,11 @@ fn setup_for_gecko() -> Vec<String> {
+     let flags_path = TOPOBJDIR.join("netwerk/socket/neqo/extra-bindgen-flags");
+ 
+     println!("cargo:rerun-if-changed={}", flags_path.to_str().unwrap());
+-    let mut flags = fs::read_to_string(flags_path)
++    flags = fs::read_to_string(flags_path)
+         .expect("Failed to read extra-bindgen-flags file")
+         .split_whitespace()
+-        .map(String::from)
+-        .collect::<Vec<_>>();
++        .map(std::borrow::ToOwned::to_owned)
++        .collect();
+ 
+     flags.push(String::from("-include"));
+     flags.push(
