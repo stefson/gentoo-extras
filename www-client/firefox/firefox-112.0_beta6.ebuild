@@ -640,8 +640,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
-	eapply "${FILESDIR}/"0001-fixup-webaudio-xismd-in-armv7a.patch
-	eapply "${FILESDIR}/"0002-fixup-neon-webaudio-xismd-in-armv7a.patch
 	eapply "${FILESDIR}/"0003-remove-explicit-neon-flags-from-skia-build.patch
 	eapply "${FILESDIR}/"0004-revert-armv7-bindgen-changes.patch
 
