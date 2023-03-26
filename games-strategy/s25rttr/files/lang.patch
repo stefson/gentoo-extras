@@ -1,7 +1,7 @@
 diff --git a/external/languages/rttr-de.po b/external/languages-new/rttr-de.po
 index 1894fc2..b0c9125 100644
---- a/languages/rttr-de.po
-+++ b/languages-new/rttr-de.po
+--- a/external/languages/rttr-de.po
++++ b/external/languages/rttr-de.po
 @@ -7,7 +7,7 @@ msgstr ""
  "Project-Id-Version: Return To The Roots\n"
  "Report-Msgid-Bugs-To: \n"
