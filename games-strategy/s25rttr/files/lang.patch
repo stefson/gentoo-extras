@@ -1,13 +1,13 @@
 diff --git a/external/languages/rttr-de.po b/external/languages-new/rttr-de.po
-index 1894fc2..38d1100 100644
---- a/external/languages/rttr-de.po
-+++ b/external/languages/rttr-de.po
+index 1894fc2..b0c9125 100644
+--- a/languages/rttr-de.po
++++ b/languages-new/rttr-de.po
 @@ -7,7 +7,7 @@ msgstr ""
  "Project-Id-Version: Return To The Roots\n"
  "Report-Msgid-Bugs-To: \n"
  "POT-Creation-Date: 2022-08-21 21:18+0200\n"
 -"PO-Revision-Date: 2020-12-21 13:05+0000\n"
-+"PO-Revision-Date: 2023-03-26 08:04+0200\n"
++"PO-Revision-Date: 2023-03-26 16:41+0200\n"
  "Last-Translator: FloSoft <Unknown>\n"
  "Language-Team: Return To The Roots <sf-team@siedler25.org>\n"
  "Language: de_DE\n"
@@ -39,7 +39,7 @@ index 1894fc2..38d1100 100644
  #: libs/s25main/addons/AddonBurnDuration.h:17
  msgid "Adjusts how long a building will burn for when it is destroyed"
 -msgstr "Legt fest wie lange zerstörte Gebäude brennen sollen."
-+msgstr "Legt fest, wie lange zerstörte Gebäude brennen sollen"
++msgstr "Legt fest wie lange zerstörte Gebäude brennen sollen"
  
  #: libs/s25main/ingameWindows/iwOptionsWindow.cpp:100
  msgid "Advanced"
@@ -62,7 +62,7 @@ index 1894fc2..38d1100 100644
  #: libs/s25main/addons/AddonMilitaryAid.h:24
  msgid "Construction and attack aid"
 -msgstr ""
-+msgstr "Konstruktionshilfe und Angriffshilfe"
++msgstr "Konstruktionshilfe und Angriffshile"
  
  #: libs/s25main/desktops/dskSelectMap.cpp:109
  msgid "Continents"
@@ -139,7 +139,18 @@ index 1894fc2..38d1100 100644
  
  #: libs/s25main/resources/ArchiveLocator.cpp:60
  msgid "Ignoring resource %1% in %2% because it is already found in %3%\n"
-@@ -3131,9 +3129,8 @@ msgid "Return to harbor"
+@@ -3038,9 +3036,8 @@ msgid "Received async logs from %1% (%2% entries).\n"
+ msgstr "Async-Logs von %1% empfangen (%2% Einträge).\n"
+ 
+ #: libs/s25main/ingameWindows/iwConnecting.cpp:78
+-#, fuzzy
+ msgid "Receiving Map..."
+-msgstr "Prüfe Karte..."
++msgstr "Lade Karte ..."
+ 
+ #: libs/s25main/addons/AddonNoCoinsDefault.h:18
+ msgid "Receiving coins is disabled for military buildings by default."
+@@ -3131,9 +3128,8 @@ msgid "Return to harbor"
  msgstr "Zurück zum Hafen"
  
  #: libs/s25main/ingameWindows/iwMapGenerator.cpp:106
@@ -150,7 +161,7 @@ index 1894fc2..38d1100 100644
  
  #: libs/s25main/gameData/GoodConsts.cpp:17
  msgid "Rod and line"
-@@ -3403,7 +3400,7 @@ msgstr "Entfernte Datei %1% während der Ladeprüfung für %2% übersprungen\n"
+@@ -3403,7 +3399,7 @@ msgstr "Entfernte Datei %1% während der Ladeprüfung für %2% übersprungen\n"
  
  #: libs/s25main/gameData/BuildingConsts.cpp:31
  msgid "Slaughterhouse"
@@ -159,7 +170,7 @@ index 1894fc2..38d1100 100644
  
  #: libs/s25main/addons/AddonShipSpeed.h:20
  #: libs/s25main/desktops/dskGameLobby.cpp:228
-@@ -3649,7 +3646,7 @@ msgstr "In der Gebäudestatistik haben Sie Einblick in den Bestand aller Gebäud
+@@ -3649,7 +3645,7 @@ msgstr "In der Gebäudestatistik haben Sie Einblick in den Bestand aller Gebäud
  
  #: libs/s25main/gameData/BuildingConsts.cpp:181
  msgid "The butcher processes the livestock delivered into nutritious ham on which you miners are fed."
