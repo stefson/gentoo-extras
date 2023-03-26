@@ -1,5 +1,5 @@
-diff --git a/external/languages/rttr-de.po b/external/languages-new/rttr-de.po
-index 1894fc2..b0c9125 100644
+diff --git a/external/languages/rttr-de.po b/external/languages/rttr-de.po
+index 1894fc2..8342adc 100644
 --- a/external/languages/rttr-de.po
 +++ b/external/languages/rttr-de.po
 @@ -7,7 +7,7 @@ msgstr ""
@@ -7,7 +7,7 @@ index 1894fc2..b0c9125 100644
  "Report-Msgid-Bugs-To: \n"
  "POT-Creation-Date: 2022-08-21 21:18+0200\n"
 -"PO-Revision-Date: 2020-12-21 13:05+0000\n"
-+"PO-Revision-Date: 2023-03-26 16:41+0200\n"
++"PO-Revision-Date: 2023-03-26 16:53+0200\n"
  "Last-Translator: FloSoft <Unknown>\n"
  "Language-Team: Return To The Roots <sf-team@siedler25.org>\n"
  "Language: de_DE\n"
@@ -52,7 +52,18 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/ingameWindows/iwAction.cpp:197
  #: libs/s25main/ingameWindows/iwAction.cpp:211
-@@ -935,11 +935,11 @@ msgstr "Bauhilfsmodus"
+@@ -903,9 +903,8 @@ msgid "Connect"
+ msgstr "Verbinde..."
+ 
+ #: libs/s25main/ingameWindows/iwConnecting.cpp:27
+-#, fuzzy
+ msgid "Connecting"
+-msgstr "Verbinde..."
++msgstr "Verbinde"
+ 
+ #: libs/s25main/ingameWindows/iwLobbyConnect.cpp:49
+ msgid "Connecting to Lobby"
+@@ -935,11 +934,11 @@ msgstr "Bauhilfsmodus"
  
  #: libs/s25main/addons/AddonMilitaryAid.h:23
  msgid "Construction aid only"
@@ -66,7 +77,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/desktops/dskSelectMap.cpp:109
  msgid "Continents"
-@@ -1205,11 +1205,11 @@ msgstr "Dynamisch (Begrenzt auf die Wiederholrate des Monitors, funktioniert mit
+@@ -1205,11 +1204,11 @@ msgstr "Dynamisch (Begrenzt auf die Wiederholrate des Monitors, funktioniert mit
  
  #: libs/s25main/ingameWindows/iwMainMenu.cpp:81
  msgid "Economic Progress"
@@ -80,7 +91,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/ingameWindows/iwAddons.cpp:64
  msgid "Economy"
-@@ -1217,17 +1217,16 @@ msgstr "Wirtschaft"
+@@ -1217,17 +1216,16 @@ msgstr "Wirtschaft"
  
  #: libs/s25main/EconomyModeHandler.cpp:66
  msgid "Economy Mode: Collect as much as you can of the following good types: "
@@ -101,7 +112,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/desktops/dskOptions.cpp:245
  msgid "Effects"
-@@ -1327,7 +1326,7 @@ msgstr "Fehler beim Entpacken des Lua-Skripts"
+@@ -1327,7 +1325,7 @@ msgstr "Fehler beim Entpacken des Lua-Skripts"
  
  #: libs/s25main/network/GameClient.cpp:1494
  msgid "Error decompressing map file"
@@ -110,7 +121,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/network/GameClient.cpp:1325
  msgid ""
-@@ -1456,9 +1455,8 @@ msgid "Failed to read lua file '%1%'\n"
+@@ -1456,9 +1454,8 @@ msgid "Failed to read lua file '%1%'\n"
  msgstr "Lua Datei '%1%' konnte nicht gelesen werden\n"
  
  #: libs/s25main/Loader.cpp:990 libs/s25main/Loader.cpp:1009
@@ -121,7 +132,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/network/GameServer.cpp:1574
  msgid "Failed to save async log at %1%\n"
-@@ -1751,7 +1749,7 @@ msgstr "Getreide"
+@@ -1751,7 +1748,7 @@ msgstr "Getreide"
  
  #: libs/s25main/gameData/BuildingConsts.cpp:216
  msgid "Grain and water are needed for rearing pigs. The meat thus obtained can then be processed by a butcher."
@@ -130,7 +141,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/gameData/BuildingConsts.cpp:20
  msgid "Granite mine"
-@@ -1870,7 +1868,7 @@ msgstr "IPv6"
+@@ -1870,7 +1867,7 @@ msgstr "IPv6"
  
  #: libs/s25main/addons/AddonExhaustibleWater.h:18
  msgid "If Water is exhaustible wells will now dry out. If water everywhere is enabled, a geologist will not notify for water"
@@ -139,7 +150,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/resources/ArchiveLocator.cpp:60
  msgid "Ignoring resource %1% in %2% because it is already found in %3%\n"
-@@ -3038,9 +3036,8 @@ msgid "Received async logs from %1% (%2% entries).\n"
+@@ -3038,9 +3035,8 @@ msgid "Received async logs from %1% (%2% entries).\n"
  msgstr "Async-Logs von %1% empfangen (%2% Einträge).\n"
  
  #: libs/s25main/ingameWindows/iwConnecting.cpp:78
@@ -150,7 +161,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/addons/AddonNoCoinsDefault.h:18
  msgid "Receiving coins is disabled for military buildings by default."
-@@ -3131,9 +3128,8 @@ msgid "Return to harbor"
+@@ -3131,9 +3127,8 @@ msgid "Return to harbor"
  msgstr "Zurück zum Hafen"
  
  #: libs/s25main/ingameWindows/iwMapGenerator.cpp:106
@@ -161,7 +172,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/gameData/GoodConsts.cpp:17
  msgid "Rod and line"
-@@ -3403,7 +3399,7 @@ msgstr "Entfernte Datei %1% während der Ladeprüfung für %2% übersprungen\n"
+@@ -3403,7 +3398,7 @@ msgstr "Entfernte Datei %1% während der Ladeprüfung für %2% übersprungen\n"
  
  #: libs/s25main/gameData/BuildingConsts.cpp:31
  msgid "Slaughterhouse"
@@ -170,7 +181,7 @@ index 1894fc2..b0c9125 100644
  
  #: libs/s25main/addons/AddonShipSpeed.h:20
  #: libs/s25main/desktops/dskGameLobby.cpp:228
-@@ -3649,7 +3645,7 @@ msgstr "In der Gebäudestatistik haben Sie Einblick in den Bestand aller Gebäud
+@@ -3649,7 +3644,7 @@ msgstr "In der Gebäudestatistik haben Sie Einblick in den Bestand aller Gebäud
  
  #: libs/s25main/gameData/BuildingConsts.cpp:181
  msgid "The butcher processes the livestock delivered into nutritious ham on which you miners are fed."
