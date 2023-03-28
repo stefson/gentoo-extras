@@ -73,7 +73,7 @@ index 1894fc2..8342adc 100644
  #: libs/s25main/addons/AddonMilitaryAid.h:24
  msgid "Construction and attack aid"
 -msgstr ""
-+msgstr "Konstruktionshilfe und Angriffshile"
++msgstr "Konstruktions- und Angriffshilfe"
  
  #: libs/s25main/desktops/dskSelectMap.cpp:109
  msgid "Continents"
