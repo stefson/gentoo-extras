@@ -484,6 +484,8 @@ src_prepare() {
 
 	# upstreamed to 112 branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-rhbz-2115253-vaapi-fixes.patch
 
 	eapply "${WORKDIR}/firefox-patches"
