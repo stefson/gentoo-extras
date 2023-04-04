@@ -482,7 +482,7 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 112 branch
+	# upstreamed to 113 branch
 	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
@@ -492,7 +492,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0004-revert-armv7-bindgen-changes.patch
+#	eapply "${FILESDIR}/"0004-revert-armv7-bindgen-changes.patch
+	eapply "${FILESDIR}/"0005-upstream-fix-for-armv7-bindgen-changes.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

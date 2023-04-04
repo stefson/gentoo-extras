@@ -1,0 +1,54 @@
+diff --git a/build/moz.configure/arm.configure b/build/moz.configure/arm.configure
+--- a/build/moz.configure/arm.configure
++++ b/build/moz.configure/arm.configure
+@@ -149,20 +149,29 @@
+ check_and_add_flag(
+     "-mno-unaligned-access", when=depends(target.os)(lambda os: os == "Android")
+ )
+ 
+ 
++# The set of flags that clang understands
+ @depends(
+     arch_option,
+     thumb_option,
+-    thumb_interwork_option,
+     fpu_option,
+     float_abi_option,
+     soft_float_option,
+ )
+-def all_arm_flags(arch, thumb, interwork, fpu, float_abi, soft_float):
+-    return arch + thumb + interwork + fpu + float_abi + soft_float
++def all_clang_arm_flags(arch, thumb, fpu, float_abi, soft_float):
++    return arch + thumb + fpu + float_abi + soft_float
++
++
++# All the flags the compiler understands. When the compiler is clang, this
++# still includes unsupported flags, but we live it to configure to fail
++# during a compiler check. These checks aren't available for clang as used
++# by bindgen, so we keep the separate set of flags for clang for bindgen.
++@depends(all_clang_arm_flags, thumb_interwork_option)
++def all_arm_flags(flags, interwork):
++    return flags + interwork
+ 
+ 
+ add_old_configure_assignment("_ARM_FLAGS", all_arm_flags)
+ add_old_configure_assignment("_THUMB_FLAGS", thumb_option)
+ 
+diff --git a/build/moz.configure/bindgen.configure b/build/moz.configure/bindgen.configure
+--- a/build/moz.configure/bindgen.configure
++++ b/build/moz.configure/bindgen.configure
+@@ -330,11 +330,11 @@
+     target,
+     target_is_unix,
+     cxx_compiler,
+     bindgen_cflags_android,
+     bindgen_config_paths.clang_flags,
+-    all_arm_flags,
++    all_clang_arm_flags,
+ )
+ def basic_bindgen_cflags(
+     target, is_unix, compiler_info, android_cflags, clang_flags, all_arm_flags
+ ):
+     args = [
+
+
