@@ -492,7 +492,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0005-upstream-fix-for-armv7-bindgen-changes.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
