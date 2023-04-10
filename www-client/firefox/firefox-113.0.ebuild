@@ -137,7 +137,7 @@ CDEPEND="
 	system-icu? ( >=dev-libs/icu-72.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
-	system-libvpx? ( >=media-libs/libvpx-1.11.0:0=[postproc] )
+	system-libvpx? ( >=media-libs/libvpx-1.12.0:0=[postproc] )
 	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
 	wayland? (
