@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-112-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -632,10 +632,9 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	# upstreamed to 113 branch
-	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-rhbz-2115253-vaapi-fixes.patch
+	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1822728-increase-child-process-shutdown-timeout.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

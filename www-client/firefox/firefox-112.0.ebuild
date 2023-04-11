@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-112-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -630,10 +630,6 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
-
-	# upstreamed to 112 branch
-	rm -v "${WORKDIR}"/firefox-patches/0011-musl-getcontext-is-only-avaliable-on-glibc-systems.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-rhbz-2115253-vaapi-fixes.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
