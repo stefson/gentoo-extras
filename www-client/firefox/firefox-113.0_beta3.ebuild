@@ -635,6 +635,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1822728-increase-child-process-shutdown-timeout.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1826583-dont-crash-on-wayland-log-handler.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
