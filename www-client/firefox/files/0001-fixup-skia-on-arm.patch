@@ -1,7 +1,19 @@
+# HG changeset patch
+# User Lee Salzman <lsalzman@mozilla.com>
+# Date 1681830541 0
+# Node ID 93321213539f5ce475ee30140d95301426dfa8ad
+# Parent  78b546a4966a4813542c160747d5753491830230
+Bug 1827727 - Fix building Skia on GCC ARM. r=aosmond,gfx-reviewers
+
+Differential Revision: https://phabricator.services.mozilla.com/D175578
+
 diff --git a/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h b/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h
 --- a/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h
 +++ b/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h
-@@ -231,11 +231,11 @@
+@@ -228,17 +228,17 @@ namespace SK_OPTS_NS {
+     SI U32 min(U32 a, U32 b) { return vminq_u32(a,b); }
+     SI F   max(F a, F b)     { return vmaxq_f32(a,b); }
+     SI I32 max(I32 a, I32 b) { return vmaxq_s32(a,b); }
      SI U32 max(U32 a, U32 b) { return vmaxq_u32(a,b); }
  
      SI F   abs_  (F v)   { return vabsq_f32(v); }
@@ -14,5 +26,7 @@ diff --git a/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h b/gfx/skia/skia/src/
      SI U16 pack(U32 v)       { return SK_CONVERTVECTOR(v, U16); }
      SI U8  pack(U16 v)       { return SK_CONVERTVECTOR(v,  U8); }
  
-
+     SI F if_then_else(I32 c, F t, F e) { return vbslq_f32(vreinterpretq_u32_s32(c),t,e); }
+ 
+     #if defined(SK_CPU_ARM64)
 
