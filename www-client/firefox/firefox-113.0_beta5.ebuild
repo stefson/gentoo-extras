@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-112-patches-03j.tar.xz"
+FIREFOX_PATCHSET="firefox-112-patches-04j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -638,6 +638,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1826583-dont-crash-on-wayland-log-handler.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1803016-wayland-dont-commit-wl_buffer-if-buffer-scale-doesnt-match.patch
+	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1822747-riscv64-jit-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
