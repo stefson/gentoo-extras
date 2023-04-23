@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-112-patches-04j.tar.xz"
+FIREFOX_PATCHSET="firefox-112-patches-05j.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -641,6 +641,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1803016-wayland-dont-commit-wl_buffer-if-buffer-scale-doesnt-match.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1822747-riscv64-jit-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1827950-bitmap-font-issue.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
