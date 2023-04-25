@@ -633,6 +633,10 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1826583-dont-crash-on-wayland-log-handler.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1827950-bitmap-font-issue.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
