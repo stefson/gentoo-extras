@@ -1,0 +1,27 @@
+# HG changeset patch
+# User stransky <stransky@redhat.com>
+# Date 1682143901 0
+# Node ID 555f98a971f87d587d9e26059deec44c78175380
+# Parent  90256c29ed1fe22a64da62b288495ee5e17144c2
+Bug 1829282 [Linux] Export IsWaylandEnabled() on X11 builds r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D176117
+
+diff --git a/toolkit/xre/nsAppRunner.h b/toolkit/xre/nsAppRunner.h
+--- a/toolkit/xre/nsAppRunner.h
++++ b/toolkit/xre/nsAppRunner.h
+@@ -156,13 +156,11 @@ void SetupErrorHandling(const char* prog
+ 
+ #ifdef MOZ_ASAN_REPORTER
+ extern "C" {
+ void MOZ_EXPORT __sanitizer_set_report_path(const char* path);
+ }
+ void setASanReporterPath(nsIFile* aDir);
+ #endif
+ 
+-#ifdef MOZ_WAYLAND
+ bool IsWaylandEnabled();
+-#endif
+ 
+ #endif  // nsAppRunner_h__
+

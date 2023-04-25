@@ -497,6 +497,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	
 	eapply "${FILESDIR}/"0003-fixup-clang-skia-on-arm.patch
+	eapply "${FILESDIR}/"0004-fixup-missing-xorg-include.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
