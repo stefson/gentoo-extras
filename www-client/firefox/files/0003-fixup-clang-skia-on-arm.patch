@@ -1,7 +1,19 @@
+# HG changeset patch
+# User Lee Salzman <lsalzman@mozilla.com>
+# Date 1682431213 0
+# Node ID 0f6595072e6eba8e998f7e58e78111ef489bc958
+# Parent  49d296ac9ca7ad17651a0ab5a7a4d55c637517a3
+Bug 1829521 - More Skia build fixes for GCC ARM. r=aosmond
+
+Differential Revision: https://phabricator.services.mozilla.com/D176315
+
 diff --git a/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h b/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h
 --- a/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h
 +++ b/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h
-@@ -2127,11 +2127,11 @@
+@@ -2124,17 +2124,17 @@ STAGE(force_opaque_dst, NoCtx) { da = 1;
+ 
+ STAGE(rgb_to_hsl, NoCtx) {
+     F mx = max(r, max(g,b)),
        mn = min(r, min(g,b)),
        d = mx - mn,
        d_rcp = 1.0f / d;
@@ -14,5 +26,7 @@ diff --git a/gfx/skia/skia/src/opts/SkRasterPipeline_opts.h b/gfx/skia/skia/src/
                                   (r-g)*d_rcp + 4.0f)));
  
      F l = (mx + mn) * 0.5f;
-
+     F s = if_then_else(mx == mn, F(0),
+                        d / if_then_else(l > 0.5f, 2.0f-mx-mn, mx+mn));
+ 
 
