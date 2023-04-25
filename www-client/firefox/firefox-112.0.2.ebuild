@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-112-patches-05j.tar.xz"
+FIREFOX_PATCHSET="firefox-112-patches-06.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -633,9 +633,9 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1826583-dont-crash-on-wayland-log-handler.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1827950-bitmap-font-issue.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1826583-dont-crash-on-wayland-log-handler.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1827950-bitmap-font-issue.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
