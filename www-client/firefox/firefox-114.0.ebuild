@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-112-patches-04j.tar.xz"
+FIREFOX_PATCHSET="firefox-112-patches-06.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -483,22 +483,19 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	# upstreamed to 114 branch
+	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1822728-increase-child-process-shutdown-timeout.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1826583-dont-crash-on-wayland-log-handler.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1827429-wayland-window-is-visible.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bmo-1803016-wayland-dont-commit-wl_buffer-if-buffer-scale-doesnt-match.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1822747-riscv64-jit-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1803016-wayland-dont-commit-wl_buffer-if-buffer-scale-doesnt-match.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1822747-riscv64-jit-fix.patch
+
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	
-	eapply "${FILESDIR}/"0003-fixup-clang-skia-on-arm.patch
-	eapply "${FILESDIR}/"0004-fixup-missing-xorg-include.patch
-
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
