@@ -484,12 +484,12 @@ src_prepare() {
 
 	# upstreamed to 114 branch
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1822728-increase-child-process-shutdown-timeout.patch
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1803016-wayland-dont-commit-wl_buffer-if-buffer-scale-doesnt-match.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1822747-riscv64-jit-fix.patch
-
 
 	eapply "${WORKDIR}/firefox-patches"
 
