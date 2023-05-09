@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-112-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=15
 
@@ -632,13 +632,6 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
-
-	# upstreamed to 113 branch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1670333-OpenH264-Fix-decoding-if-it-starts-on-no.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1663844-OpenH264-Allow-using-OpenH264-GMP-decode.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1822728-increase-child-process-shutdown-timeout.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1803016-wayland-dont-commit-wl_buffer-if-buffer-scale-doesnt-match.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1822747-riscv64-jit-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
