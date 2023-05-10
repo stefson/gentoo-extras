@@ -115,7 +115,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.89
+	>=dev-libs/nss-3.89.1
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -632,6 +632,10 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
+	# upstreamed to 114 branch
+	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -749,6 +753,9 @@ src_configure() {
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
+
+	# for musl: add alpine patch and then uncomment
+	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 
 	# Set state path
 	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
