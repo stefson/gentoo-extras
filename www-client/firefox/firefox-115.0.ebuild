@@ -484,6 +484,7 @@ src_prepare() {
 
 	# upstreamed to 114 branch
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
 	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
 
 	eapply "${WORKDIR}/firefox-patches"
