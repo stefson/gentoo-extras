@@ -134,7 +134,7 @@ CDEPEND="
 		>=media-libs/harfbuzz-6.0.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
-	system-icu? ( >=dev-libs/icu-72.1:= )
+	system-icu? ( >=dev-libs/icu-73.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.12.0:0=[postproc] )
