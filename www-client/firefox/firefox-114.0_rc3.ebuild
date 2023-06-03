@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-113-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -651,6 +651,7 @@ src_prepare() {
 	# upstreamed to 114 branch
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
 	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1831242-bindgen-llvm-16.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
