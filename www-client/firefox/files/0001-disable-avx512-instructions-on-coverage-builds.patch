@@ -1,0 +1,41 @@
+From 81ff1f5f492a98066d8fdc0c5bc688fdb74a3b7c Mon Sep 17 00:00:00 2001
+From: Jason Kratzer <jkratzer@mozilla.com>
+Date: Thu, 25 May 2023 16:32:25 +0000
+Subject: [PATCH] Bug 1832604 - Disable AVX512 instructions on coverage builds.
+ r=lsalzman
+
+Differential Revision: https://phabricator.services.mozilla.com/D179098
+---
+ gfx/skia/generate_mozbuild.py | 3 ++-
+ gfx/skia/moz.build            | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/gfx/skia/generate_mozbuild.py b/gfx/skia/generate_mozbuild.py
+index 17814af760031..71a544caa02e5 100755
+--- a/gfx/skia/generate_mozbuild.py
++++ b/gfx/skia/generate_mozbuild.py
+@@ -56,7 +56,8 @@
+     SOURCES['skia/src/opts/SkOpts_sse42.cpp'].flags += ['-msse4.2']
+     SOURCES['skia/src/opts/SkOpts_avx.cpp'].flags += ['-mavx']
+     SOURCES['skia/src/opts/SkOpts_hsw.cpp'].flags += ['-mavx2', '-mf16c', '-mfma']
+-    SOURCES['skia/src/opts/SkOpts_skx.cpp'].flags += ['-mavx512f', '-mavx512dq', '-mavx512cd', '-mavx512bw', '-mavx512vl']
++    if not CONFIG["MOZ_CODE_COVERAGE"]:
++      SOURCES['skia/src/opts/SkOpts_skx.cpp'].flags += ['-mavx512f', '-mavx512dq', '-mavx512cd', '-mavx512bw', '-mavx512vl']
+ elif CONFIG['CPU_ARCH'] == 'aarch64' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+     SOURCES['skia/src/opts/SkOpts_crc32.cpp'].flags += ['-march=armv8-a+crc']
+ 
+diff --git a/gfx/skia/moz.build b/gfx/skia/moz.build
+index 72645f05e1747..6966e6b554943 100644
+--- a/gfx/skia/moz.build
++++ b/gfx/skia/moz.build
+@@ -567,7 +567,8 @@ if CONFIG['INTEL_ARCHITECTURE']:
+     SOURCES['skia/src/opts/SkOpts_sse42.cpp'].flags += ['-msse4.2']
+     SOURCES['skia/src/opts/SkOpts_avx.cpp'].flags += ['-mavx']
+     SOURCES['skia/src/opts/SkOpts_hsw.cpp'].flags += ['-mavx2', '-mf16c', '-mfma']
+-    SOURCES['skia/src/opts/SkOpts_skx.cpp'].flags += ['-mavx512f', '-mavx512dq', '-mavx512cd', '-mavx512bw', '-mavx512vl']
++    if not CONFIG["MOZ_CODE_COVERAGE"]:
++        SOURCES['skia/src/opts/SkOpts_skx.cpp'].flags += ['-mavx512f', '-mavx512dq', '-mavx512cd', '-mavx512bw', '-mavx512vl']
+ elif CONFIG['CPU_ARCH'] == 'aarch64' and CONFIG['CC_TYPE'] in ('clang', 'gcc'):
+     SOURCES['skia/src/opts/SkOpts_crc32.cpp'].flags += ['-march=armv8-a+crc']
+ 
+

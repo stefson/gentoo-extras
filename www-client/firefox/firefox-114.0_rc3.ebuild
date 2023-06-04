@@ -655,6 +655,9 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}"/0001-disable-avx512-instructions-on-coverage-builds.patch
+	eapply "${FILESDIR}"/0002-ensure-MOZ_SKIA-is-alway-defined-in-skia.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
