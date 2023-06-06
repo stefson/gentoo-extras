@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-113-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-114-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -649,13 +649,12 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	# upstreamed to 114 branch
-	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1831242-bindgen-llvm-16.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1831242-bindgen-llvm-16.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/0001-disable-avx512-instructions-on-coverage-builds.patch
 	eapply "${FILESDIR}"/0002-ensure-MOZ_SKIA-is-alway-defined-in-skia.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
