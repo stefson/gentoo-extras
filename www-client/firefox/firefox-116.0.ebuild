@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-114-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -495,10 +495,9 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 114 branch
-	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	# upstreamed to 116 branch
 	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
-	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-disable-avx512-from-skia.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
