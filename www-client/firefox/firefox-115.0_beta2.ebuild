@@ -933,13 +933,6 @@ src_configure() {
 			if tc-ld-is-mold ; then
 				mozconfig_add_options_ac "using ld=mold due to system selection" --enable-linker=mold
 
-				# increase ulimit with mold+lto, bugs #892641, #907485
-				if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
-					ewarn "Unable to modify ulimits - building with mold+lto might fail due to low ulimit -n resources."
-					ewarn "Please see bugs #892641 & #907485."
-				else
-					ulimit -n 16384
-				fi
 			else
 				mozconfig_add_options_ac "forcing ld=lld due to USE=clang and USE=lto" --enable-linker=lld
 			fi
@@ -1168,6 +1161,16 @@ src_configure() {
 
 src_compile() {
 	local virtx_cmd=
+	
+	if tc-ld-is-mold && use lto; then
+		# increase ulimit with mold+lto, bugs #892641, #907485
+		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
+			ewarn "Unable to modify ulimits - building with mold+lto might fail due to low ulimit -n resources."
+			ewarn "Please see bugs #892641 & #907485."
+		else
+			ulimit -n 16384
+		fi
+	fi
 
 	if use pgo; then
 		# Reset and cleanup environment variables used by GNOME/XDG
