@@ -771,6 +771,9 @@ src_configure() {
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
+	# for musl: add alpine patch and then uncomment
+	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
+
 	# Set state path
 	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
 
