@@ -131,7 +131,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.89
+	>=dev-libs/nss-3.90
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -648,6 +648,10 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
+
+	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1835829-non-unified-build-skia-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-disable-avx512-from-skia.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
