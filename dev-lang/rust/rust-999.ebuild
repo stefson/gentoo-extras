@@ -43,12 +43,12 @@ IUSE="clippy cpu_flags_x86_sse2 debug doc rls rustfmt system-bootstrap system-ll
 # 3. Specify LLVM_MAX_SLOT, e.g. 8.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:15[llvm_targets_WebAssembly?]
-		wasm? ( >=sys-devel/lld-15 )
+		sys-devel/llvm:16[llvm_targets_WebAssembly?]
+		wasm? ( >=sys-devel/lld-16 )
 	)
-	<sys-devel/llvm-16:=
+	<sys-devel/llvm-17:=
 "
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=16
 
 # to bootstrap we need at least exactly previous version, or same.
 # most of the time previous versions fail to bootstrap with newer
