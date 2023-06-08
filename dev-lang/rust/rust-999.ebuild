@@ -225,7 +225,7 @@ src_configure() {
 		debug-assertions = $(toml_usex debug)
 		default-linker = "$(tc-getCC)"
 		rpath = false
-		omit_git_hash = false
+		omit-git-hash = false
 		lld = $(usex system-llvm false $(toml_usex wasm))
 		llvm-tools = $(usex system-llvm false true)
 	EOF
