@@ -24,8 +24,8 @@ HOMEPAGE="https://www.rust-lang.org/"
 
 RESTRICT="network-sandbox"
 
-ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
-	NVPTX PowerPC Sparc SystemZ WebAssembly X86 XCore )
+ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM AVR BPF Hexagon Lanai LoongArch Mips MSP430
+	NVPTX PowerPC RISCV Sparc SystemZ VE WebAssembly X86 XCore )
 ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
