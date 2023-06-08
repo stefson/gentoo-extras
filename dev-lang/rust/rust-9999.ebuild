@@ -259,7 +259,7 @@ src_configure() {
 		optimize-tests = $(toml_usex !debug)
 		codegen-tests = true
 		dist-src = false
-		ignore-git = false
+		omit_git_hash = false
 		lld = $(usex system-llvm false $(toml_usex wasm))
 		backtrace-on-ice = true
 		jemalloc = false
