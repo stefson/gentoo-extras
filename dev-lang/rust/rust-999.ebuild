@@ -15,9 +15,10 @@ EGIT_BRANCH="beta"
 EGIT_CHECKOUT_DIR="${MY_P}-src"
 #KEYWORDS=""
 
-CHOST_amd64=x86_64-gentoo-linux-musl
-#CHOST_arm64=aarch64-unknown-linux-gnu
-#CHOST_arm=armv7-unknown-linux-gnu
+CHOST_arm64=aarch64-unknown-linux-gnu
+CHOST_arm=armv7-unknown-linux-gnu
+CHOST_amd64=x86_64-unknown-linux-gnu
+#CHOST_amd64=x86_64-gentoo-linux-musl
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="https://www.rust-lang.org/"
