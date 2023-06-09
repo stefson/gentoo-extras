@@ -57,7 +57,7 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~riscv ~x86"
 
 SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -65,7 +65,7 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
 IUSE+=" jack +jumbo-build libproxy lto +openh264 pgo pulseaudio sndio selinux"
 IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
-IUSE+=" +telemetry wayland wifi +X"
+IUSE+=" +telemetry valgrind wayland wifi +X"
 
 # Firefox-only IUSE
 IUSE+=" geckodriver +gmp-autoupdate screencast"
@@ -131,7 +131,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.89.1
+	>=dev-libs/nss-3.89
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -173,6 +173,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
 	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
+	valgrind? ( dev-util/valgrind )
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1
 		x11-libs/gtk+:3[wayland]
@@ -648,14 +649,7 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
-	# upstreamed to 114 branch
-#	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0013-musl-include-net-if.h-before-linux-if.h-to-avoid-red.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1831242-bindgen-llvm-16.patch
-
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}"/0002-ensure-MOZ_SKIA-is-alway-defined-in-skia.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -840,6 +834,8 @@ src_configure() {
 	# bug 833001, bug 903411#c8
 	if use ppc64 || use riscv; then
 		mozconfig_add_options_ac '' --disable-sandbox
+	elif use valgrind; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-sandbox
 	else
 		mozconfig_add_options_ac '' --enable-sandbox
 	fi
@@ -896,6 +892,7 @@ src_configure() {
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
+	mozconfig_use_enable valgrind
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
@@ -1077,8 +1074,12 @@ src_configure() {
 			;;
 	esac
 
-	if ! use elibc_glibc ; then
+	if ! use elibc_glibc; then
 		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
+	fi
+
+	if use valgrind; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
 	fi
 
 	# Allow elfhack to work in combination with unstripped binaries
@@ -1146,11 +1147,25 @@ src_configure() {
 	echo "=========================================================="
 	echo
 
+	if use valgrind; then
+		sed -i -e 's/--enable-optimize=-O[0-9s]/--enable-optimize="-g -O2"/' .mozconfig || die
+	fi
+
 	./mach configure || die
 }
 
 src_compile() {
 	local virtx_cmd=
+
+	if tc-ld-is-mold && use lto; then
+		# increase ulimit with mold+lto, bugs #892641, #907485
+		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
+			ewarn "Unable to modify ulimits - building with mold+lto might fail due to low ulimit -n resources."
+			ewarn "Please see bugs #892641 & #907485."
+		else
+			ulimit -n 16384
+		fi
+	fi
 
 	if use pgo; then
 		# Reset and cleanup environment variables used by GNOME/XDG
@@ -1433,3 +1448,4 @@ pkg_postinst() {
 	optfeature "desktop notifications" x11-libs/libnotify
 	optfeature "fallback mouse cursor theme e.g. on WMs" gnome-base/gsettings-desktop-schemas
 }
+
