@@ -570,7 +570,7 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-102/stop-undesired-requests.patch
 
 	eapply "${FILESDIR}"/0003-remove-explicit-neon-flags-from-skia-build.patch
-	eapply "${FILESDIR}"/0004-fix-rust-1.70.0-compile.patch
+#	eapply "${FILESDIR}"/0004-fix-rust-1.70.0-compile.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -608,7 +608,7 @@ src_prepare() {
 
 	# Clearing checksums where we have applied patches
 	moz_clear_vendor_checksums bindgen
-	moz_clear_vendor_checksums mp4parse
+#	moz_clear_vendor_checksums mp4parse
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
