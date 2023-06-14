@@ -20,7 +20,7 @@ SLOT="beta"
 KEYWORDS=""
 RESTRICT="network-sandbox"
 
-IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND="
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -32,8 +32,7 @@ DEPEND="${CDEPEND}
 "
 RDEPEND="${CDEPEND}
 	sys-libs/zlib
-	!libressl? ( dev-libs/openssl:0= )
-	libressl? ( dev-libs/libressl:0= )
+	dev-libs/openssl
 	net-libs/libssh2
 	net-misc/curl[ssl]
 	"
