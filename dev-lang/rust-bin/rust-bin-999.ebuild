@@ -36,7 +36,6 @@ RDEPEND="${CDEPEND}
 	libressl? ( dev-libs/libressl:0= )
 	net-libs/libssh2
 	net-misc/curl[ssl]
-	!dev-util/cargo
 	"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
