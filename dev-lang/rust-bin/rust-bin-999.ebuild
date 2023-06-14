@@ -40,7 +40,7 @@ REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
 # stripping rust may break it (at least on x86_64)
 # https://github.com/rust-lang/rust/issues/112286
-RESTRICT="strip"
+# RESTRICT="strip"
 
 QA_PREBUILT="
 	opt/${P}/bin/*-${PV}
