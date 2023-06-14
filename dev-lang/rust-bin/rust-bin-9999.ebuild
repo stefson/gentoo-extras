@@ -27,7 +27,7 @@ SLOT="nightly"
 KEYWORDS=""
 RESTRICT="network-sandbox"
 
-IUSE="clippy cpu_flags_x86_sse2 doc miri rls rust-analyzer rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc miri rust-analyzer rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND="
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -44,7 +44,6 @@ RDEPEND="${CDEPEND}
 	net-misc/curl[ssl]
 	"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )
-	rls? ( source )
 	rust-analyzer? ( source )"
 
 # stripping rust may break it (at least on x86_64)
@@ -96,10 +95,6 @@ src_install() {
 	use source && components="${components},rust-src"
 	use clippy && components="${components},clippy-preview"
 	use miri && components="${components},miri-preview"
-	if use rls; then
-		local analysis=$(grep 'analysis' ./components)
-		components="${components},rls-preview,${analysis}"
-	fi
 	if use rust-analyzer; then
 		local analysis=$(grep 'analysis' ./components)
 		components="${components},rust-analyzer-preview,${analysis}"
@@ -151,11 +146,6 @@ src_install() {
 		dosym "../../opt/${P}/bin/${miri}" "/usr/bin/${miri}"
 		dosym "../../opt/${P}/bin/${cargo_miri}" "/usr/bin/${cargo_miri}"
 	fi
-	if use rls; then
-		local rls=rls-bin-${PV}
-		mv "${D}/opt/${P}/bin/rls" "${D}/opt/${P}/bin/${rls}" || die
-		dosym "../../opt/${P}/bin/${rls}" "/usr/bin/${rls}"
-	fi
 	if use rust-analyzer; then
 		local rust_analyzer=rust-analyzer-bin-${PV}
 		mv "${D}/opt/${P}/bin/rust-analyzer" "${D}/opt/${P}/bin/${rust_analyzer}" || die
@@ -191,9 +181,6 @@ src_install() {
 	if use miri; then
 		echo /usr/bin/miri >> "${T}/provider-${P}"
 		echo /usr/bin/cargo-miri >> "${T}/provider-${P}"
-	fi
-	if use rls; then
-		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rust-analyzer; then
 		echo /usr/bin/rust-analyzer >> "${T}/provider-${P}"

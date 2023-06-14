@@ -20,7 +20,7 @@ SLOT="beta"
 KEYWORDS=""
 RESTRICT="network-sandbox"
 
-IUSE="clippy cpu_flags_x86_sse2 doc rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND="
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -78,10 +78,6 @@ src_install() {
 	local components="rustc,cargo,${std}"
 	use doc && components="${components},rust-docs"
 	use clippy && components="${components},clippy-preview"
-	if use rls; then
-		local analysis=$(grep 'analysis' ./components)
-		components="${components},rls-preview,${analysis}"
-	fi
 	use rustfmt && components="${components},rustfmt-preview"
 	./install.sh \
 		--components="${components}" \
@@ -118,11 +114,6 @@ src_install() {
 		dosym "../../opt/${P}/bin/${clippy_driver}" "/usr/bin/${clippy_driver}"
 		dosym "../../opt/${P}/bin/${cargo_clippy}" "/usr/bin/${cargo_clippy}"
 	fi
-	if use rls; then
-		local rls=rls-bin-${PV}
-		mv "${D}/opt/${P}/bin/rls" "${D}/opt/${P}/bin/${rls}" || die
-		dosym "../../opt/${P}/bin/${rls}" "/usr/bin/${rls}"
-	fi
 	if use rustfmt; then
 		local rustfmt=rustfmt-bin-${PV}
 		local cargo_fmt=cargo-fmt-bin-${PV}
@@ -149,9 +140,6 @@ src_install() {
 	if use clippy; then
 		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
 		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
-	fi
-	if use rls; then
-		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
 		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
