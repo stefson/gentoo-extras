@@ -650,6 +650,8 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	eapply "${WORKDIR}/firefox-patches"
+	
+	eapply "${FILESDIR}/0001-fix-non-unified-build.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
