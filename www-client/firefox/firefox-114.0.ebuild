@@ -655,6 +655,7 @@ src_prepare() {
 	eapply "${FILESDIR}"/0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}"/0003-fix-non-unified-build-gcc-10.patch
 	eapply "${FILESDIR}"/0004-fix-non-unified-build-gcc-12.patch
+	eapply "${FILESDIR}"/gcc-11-arm.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
