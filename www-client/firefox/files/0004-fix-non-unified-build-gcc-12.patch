@@ -1,0 +1,16 @@
+diff --git a/toolkit/components/glean/ipc/Support.cpp b/toolkit/components/glean/ipc/Support.cpp
+--- a/toolkit/components/glean/ipc/Support.cpp
++++ b/toolkit/components/glean/ipc/Support.cpp
+@@ -8,10 +8,11 @@
+ // FFI.
+ #include "FOGIPC.h"
+ #include "mozilla/AppShutdown.h"
+ #include "mozilla/ClearOnShutdown.h"
+ #include "mozilla/glean/GleanMetrics.h"
++#include "mozilla/ipc/ByteBuf.h"
+ #include "mozilla/Unused.h"
+ #include "nsThreadUtils.h"
+ 
+ using mozilla::AppShutdown;
+ using mozilla::RunOnShutdown;
+
