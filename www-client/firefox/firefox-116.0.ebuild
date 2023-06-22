@@ -504,6 +504,9 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
+	eapply "${FILESDIR}"/0004-fix-non-unified-build-gcc-11.patch
+	eapply "${FILESDIR}"/0005-fix-non-unified-build-gcc-12.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 

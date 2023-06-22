@@ -1,0 +1,20 @@
+diff --git a/js/src/jit/shared/AtomicOperations-shared-jit.cpp b/js/src/jit/shared/AtomicOperations-shared-jit.cpp
+--- a/js/src/jit/shared/AtomicOperations-shared-jit.cpp
++++ b/js/src/jit/shared/AtomicOperations-shared-jit.cpp
+@@ -4,10 +4,14 @@
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+ #include "jit/AtomicOperations.h"
+ 
++#if defined(__arm__)
++#  include "jit/arm/Architecture-arm.h"
++#endif
++
+ #ifdef JS_HAVE_GENERATED_ATOMIC_OPS
+ 
+ #  include <atomic>
+ 
+ #  include "js/GCAPI.h"
+
+
