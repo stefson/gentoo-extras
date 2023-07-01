@@ -496,7 +496,9 @@ src_prepare() {
 	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 
 	# upstreamed to 116 branch
+
 	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
+	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1516081-Disable-watchdog-during-PGO-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1835829-non-unified-build-skia-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-disable-avx512-from-skia.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1559213-fix-system-av1-libs.patch
