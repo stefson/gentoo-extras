@@ -1,0 +1,38 @@
+From e4e26c4140fe17b9a422a3349700680279dc06de Mon Sep 17 00:00:00 2001
+From: Mike Hommey <mh+mozilla@glandium.org>
+Date: Fri, 30 Jun 2023 22:12:34 +0000
+Subject: [PATCH] Bug 1841203 - Stop building SkICC. r=gfx-reviewers,lsalzman
+
+It is not used.
+
+Differential Revision: https://phabricator.services.mozilla.com/D182538
+---
+ gfx/skia/generate_mozbuild.py | 1 +
+ gfx/skia/moz.build            | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gfx/skia/generate_mozbuild.py b/gfx/skia/generate_mozbuild.py
+index 3a41946b92980..18a70a3e54f9b 100755
+--- a/gfx/skia/generate_mozbuild.py
++++ b/gfx/skia/generate_mozbuild.py
+@@ -189,6 +189,7 @@ def generate_separated_sources(platform_sources):
+     'SkXPS',
+     'SkCreateCGImageRef',
+     'skia/src/ports/SkGlobalInitialization',
++    'SkICC',
+   ]
+ 
+   def isignorelisted(value):
+diff --git a/gfx/skia/moz.build b/gfx/skia/moz.build
+index 63c8e8a6b7fbc..9ddf9b4349e30 100644
+--- a/gfx/skia/moz.build
++++ b/gfx/skia/moz.build
+@@ -216,7 +216,6 @@ UNIFIED_SOURCES += [
+     'skia/src/effects/imagefilters/SkComposeImageFilter.cpp',
+     'skia/src/effects/SkDashPathEffect.cpp',
+     'skia/src/encode/SkEncoder.cpp',
+-    'skia/src/encode/SkICC.cpp',
+     'skia/src/encode/SkImageEncoder.cpp',
+     'skia/src/image/SkImage.cpp',
+     'skia/src/image/SkImage_Base.cpp',
+

@@ -657,6 +657,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}"/0004-fix-non-unified-build-gcc-11.patch
 	eapply "${FILESDIR}"/0005-fix-non-unified-build-gcc-12.patch
+	eapply "${FILESDIR}"/0006-skia-stop-building-skicc.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
