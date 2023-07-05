@@ -93,9 +93,6 @@ src_install() {
 	rm rust-installer-version || die
 	rm components || die
 	rm uninstall.sh || die
-	if use aarch64-gnu-std ; then
-		rm aarch64-unknown-linux-gnu/lib/librustc-stable_rt*a
-	fi
 }
 
 pkg_postinst() {
