@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-114-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-115-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -492,16 +492,20 @@ src_unpack() {
 
 src_prepare() {
 
-	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-	! use ppc64 && rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
+	if use lto; then
+		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
+	fi
+
+	if ! use ppc64; then
+		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
+	fi
 
 	# upstreamed to 116 branch
-
-	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
-	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1516081-Disable-watchdog-during-PGO-builds.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1835829-non-unified-build-skia-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-disable-avx512-from-skia.patch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1559213-fix-system-av1-libs.patch
+	rm -v "${WORKDIR}"/firefox-patches/0013-bmo-1516081-Disable-watchdog-during-PGO-builds.patch
+	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1559213-fix-system-av1-libs.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1840931-elfhack-pgo-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1839023-arm-unified-build-missing-header.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1838655-arm-unified-build-missing-include.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

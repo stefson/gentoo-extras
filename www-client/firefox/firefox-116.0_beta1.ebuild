@@ -654,7 +654,6 @@ src_prepare() {
 	fi
 
 	# upstreamed to 116 branch
-
 	rm -v "${WORKDIR}"/firefox-patches/0013-bmo-1516081-Disable-watchdog-during-PGO-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1559213-fix-system-av1-libs.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1840931-elfhack-pgo-fix.patch
@@ -662,6 +661,11 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1838655-arm-unified-build-missing-include.patch
 
 	eapply "${WORKDIR}/firefox-patches"
+
+	eapply "${FILESDIR}/"0021-bmo-1559213-fix-system-av1-libs.patch
+
+	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
+	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
