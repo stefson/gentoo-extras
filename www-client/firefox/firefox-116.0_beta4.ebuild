@@ -659,6 +659,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1840931-elfhack-pgo-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1839023-arm-unified-build-missing-header.patch
 	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1838655-arm-unified-build-missing-include.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1838323-disambiguate-skvx-when-building-with-different-arches.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
