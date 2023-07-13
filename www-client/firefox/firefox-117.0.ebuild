@@ -500,8 +500,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
-	# upstreamed to 116 branch
+	# upstreamed to 117 branch
 	rm -v "${WORKDIR}"/firefox-patches/0013-bmo-1516081-Disable-watchdog-during-PGO-builds.patch
+	rm -v "${WORKDIR}"/firefox-patches/0014-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
 	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1559213-fix-system-av1-libs.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1840931-elfhack-pgo-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1839023-arm-unified-build-missing-header.patch
