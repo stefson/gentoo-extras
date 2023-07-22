@@ -667,6 +667,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0003-remove-over-alignment-from-GCMarker-and-Nursery.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
