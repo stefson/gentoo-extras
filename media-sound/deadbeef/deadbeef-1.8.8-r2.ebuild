@@ -11,7 +11,7 @@ PLOCALE_BACKUP="en_GB"
 inherit autotools gnome2-utils plocale xdg-utils
 
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
-#KEYWORDS="~amd64 ~arm ~x86"
+KEYWORDS="~amd64 ~arm ~x86"
 
 DESCRIPTION="foobar2k-like music player"
 HOMEPAGE="http://deadbeef.sourceforge.net"
