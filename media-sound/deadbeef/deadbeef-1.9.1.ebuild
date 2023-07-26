@@ -158,6 +158,8 @@ src_prepare() {
 #	eapply "${FILESDIR}/deadbeef-1.8.8-fix-curl-endings.patch"
 #	eapply "${FILESDIR}/0001-remove-clang.patch"
 
+	eapply "${FILESDIR}/deadbeef-1.8.8-fix-clang-16.patch"
+
 	# fix for --enable-artwork --disable-artwork-network
 	eapply "${FILESDIR}/deadbeef-1.9.1-fix-undeclard-identifier-artwork-enable-wos.patch"
 
