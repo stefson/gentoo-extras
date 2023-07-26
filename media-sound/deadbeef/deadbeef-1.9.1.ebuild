@@ -159,6 +159,7 @@ src_prepare() {
 #	eapply "${FILESDIR}/0001-remove-clang.patch"
 
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-clang-16.patch"
+	eapply "${FILESDIR}/deadbeef-1.9.1-fix-pthreads-with-musl.patch"
 
 	# fix for --enable-artwork --disable-artwork-network
 	eapply "${FILESDIR}/deadbeef-1.9.1-fix-undeclard-identifier-artwork-enable-wos.patch"
