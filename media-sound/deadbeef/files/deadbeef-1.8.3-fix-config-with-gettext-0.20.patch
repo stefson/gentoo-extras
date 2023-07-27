@@ -10,8 +10,8 @@ Subject: [PATCH] Use AM_GNU_GETTEXT([external]) for better compatibility
 
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -2,8 +2,7 @@ SUBDIRS = pixmaps\
- 		  icons\
+@@ -3,8 +3,7 @@ SUBDIRS = pixmaps\
+ 		  external\
  		  shared\
  		  ${PLUGINS_DIRS}\
 -		  po\
@@ -21,7 +21,7 @@ Subject: [PATCH] Use AM_GNU_GETTEXT([external]) for better compatibility
  bin_PROGRAMS = deadbeef
  
 diff --git a/configure.ac b/configure.ac
-index 97b818f..4290775 100644
+index fd5131b..cae789d 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -16,7 +16,7 @@ AC_PROG_INSTALL
@@ -33,10 +33,11 @@ index 97b818f..4290775 100644
  PKG_PROG_PKG_CONFIG
  AM_PROG_CC_C_O
  AM_ICONV
-@@ -949,7 +949,6 @@ plugins/sc68/Makefile
- plugins/coreaudio/Makefile
+@@ -966,7 +966,6 @@ plugins/coreaudio/Makefile
  plugins/rg_scanner/Makefile
+ plugins/soundtouch/Makefile
  po/Makefile.in
 -intl/Makefile
  deadbeef.desktop
  ])
+ 
