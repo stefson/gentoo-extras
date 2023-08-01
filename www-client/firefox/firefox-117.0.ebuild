@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-115-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-116-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -501,17 +501,10 @@ src_prepare() {
 	fi
 
 	# upstreamed to 117 branch
-	rm -v "${WORKDIR}"/firefox-patches/0013-bmo-1516081-Disable-watchdog-during-PGO-builds.patch
-	rm -v "${WORKDIR}"/firefox-patches/0014-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
-	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1559213-fix-system-av1-libs.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1840931-elfhack-pgo-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1839023-arm-unified-build-missing-header.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1838655-arm-unified-build-missing-include.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1838323-disambiguate-skvx-when-building-with-different-arches.patch
-
+	rm -v "${WORKDIR}"/firefox-patches/0013-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-fix-building-gcc-pgo-and-disable-watchdog-on-pgo-builds.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1841377-musl-libc-overalignment.patch
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}/"0021-bmo-1559213-fix-system-av1-libs.patch
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
