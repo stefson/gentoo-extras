@@ -652,6 +652,11 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
+	# upstreamed to 115 branch
+	rm -v "${WORKDIR}"/firefox-patches/0014-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1840931-elfhack-pgo-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1838323-disambiguate-skvx-when-building-with-different-arches.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
