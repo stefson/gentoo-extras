@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-116-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-116-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -657,6 +657,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0013-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-fix-building-gcc-pgo-and-disable-watchdog-on-pgo-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1841377-musl-libc-overalignment.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1841567-stop-running-check_binary-on-host-binaries.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1841571-treat-rust-libraries-as-objects.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
