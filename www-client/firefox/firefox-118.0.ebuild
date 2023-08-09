@@ -62,7 +62,7 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
-	hardened hwaccel jack libproxy lto +openh264 pgo pulseaudio sndio screencast 
+	hardened hwaccel icu4x jack libproxy lto +openh264 pgo pulseaudio sndio screencast 
 	selinux +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx system-png +system-webp wayland wifi +X"
 
@@ -676,6 +676,9 @@ src_configure() {
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
+	is use icu4x  then
+		mozconfig_add_options_ac "forcing icu4x due to use icu4x" --enable-icu4x
+
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
 
@@ -693,7 +696,6 @@ src_configure() {
 	mozconfig_use_enable pulseaudio
 	# force the deprecated alsa sound code if pulseaudio is disabled
 	if use kernel_linux && ! use pulseaudio ; then
-#		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
 		mozconfig_add_options_ac '-pulseaudio' --enable-audio-backends=alsa
 	fi
 
