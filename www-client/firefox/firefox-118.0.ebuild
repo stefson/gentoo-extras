@@ -3,11 +3,11 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-116-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-116-patches-03.tar.xz"
 
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=17
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{9..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
@@ -78,6 +78,18 @@ BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
 	>=virtual/rust-1.65.0
 	|| (
+		(
+			sys-devel/clang:17
+			sys-devel/llvm:17
+			clang? (
+				|| (
+					sys-devel/lld:17
+					sys-devel/mold
+				)
+				virtual/rust:0/llvm-17
+				pgo? ( =sys-libs/compiler-rt-sanitizers-17*[profile] )
+			)
+		)
 		(
 			sys-devel/clang:16
 			sys-devel/llvm:16
@@ -504,6 +516,11 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0013-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-fix-building-gcc-pgo-and-disable-watchdog-on-pgo-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1841377-musl-libc-overalignment.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1841567-stop-running-check_binary-on-host-binaries.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1841571-treat-rust-libraries-as-objects.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
+#	rm -v "${WORKDIR}"/firefox-patches/
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
