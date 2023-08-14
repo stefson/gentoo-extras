@@ -514,6 +514,7 @@ src_prepare() {
 
 	# upstreamed to 118 branch
 	rm -v "${WORKDIR}"/firefox-patches/0013-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-fix-building-gcc-pgo-and-disable-watchdog-on-pgo-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1841377-musl-libc-overalignment.patch
 	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1847190-dont-use-configure_cache-for-relative-relocations.patch
