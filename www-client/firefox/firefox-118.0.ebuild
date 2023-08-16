@@ -697,8 +697,9 @@ src_configure() {
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
-	is use icu4x  then
+	if use icu4x ; then
 		mozconfig_add_options_ac "forcing icu4x due to use icu4x" --enable-icu4x
+	fi
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
