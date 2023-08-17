@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-116-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-116-patches-04.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -523,6 +523,10 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
 	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-911679-gcc-binutils-2.41.patch
 	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1847697-dont-use-pack-relative-relocs-when-it-leads-to-ld-error.patch
+	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1837627-dont-use-YUVColorSpaceIdentity-for-YUV-pixel-formats.patch
+	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1837627-convert-AVColorRange-to-GetColorRange.patch
+	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1843425-enable-vaapi-on-X11-only-build.patch
+	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
