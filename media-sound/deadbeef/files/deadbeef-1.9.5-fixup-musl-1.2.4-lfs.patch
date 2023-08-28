@@ -27,10 +27,10 @@ index 73d4b43d95..d280e3dde4 100644
  dnl AC_PROG_LIBTOOL
  AC_CONFIG_MACRO_DIR([m4])
  AC_C_BIGENDIAN
-diff --git a/src/vfs_stdio.c b/src/vfs_stdio.c
+diff --git a/vfs_stdio.c b/vfs_stdio.c
 index fb86867415..84d884241c 100644
---- a/src/vfs_stdio.c
-+++ b/src/vfs_stdio.c
+--- a/vfs_stdio.c
++++ b/vfs_stdio.c
 @@ -35,8 +35,6 @@
  #include <unistd.h>
  
