@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-116-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-117-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -512,21 +512,12 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
-	# upstreamed to 118 branch
-	rm -v "${WORKDIR}"/firefox-patches/0013-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-fix-building-gcc-pgo-and-disable-watchdog-on-pgo-builds.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1841377-musl-libc-overalignment.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1847190-dont-use-configure_cache-for-relative-relocations.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1841567-stop-running-check_binary-on-host-binaries.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1841571-treat-rust-libraries-as-objects.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
-	rm -v "${WORKDIR}"/firefox-patches/0034-bgo-911679-gcc-binutils-2.41.patch
-	rm -v "${WORKDIR}"/firefox-patches/0035-bmo-1847697-dont-use-pack-relative-relocs-when-it-leads-to-ld-error.patch
-	rm -v "${WORKDIR}"/firefox-patches/0036-bmo-1837627-dont-use-YUVColorSpaceIdentity-for-YUV-pixel-formats.patch
-	rm -v "${WORKDIR}"/firefox-patches/0037-bmo-1837627-convert-AVColorRange-to-GetColorRange.patch
-	rm -v "${WORKDIR}"/firefox-patches/0038-bmo-1843425-enable-vaapi-on-X11-only-build.patch
-	rm -v "${WORKDIR}"/firefox-patches/0039-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
+	# upstreamed to 119 branch
+	rm -v "${WORKDIR}"/firefox-patches/0021-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bgo-911679-gcc-binutils-2.41.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1846701-Rename-MOZ_WAYLAND_USE_HWDECODE-to-MOZ_USE_HWDECODE.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
