@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{9,10,11} )
+PYTHON_COMPAT=( python3_{9..11} )
 
-inherit eutils distutils-r1
+inherit distutils-r1
 
 DESCRIPTION="Settings editor for LightDM GTK+ greeter"
 HOMEPAGE="https://launchpad.net/lightdm-gtk-greeter-settings"
