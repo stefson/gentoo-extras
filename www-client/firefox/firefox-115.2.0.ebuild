@@ -3,11 +3,11 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-115esr-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-115esr-patches-05.tar.xz"
 
 LLVM_MAX_SLOT=16
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
@@ -57,13 +57,13 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
-IUSE+=" jack +jumbo-build libproxy lto +openh264 pgo pulseaudio sndio selinux"
+IUSE+=" jack libproxy lto openh264 pgo pulseaudio sndio selinux"
 IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
 IUSE+=" wayland wifi +X"
 
@@ -85,10 +85,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:16
 			sys-devel/llvm:16
 			clang? (
-				|| (
-					sys-devel/lld:16
-					sys-devel/mold
-				)
+				sys-devel/lld:16
 				virtual/rust:0/llvm-16
 				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
 			)
@@ -97,10 +94,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:15
 			sys-devel/llvm:15
 			clang? (
-				|| (
-					sys-devel/lld:15
-					sys-devel/mold
-				)
+				sys-devel/lld:15
 				virtual/rust:0/llvm-15
 				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
@@ -200,6 +194,10 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 		x11-libs/libxcb:=
 	)"
 RDEPEND="${COMMON_DEPEND}
+	hwaccel? (
+		media-video/libva-utils
+		sys-apps/pciutils
+	)
 	jack? ( virtual/jack )
 	openh264? ( media-libs/openh264:*[plugin] )"
 DEPEND="${COMMON_DEPEND}
@@ -652,11 +650,6 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
-	# upstreamed to 115 branch
-	rm -v "${WORKDIR}"/firefox-patches/0014-libaom-Use-NEON_FLAGS-instead-of-VPX_ASFLAGS-for-lib.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1840931-elfhack-pgo-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1838323-disambiguate-skvx-when-building-with-different-arches.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -692,22 +685,6 @@ src_prepare() {
 
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
-	# Respect choice for "jumbo-build"
-	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
-	if [[ -n ${FILES_PER_UNIFIED_FILE} ]] && use jumbo-build; then
-		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
-		elog ""
-		elog "jumbo-build defaults modified to ${my_files_per_unified_file}."
-		elog "if you get a build failure, try undefining FILES_PER_UNIFIED_FILE,"
-		elog "if that fails try -jumbo-build before opening a bug report."
-		elog ""
-
-		sed -i -e "s/\"FILES_PER_UNIFIED_FILE\", 16/\"FILES_PER_UNIFIED_FILE\", "${my_files_per_unified_file}"/" python/mozbuild/mozbuild/frontend/data.py ||
-			die "Failed to adjust FILES_PER_UNIFIED_FILE in python/mozbuild/mozbuild/frontend/data.py"
-		sed -i -e "s/FILES_PER_UNIFIED_FILE = 6/FILES_PER_UNIFIED_FILE = "${my_files_per_unified_file}"/" js/src/moz.build ||
-			die "Failed to adjust FILES_PER_UNIFIED_FILE in js/src/moz.build"
-	fi
-
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
 	mkdir -p "${BUILD_DIR}" || die
@@ -736,7 +713,6 @@ src_configure() {
 		local version_clang=$(clang --version 2>/dev/null | grep -F -- 'clang version' | awk '{ print $3 }')
 		[[ -n ${version_clang} ]] && version_clang=$(ver_cut 1 "${version_clang}")
 		[[ -z ${version_clang} ]] && die "Failed to read clang version!"
-
 
 		if tc-is-gcc; then
 			have_switched_compiler=yes
@@ -919,8 +895,6 @@ src_configure() {
 	mozconfig_add_options_ac '--enable-audio-backends' --enable-audio-backends="${myaudiobackends::-1}"
 
 	mozconfig_use_enable wifi necko-wifi
-
-	! use jumbo-build && mozconfig_add_options_ac '--disable-unified-build' --disable-unified-build
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
@@ -1420,6 +1394,10 @@ pkg_postinst() {
 	optfeature "desktop notifications" x11-libs/libnotify
 	optfeature "fallback mouse cursor theme e.g. on WMs" gnome-base/gsettings-desktop-schemas
 
+	if use hwaccel && has_version "x11-drivers/nvidia-drivers"; then
+		optfeature "hardware acceleration with NVIDIA cards" media-libs/nvidia-vaapi-driver
+	fi
+
 	if ! has_version "sys-libs/glibc"; then
 		elog
 		elog "glibc not found! You won't be able to play DRM content."
@@ -1427,3 +1405,4 @@ pkg_postinst() {
 		elog
 	fi
 }
+
