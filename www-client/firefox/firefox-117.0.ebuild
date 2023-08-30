@@ -1261,6 +1261,18 @@ src_install() {
 			pref("gfx.x11-egl.force-enabled",          true);
 			EOF
 		fi
+
+		# Install the vaapitest binary on supported arches (+arm when keyworded)
+		if use amd64 || use arm64 || use x86 ; then
+			exeinto "${MOZILLA_FIVE_HOME}"
+			doexe "${BUILD_DIR}"/dist/bin/vaapitest
+		fi
+
+		# Install the v4l2test on supported arches (+ arm, + riscv64 when keyworded)
+		if use arm64 ; then
+			exeinto "${MOZILLA_FIVE_HOME}"
+			doexe "${BUILD_DIR}"/dist/bin/v4l2test
+		fi
 	fi
 
 	if ! use gmp-autoupdate ; then
