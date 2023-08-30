@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI="8"
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
@@ -14,7 +14,7 @@ S="${WORKDIR}/firefox"
 EGIT_REPO_URI="https://github.com/mozilla/gecko-dev"
 EGIT_CHECKOUT_DIR="${WORKDIR}/firefox"
 
-inherit check-reqs flag-o-matic toolchain-funcs eutils \
+inherit check-reqs flag-o-matic toolchain-funcs \
 		gnome2-utils mozcoreconf-v6 pax-utils \
 		fdo-mime autotools virtualx git-r3
 
