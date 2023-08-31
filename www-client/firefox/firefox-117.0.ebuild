@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-117-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-117-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -85,10 +85,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:16
 			sys-devel/llvm:16
 			clang? (
-				|| (
-					sys-devel/lld:16
-					sys-devel/mold
-				)
+				sys-devel/lld:16
 				virtual/rust:0/llvm-16
 				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
 			)
@@ -97,10 +94,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:15
 			sys-devel/llvm:15
 			clang? (
-				|| (
-					sys-devel/lld:15
-					sys-devel/mold
-				)
+				sys-devel/lld:15
 				virtual/rust:0/llvm-15
 				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
