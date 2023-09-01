@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-117-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-117-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=16
 
@@ -85,10 +85,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:16
 			sys-devel/llvm:16
 			clang? (
-				|| (
-					sys-devel/lld:16
-					sys-devel/mold
-				)
+				sys-devel/lld:16
 				virtual/rust:0/llvm-16
 				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
 			)
@@ -97,10 +94,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:15
 			sys-devel/llvm:15
 			clang? (
-				|| (
-					sys-devel/lld:15
-					sys-devel/mold
-				)
+				sys-devel/lld:15
 				virtual/rust:0/llvm-15
 				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
@@ -654,13 +648,12 @@ src_prepare() {
 	fi
 
 	# upstreamed to 118 branch
-	rm -v "${WORKDIR}"/firefox-patches/0021-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bgo-911679-gcc-binutils-2.41.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1846701-Rename-MOZ_WAYLAND_USE_HWDECODE-to-MOZ_USE_HWDECODE.patch
-#	rm -v "${WORKDIR}"/firefox-patches/
-#	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0020-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-911679-gcc-binutils-2.41.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1846701-Rename-MOZ_WAYLAND_USE_HWDECODE-to-MOZ_USE_HWDECODE.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1849718-drop-double-import-for-markeroptions.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -699,6 +692,10 @@ src_prepare() {
 	einfo "Removing pre-built binaries ..."
 
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
+
+	# Clear checksums from cargo crates we've manually patched.
+	# moz_clear_vendor_checksums xyz
+	moz_clear_vendor_checksums proc-macro2
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
@@ -776,7 +773,11 @@ src_configure() {
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	export AS="$(tc-getCC) -c"
-	tc-export CC CXX LD AR AS NM OBJDUMP RANLIB PKG_CONFIG
+
+	# Configuration tests expect llvm-readelf output, bug 913130
+	READELF="llvm-readelf"
+	
+	tc-export CC CXX LD AR AS NM OBJDUMP RANLIB READELF PKG_CONFIG
 
 	# Pass the correct toolchain paths through cbindgen
 	if tc-is-cross-compiler ; then
@@ -818,6 +819,8 @@ src_configure() {
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
+		--disable-wasm-function-references \
+		--disable-wasm-gc \
 		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
@@ -1261,6 +1264,18 @@ src_install() {
 			cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel x11 prefs"
 			pref("gfx.x11-egl.force-enabled",          true);
 			EOF
+		fi
+
+		# Install the vaapitest binary on supported arches (+arm when keyworded)
+		if use amd64 || use arm64 || use x86 ; then
+			exeinto "${MOZILLA_FIVE_HOME}"
+			doexe "${BUILD_DIR}"/dist/bin/vaapitest
+		fi
+
+		# Install the v4l2test on supported arches (+ arm, + riscv64 when keyworded)
+		if use arm64 ; then
+			exeinto "${MOZILLA_FIVE_HOME}"
+			doexe "${BUILD_DIR}"/dist/bin/v4l2test
 		fi
 	fi
 
