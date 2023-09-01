@@ -48,14 +48,20 @@ REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )
 
 # stripping rust may break it (at least on x86_64)
 # https://github.com/rust-lang/rust/issues/112286
-# RESTRICT="strip"
+RESTRICT="strip"
 
 QA_PREBUILT="
-	opt/${P}/bin/*-${PV}
-	opt/${P}/lib/*.so
-	opt/${P}/lib/rustlib/*/lib/*.so
-	opt/${P}/lib/rustlib/*/lib/*.rlib*
+	opt/${P}/bin/.*
+	opt/${P}/lib/.*.so
+	opt/${P}/libexec/.*
+	opt/${P}/lib/rustlib/.*/bin/.*
+	opt/${P}/lib/rustlib/.*/lib/.*
 "
+
+# An rmeta file is custom binary format that contains the metadata for the crate.
+# rmeta files do not support linking, since they do not contain compiled object files.
+# so we can safely silence the warning for this QA check.
+QA_EXECSTACK="opt/${P}/lib/rustlib/*/lib*.rlib:lib.rmeta"
 
 src_unpack() {
 	local postfix
