@@ -140,10 +140,7 @@ CDEPEND="
 	x11-libs/gdk-pixbuf
 	x11-libs/pango
 	x11-libs/pixman
-	dbus? (
-		sys-apps/dbus
-		dev-libs/dbus-glib
-	)
+	dbus? ( sys-apps/dbus )
 	libproxy? ( net-libs/libproxy )
 	screencast? ( media-video/pipewire:= )
 	system-av1? (
