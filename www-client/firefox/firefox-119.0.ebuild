@@ -3,11 +3,11 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-117-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-117-patches-04.tar.xz"
 
 LLVM_MAX_SLOT=17
 
-PYTHON_COMPAT=( python3_{9..12} )
+PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
@@ -510,11 +510,13 @@ src_prepare() {
 	fi
 
 	# upstreamed to 119 branch
-	rm -v "${WORKDIR}"/firefox-patches/0021-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bgo-911679-gcc-binutils-2.41.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
-	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1846701-Rename-MOZ_WAYLAND_USE_HWDECODE-to-MOZ_USE_HWDECODE.patch
+	rm -v "${WORKDIR}"/firefox-patches/0020-qm-qm-fix-sqlite3-on-ppc-with-clang.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1844484-override-compiler-vtables-symbol-for-pure-virtual-methods.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-911679-gcc-binutils-2.41.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1846701-Rename-MOZ_WAYLAND_USE_HWDECODE-to-MOZ_USE_HWDECODE.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1849869-update-proc-macro2-to-1.0.66.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1849718-drop-double-import-for-markeroptions.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
