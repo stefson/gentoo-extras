@@ -653,6 +653,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-911679-gcc-binutils-2.41.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1839615-configure-libva-logging-according-to-platform-decoder.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1846701-Rename-MOZ_WAYLAND_USE_HWDECODE-to-MOZ_USE_HWDECODE.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1849869-update-proc-macro2-to-1.0.66.patch
 	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1849718-drop-double-import-for-markeroptions.patch
 
 	eapply "${WORKDIR}/firefox-patches"
