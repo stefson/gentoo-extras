@@ -1,38 +1,36 @@
-diff --git a/browser/components/BrowserGlue.jsm b/browser/components/BrowserGlue.jsm
-index 81de0fb201..163b4843e4 100644
---- a/browser/components/BrowserGlue.jsm
-+++ b/browser/components/BrowserGlue.jsm
-@@ -1375,8 +1375,6 @@ BrowserGlue.prototype = {
-       Normandy.init();
+diff --git a/browser/components/BrowserGlue.jsm b/browser/components/BrowserGlue.sys.mjs
+index b2479db..7670f08 100644
+--- a/browser/components/BrowserGlue.sys.mjs
++++ b/browser/components/BrowserGlue.sys.mjs
+@@ -1274,7 +1274,6 @@ BrowserGlue.prototype = {
+       lazy.Normandy.init();
      }
  
--    SaveToPocket.init();
--
-     AboutHomeStartupCache.init();
+-    lazy.SaveToPocket.init();
  
-     Services.obs.notifyObservers(null, "browser-ui-startup-complete");
+     AboutHomeStartupCache.init();
+
 diff --git a/browser/components/moz.build b/browser/components/moz.build
-index d16b27b1ea..a119166fa5 100644
+index 3b2126e..32b7831 100644
 --- a/browser/components/moz.build
 +++ b/browser/components/moz.build
-@@ -42,7 +42,6 @@ DIRS += [
+@@ -44,7 +44,6 @@ DIRS += [
      "originattributes",
-     "ion",
+     "pagedata",
      "places",
 -    "pocket",
      "preferences",
      "privatebrowsing",
      "prompts",
 diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
-index 16168e5..857a968 100644
+index 43c84c3..4b4aad2 100644
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -5246,8 +5246,6 @@ var XULBrowserWindow = {
+@@ -5478,7 +5478,6 @@ var XULBrowserWindow = {
  
      SafeBrowsingNotificationBox.onLocationChange(aLocationURI);
  
 -    SaveToPocket.onLocationChange(window);
--
-     UrlbarProviderSearchTips.onLocationChange(
-       window,
-       aLocationURI,
+ 
+     let originalURI;
+     if (

@@ -1,33 +1,20 @@
 diff --git a/browser/extensions/moz.build b/browser/extensions/moz.build
-index 0d4b9c3..a127d41 100644
+index 3c6e7eb..2df11e8 100644
 --- a/browser/extensions/moz.build
 +++ b/browser/extensions/moz.build
-@@ -5,11 +5,6 @@
+@@ -5,10 +5,4 @@
  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
  
  DIRS += [
--    "doh-rollout",
-     "formautofill",
+-    "formautofill",
 -    "screenshots",
 -    "webcompat",
 -    "report-site-issue",
-     "pictureinpicture",
+-    "pictureinpicture",
 -    "search-detection",
  ]
-diff --git a/browser/installer/package-manifest.in b/browser/installer/package-manifest.in
-index 73a41dc..d049778 100644
---- a/browser/installer/package-manifest.in
-+++ b/browser/installer/package-manifest.in
-@@ -243,7 +243,6 @@
- @RESPATH@/browser/chrome/icons/default/default64.png
- @RESPATH@/browser/chrome/icons/default/default128.png
- #endif
--@RESPATH@/browser/features/*
- 
- ; [DevTools Startup Files]
- @RESPATH@/browser/chrome/devtools-startup@JAREXT@
 diff --git a/browser/locales/Makefile.in b/browser/locales/Makefile.in
-index e4b60a0..c38fdd2 100644
+index 1b8f21b..8f0fbf6 100644
 --- a/browser/locales/Makefile.in
 +++ b/browser/locales/Makefile.in
 @@ -55,7 +55,6 @@ l10n-%:
@@ -47,29 +34,48 @@ index e4b60a0..c38fdd2 100644
  package-win32-installer: $(SUBMAKEFILES)
  	$(MAKE) -C ../installer/windows CONFIG_DIR=l10ngen ZIP_IN='$(ZIP_OUT)' installer
 diff --git a/browser/locales/filter.py b/browser/locales/filter.py
-index 22eb5cb..5e1f09f 100644
+index 9155947..e33d121 100644
 --- a/browser/locales/filter.py
 +++ b/browser/locales/filter.py
-@@ -17,7 +17,6 @@ def test(mod, path, entity=None):
+@@ -14,8 +14,6 @@ def test(mod, path, entity=None):
+         "devtools/shared",
          "devtools/startup",
          "browser",
-         "browser/extensions/formautofill",
+-        "browser/extensions/formautofill",
 -        "browser/extensions/report-site-issue",
          "extensions/spellcheck",
          "other-licenses/branding/firefox",
          "browser/branding/official",
+diff --git a/browser/locales/l10n.ini b/browser/locales/l10n.ini
+index fad1533..76fdaff 100644
+--- a/browser/locales/l10n.ini
++++ b/browser/locales/l10n.ini
+@@ -12,8 +12,6 @@ dirs = browser
+      browser/branding/official
+      devtools/client
+      devtools/startup
+-     browser/extensions/formautofill
+-     browser/extensions/report-site-issue
+ 
+ [includes]
+ # non-central apps might want to use %(topsrcdir)s here, or other vars
 diff --git a/browser/locales/l10n.toml b/browser/locales/l10n.toml
-index e9d5010..914a2f1 100644
+index 31baf8c..baaff3b 100644
 --- a/browser/locales/l10n.toml
 +++ b/browser/locales/l10n.toml
-@@ -133,10 +133,6 @@ locales = [
-     reference = "browser/extensions/formautofill/locales/en-US/**"
-     l10n = "{l}browser/extensions/formautofill/**"
+@@ -131,15 +131,6 @@ locales = [
+     reference = "browser/branding/official/locales/en-US/**"
+     l10n = "{l}browser/branding/official/**"
  
+-[[paths]]
+-    reference = "browser/extensions/formautofill/locales/en-US/**"
+-    l10n = "{l}browser/extensions/formautofill/**"
+-
 -[[paths]]
 -    reference = "browser/extensions/report-site-issue/locales/en-US/**"
 -    l10n = "{l}browser/extensions/report-site-issue/**"
 -
- [[paths]]
-     reference = "services/sync/locales/en-US/**"
-     l10n = "{l}services/sync/**"
+-
+ [[includes]]
+     path = "toolkit/locales/l10n.toml"
+ 
