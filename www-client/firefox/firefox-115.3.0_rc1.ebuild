@@ -652,6 +652,14 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}"/privacy-patchset-115/firefox-60-disable-data-sharing-infobar.patch
+	eapply "${FILESDIR}"/privacy-patchset-115/firefox-60-disable-telemetry.patch
+
+	# disable unwanted addons and pocket as well
+#	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons.patch
+#	eapply "${FILESDIR}"/privacy-patchset-115/disable-pocket.patch
+#	eapply "${FILESDIR}"/privacy-patchset-115/stop-undesired-requests.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 

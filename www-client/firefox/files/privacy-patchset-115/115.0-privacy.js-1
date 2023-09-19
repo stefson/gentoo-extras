@@ -1,0 +1,164 @@
+// disable check for default browser
+// pref("browser.shell.checkDefaultBrowser",false);
+
+// killswitch for activity stream
+pref("browser.newtabpage.activity-stream.feeds.section.highlights",false);
+pref("browser.newtabpage.activity-stream.feeds.section.topstories",false);
+pref("browser.newtabpage.activity-stream.feeds.snippets",false);
+pref("browser.newtabpage.activity-stream.feeds.topsites",false);
+//pref("browser.newtabpage.activity-stream.prerender",false);
+
+pref("browser.library.activity-stream.enabled",false);
+pref("browser.newtabpage.activity-stream.section.highlights.includeBookmarks",false);
+pref("browser.newtabpage.activity-stream.section.highlights.includeDownloads",false);
+pref("browser.newtabpage.activity-stream.section.highlights.includeVisited",false);
+pref("browser.newtabpage.activity-stream.discoverystream.enabled",false);
+pref("browser.newtabpage.activity-stream.showSponsored",false);
+pref("browser.newtabpage.activity-stream.feeds.system.topsites",false);
+pref("browser.newtabpage.activity-stream.feeds.telemetry",false);
+
+pref("browser.newtabpage.activity-stream.discoverystream.spocs.personalized",false);
+pref("browser.newtabpage.activity-stream.feeds.aboutpreferences",false);
+pref("browser.newtabpage.activity-stream.feeds.asrouterfeed",false);
+pref("browser.newtabpage.activity-stream.feeds.discoverystreamfeed",false);
+pref("browser.newtabpage.activity-stream.feeds.newtabinit",false);
+pref("browser.newtabpage.activity-stream.feeds.places",false);
+pref("browser.newtabpage.activity-stream.feeds.prefs",false);
+pref("browser.newtabpage.activity-stream.feeds.recommendationproviderswitcher",false);
+pref("browser.newtabpage.activity-stream.feeds.sections",false);
+pref("browser.newtabpage.activity-stream.feeds.systemtick",false);
+pref("browser.newtabpage.activity-stream.showSearch",false);
+
+pref("browser.newtabpage.activity-stream.default.sites","");
+
+pref("browser.newtabpage.enabled",false);
+pref("browser.startup.page",0);
+
+// killswitch for about:welcome
+pref("browser.aboutwelcome.enabled",false);
+pref("startup.homepage_welcome_url","about:blank");
+
+// killswitch for shield studies
+pref("app.shield.optoutstudies.enabled",false);
+
+// killswitch for extension recommendations
+pref("browser.discovery.enabled",false);
+
+// killswitch for pocket crap
+pref("extensions.pocket.enabled",false);
+pref("extensions.pocket.api", "");
+pref("extensions.pocket.site", "");
+pref("extensions.pocket.oAuthConsumerKey", "");
+pref("browser.newtabpage.activity-stream.section.highlights.includePocket",false);
+pref("services.sync.prefs.sync.browser.newtabpage.activity-stream.section.highlights.includePocket",false);
+pref("browser.newtabpage.activity-stream.section.highlights.includePocket",false);
+pref("extensions.pocket.showHome",false);
+pref("extensions.pocket.onSaveRecs",false);
+//pref("browser.bookmarks.showMobileBookmarks",false);
+
+// disable firefox sync! \o/
+pref("identity.fxaccounts.enabled",false);
+
+// disable ping-centre
+pref("browser.ping-centre.telemetry",false);
+pref("browser.ping-centre.log",false);
+//pref("browser.ping-centre.production.endpoint", "");
+//pref("browser.ping-centre.staging.endpoint", "");
+
+
+// disable extension promotion
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.addons",false);
+pref("browser.newtabpage.activity-stream.asrouter.userprefs.cfr.features",false);
+
+// enable do not track function
+pref("privacy.donottrackheader.enabled",true);
+
+// set "system colors" off by default as background color
+// See https://bugzilla.redhat.com/show_bug.cgi?id=1226489
+pref("browser.display.use_system_colors",false);
+
+//todo: disable telemetry and healtreport
+
+//disable telemetry
+
+pref("toolkit.telemetry.server","");
+pref("toolkit.telemetry.unified",false);
+pref("toolkit.telemetry.archive.enabled",false);
+pref("toolkit.telemetry.cachedClientID","");
+pref("toolkit.telemetry.newProfilePing.enabled",false);
+pref("toolkit.telemetry.shutdownPingSender.enabled",false);
+pref("toolkit.telemetry.updatePing.enabled",false);
+pref("toolkit.telemetry.bhrPing.enabled",false);
+pref("experiments.enabled",false);
+
+// disable health report
+
+pref("datareporting.healthreport.about.reportUrl","");
+pref("datareporting.healthreport.uploadEnabled",false);
+pref("datareporting.policy.dataSubmissionEnabled",false);
+pref("datareporting.healthreport.infoURL","");
+pref("datareporting.policy.firstRunURL","");
+
+// disable another topsites feature
+
+pref("browser.urlbar.suggest.topsites",false);
+
+// I don't use gamepad
+
+pref("dom.gamepad.enabled",false);
+
+// don't want screenshots
+
+pref("extensions.screenshots.disabled",false);
+
+// safebrowsing killswitch
+
+pref("browser.safebrowsing.allowOverride",false);
+
+pref("browser.safebrowsing.phishing.enabled",false);
+pref("browser.safebrowsing.malware.enabled",false);
+pref("browser.safebrowsing.blockedURIs.enabled",false);
+pref("browser.safebrowsing.downloads.enabled",false);
+pref("browser.safebrowsing.downloads.remote.enabled",false);
+pref("browser.safebrowsing.downloads.remote.block_dangerous",false);
+pref("browser.safebrowsing.downloads.remote.block_dangerous_host",false);
+pref("browser.safebrowsing.downloads.remote.block_potentially_unwanted",false);
+pref("browser.safebrowsing.downloads.remote.block_uncommon",false);
+pref("browser.safebrowsing.downloads.remote.url","");
+
+//pref("browser.safebrowsing.provider.*.gethashURL","");
+pref("browser.safebrowsing.provider.google.gethashURL","");
+pref("browser.safebrowsing.provider.google4.gethashURL","");
+pref("browser.safebrowsing.provider.mozilla.gethashURL","");
+pref("urlclassifier.gethash.timeout_ms","1");
+
+//pref("browser.safebrowsing.provider.*.updateURL","");
+pref("browser.safebrowsing.provider.google.updateURL","");
+pref("browser.safebrowsing.provider.google4.updateURL","");
+pref("browser.safebrowsing.provider.mozilla.updateURL","");
+
+pref("browser.safebrowsing.provider.google.lists","");
+pref("browser.safebrowsing.downloads.remote.timeout_ms",1);
+
+// don't use formautofill stuff
+
+pref("signon.autofillForms",false);
+pref("signon.generation.enabled",false);
+pref("signon.management.page.breach-alerts.enabled",false);
+pref("signon.rememberSignons",false);
+
+// allow custom css stuff
+
+pref("toolkit.legacyUserProfileCustomizations.stylesheets",true);
+
+// this disables slipstreaming search into url
+pref("browser.urlbar.suggest.searches",false);
+pref("browser.search.suggest.enabled", false);
+
+// this disables pip (video in page overlay crap)
+pref("media.videocontrols.picture-in-picture.enabled",false);
+pref("media.videocontrols.picture-in-picture.video-toggle.enabled",false);
+
+// this disables firefox-mpris caching of video screenshots
+
+pref("media.hardwaremediakeys.enabled",false);
