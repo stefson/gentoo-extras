@@ -657,9 +657,9 @@ src_prepare() {
 
 	# disable unwanted addons and pocket as well
 	eapply "${FILESDIR}"/privacy-patchset-115/disable-pocket.patch
-	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r1.patch
-	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r2.patch
-	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r3.patch
+#	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r1.patch
+#	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r2.patch
+#	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r3.patch
 	eapply "${FILESDIR}"/privacy-patchset-115/stop-undesired-requests.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
@@ -704,7 +704,7 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
-	rm -rv browser/extensions/{formautofill,screenshots,webcompat,report-site-issue}
+#	rm -rv browser/extensions/{formautofill,screenshots,webcompat,report-site-issue}
 #	rm -rv browser/extensions/{formautofill,pictureinpicture,screenshots,webcompat,report-site-issue}
 
 	xdg_environment_reset
