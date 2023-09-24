@@ -659,7 +659,7 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-115/disable-pocket.patch
 	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r1.patch
 	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r2.patch
-	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r2.patch
+	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r3.patch
 	eapply "${FILESDIR}"/privacy-patchset-115/stop-undesired-requests.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
