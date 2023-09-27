@@ -134,7 +134,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.92
+	>=dev-libs/nss-3.93
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -813,6 +813,7 @@ src_configure() {
 		--allow-addon-sideload \
 		--disable-cargo-incremental \
 		--disable-crashreporter \
+		--disable-disk-remnant-avoidance \
 		--disable-gpsd \
 		--disable-install-strip \
 		--disable-legacy-profile-creation \
