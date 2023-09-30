@@ -656,7 +656,7 @@ src_prepare() {
 	eapply "${FILESDIR}"/privacy-patchset-115/firefox-60-disable-telemetry.patch
 
 	# disable unwanted addons and pocket as well
-#	eapply "${FILESDIR}"/privacy-patchset-115/disable-pocket.patch
+	eapply "${FILESDIR}"/privacy-patchset-115/disable-pocket.patch
 #	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r1.patch
 #	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r2.patch
 #	eapply "${FILESDIR}"/privacy-patchset-115/remove_addons-r3.patch
