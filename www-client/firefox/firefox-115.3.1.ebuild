@@ -702,7 +702,7 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
-#	rm -rv browser/extensions/{formautofill,screenshots,webcompat,report-site-issue}
+	rm -rv browser/extensions/{formautofill,screenshots,webcompat,report-site-issue}
 #	rm -rv browser/extensions/{formautofill,pictureinpicture,screenshots,webcompat,report-site-issue}
 
 	xdg_environment_reset
