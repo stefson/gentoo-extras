@@ -76,7 +76,7 @@ BDEPEND="${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.26
 	>=net-libs/nodejs-14.20.0
 	virtual/pkgconfig
-	>=virtual/rust-1.65.0
+	>=virtual/rust-1.69.0
 	|| (
 		(
 			sys-devel/clang:17
@@ -100,18 +100,6 @@ BDEPEND="${PYTHON_DEPS}
 				)
 				virtual/rust:0/llvm-16
 				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:15
-			sys-devel/llvm:15
-			clang? (
-				|| (
-					sys-devel/lld:15
-					sys-devel/mold
-				)
-				virtual/rust:0/llvm-15
-				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
 		)
 	)
