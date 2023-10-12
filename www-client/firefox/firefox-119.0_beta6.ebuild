@@ -3,9 +3,9 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-118-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-118-patches-04.tar.xz"
 
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=17
 
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -80,6 +80,15 @@ FF_ONLY_DEPEND="!www-client/firefox:0
 	selinux? ( sec-policy/selinux-mozilla )"
 BDEPEND="${PYTHON_DEPS}
 	|| (
+		(
+			sys-devel/clang:17
+			sys-devel/llvm:17
+			clang? (
+				sys-devel/lld:16
+				virtual/rust:0/llvm-17
+				pgo? ( =sys-libs/compiler-rt-sanitizers-17*[profile] )
+			)
+		)
 		(
 			sys-devel/clang:16
 			sys-devel/llvm:16
@@ -649,6 +658,9 @@ src_prepare() {
 	if ! use ppc64; then
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
+
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-915306-rust-1.73-compatibility-patch1.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-915306-rust-1.73-compatibility-patch2.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

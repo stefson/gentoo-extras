@@ -497,7 +497,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
-	# upstreamed to 119 branch
+	# upstreamed to 120 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
