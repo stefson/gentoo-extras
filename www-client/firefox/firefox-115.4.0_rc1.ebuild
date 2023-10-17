@@ -659,6 +659,8 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
+	rm -v "${WORKDIR}"/firefox-patches/0028-bgo-911679-gcc-binutils-2.41.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}"/privacy-patchset-115/firefox-60-disable-data-sharing-infobar.patch
