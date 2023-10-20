@@ -31,7 +31,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy cpu_flags_x86_sse2 debug doc miri parallel-compiler rls rustfmt rust-analyzer system-llvm wasm sanitize ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc miri parallel-compiler rustfmt rust-analyzer system-llvm wasm sanitize ${ALL_LLVM_TARGETS[*]}"
 
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling one than more slot
@@ -123,7 +123,6 @@ pre_build_checks() {
 	local M=6144
 	M=$(( $(usex clippy 128 0) + ${M} ))
 	M=$(( $(usex miri 128 0) + ${M} ))
-	M=$(( $(usex rls 512 0) + ${M} ))
 	M=$(( $(usex rust-analyzer 512 0) + ${M} ))
 	M=$(( $(usex rustfmt 256 0) + ${M} ))
 	M=$(( $(usex system-llvm 0 2048) + ${M} ))
@@ -200,17 +199,11 @@ src_configure() {
 	if use miri; then
 		tools="\"miri\",$tools"
 	fi
-	if use rls; then
-		tools="\"rls\",$tools"
-	fi
 	if use rustfmt; then
 		tools="\"rustfmt\",$tools"
 	fi
 	if use rust-analyzer; then
 		tools="\"rust-analyzer\",$tools"
-	fi
-	if [ use rls -o use rust-analyzer ]; then
-		tools="\"analysis\",\"src\",$tools"
 	fi
 
 	rust_target="$(rust_abi)"
@@ -432,9 +425,6 @@ src_install() {
 		mv "${ED}/usr/bin/miri" "${ED}/usr/bin/miri-${PV}" || die
 		mv "${ED}/usr/bin/cargo-miri" "${ED}/usr/bin/cargo-miri-${PV}" || die
 	fi
-	if use rls; then
-		mv "${ED}/usr/bin/rls" "${ED}/usr/bin/rls-${PV}" || die
-	fi
 	if use rust-analyzer; then
 		mv "${ED}/usr/bin/rust-analyzer" "${ED}/usr/bin/rust-analyzer-${PV}" || die
 	fi
@@ -486,9 +476,6 @@ src_install() {
 	if use miri; then
 		echo /usr/bin/miri >> "${T}/provider-${P}"
 		echo /usr/bin/cargo-miri >> "${T}/provider-${P}"
-	fi
-	if use rls; then
-		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rust-analyzer; then
 		echo /usr/bin/rust-analyzer >> "${T}/provider-${P}"

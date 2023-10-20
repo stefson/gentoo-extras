@@ -32,7 +32,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy cpu_flags_x86_sse2 debug doc rls rustfmt system-bootstrap system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc rustfmt system-bootstrap system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
 
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling one than more slot
@@ -170,9 +170,6 @@ src_configure() {
 	if use clippy; then
 		tools="\"clippy\",$tools"
 	fi
-	if use rls; then
-		tools="\"rls\",\"analysis\",\"src\",$tools"
-	fi
 	if use rustfmt; then
 		tools="\"rustfmt\",$tools"
 	fi
@@ -281,9 +278,6 @@ src_install() {
 		mv "${ED}/usr/bin/clippy-driver" "${ED}/usr/bin/clippy-driver-${PV}" || die
 		mv "${ED}/usr/bin/cargo-clippy" "${ED}/usr/bin/cargo-clippy-${PV}" || die
 	fi
-	if use rls; then
-		mv "${ED}/usr/bin/rls" "${ED}/usr/bin/rls-${PV}" || die
-	fi
 	if use rustfmt; then
 		mv "${ED}/usr/bin/rustfmt" "${ED}/usr/bin/rustfmt-${PV}" || die
 		mv "${ED}/usr/bin/cargo-fmt" "${ED}/usr/bin/cargo-fmt-${PV}" || die
@@ -316,11 +310,6 @@ src_install() {
 		LDPATH="${EPREFIX}/usr/$(get_libdir)/${P}"
 		MANPATH="${EPREFIX}/usr/share/${P}/man"
 	EOF
-	if use rls; then
-		cat <<-EOF >> "${T}"/50${P}
-		RUST_SRC_PATH="${EPREFIX}/usr/$(get_libdir)/${P}/rustlib/src/rust/src/"
-		EOF
-	fi
 	doenvd "${T}"/50${P}
 
 	# note: eselect-rust adds EROOT to all paths below
@@ -334,9 +323,6 @@ src_install() {
 	if use clippy; then
 		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
 		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
-	fi
-	if use rls; then
-		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
 		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
