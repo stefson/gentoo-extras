@@ -621,6 +621,7 @@ src_configure() {
 		--disable-install-strip \
 		--disable-strip \
 		--disable-updater \
+		--disable-phc \
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \

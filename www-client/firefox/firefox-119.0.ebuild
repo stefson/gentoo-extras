@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-118-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-119-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -658,9 +658,6 @@ src_prepare() {
 	if ! use ppc64; then
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
-
-	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-915306-rust-1.73-compatibility-patch1.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-915306-rust-1.73-compatibility-patch2.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
