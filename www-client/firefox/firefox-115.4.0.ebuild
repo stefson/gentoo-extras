@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-115esr-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-115esr-patches-07.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -702,6 +702,10 @@ src_prepare() {
 	einfo "Removing pre-built binaries ..."
 
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
+
+	# Clear cargo checksums from crates we have patched
+	# moz_clear_vendor_checksums crate
+	moz_clear_vendor_checksums audio_thread_priority
 
 	# Create build dir
 	BUILD_DIR="${WORKDIR}/${PN}_build"
