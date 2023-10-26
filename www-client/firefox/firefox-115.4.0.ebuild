@@ -659,7 +659,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
-	rm -v "${WORKDIR}"/firefox-patches/0028-bgo-911679-gcc-binutils-2.41.patch
+	if use x86 && use elibc_glibc ; then
+		rm -v "${WORKDIR}"/firefox-patches/*-musl-non-lfs64-api-on-audio_thread_priority-crate.patch || die
+	fi
 
 	eapply "${WORKDIR}/firefox-patches"
 
