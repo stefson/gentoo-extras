@@ -146,10 +146,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	x11-libs/gdk-pixbuf
 	x11-libs/pango
 	x11-libs/pixman
-	dbus? (
-		dev-libs/dbus-glib
-		sys-apps/dbus
-	)
+	dbus? ( sys-apps/dbus )
 	jack? ( virtual/jack )
 	pulseaudio? (
 		|| (
