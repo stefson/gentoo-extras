@@ -139,7 +139,7 @@ CDEPEND="
 		>=media-libs/harfbuzz-8.0.0:0=
 		>=media-gfx/graphite2-1.3.14
 	)
-	system-icu? ( >=dev-libs/icu-73.1:= )
+	system-icu? ( >=dev-libs/icu-74.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.12.0:0=[postproc] )
@@ -504,6 +504,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+
+	eapply "${FILESDIR}/"0003-revert-mozbg1859865-linking-error.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
