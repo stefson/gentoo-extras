@@ -153,9 +153,8 @@ CDEPEND="
 	)
 	wifi? (
 		kernel_linux? (
-			sys-apps/dbus
-			dev-libs/dbus-glib
 			net-misc/networkmanager
+			sys-apps/dbus
 		)
 	)
 	jack? ( virtual/jack )
