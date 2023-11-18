@@ -1,0 +1,53 @@
+diff --git a/src/bootstrap/src/bin/rustc.rs b/src/bootstrap/src/bin/rustc.rs
+index 070a2da..8edb45d 100644
+--- a/src/bootstrap/src/bin/rustc.rs
++++ b/src/bootstrap/src/bin/rustc.rs
+@@ -127,13 +127,6 @@ fn main() {
+     if let Ok(map) = env::var("RUSTC_DEBUGINFO_MAP") {
+         cmd.arg("--remap-path-prefix").arg(&map);
+     }
+-    // The remap flags for Cargo registry sources need to be passed after the remapping for the
+-    // Rust source code directory, to handle cases when $CARGO_HOME is inside the source directory.
+-    if let Ok(maps) = env::var("RUSTC_CARGO_REGISTRY_SRC_TO_REMAP") {
+-        for map in maps.split('\t') {
+-            cmd.arg("--remap-path-prefix").arg(map);
+-        }
+-    }
+ 
+     // Force all crates compiled by this compiler to (a) be unstable and (b)
+     // allow the `rustc_private` feature to link to other unstable crates
+diff --git a/src/bootstrap/src/core/builder.rs b/src/bootstrap/src/core/builder.rs
+index cd27667..bf01bea 100644
+--- a/src/bootstrap/src/core/builder.rs
++++ b/src/bootstrap/src/core/builder.rs
+@@ -2,7 +2,7 @@ use std::any::{type_name, Any};
+ use std::cell::{Cell, RefCell};
+ use std::collections::BTreeSet;
+ use std::env;
+-use std::ffi::{OsStr, OsString};
++use std::ffi::OsStr;
+ use std::fmt::{Debug, Write};
+ use std::fs::{self, File};
+ use std::hash::Hash;
+@@ -1788,20 +1788,6 @@ impl<'a> Builder<'a> {
+             cargo.env("CFG_VIRTUAL_RUST_SOURCE_BASE_DIR", map_to);
+         }
+ 
+-        if self.config.rust_remap_debuginfo {
+-            // FIXME: handle vendored sources
+-            let registry_src = t!(home::cargo_home()).join("registry").join("src");
+-            let mut env_var = OsString::new();
+-            for entry in t!(std::fs::read_dir(registry_src)) {
+-                if !env_var.is_empty() {
+-                    env_var.push("\t");
+-                }
+-                env_var.push(t!(entry).path());
+-                env_var.push("=/rust/deps");
+-            }
+-            cargo.env("RUSTC_CARGO_REGISTRY_SRC_TO_REMAP", env_var);
+-        }
+-
+         // Enable usage of unstable features
+         cargo.env("RUSTC_BOOTSTRAP", "1");
+         self.add_rust_test_threads(&mut cargo);
+

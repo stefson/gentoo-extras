@@ -1,0 +1,363 @@
+diff --git a/config.example.toml b/config.example.toml
+index e5df28a..eb3d776 100644
+--- a/config.example.toml
++++ b/config.example.toml
+@@ -30,7 +30,7 @@
+ #
+ # If `change-id` does not match the version that is currently running,
+ # `x.py` will prompt you to update it and check the related PR for more details.
+-change-id = 116881
++change-id = 115898
+ 
+ # =============================================================================
+ # Tweaking how LLVM is compiled
+@@ -381,9 +381,6 @@ change-id = 116881
+ # this is not intended to be used during local development.
+ #metrics = false
+ 
+-# Specify the location of the Android NDK. Used when targeting Android.
+-#android-ndk = "/path/to/android-ndk-r25b"
+-
+ # =============================================================================
+ # General install configuration options
+ # =============================================================================
+@@ -764,6 +761,12 @@ change-id = 116881
+ # it must link to `libgcc_eh.a` to get a working output, and this option have no effect.
+ #llvm-libunwind = 'no' if Linux, 'in-tree' if Fuchsia
+ 
++# If this target is for Android, this option will be required to specify where
++# the NDK for the target lives. This is used to find the C compiler to link and
++# build native code.
++# See `src/bootstrap/cc_detect.rs` for details.
++#android-ndk = <none> (path)
++
+ # Build the sanitizer runtimes for this target.
+ # This option will override the same option under [build] section.
+ #sanitizers = build.sanitizers (bool)
+diff --git a/src/bootstrap/bootstrap_test.py b/src/bootstrap/bootstrap_test.py
+index 6da410e..1cd3bcf 100644
+--- a/src/bootstrap/bootstrap_test.py
++++ b/src/bootstrap/bootstrap_test.py
+@@ -103,6 +103,7 @@ class GenerateAndParseConfig(unittest.TestCase):
+     """Test that we can serialize and deserialize a config.toml file"""
+     def test_no_args(self):
+         build = serialize_and_parse([])
++	self.assertEqual(build.get_toml("change-id"), '115898')
+         self.assertEqual(build.get_toml("profile"), 'dist')
+         self.assertIsNone(build.get_toml("llvm.download-ci-llvm"))
+ 
+diff --git a/src/bootstrap/configure.py b/src/bootstrap/configure.py
+index 544a42d..aaac36b 100755
+--- a/src/bootstrap/configure.py
++++ b/src/bootstrap/configure.py
+@@ -98,7 +98,20 @@ v("llvm-root", None, "set LLVM root")
+ v("llvm-config", None, "set path to llvm-config")
+ v("llvm-filecheck", None, "set path to LLVM's FileCheck utility")
+ v("python", "build.python", "set path to python")
+-v("android-ndk", "build.android-ndk", "set path to Android NDK")
++v("android-cross-path", "target.arm-linux-androideabi.android-ndk",
++  "Android NDK standalone path (deprecated)")
++v("i686-linux-android-ndk", "target.i686-linux-android.android-ndk",
++  "i686-linux-android NDK standalone path")
++v("arm-linux-androideabi-ndk", "target.arm-linux-androideabi.android-ndk",
++  "arm-linux-androideabi NDK standalone path")
++v("armv7-linux-androideabi-ndk", "target.armv7-linux-androideabi.android-ndk",
++  "armv7-linux-androideabi NDK standalone path")
++v("thumbv7neon-linux-androideabi-ndk", "target.thumbv7neon-linux-androideabi.android-ndk",
++  "thumbv7neon-linux-androideabi NDK standalone path")
++v("aarch64-linux-android-ndk", "target.aarch64-linux-android.android-ndk",
++  "aarch64-linux-android NDK standalone path")
++v("x86_64-linux-android-ndk", "target.x86_64-linux-android.android-ndk",
++  "x86_64-linux-android NDK standalone path")
+ v("musl-root", "target.x86_64-unknown-linux-musl.musl-root",
+   "MUSL root installation directory (deprecated)")
+ v("musl-root-x86_64", "target.x86_64-unknown-linux-musl.musl-root",
+diff --git a/src/bootstrap/src/core/config/config.rs b/src/bootstrap/src/core/config/config.rs
+index 0a9175a..756acf9 100644
+--- a/src/bootstrap/src/core/config/config.rs
++++ b/src/bootstrap/src/core/config/config.rs
+@@ -22,6 +22,7 @@ use crate::core::build_steps::compile::CODEGEN_BACKEND_PREFIX;
+ use crate::core::build_steps::llvm;
+ use crate::core::config::flags::{Color, Flags, Warnings};
+ use crate::utils::cache::{Interned, INTERNER};
++use crate::utils::cc_detect::{ndk_compiler, Language};
+ use crate::utils::channel::{self, GitInfo};
+ use crate::utils::helpers::{exe, output, t};
+ use build_helper::exit;
+@@ -143,7 +144,6 @@ pub struct Config {
+     pub color: Color,
+     pub patch_binaries_for_nix: Option<bool>,
+     pub stage0_metadata: Stage0Metadata,
+-    pub android_ndk: Option<PathBuf>,
+ 
+     pub stdout_is_tty: bool,
+     pub stderr_is_tty: bool,
+@@ -524,6 +524,7 @@ pub struct Target {
+     pub ranlib: Option<PathBuf>,
+     pub default_linker: Option<PathBuf>,
+     pub linker: Option<PathBuf>,
++    pub ndk: Option<PathBuf>,
+     pub sanitizers: Option<bool>,
+     pub profiler: Option<StringOrBool>,
+     pub rpath: Option<bool>,
+@@ -801,7 +802,6 @@ define_config! {
+         patch_binaries_for_nix: Option<bool> = "patch-binaries-for-nix",
+         // NOTE: only parsed by bootstrap.py, `--feature build-metrics` enables metrics unconditionally
+         metrics: Option<bool> = "metrics",
+-        android_ndk: Option<PathBuf> = "android-ndk",
+     }
+ }
+ 
+@@ -1042,6 +1042,7 @@ define_config! {
+         llvm_has_rust_patches: Option<bool> = "llvm-has-rust-patches",
+         llvm_filecheck: Option<String> = "llvm-filecheck",
+         llvm_libunwind: Option<String> = "llvm-libunwind",
++        android_ndk: Option<String> = "android-ndk",
+         sanitizers: Option<bool> = "sanitizers",
+         profiler: Option<StringOrBool> = "profiler",
+         rpath: Option<bool> = "rpath",
+@@ -1324,7 +1325,6 @@ impl Config {
+         config.python = build.python.map(PathBuf::from);
+         config.reuse = build.reuse.map(PathBuf::from);
+         config.submodules = build.submodules;
+-        config.android_ndk = build.android_ndk;
+         set(&mut config.low_priority, build.low_priority);
+         set(&mut config.compiler_docs, build.compiler_docs);
+         set(&mut config.library_docs_private_items, build.library_docs_private_items);
+@@ -1455,7 +1455,6 @@ impl Config {
+             config.llvm_libunwind_default = rust
+                 .llvm_libunwind
+                 .map(|v| v.parse().expect("failed to parse rust.llvm-libunwind"));
+-
+             if let Some(ref backends) = rust.codegen_backends {
+                 let available_backends = vec!["llvm", "cranelift", "gcc"];
+ 
+@@ -1597,11 +1596,18 @@ impl Config {
+                     .llvm_libunwind
+                     .as_ref()
+                     .map(|v| v.parse().expect("failed to parse rust.llvm-libunwind"));
++                if let Some(ref s) = cfg.android_ndk {
++                    target.ndk = Some(config.src.join(s));
++                }
+                 if let Some(s) = cfg.no_std {
+                     target.no_std = s;
+                 }
+-                target.cc = cfg.cc.map(PathBuf::from);
+-                target.cxx = cfg.cxx.map(PathBuf::from);
++                target.cc = cfg.cc.map(PathBuf::from).or_else(|| {
++                    target.ndk.as_ref().map(|ndk| ndk_compiler(Language::C, &triple, ndk))
++                });
++                target.cxx = cfg.cxx.map(PathBuf::from).or_else(|| {
++                    target.ndk.as_ref().map(|ndk| ndk_compiler(Language::CPlusPlus, &triple, ndk))
++                });
+                 target.ar = cfg.ar.map(PathBuf::from);
+                 target.ranlib = cfg.ranlib.map(PathBuf::from);
+                 target.linker = cfg.linker.map(PathBuf::from);
+diff --git a/src/bootstrap/src/lib.rs b/src/bootstrap/src/lib.rs
+index 33b8f1a..b5430e4 100644
+--- a/src/bootstrap/src/lib.rs
++++ b/src/bootstrap/src/lib.rs
+@@ -78,7 +78,7 @@ const LLD_FILE_NAMES: &[&str] = &["ld.lld", "ld64.lld", "lld-link", "wasm-ld"];
+ /// If you make any major changes (such as adding new values or changing default values),
+ /// please ensure that the associated PR ID is added to the end of this list.
+ /// This is necessary because the list must be sorted by the merge date.
+-pub const CONFIG_CHANGE_HISTORY: &[usize] = &[115898, 116998, 117435, 116881];
++pub const CONFIG_CHANGE_HISTORY: &[usize] = &[115898, 117435, 116881];
+ 
+ /// Extra --check-cfg to add when building
+ /// (Mode restriction, config name, config values (if any))
+diff --git a/src/bootstrap/src/utils/cc_detect.rs b/src/bootstrap/src/utils/cc_detect.rs
+index 52b36ce..3d3f93f 100644
+--- a/src/bootstrap/src/utils/cc_detect.rs
++++ b/src/bootstrap/src/utils/cc_detect.rs
+@@ -26,7 +26,7 @@ use std::path::{Path, PathBuf};
+ use std::process::Command;
+ use std::{env, iter};
+ 
+-use crate::core::config::TargetSelection;
++use crate::core::config::{Target, TargetSelection};
+ use crate::utils::helpers::output;
+ use crate::{Build, CLang, GitRepo};
+ 
+@@ -107,11 +107,10 @@ pub fn find(build: &Build) {
+ pub fn find_target(build: &Build, target: TargetSelection) {
+     let mut cfg = new_cc_build(build, target);
+     let config = build.config.target_config.get(&target);
+-    if let Some(cc) = config
+-        .and_then(|c| c.cc.clone())
+-        .or_else(|| default_compiler(&mut cfg, Language::C, target, build))
+-    {
++    if let Some(cc) = config.and_then(|c| c.cc.as_ref()) {
+         cfg.compiler(cc);
++    } else {
++        set_compiler(&mut cfg, Language::C, target, config, build);
+     }
+ 
+     let compiler = cfg.get_compiler();
+@@ -128,12 +127,12 @@ pub fn find_target(build: &Build, target: TargetSelection) {
+     // We'll need one anyways if the target triple is also a host triple
+     let mut cfg = new_cc_build(build, target);
+     cfg.cpp(true);
+-    let cxx_configured = if let Some(cxx) = config
+-        .and_then(|c| c.cxx.clone())
+-        .or_else(|| default_compiler(&mut cfg, Language::CPlusPlus, target, build))
+-    {
++    let cxx_configured = if let Some(cxx) = config.and_then(|c| c.cxx.as_ref()) {
+         cfg.compiler(cxx);
+         true
++    } else if build.hosts.contains(&target) || build.build == target {
++        set_compiler(&mut cfg, Language::CPlusPlus, target, config, build);
++        true
+     } else {
+         // Use an auto-detected compiler (or one configured via `CXX_target_triple` env vars).
+         cfg.try_get_compiler().is_ok()
+@@ -162,21 +161,22 @@ pub fn find_target(build: &Build, target: TargetSelection) {
+     }
+ }
+ 
+-fn default_compiler(
++fn set_compiler(
+     cfg: &mut cc::Build,
+     compiler: Language,
+     target: TargetSelection,
++    config: Option<&Target>,
+     build: &Build,
+-) -> Option<PathBuf> {
++) {
+     match &*target.triple {
+         // When compiling for android we may have the NDK configured in the
+         // config.toml in which case we look there. Otherwise the default
+         // compiler already takes into account the triple in question.
+-        t if t.contains("android") => build
+-            .config
+-            .android_ndk
+-            .as_ref()
+-            .map(|ndk| ndk_compiler(compiler, &*target.triple, ndk)),
++        t if t.contains("android") => {
++            if let Some(ndk) = config.and_then(|c| c.ndk.as_ref()) {
++                cfg.compiler(ndk_compiler(compiler, &*target.triple, ndk));
++            }
++        }
+ 
+         // The default gcc version from OpenBSD may be too old, try using egcc,
+         // which is a gcc version from ports, if this is the case.
+@@ -184,48 +184,45 @@ fn default_compiler(
+             let c = cfg.get_compiler();
+             let gnu_compiler = compiler.gcc();
+             if !c.path().ends_with(gnu_compiler) {
+-                return None;
++                return;
+             }
+ 
+             let output = output(c.to_command().arg("--version"));
+-            let i = output.find(" 4.")?;
++            let i = match output.find(" 4.") {
++                Some(i) => i,
++                None => return,
++            };
+             match output[i + 3..].chars().next().unwrap() {
+                 '0'..='6' => {}
+-                _ => return None,
++                _ => return,
+             }
+             let alternative = format!("e{gnu_compiler}");
+             if Command::new(&alternative).output().is_ok() {
+-                Some(PathBuf::from(alternative))
+-            } else {
+-                None
++                cfg.compiler(alternative);
+             }
+         }
+ 
+-        "mips-unknown-linux-musl" if compiler == Language::C => {
++        "mips-unknown-linux-musl" => {
+             if cfg.get_compiler().path().to_str() == Some("gcc") {
+-                Some(PathBuf::from("mips-linux-musl-gcc"))
+-            } else {
+-                None
++                cfg.compiler("mips-linux-musl-gcc");
+             }
+         }
+-        "mipsel-unknown-linux-musl" if compiler == Language::C => {
++        "mipsel-unknown-linux-musl" => {
+             if cfg.get_compiler().path().to_str() == Some("gcc") {
+-                Some(PathBuf::from("mipsel-linux-musl-gcc"))
+-            } else {
+-                None
++                cfg.compiler("mipsel-linux-musl-gcc");
+             }
+         }
+ 
+-        t if t.contains("musl") && compiler == Language::C => {
++        t if t.contains("musl") => {
+             if let Some(root) = build.musl_root(target) {
+                 let guess = root.join("bin/musl-gcc");
+-                if guess.exists() { Some(guess) } else { None }
+-            } else {
+-                None
++                if guess.exists() {
++                    cfg.compiler(guess);
++                }
+             }
+         }
+ 
+-        _ => None,
++        _ => {}
+     }
+ }
+ 
+@@ -246,22 +243,10 @@ pub(crate) fn ndk_compiler(compiler: Language, triple: &str, ndk: &Path) -> Path
+     let api_level =
+         if triple.contains("aarch64") || triple.contains("x86_64") { "21" } else { "19" };
+     let compiler = format!("{}{}-{}", triple_translated, api_level, compiler.clang());
+-    let host_tag = if cfg!(target_os = "macos") {
+-        // The NDK uses universal binaries, so this is correct even on ARM.
+-        "darwin-x86_64"
+-    } else if cfg!(target_os = "windows") {
+-        "windows-x86_64"
+-    } else {
+-        // NDK r25b only has official releases for macOS, Windows and Linux.
+-        // Try the Linux directory everywhere else, on the assumption that the OS has an
+-        // emulation layer that can cope (e.g. BSDs).
+-        "linux-x86_64"
+-    };
+-    ndk.join("toolchains").join("llvm").join("prebuilt").join(host_tag).join("bin").join(compiler)
++    ndk.join("bin").join(compiler)
+ }
+ 
+ /// The target programming language for a native compiler.
+-#[derive(PartialEq)]
+ pub(crate) enum Language {
+     /// The compiler is targeting C.
+     C,
+diff --git a/src/ci/docker/host-x86_64/arm-android/Dockerfile b/src/ci/docker/host-x86_64/arm-android/Dockerfile
+index abca06f..db11700 100644
+--- a/src/ci/docker/host-x86_64/arm-android/Dockerfile
++++ b/src/ci/docker/host-x86_64/arm-android/Dockerfile
+@@ -30,7 +30,7 @@ ENV PATH=$PATH:/android/sdk/platform-tools
+ 
+ ENV TARGETS=arm-linux-androideabi
+ 
+-ENV RUST_CONFIGURE_ARGS --android-ndk=/android/ndk/
++ENV RUST_CONFIGURE_ARGS --arm-linux-androideabi-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/
+ 
+ ENV SCRIPT python3 ../x.py --stage 2 test --host='' --target $TARGETS
+ 
+diff --git a/src/ci/docker/host-x86_64/dist-android/Dockerfile b/src/ci/docker/host-x86_64/dist-android/Dockerfile
+index 20b72b3..b09b6ed 100644
+--- a/src/ci/docker/host-x86_64/dist-android/Dockerfile
++++ b/src/ci/docker/host-x86_64/dist-android/Dockerfile
+@@ -19,7 +19,12 @@ ENV TARGETS=$TARGETS,x86_64-linux-android
+ ENV RUST_CONFIGURE_ARGS \
+       --enable-extended \
+       --enable-profiler \
+-      --android-ndk=/android/ndk/ \
++      --arm-linux-androideabi-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/ \
++      --armv7-linux-androideabi-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/ \
++      --thumbv7neon-linux-androideabi-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/ \
++      --i686-linux-android-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/ \
++      --aarch64-linux-android-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/ \
++      --x86_64-linux-android-ndk=/android/ndk/toolchains/llvm/prebuilt/linux-x86_64/ \
+       --disable-docs
+ 
+ ENV SCRIPT python3 ../x.py dist --host='' --target $TARGETS
