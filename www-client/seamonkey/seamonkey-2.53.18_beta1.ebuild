@@ -8,7 +8,7 @@ WANT_AUTOCONF="2.1"
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
 
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=17
 
 # This list can be updated with scripts/get_langs.sh from the mozilla overlay
 # note - could not roll langpacks for: ca fi
@@ -23,9 +23,9 @@ MOZ_PV="${MOZ_PV/_beta/b}"
 MOZ_PV="${MOZ_PV/_rc/rc}"
 MOZ_P="${P}"
 MY_MOZ_P="${PN}-${MOZ_PV}"
-PATCH_PV="2.53.17"
-PATCH="${PN}-${PATCH_PV}-patches-3"
-PATCH_S="${WORKDIR}/gentoo-${PN}-patches-${PATCH_PV}-3"
+PATCH_PV="2.53.18"
+PATCH="${PN}-${PATCH_PV}-patches-1"
+PATCH_S="${WORKDIR}/gentoo-${PN}-patches-${PATCH_PV}-1"
 
 if [[ ${PV} == *_pre* ]] ; then
 	MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/candidates/${MOZ_PV}-candidates/build${PV##*_pre}"
@@ -35,7 +35,7 @@ fi
 
 SRC_URI="${MOZ_HTTP_URI}/source/${MY_MOZ_P}.source.tar.xz -> ${P}.source.tar.xz
 	${MOZ_HTTP_URI}/source/${MY_MOZ_P}.source-l10n.tar.xz -> ${P}.source-l10n.tar.xz
-	https://github.com/BioMike/gentoo-${PN}-patches/archive/refs/tags/${PATCH_PV}-3.tar.gz -> ${PATCH}.tar.gz"
+	https://github.com/BioMike/gentoo-${PN}-patches/archive/refs/tags/${PATCH_PV}-1.tar.gz -> ${PATCH}.tar.gz"
 
 S="${WORKDIR}/${MY_MOZ_P}"
 
@@ -49,11 +49,11 @@ HOMEPAGE="https://www.seamonkey-project.org/"
 
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 SLOT="0"
-SYSTEM_IUSE=( +system-{av1,harfbuzz,icu,jpeg,libevent,libvpx,png,sqlite} )
+SYSTEM_IUSE=( +system-{av1,harfbuzz,icu,jpeg,libevent,libvpx,png} )
 IUSE="+chatzilla cpu_flags_arm_neon dbus +gmp-autoupdate +ipc jack
 lto pulseaudio selinux startup-notification test webrtc wifi"
 IUSE+=" ${SYSTEM_IUSE[@]}"
-KEYWORDS="amd64 ~ppc64 ~x86"
+#KEYWORDS="amd64 ~ppc64 ~x86"
 
 RESTRICT="!test? ( test )"
 
@@ -65,6 +65,10 @@ BDEPEND="
 	dev-util/cbindgen
 	>=sys-devel/binutils-2.16.1
 	|| (
+		(
+			sys-devel/clang:17
+			sys-devel/llvm:17
+		)
 		(
 			sys-devel/clang:16
 			sys-devel/llvm:16
@@ -130,7 +134,6 @@ COMMON_DEPEND="
 	system-libevent? ( >=dev-libs/libevent-2.0:0= )
 	system-libvpx? ( >=media-libs/libvpx-1.8.0:0=[postproc] )
 	system-png? ( >=media-libs/libpng-1.6.31:0=[apng] )
-	system-sqlite? ( >=dev-db/sqlite-3.38.2:3[secure-delete] )
 	wifi? (
 		kernel_linux? (
 			>=dev-libs/dbus-glib-0.72
@@ -211,6 +214,10 @@ src_unpack() {
 
 src_prepare() {
 	# Apply our patches
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1004_fix_pie_detection.patch
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1007_re-add_system_sqlite.patch
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1018_seamonkey-2.53.11-binutils-2.41.patch
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/2012_make-MOZ_SIGNAL_TRAMPOLINE-Android-only_bug1434526.patch
 	eapply "${PATCH_S}/${PN}"
 
 	# Shell scripts sometimes contain DOS line endings; bug 391889
@@ -294,9 +301,6 @@ src_configure() {
 		mozconfig_annotate 'tc-ld-is-gold=false' --disable-gold
 	fi
 
-	# Enable position independent executables
-	mozconfig_annotate 'enabled by Gentoo' --enable-pie
-
 	# Debug is broken, disable debug symbols
 	mozconfig_annotate 'disabled by Gentoo' --disable-debug-symbols
 
@@ -345,7 +349,6 @@ src_configure() {
 	# For testing purpose only
 	mozconfig_annotate 'Sandbox' --enable-content-sandbox
 
-	mozconfig_use_enable system-sqlite
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-libvpx
