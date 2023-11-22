@@ -655,6 +655,11 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
 
+	# Workaround for bgo#917599
+	if use system-icu && ! has_version ">=dev-libs/icu-74.1" ; then
+		rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1862601-system-icu-74.patch || die
+	fi
+
 	# upstreamed to 120 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
