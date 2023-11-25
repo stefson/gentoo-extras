@@ -315,13 +315,13 @@ index 756acf9..d137581 100644
                  target.qemu_rootfs = cfg.qemu_rootfs.map(PathBuf::from);
                  target.sanitizers = cfg.sanitizers;
 diff --git a/src/bootstrap/configure.py b/src/bootstrap/configure.py
-index aaac36b..9fc5e75 100755
+index 544a42d..05b2189 100755
 --- a/src/bootstrap/configure.py
 +++ b/src/bootstrap/configure.py
-@@ -112,38 +112,6 @@ v("aarch64-linux-android-ndk", "target.aarch64-linux-android.android-ndk",
-   "aarch64-linux-android NDK standalone path")
- v("x86_64-linux-android-ndk", "target.x86_64-linux-android.android-ndk",
-   "x86_64-linux-android NDK standalone path")
+@@ -99,38 +99,6 @@ v("llvm-config", None, "set path to llvm-config")
+ v("llvm-filecheck", None, "set path to LLVM's FileCheck utility")
+ v("python", "build.python", "set path to python")
+ v("android-ndk", "build.android-ndk", "set path to Android NDK")
 -v("musl-root", "target.x86_64-unknown-linux-musl.musl-root",
 -  "MUSL root installation directory (deprecated)")
 -v("musl-root-x86_64", "target.x86_64-unknown-linux-musl.musl-root",
