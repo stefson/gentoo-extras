@@ -1,7 +1,7 @@
-diff --git a/src/bootstrap/bin/rustdoc.rs b/src/bootstrap/bin/rustdoc.rs
+diff --git a/src/bootstrap/src/bin/rustdoc.rs b/src/bootstrap/src/bin/rustdoc.rs
 index 6561c1c..3bd7ee1 100644
---- a/src/bootstrap/bin/rustdoc.rs
-+++ b/src/bootstrap/bin/rustdoc.rs
+--- a/src/bootstrap/src/bin/rustdoc.rs
++++ b/src/bootstrap/src/bin/rustdoc.rs
 @@ -25,9 +25,6 @@ fn main() {
      // is passed (a bit janky...)
      let target = args.windows(2).find(|w| &*w[0] == "--target").and_then(|w| w[1].to_str());

@@ -4,13 +4,11 @@ Date: Sun, 3 Nov 2019 17:01:32 -0600
 Subject: [PATCH] Link libssp_nonshared.a on all musl targets
 
 ---
- compiler/rustc_target/src/spec/linux_musl_base.rs | 5 ++++-
+ compiler/rustc_target/src/spec/linux_musl.rs | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/compiler/rustc_target/src/spec/linux_musl_base.rs b/compiler/rustc_target/src/spec/linux_musl_base.rs
-index 9931578ba8676..a1cece5733cc1 100644
---- a/compiler/rustc_target/src/spec/linux_musl_base.rs
-+++ b/compiler/rustc_target/src/spec/linux_musl_base.rs
+--- a/compiler/rustc_target/src/spec/base/linux_musl.rs
++++ b/compiler/rustc_target/src/spec/base/linux_musl.rs
 @@ -1,10 +1,13 @@
 -use crate::spec::TargetOptions;
 +use crate::spec::{Cc, LinkerFlavor, Lld, TargetOptions};

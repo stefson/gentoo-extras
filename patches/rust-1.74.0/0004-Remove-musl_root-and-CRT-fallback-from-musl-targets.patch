@@ -79,10 +79,10 @@ index c126390..63e3074 100644
              LinkSelfContainedDefault::Mingw => "mingw",
          }
          .to_json()
-diff --git a/compiler/rustc_target/src/spec/linux_musl_base.rs b/compiler/rustc_target/src/spec/linux_musl_base.rs
+diff --git a/compiler/rustc_target/src/spec/base/linux_musl.rs b/compiler/rustc_target/src/spec/base/linux_musl.rs
 index 61553e7..67d18c8 100644
---- a/compiler/rustc_target/src/spec/linux_musl_base.rs
-+++ b/compiler/rustc_target/src/spec/linux_musl_base.rs
+--- a/compiler/rustc_target/src/spec/base/linux_musl.rs
++++ b/compiler/rustc_target/src/spec/base/linux_musl.rs
 @@ -1,13 +1,9 @@
 -use crate::spec::crt_objects::{self, LinkSelfContainedDefault};
  use crate::spec::TargetOptions;
@@ -132,10 +132,10 @@ index f3c2366..f184304 100644
  # The root location of the `wasm32-wasi` sysroot. Only used for the
  # `wasm32-wasi` target. If you are building wasm32-wasi target, make sure to
  # create a `[target.wasm32-wasi]` section and move this field there.
-diff --git a/src/bootstrap/cc_detect.rs b/src/bootstrap/cc_detect.rs
+diff --git a/src/bootstrap/src/utils/cc_detect.rs b/src/bootstrap/src/utils/cc_detect.rs
 index 2496c2a..44effb3 100644
---- a/src/bootstrap/cc_detect.rs
-+++ b/src/bootstrap/cc_detect.rs
+--- a/src/bootstrap/src/utils/cc_detect.rs
++++ b/src/bootstrap/src/utils/cc_detect.rs
 @@ -41,8 +41,6 @@ fn cc2ar(cc: &Path, target: TargetSelection) -> Option<PathBuf> {
          Some(PathBuf::from(ar))
      } else if target.contains("msvc") {
@@ -198,10 +198,10 @@ index 2496c2a..44effb3 100644
          _ => {}
      }
  }
-diff --git a/src/bootstrap/compile.rs b/src/bootstrap/compile.rs
-index 292ccc5..204b0c9 100644
---- a/src/bootstrap/compile.rs
-+++ b/src/bootstrap/compile.rs
+diff --git a/src/bootstrap/src/core/build_steps/compile.rs b/src/bootstrap/src/core/build_steps/compile.rs
+index 7021a95..d3875ab 100644
+--- a/src/bootstrap/src/core/build_steps/compile.rs
++++ b/src/bootstrap/src/core/build_steps/compile.rs
 @@ -257,38 +257,8 @@ fn copy_self_contained_objects(
  
      // Copies the libc and CRT objects.
@@ -258,10 +258,10 @@ index 292ccc5..204b0c9 100644
          if target.contains("-wasi") {
              if let Some(p) = builder.wasi_root(target) {
                  let root = format!(
-diff --git a/src/bootstrap/config.rs b/src/bootstrap/config.rs
-index 836328f..72e541a 100644
---- a/src/bootstrap/config.rs
-+++ b/src/bootstrap/config.rs
+diff --git a/src/bootstrap/src/core/config/config.rs b/src/bootstrap/src/core/config/config.rs
+index 756acf9..d137581 100644
+--- a/src/bootstrap/src/core/config/config.rs
++++ b/src/bootstrap/src/core/config/config.rs
 @@ -263,8 +263,6 @@ pub struct Config {
      pub print_step_rusage: bool,
      pub missing_tools: bool,
@@ -357,10 +357,10 @@ index f469dbe..679dbc2 100755
  v("qemu-armhf-rootfs", "target.arm-unknown-linux-gnueabihf.qemu-rootfs",
    "rootfs in qemu testing, you probably don't want to use this")
  v("qemu-aarch64-rootfs", "target.aarch64-unknown-linux-gnu.qemu-rootfs",
-diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
-index f4379c4..eed0e25 100644
---- a/src/bootstrap/lib.rs
-+++ b/src/bootstrap/lib.rs
+diff --git a/src/bootstrap/src/lib.rs b/src/bootstrap/src/lib.rs
+index c94407d..d6762e7 100644
+--- a/src/bootstrap/src/lib.rs
++++ b/src/bootstrap/src/lib.rs
 @@ -1291,25 +1291,6 @@ impl Build {
          }
      }
@@ -387,10 +387,10 @@ index f4379c4..eed0e25 100644
      /// Returns the sysroot for the wasi target, if defined
      fn wasi_root(&self, target: TargetSelection) -> Option<&Path> {
          self.config.target_config.get(&target).and_then(|t| t.wasi_root.as_ref()).map(|p| &**p)
-diff --git a/src/bootstrap/sanity.rs b/src/bootstrap/sanity.rs
-index 0febdf2..c84f31d 100644
---- a/src/bootstrap/sanity.rs
-+++ b/src/bootstrap/sanity.rs
+diff --git a/src/bootstrap/src/core/sanity.rs b/src/bootstrap/src/core/sanity.rs
+index eec3be6..a2d1cb5 100644
+--- a/src/bootstrap/src/core/sanity.rs
++++ b/src/bootstrap/src/core/sanity.rs
 @@ -11,7 +11,6 @@
  use std::collections::HashMap;
  use std::env;

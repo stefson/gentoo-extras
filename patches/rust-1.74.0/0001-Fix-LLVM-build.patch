@@ -4,13 +4,13 @@ Date: Fri, 8 Sep 2017 00:04:29 -0500
 Subject: [PATCH] Fix LLVM build
 
 ---
- src/bootstrap/lib.rs | 2 +-
+ src/bootstrap/src/lib.rs | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
+diff --git a/src/bootstrap/src/lib.rs b/src/bootstrap/src/lib.rs
 index 1667dfc3f8544..136f5ca1eedba 100644
---- a/src/bootstrap/lib.rs
-+++ b/src/bootstrap/lib.rs
+--- a/src/bootstrap/src/lib.rs
++++ b/src/bootstrap/src/lib.rs
 @@ -953,7 +953,7 @@ impl Build {
              .args()
              .iter()
