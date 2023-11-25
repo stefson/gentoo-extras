@@ -315,10 +315,10 @@ index 756acf9..d137581 100644
                  target.qemu_rootfs = cfg.qemu_rootfs.map(PathBuf::from);
                  target.sanitizers = cfg.sanitizers;
 diff --git a/src/bootstrap/configure.py b/src/bootstrap/configure.py
-index f469dbe..679dbc2 100755
+index aaac36b..9fc5e75 100755
 --- a/src/bootstrap/configure.py
 +++ b/src/bootstrap/configure.py
-@@ -111,38 +111,6 @@ v("aarch64-linux-android-ndk", "target.aarch64-linux-android.android-ndk",
+@@ -112,38 +112,6 @@ v("aarch64-linux-android-ndk", "target.aarch64-linux-android.android-ndk",
    "aarch64-linux-android NDK standalone path")
  v("x86_64-linux-android-ndk", "target.x86_64-linux-android.android-ndk",
    "x86_64-linux-android NDK standalone path")
@@ -361,7 +361,7 @@ diff --git a/src/bootstrap/src/lib.rs b/src/bootstrap/src/lib.rs
 index c94407d..d6762e7 100644
 --- a/src/bootstrap/src/lib.rs
 +++ b/src/bootstrap/src/lib.rs
-@@ -1291,25 +1291,6 @@ impl Build {
+@@ -1306,25 +1306,6 @@ impl Build {
          }
      }
  
@@ -442,10 +442,10 @@ index a62f98b..f949736 100644
  
  # Newer binutils broke things on some vms/distros (i.e., linking against
 diff --git a/src/ci/docker/host-x86_64/dist-various-1/Dockerfile b/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
-index 8f4ad0f..dd9927e 100644
+index 3372bae..233d3f1 100644
 --- a/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
 +++ b/src/ci/docker/host-x86_64/dist-various-1/Dockerfile
-@@ -173,14 +173,6 @@ ENV CFLAGS_armv5te_unknown_linux_musleabi="-march=armv5te -marm -mfloat-abi=soft
+@@ -132,10 +132,6 @@ ENV CFLAGS_armv5te_unknown_linux_musleabi="-march=armv5te -marm -mfloat-abi=soft
      CC_riscv64gc_unknown_none_elf=false
  
  ENV RUST_CONFIGURE_ARGS \
@@ -453,10 +453,6 @@ index 8f4ad0f..dd9927e 100644
 -      --musl-root-arm=/musl-arm \
 -      --musl-root-armhf=/musl-armhf \
 -      --musl-root-armv7hf=/musl-armv7hf \
--      --musl-root-mips=/musl-mips \
--      --musl-root-mipsel=/musl-mipsel \
--      --musl-root-mips64=/musl-mips64 \
--      --musl-root-mips64el=/musl-mips64el \
        --disable-docs
  
  ENV SCRIPT \
