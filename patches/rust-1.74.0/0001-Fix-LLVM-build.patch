@@ -8,10 +8,10 @@ Subject: [PATCH] Fix LLVM build
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/bootstrap/src/lib.rs b/src/bootstrap/src/lib.rs
-index 1667dfc3f8544..136f5ca1eedba 100644
+index 33b8f1a..d933a8b 100644
 --- a/src/bootstrap/src/lib.rs
 +++ b/src/bootstrap/src/lib.rs
-@@ -953,7 +953,7 @@ impl Build {
+@@ -1195,7 +1195,7 @@ impl Build {
              .args()
              .iter()
              .map(|s| s.to_string_lossy().into_owned())
@@ -19,5 +19,4 @@ index 1667dfc3f8544..136f5ca1eedba 100644
 +            .filter(|s| !s.starts_with("-O") && !s.starts_with("/O") && !s.starts_with("-static"))
              .collect::<Vec<String>>();
  
-         // If we're compiling on macOS then we add a few unconditional flags
-
+         // If we're compiling C++ on macOS then we add a flag indicating that
