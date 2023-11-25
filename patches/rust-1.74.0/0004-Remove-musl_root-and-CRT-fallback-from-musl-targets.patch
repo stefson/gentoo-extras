@@ -98,10 +98,10 @@ index 61553e7..67d18c8 100644
      // These targets statically link libc by default
      base.crt_static_default = true;
 diff --git a/config.example.toml b/config.example.toml
-index f3c2366..f184304 100644
+index e5df28a..c61dbb2 100644
 --- a/config.example.toml
 +++ b/config.example.toml
-@@ -574,14 +574,6 @@ changelog-seen = 2
+@@ -589,14 +589,6 @@ change-id = 116881
  # behavior -- this may lead to miscompilations or other bugs.
  #description = ""
  
@@ -116,7 +116,7 @@ index f3c2366..f184304 100644
  # By default the `rustc` executable is built with `-Wl,-rpath` flags on Unix
  # platforms to ensure that the compiler is usable by default from the build
  # directory (as it links to a number of dynamic libraries). This may not be
-@@ -776,15 +768,6 @@ changelog-seen = 2
+@@ -785,15 +777,6 @@ change-id = 116881
  # only use static libraries. If unset, the target's default linkage is used.
  #crt-static = <platform-specific> (bool)
  
