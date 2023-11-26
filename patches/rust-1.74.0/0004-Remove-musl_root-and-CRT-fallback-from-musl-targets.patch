@@ -259,10 +259,10 @@ index 7021a95..d3875ab 100644
              if let Some(p) = builder.wasi_root(target) {
                  let root = format!(
 diff --git a/src/bootstrap/src/core/config/config.rs b/src/bootstrap/src/core/config/config.rs
-index 756acf9..d137581 100644
+index 0a9175a..d286af2 100644
 --- a/src/bootstrap/src/core/config/config.rs
 +++ b/src/bootstrap/src/core/config/config.rs
-@@ -263,8 +263,6 @@ pub struct Config {
+@@ -269,8 +269,6 @@ pub struct Config {
      pub print_step_rusage: bool,
      pub missing_tools: bool,
  
@@ -271,7 +271,7 @@ index 756acf9..d137581 100644
      pub prefix: Option<PathBuf>,
      pub sysconfdir: Option<PathBuf>,
      pub datadir: Option<PathBuf>,
-@@ -522,8 +520,6 @@ pub struct Target {
+@@ -528,8 +526,6 @@ pub struct Target {
      pub profiler: Option<StringOrBool>,
      pub rpath: Option<bool>,
      pub crt_static: Option<bool>,
@@ -280,7 +280,7 @@ index 756acf9..d137581 100644
      pub wasi_root: Option<PathBuf>,
      pub qemu_rootfs: Option<PathBuf>,
      pub no_std: bool,
-@@ -979,7 +975,6 @@ define_config! {
+@@ -998,7 +994,6 @@ define_config! {
          default_linker: Option<String> = "default-linker",
          channel: Option<String> = "channel",
          description: Option<String> = "description",
@@ -288,7 +288,7 @@ index 756acf9..d137581 100644
          rpath: Option<bool> = "rpath",
          verbose_tests: Option<bool> = "verbose-tests",
          optimize_tests: Option<bool> = "optimize-tests",
-@@ -1028,8 +1023,6 @@ define_config! {
+@@ -1046,8 +1041,6 @@ define_config! {
          profiler: Option<StringOrBool> = "profiler",
          rpath: Option<bool> = "rpath",
          crt_static: Option<bool> = "crt-static",
@@ -297,15 +297,15 @@ index 756acf9..d137581 100644
          wasi_root: Option<String> = "wasi-root",
          qemu_rootfs: Option<String> = "qemu-rootfs",
          no_std: Option<bool> = "no-std",
-@@ -1412,7 +1405,6 @@ impl Config {
-             set(&mut config.llvm_tools_enabled, rust.llvm_tools);
-             config.rustc_parallel = rust.parallel_compiler.unwrap_or(false);
+@@ -1437,7 +1430,6 @@ impl Config {
+                 .parallel_compiler
+                 .unwrap_or(config.channel == "dev" || config.channel == "nightly");
              config.rustc_default_linker = rust.default_linker;
 -            config.musl_root = rust.musl_root.map(PathBuf::from);
              config.save_toolstates = rust.save_toolstates.map(PathBuf::from);
              set(
                  &mut config.deny_warnings,
-@@ -1597,8 +1589,6 @@ impl Config {
+@@ -1606,8 +1598,6 @@ impl Config {
                  target.ranlib = cfg.ranlib.map(PathBuf::from);
                  target.linker = cfg.linker.map(PathBuf::from);
                  target.crt_static = cfg.crt_static;
