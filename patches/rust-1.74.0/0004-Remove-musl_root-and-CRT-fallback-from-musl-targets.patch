@@ -80,20 +80,21 @@ index c126390..63e3074 100644
          }
          .to_json()
 diff --git a/compiler/rustc_target/src/spec/base/linux_musl.rs b/compiler/rustc_target/src/spec/base/linux_musl.rs
-index 61553e7..67d18c8 100644
+index 5117cad..36d6405 100644
 --- a/compiler/rustc_target/src/spec/base/linux_musl.rs
 +++ b/compiler/rustc_target/src/spec/base/linux_musl.rs
 @@ -1,13 +1,9 @@
--use crate::spec::crt_objects::{self, LinkSelfContainedDefault};
- use crate::spec::TargetOptions;
+-use crate::spec::crt_objects;
+-use crate::spec::{base, LinkSelfContainedDefault, TargetOptions};
++use crate::spec::{base, TargetOptions};
  
  pub fn opts() -> TargetOptions {
-     let mut base = super::linux_base::opts();
+     let mut base = base::linux::opts();
  
      base.env = "musl".into();
 -    base.pre_link_objects_self_contained = crt_objects::pre_musl_self_contained();
 -    base.post_link_objects_self_contained = crt_objects::post_musl_self_contained();
--    base.link_self_contained = LinkSelfContainedDefault::Musl;
+-    base.link_self_contained = LinkSelfContainedDefault::InferredForMusl;
  
      // These targets statically link libc by default
      base.crt_static_default = true;
