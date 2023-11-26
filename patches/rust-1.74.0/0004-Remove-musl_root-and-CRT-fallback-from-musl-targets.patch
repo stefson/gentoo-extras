@@ -202,7 +202,7 @@ diff --git a/src/bootstrap/src/core/build_steps/compile.rs b/src/bootstrap/src/c
 index 7021a95..d3875ab 100644
 --- a/src/bootstrap/src/core/build_steps/compile.rs
 +++ b/src/bootstrap/src/core/build_steps/compile.rs
-@@ -257,38 +257,8 @@ fn copy_self_contained_objects(
+@@ -308,38 +308,8 @@ fn copy_self_contained_objects(
  
      // Copies the libc and CRT objects.
      //
@@ -242,7 +242,7 @@ index 7021a95..d3875ab 100644
          let srcdir = builder
              .wasi_root(target)
              .unwrap_or_else(|| {
-@@ -390,15 +360,6 @@ pub fn std_cargo(builder: &Builder<'_>, target: TargetSelection, stage: u32, car
+@@ -436,15 +406,6 @@ pub fn std_cargo(builder: &Builder<'_>, target: TargetSelection, stage: u32, car
              .arg("--manifest-path")
              .arg(builder.src.join("library/sysroot/Cargo.toml"));
  
