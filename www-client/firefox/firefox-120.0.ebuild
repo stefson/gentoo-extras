@@ -660,6 +660,7 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/0028-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
