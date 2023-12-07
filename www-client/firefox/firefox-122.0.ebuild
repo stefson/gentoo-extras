@@ -504,6 +504,7 @@ src_prepare() {
 
 	# upstreamed to 122 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0005-bmo-1559213-Support-system-av1.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-914738-nodbus-fix2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
 
