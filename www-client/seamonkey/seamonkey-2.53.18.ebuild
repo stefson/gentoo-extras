@@ -218,6 +218,11 @@ src_prepare() {
 	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1007_re-add_system_sqlite.patch
 	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1018_seamonkey-2.53.11-binutils-2.41.patch
 	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/2012_make-MOZ_SIGNAL_TRAMPOLINE-Android-only_bug1434526.patch
+
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1019-1539780-70a1.patch
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1020-1590907-5-72a1.patch
+	rm -v "${WORKDIR}"/gentoo-seamonkey-patches-2.53.18-1/seamonkey/1021-1635764-78a1.patch
+
 	eapply "${PATCH_S}/${PN}"
 
 	# Shell scripts sometimes contain DOS line endings; bug 391889
