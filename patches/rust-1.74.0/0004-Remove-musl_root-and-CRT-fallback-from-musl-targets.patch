@@ -123,30 +123,30 @@ index 2496c2a..44effb3 100644
      } else if target.contains("openbsd") {
          Some(PathBuf::from("ar"))
      } else if target.contains("vxworks") {
-@@ -110,7 +108,7 @@ pub fn find_target(build: &Build, target: TargetSelection) {
-     if let Some(cc) = config.and_then(|c| c.cc.as_ref()) {
+@@ -109,7 +107,7 @@ pub fn find_target(build: &Build, target: TargetSelection) {
+     let config = build.config.target_config.get(&target);
+     if let Some(cc) = config
+         .and_then(|c| c.cc.clone())
+-        .or_else(|| default_compiler(&mut cfg, Language::C, target, build))
++        .or_else(|| default_compiler(&mut cfg, Language::C, target))
+     {
          cfg.compiler(cc);
-     } else {
--        set_compiler(&mut cfg, Language::C, target, config, build);
-+        set_compiler(&mut cfg, Language::C, target, config);
      }
- 
-     let compiler = cfg.get_compiler();
-@@ -131,7 +129,7 @@ pub fn find_target(build: &Build, target: TargetSelection) {
+@@ -130,7 +128,7 @@ pub fn find_target(build: &Build, target: TargetSelection) {
+     cfg.cpp(true);
+     let cxx_configured = if let Some(cxx) = config
+         .and_then(|c| c.cxx.clone())
+-        .or_else(|| default_compiler(&mut cfg, Language::CPlusPlus, target, build))
++        .or_else(|| default_compiler(&mut cfg, Language::CPlusPlus, target))
+     {
          cfg.compiler(cxx);
          true
-     } else if build.hosts.contains(&target) || build.build == target {
--        set_compiler(&mut cfg, Language::CPlusPlus, target, config, build);
-+        set_compiler(&mut cfg, Language::CPlusPlus, target, config);
-         true
-     } else {
-         // Use an auto-detected compiler (or one configured via `CXX_target_triple` env vars).
-@@ -166,7 +164,6 @@ fn set_compiler(
+@@ -166,7 +164,6 @@ fn default_compiler(
+     cfg: &mut cc::Build,
      compiler: Language,
      target: TargetSelection,
-     config: Option<&Target>,
 -    build: &Build,
- ) {
+ ) -> Option<PathBuf> {
      match &*target.triple {
          // When compiling for android we may have the NDK configured in the
 @@ -201,30 +199,6 @@ fn default_compiler(
