@@ -8,10 +8,10 @@ Subject: [PATCH] Prefer libgcc_eh over libunwind for musl
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/library/unwind/src/lib.rs b/library/unwind/src/lib.rs
-index 079626f0fea54..590fca0acfab7 100644
+index 335bded..1a90731 100644
 --- a/library/unwind/src/lib.rs
 +++ b/library/unwind/src/lib.rs
-@@ -51,7 +51,7 @@ cfg_if::cfg_if! {
+@@ -50,7 +50,7 @@ cfg_if::cfg_if! {
          #[link(name = "unwind", cfg(not(target_feature = "crt-static")))]
          extern "C" {}
      } else {
