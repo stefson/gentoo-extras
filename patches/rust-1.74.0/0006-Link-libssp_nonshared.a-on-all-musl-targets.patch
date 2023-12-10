@@ -7,14 +7,16 @@ Subject: [PATCH] Link libssp_nonshared.a on all musl targets
  compiler/rustc_target/src/spec/linux_musl.rs | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/compiler/rustc_target/src/spec/base/linux_musl.rs b/compiler/rustc_target/src/spec/base/linux_musl.rs
+index 36d6405..5d0f6f3 100644
 --- a/compiler/rustc_target/src/spec/base/linux_musl.rs
 +++ b/compiler/rustc_target/src/spec/base/linux_musl.rs
 @@ -1,10 +1,13 @@
--use crate::spec::TargetOptions;
-+use crate::spec::{Cc, LinkerFlavor, Lld, TargetOptions};
+-use crate::spec::{base, TargetOptions};
++use crate::spec::{base, Cc, LinkerFlavor, Lld, TargetOptions};
  
  pub fn opts() -> TargetOptions {
-     let mut base = super::linux_base::opts();
+     let mut base = base::linux::opts();
  
      base.env = "musl".into();
  
@@ -23,6 +25,4 @@ Subject: [PATCH] Link libssp_nonshared.a on all musl targets
 +
      // These targets statically link libc by default
      base.crt_static_default = true;
-
  
-
