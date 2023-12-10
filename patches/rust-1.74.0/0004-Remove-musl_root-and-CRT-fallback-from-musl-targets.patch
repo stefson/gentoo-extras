@@ -23,10 +23,10 @@ index c4a0f62..ca5e2a3 100644
              sess.host == sess.target
                  && sess.target.vendor != "uwp"
 diff --git a/compiler/rustc_target/src/spec/crt_objects.rs b/compiler/rustc_target/src/spec/crt_objects.rs
-index c126390..63e3074 100644
+index 53f710b..2a4eec1 100644
 --- a/compiler/rustc_target/src/spec/crt_objects.rs
 +++ b/compiler/rustc_target/src/spec/crt_objects.rs
-@@ -63,28 +63,6 @@ pub(super) fn all(obj: &'static str) -> CrtObjects {
+@@ -61,28 +61,6 @@ pub(super) fn all(obj: &'static str) -> CrtObjects {
      ])
  }
  
@@ -55,30 +55,6 @@ index c126390..63e3074 100644
  pub(super) fn pre_mingw_self_contained() -> CrtObjects {
      new(&[
          (LinkOutputKind::DynamicNoPicExe, &["crt2.o", "rsbegin.o"]),
-@@ -130,7 +108,6 @@ pub(super) fn post_wasi_self_contained() -> CrtObjects {
- pub enum LinkSelfContainedDefault {
-     False,
-     True,
--    Musl,
-     Mingw,
- }
- 
-@@ -141,7 +118,6 @@ impl FromStr for LinkSelfContainedDefault {
-         Ok(match s {
-             "false" => LinkSelfContainedDefault::False,
-             "true" | "wasm" => LinkSelfContainedDefault::True,
--            "musl" => LinkSelfContainedDefault::Musl,
-             "mingw" => LinkSelfContainedDefault::Mingw,
-             _ => return Err(()),
-         })
-@@ -153,7 +129,6 @@ impl ToJson for LinkSelfContainedDefault {
-         match *self {
-             LinkSelfContainedDefault::False => "false",
-             LinkSelfContainedDefault::True => "true",
--            LinkSelfContainedDefault::Musl => "musl",
-             LinkSelfContainedDefault::Mingw => "mingw",
-         }
-         .to_json()
 diff --git a/compiler/rustc_target/src/spec/base/linux_musl.rs b/compiler/rustc_target/src/spec/base/linux_musl.rs
 index 5117cad..36d6405 100644
 --- a/compiler/rustc_target/src/spec/base/linux_musl.rs
@@ -98,6 +74,7 @@ index 5117cad..36d6405 100644
  
      // These targets statically link libc by default
      base.crt_static_default = true;
+     
 diff --git a/config.example.toml b/config.example.toml
 index e5df28a..c61dbb2 100644
 --- a/config.example.toml
