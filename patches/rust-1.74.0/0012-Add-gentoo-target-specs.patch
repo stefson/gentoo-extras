@@ -90,10 +90,10 @@ index 0000000..64be1b1
 +    base
 +}
 diff --git a/compiler/rustc_target/src/spec/mod.rs b/compiler/rustc_target/src/spec/mod.rs
-index dc16739..bb6ebcd 100644
+index f047994..e971fb9 100644
 --- a/compiler/rustc_target/src/spec/mod.rs
 +++ b/compiler/rustc_target/src/spec/mod.rs
-@@ -905,7 +905,17 @@ macro_rules! supported_targets {
+@@ -1440,7 +1440,17 @@ macro_rules! supported_targets {
      };
  }
  
@@ -111,7 +111,7 @@ index dc16739..bb6ebcd 100644
      ("x86_64-unknown-linux-gnu", x86_64_unknown_linux_gnu),
      ("x86_64-unknown-linux-gnux32", x86_64_unknown_linux_gnux32),
      ("i686-unknown-linux-gnu", i686_unknown_linux_gnu),
-@@ -933,7 +943,6 @@ supported_targets! {
+@@ -1472,7 +1482,6 @@ supported_targets! {
      ("arm-unknown-linux-gnueabi", arm_unknown_linux_gnueabi),
      ("arm-unknown-linux-gnueabihf", arm_unknown_linux_gnueabihf),
      ("armeb-unknown-linux-gnueabi", armeb_unknown_linux_gnueabi),
