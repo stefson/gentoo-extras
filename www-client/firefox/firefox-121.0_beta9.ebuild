@@ -672,6 +672,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0003-fix-regression-on-XSIMD_NO_SUPPORTED_ARCHITECTURE.patch
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
