@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-120-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-122-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -505,18 +505,10 @@ src_prepare() {
 	# upstreamed to 122 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
-	rm -v "${WORKDIR}"/firefox-patches/0003-bmo-847568-Support-system-harfbuzz.patch
-	rm -v "${WORKDIR}"/firefox-patches/0004-bmo-847568-Support-system-graphite2.patch
-	rm -v "${WORKDIR}"/firefox-patches/0005-bmo-1559213-Support-system-av1.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-914738-nodbus-fix2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
 
 	eapply "${WORKDIR}/firefox-patches"
-
-	# backports for nightly
-	eapply "${FILESDIR}/"0003-bmo-847568-Support-system-harfbuzz
-	eapply "${FILESDIR}/"0004-bmo-847568-Support-system-graphite2.patch
-	eapply "${FILESDIR}/"0005-bmo-1559213-Support-system-av1.patch
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
