@@ -513,10 +513,14 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	# backports for nightly
+	eapply "${FILESDIR}/"0003-bmo-847568-Support-system-harfbuzz
+	eapply "${FILESDIR}/"0004-bmo-847568-Support-system-graphite2.patch
+	eapply "${FILESDIR}/"0005-bmo-1559213-Support-system-av1.patch
+
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-regression-on-XSIMD_NO_SUPPORTED_ARCHITECTURE.patch
-#	eapply "${FILESDIR}/"0005-bmo-1559213-Support-system-av1.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

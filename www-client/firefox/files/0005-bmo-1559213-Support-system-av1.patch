@@ -1,5 +1,5 @@
 diff --git a/config/external/moz.build b/config/external/moz.build
-index fe765d1..5839676 100644
+index 2fc8df5..63d18e5 100644
 --- a/config/external/moz.build
 +++ b/config/external/moz.build
 @@ -40,8 +40,9 @@ if not CONFIG["MOZ_SYSTEM_LIBVPX"]:
@@ -15,11 +15,11 @@ index fe765d1..5839676 100644
  if not CONFIG["MOZ_SYSTEM_PNG"]:
      external_dirs += ["media/libpng"]
 diff --git a/config/system-headers.mozbuild b/config/system-headers.mozbuild
-index 0437ef4..8822838 100644
+index 3e6c532..72c3de3 100644
 --- a/config/system-headers.mozbuild
 +++ b/config/system-headers.mozbuild
-@@ -1316,6 +1316,14 @@ if CONFIG['MOZ_ENABLE_LIBPROXY']:
-         'proxy.h',
+@@ -1317,6 +1317,14 @@ if CONFIG["MOZ_ENABLE_LIBPROXY"]:
+         "proxy.h",
      ]
  
 +if CONFIG['MOZ_SYSTEM_AV1']:
@@ -30,14 +30,14 @@ index 0437ef4..8822838 100644
 +        'dav1d/dav1d.h',
 +    ]
 +
- if CONFIG['MOZ_SYSTEM_ICU']:
+ if CONFIG["MOZ_SYSTEM_ICU"]:
      system_headers += [
-         'unicode/calendar.h',
+         "unicode/calendar.h",
 diff --git a/dom/media/platforms/moz.build b/dom/media/platforms/moz.build
-index c71f22a..e91f57d 100644
+index 5c6e25b..10860c1 100644
 --- a/dom/media/platforms/moz.build
 +++ b/dom/media/platforms/moz.build
-@@ -80,6 +80,11 @@ if CONFIG["MOZ_AV1"]:
+@@ -81,6 +81,11 @@ if CONFIG["MOZ_AV1"]:
          "agnostic/AOMDecoder.cpp",
          "agnostic/DAV1DDecoder.cpp",
      ]
@@ -50,7 +50,7 @@ index c71f22a..e91f57d 100644
  if CONFIG["MOZ_OMX"]:
      EXPORTS += [
 diff --git a/toolkit/moz.configure b/toolkit/moz.configure
-index 092d61e..f2a7bbe 100644
+index c0c9cb1..2bd3766 100644
 --- a/toolkit/moz.configure
 +++ b/toolkit/moz.configure
 @@ -765,14 +765,29 @@ def av1(value):
