@@ -504,7 +504,6 @@ src_prepare() {
 
 	# upstreamed to 122 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0002-Fortify-sources-properly.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-914738-nodbus-fix2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
 
@@ -512,7 +511,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fix-regression-on-XSIMD_NO_SUPPORTED_ARCHITECTURE.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
