@@ -90,41 +90,6 @@ diff --git a/src/bootstrap/src/utils/cc_detect.rs b/src/bootstrap/src/utils/cc_d
 index 2496c2a..44effb3 100644
 --- a/src/bootstrap/src/utils/cc_detect.rs
 +++ b/src/bootstrap/src/utils/cc_detect.rs
-@@ -41,8 +41,6 @@ fn cc2ar(cc: &Path, target: TargetSelection) -> Option<PathBuf> {
-         Some(PathBuf::from(ar))
-     } else if target.contains("msvc") {
-         None
--    } else if target.contains("musl") {
--        Some(PathBuf::from("ar"))
-     } else if target.contains("openbsd") {
-         Some(PathBuf::from("ar"))
-     } else if target.contains("vxworks") {
-@@ -109,7 +107,7 @@ pub fn find_target(build: &Build, target: TargetSelection) {
-     let config = build.config.target_config.get(&target);
-     if let Some(cc) = config
-         .and_then(|c| c.cc.clone())
--        .or_else(|| default_compiler(&mut cfg, Language::C, target, build))
-+        .or_else(|| default_compiler(&mut cfg, Language::C, target))
-     {
-         cfg.compiler(cc);
-     }
-@@ -130,7 +128,7 @@ pub fn find_target(build: &Build, target: TargetSelection) {
-     cfg.cpp(true);
-     let cxx_configured = if let Some(cxx) = config
-         .and_then(|c| c.cxx.clone())
--        .or_else(|| default_compiler(&mut cfg, Language::CPlusPlus, target, build))
-+        .or_else(|| default_compiler(&mut cfg, Language::CPlusPlus, target))
-     {
-         cfg.compiler(cxx);
-         true
-@@ -166,7 +164,6 @@ fn default_compiler(
-     cfg: &mut cc::Build,
-     compiler: Language,
-     target: TargetSelection,
--    build: &Build,
- ) -> Option<PathBuf> {
-     match &*target.triple {
-         // When compiling for android we may have the NDK configured in the
 @@ -201,30 +199,6 @@ fn default_compiler(
              }
          }
