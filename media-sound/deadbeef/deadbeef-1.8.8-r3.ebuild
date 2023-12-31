@@ -110,7 +110,7 @@ RDEPEND="dev-libs/glib:2
 	libsamplerate? ( media-libs/libsamplerate:0 )
 	mad? ( media-libs/libmad:0 )
 	midi? ( media-sound/timidity-freepats:0 )
-	mpg123? ( media-sound/mpg123:0 )
+	mpg123? ( media-libs/libmpg123 )
 	opus? ( media-libs/opusfile:0 )
 	psf? ( sys-libs/zlib:0 )
 	pulseaudio? ( media-libs/libpulse )
