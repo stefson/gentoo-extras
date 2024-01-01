@@ -12,10 +12,11 @@ DESCRIPTION="Companion application for Video DownloadHelper browser add-on"
 HOMEPAGE="https://github.com/aclap-dev/vdhcoapp"
 SRC_URI="
 	amd64? ( https://github.com/aclap-dev/${MY_PN}/releases/download/v${PV}/vdhcoapp-${PV}-linux-x86_64.deb )
+	arm64? ( https://github.com/aclap-dev/${MY_PN}/releases/download/v${PV}/vdhcoapp-${PV}-linux-aarch64.deb )
 	x86? ( https://github.com/aclap-dev/${MY_PN}/releases/download/v${PV}/vdhcoapp-${PV}-linux-i686.deb )"
 
 LICENSE="GPL-2"
-KEYWORDS="-* ~amd64 ~x86"
+KEYWORDS="-* ~amd64 ~arm64 ~x86"
 SLOT="0"
 IUSE="+abi_x86_64"
 RESTRICT="bindist mirror strip"
