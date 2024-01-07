@@ -20,7 +20,7 @@ BDEPEND="
 	>=dev-util/cmake-3.16
 	=sys-devel/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
 	=sys-libs/compiler-rt-${LLVM_VERSION}*
-	=sys-libs/llvm-libunwind-${LLVM_VERSION}*
+	=sys-libs/llvm-libunwind-${LLVM_VERSION}*[static-libs]
 	!!sys-devel/gcc
 "
 
