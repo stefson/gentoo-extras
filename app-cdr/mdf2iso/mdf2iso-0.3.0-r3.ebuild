@@ -6,7 +6,7 @@ EAPI=8
 inherit toolchain-funcs
 
 DESCRIPTION="Alcohol 120% bin image to ISO image file converter"
-HOMEPAGE="http://mdf2iso.berlios.de/"
+HOMEPAGE="https://www.berlios.de/software/mdf2iso/"
 SRC_URI="http://download.berlios.de/${PN}/${P}-src.tar.bz2"
 LICENSE="GPL-2"
 SLOT="0"
