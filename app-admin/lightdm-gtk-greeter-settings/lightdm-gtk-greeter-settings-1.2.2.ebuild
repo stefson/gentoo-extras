@@ -1,15 +1,14 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2023 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit distutils-r1
 
 DESCRIPTION="Settings editor for LightDM GTK+ greeter"
-HOMEPAGE="https://launchpad.net/lightdm-gtk-greeter-settings"
+HOMEPAGE="https://github.com/Xubuntu/lightdm-gtk-greeter"
 SRC_URI="https://launchpad.net/${PN}/${PV}/+download/${P}.tar.gz"
 
 LICENSE="LGPL-3"
