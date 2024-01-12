@@ -1,0 +1,25 @@
+diff -Naur a/toolkit/moz.configure b/toolkit/moz.configure
+--- a/toolkit/moz.configure	2024-01-08 18:43:07.000000000 -0000
++++ b/toolkit/moz.configure	2024-01-09 07:37:36.644126205 -0000
+@@ -534,6 +534,20 @@
+ set_config("MOZ_WAYLAND", depends_if(wayland_headers)(lambda _: True))
+ set_define("MOZ_WAYLAND", depends_if(wayland_headers)(lambda _: True))
+ 
++# Wayland proxy is used as load balancer between Firefox and Wayland
++# compositor.
++# ==============================================================
++option("--disable-wayland-proxy", help="Disable Wayland load balancer")
++
++
++@depends("--enable-wayland-proxy", when=toolkit_gtk_wayland)
++def wayland_proxy(value):
++    if value:
++        return True
++
++
++set_config("MOZ_WAYLAND_PROXY", wayland_proxy)
++set_define("MOZ_WAYLAND_PROXY", wayland_proxy)
+ 
+ # Hardware-accelerated video decode with VAAPI and V4L2 on Linux
+ # ==============================================================
+
