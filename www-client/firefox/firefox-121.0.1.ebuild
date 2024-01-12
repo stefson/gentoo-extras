@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -99,15 +99,6 @@ BDEPEND="${PYTHON_DEPS}
 				sys-devel/lld:16
 				virtual/rust:0/llvm-16
 				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:15
-			sys-devel/llvm:15
-			clang? (
-				sys-devel/lld:15
-				virtual/rust:0/llvm-15
-				pgo? ( =sys-libs/compiler-rt-sanitizers-15*[profile] )
 			)
 		)
 	)
@@ -960,10 +951,13 @@ src_configure() {
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
+		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	elif ! use X && use wayland ; then
 		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
+		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	else
 		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3-x11-only
+		mozconfig_add_options_ac 'disabling-wayland-proxy' --disable-wayland-proxy
 	fi
 
 	if use lto ; then
