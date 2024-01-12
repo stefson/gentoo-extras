@@ -1,9 +1,9 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-122-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-122-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -951,10 +951,13 @@ src_configure() {
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
+		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	elif ! use X && use wayland ; then
 		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
+		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	else
 		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3-x11-only
+		mozconfig_add_options_ac 'disabling-wayland-proxy' --disable-wayland-proxy
 	fi
 
 	if use lto ; then
