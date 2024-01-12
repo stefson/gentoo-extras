@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-122-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-122-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -518,6 +518,7 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-914738-nodbus-fix2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1743144-add-wayland-proxy-cache.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
