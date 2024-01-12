@@ -1,11 +1,11 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
 
 FIREFOX_PATCHSET="firefox-122-patches-01.tar.xz"
 
-LLVM_MAX_SLOT=17
+LLVM_MAX_SLOT=18
 
 PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -79,6 +79,18 @@ BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
 	>=virtual/rust-1.73.0
 	|| (
+		(
+			sys-devel/clang:18
+			sys-devel/llvm:18
+			clang? (
+				|| (
+					sys-devel/lld:18
+					sys-devel/mold
+				)
+				virtual/rust:0/llvm-18
+				pgo? ( =sys-libs/compiler-rt-sanitizers-18*[profile] )
+			)
+		)
 		(
 			sys-devel/clang:17
 			sys-devel/llvm:17
