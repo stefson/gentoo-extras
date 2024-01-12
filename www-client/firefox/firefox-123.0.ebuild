@@ -1,9 +1,9 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-122-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-122-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -79,18 +79,6 @@ BDEPEND="${PYTHON_DEPS}
 	virtual/pkgconfig
 	>=virtual/rust-1.73.0
 	|| (
-		(
-			sys-devel/clang:18
-			sys-devel/llvm:18
-			clang? (
-				|| (
-					sys-devel/lld:18
-					sys-devel/mold
-				)
-				virtual/rust:0/llvm-18
-				pgo? ( =sys-libs/compiler-rt-sanitizers-18*[profile] )
-			)
-		)
 		(
 			sys-devel/clang:17
 			sys-devel/llvm:17
@@ -518,7 +506,6 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-914738-nodbus-fix2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1743144-add-wayland-proxy-cache.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -721,13 +708,10 @@ src_configure() {
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
-		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	elif ! use X && use wayland ; then
 		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
-		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	else
-		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3-x11-only
-		mozconfig_add_options_ac 'disabling-wayland-proxy' --disable-wayland-proxy
+		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3
 	fi
 
 	if use lto ; then
