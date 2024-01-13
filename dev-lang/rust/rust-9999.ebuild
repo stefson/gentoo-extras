@@ -59,7 +59,7 @@ BDEPEND="${PYTHON_DEPS}
 	)
 	!system-llvm? (
 		dev-util/cmake
-		dev-util/ninja
+		app-alternatives/ninja
 	)
 "
 
