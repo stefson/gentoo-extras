@@ -73,7 +73,7 @@ BDEPEND="${PYTHON_DEPS}
 	)
 	system-bootstrap? ( ${BOOTSTRAP_DEPEND} )
 	!system-llvm? (
-		>=dev-util/cmake-3.13.4
+		>=dev-build/cmake-3.13.4
 		app-alternatives/ninja
 	)
 "

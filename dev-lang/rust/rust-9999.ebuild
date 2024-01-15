@@ -58,7 +58,7 @@ BDEPEND="${PYTHON_DEPS}
 		>=sys-devel/clang-3.5
 	)
 	!system-llvm? (
-		dev-util/cmake
+		dev-build/cmake
 		app-alternatives/ninja
 	)
 "

@@ -83,7 +83,7 @@ DEPEND="${COMMON_DEPEND}
 		>=sys-devel/gcc-4.7
 		>=sys-devel/clang-3.5
 	)
-	dev-util/cmake
+	dev-build/cmake
 "
 
 RDEPEND="${COMMON_DEPEND}
