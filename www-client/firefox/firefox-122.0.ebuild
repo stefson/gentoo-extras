@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-122-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-122-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -652,12 +652,12 @@ src_prepare() {
 	fi
 
 	# Workaround for bgo#917599
-	if use system-icu && ! has_version ">=dev-libs/icu-74.1" ; then
-		rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1862601-system-icu-74.patch || die
+	if has_version ">=dev-libs/icu-74.1" ; then
+		eapply "${WORKDIR}"/firefox-patches/0026-bmo-1862601-system-icu-74.patch
 	fi
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-748849-RUST_TARGET_override.patch
 
-	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-914738-nodbus-fix2.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1864083-missing-MOZ_DBUS_CFLAGS-after-dbus-glib-removal.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
