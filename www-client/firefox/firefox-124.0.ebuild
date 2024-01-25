@@ -516,8 +516,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 123 branch
+	# upstreamed to 124 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0004-bmo-847568-Support-system-graphite2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1743144-add-wayland-proxy-cache.patch
 	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1793001-switch-egrep-to-grepE.patch
 
