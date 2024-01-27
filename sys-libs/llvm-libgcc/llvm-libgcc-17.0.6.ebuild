@@ -1,11 +1,11 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 inherit cmake flag-o-matic llvm llvm.org toolchain-funcs
 
-DESCRIPTION="Compiler runtime library for GCC (LLVM compitable version)"
+DESCRIPTION="Compiler runtime library for GCC (LLVM compatible version)"
 HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
@@ -15,13 +15,13 @@ IUSE="+abi_x86_32 abi_x86_64 debug"
 
 DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
-"
-BDEPEND="
-	>=dev-util/cmake-3.16
 	=sys-devel/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
 	=sys-libs/compiler-rt-${LLVM_VERSION}*
 	=sys-libs/llvm-libunwind-${LLVM_VERSION}*[static-libs]
 	!!sys-devel/gcc
+"
+BDEPEND="
+	>=dev-build/cmake-3.16
 "
 
 LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake llvm-libgcc )
@@ -83,3 +83,4 @@ src_install() {
 	dosym libunwind.a /usr/lib/libgcc_eh.a
 	shopt -u nullglob
 }
+
