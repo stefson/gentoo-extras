@@ -28,7 +28,7 @@ RDEPEND=">=dev-libs/dbus-glib-0.100:=
 	>=xfce-base/xfconf-4.10:="
 DEPEND="${RDEPEND}
 	dev-lang/perl
-	dev-util/gtk-doc-am
+	dev-build/gtk-doc-am
 	dev-util/intltool
 	sys-devel/gettext
 	virtual/pkgconfig"
