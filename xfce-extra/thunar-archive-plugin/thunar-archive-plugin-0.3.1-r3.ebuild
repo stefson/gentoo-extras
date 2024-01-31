@@ -20,7 +20,7 @@ RDEPEND=">=xfce-base/libxfce4util-4.8:=
 # dev-util/xfce4-dev-tools for eautoreconf
 DEPEND="${RDEPEND}
 	dev-util/intltool
-	dev-util/xfce4-dev-tools
+	dev-build/xfce4-dev-tools
 	sys-devel/gettext
 	virtual/pkgconfig"
 
