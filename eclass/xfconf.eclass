@@ -35,7 +35,7 @@ EGIT_BOOTSTRAP=autogen.sh
 EGIT_REPO_URI="git://git.xfce.org/xfce/${MY_PN:-${PN}}"
 
 _xfconf_deps=""
-_xfconf_m4=">=dev-util/xfce4-dev-tools-4.10"
+_xfconf_m4=">=dev-build/xfce4-dev-tools-4.10"
 
 [[ -n $_xfconf_live ]] && _xfconf_deps+=" dev-build/gtk-doc ${_xfconf_m4}"
 [[ -n $EAUTORECONF ]] && _xfconf_deps+=" ${_xfconf_m4}"
