@@ -22,7 +22,7 @@ RDEPEND=">=media-libs/gstreamer-${PV}:0.10[introspection?,${MULTILIB_USEDEP}]
 	!<media-libs/gst-plugins-bad-0.10.10:0.10
 "
 DEPEND="${RDEPEND}
-	>=dev-util/gtk-doc-am-1.3
+	>=dev-build/gtk-doc-am-1.3
 "
 
 src_prepare() {
