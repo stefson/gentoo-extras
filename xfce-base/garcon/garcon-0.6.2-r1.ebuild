@@ -19,7 +19,7 @@ RDEPEND=">=dev-libs/glib-2.30:=
 	gtk2? ( >=x11-libs/gtk+-2.24:2= )"
 DEPEND="${RDEPEND}
 	dev-util/glib-utils
-	dev-util/gtk-doc-am
+	dev-build/gtk-doc-am
 	dev-util/intltool
 	sys-devel/gettext
 	virtual/pkgconfig"
