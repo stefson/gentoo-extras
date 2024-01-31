@@ -19,7 +19,7 @@ RDEPEND=">=dev-libs/glib-2.34.3:2[${MULTILIB_USEDEP}]
 	introspection? ( >=dev-libs/gobject-introspection-0.6.8 )"
 DEPEND="${RDEPEND}
 	app-arch/xz-utils
-	>=dev-util/gtk-doc-am-1.3
+	>=dev-build/gtk-doc-am-1.3
 	sys-devel/bison
 	sys-devel/flex
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
