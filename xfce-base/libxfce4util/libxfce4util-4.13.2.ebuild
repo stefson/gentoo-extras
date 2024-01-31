@@ -20,7 +20,7 @@ RDEPEND=">=dev-libs/glib-2.30:=
 	vala? ( $(vala_depend) )"
 DEPEND="${RDEPEND}
 	dev-util/intltool
-	dev-util/gtk-doc-am
+	dev-build/gtk-doc-am
 	sys-devel/gettext
 	virtual/pkgconfig"
 
