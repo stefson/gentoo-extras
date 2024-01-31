@@ -31,7 +31,7 @@ RDEPEND="${COMMON_DEPEND}
 	>=xfce-base/thunar-1.4
 	gstreamer? ( media-plugins/gst-plugins-meta:1.0 )"
 DEPEND="${COMMON_DEPEND}
-	dev-util/gtk-doc-am
+	dev-build/gtk-doc-am
 	dev-util/intltool
 	sys-devel/gettext
 	virtual/pkgconfig"
