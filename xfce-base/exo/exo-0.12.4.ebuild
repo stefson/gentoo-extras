@@ -22,7 +22,7 @@ RDEPEND=">=dev-lang/perl-5.6
 	>=xfce-base/libxfce4ui-4.12:=[gtk3(+)]
 	>=xfce-base/libxfce4util-4.12:="
 DEPEND="${RDEPEND}
-	dev-util/gtk-doc-am
+	dev-build/gtk-doc-am
 	dev-util/intltool
 	sys-devel/gettext
 	virtual/pkgconfig"
