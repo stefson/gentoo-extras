@@ -951,13 +951,10 @@ src_configure() {
 
 	if use X && use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
-		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	elif ! use X && use wayland ; then
 		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
-		mozconfig_add_options_ac '+enable-wayland-proxy' --enable-wayland-proxy
 	else
 		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3-x11-only
-		mozconfig_add_options_ac 'disabling-wayland-proxy' --disable-wayland-proxy
 	fi
 
 	if use lto ; then
