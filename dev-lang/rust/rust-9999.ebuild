@@ -44,12 +44,12 @@ IUSE="clippy cpu_flags_x86_sse2 debug doc miri parallel-compiler rustfmt rust-an
 # 3. Specify LLVM_MAX_SLOT, e.g. 8.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:17[llvm_targets_WebAssembly?]
-		wasm? ( >=sys-devel/lld-17 )
+		sys-devel/llvm:18[llvm_targets_WebAssembly?]
+		wasm? ( >=sys-devel/lld-18 )
 	)
-	<sys-devel/llvm-18:=
+	<sys-devel/llvm-19:=
 "
-LLVM_MAX_SLOT=17
+LLVM_MAX_SLOT=18
 
 BDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-rust
