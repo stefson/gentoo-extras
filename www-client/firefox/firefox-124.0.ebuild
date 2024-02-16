@@ -511,13 +511,14 @@ src_prepare() {
 
 	# Workaround for bgo#917599
 	if has_version ">=dev-libs/icu-74.1" ; then
-		eapply "${WORKDIR}"/firefox-patches/0026-bmo-1862601-system-icu-74.patch
+		eapply "${WORKDIR}"/firefox-patches/0025-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 124 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1743144-add-wayland-proxy-cache.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1793001-switch-egrep-to-grepE.patch
 
