@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-122-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-123-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -664,8 +664,6 @@ src_prepare() {
 
 	# upstreamed to 123 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1743144-add-wayland-proxy-cache.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1793001-switch-egrep-to-grepE.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
