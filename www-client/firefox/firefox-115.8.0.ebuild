@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-115esr-patches-08.tar.xz"
+FIREFOX_PATCHSET="firefox-115esr-patches-09.tar.xz"
 
 LLVM_MAX_SLOT=17
 
@@ -668,6 +668,7 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/0029-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/0030-bgo-748849-RUST_TARGET_override.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
