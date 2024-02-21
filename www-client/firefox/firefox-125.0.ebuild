@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-122-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-123-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -519,8 +519,7 @@ src_prepare() {
 	# upstreamed to 124 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1743144-add-wayland-proxy-cache.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1793001-switch-egrep-to-grepE.patch
+	rm -v "${WORKDIR}"/firefox-patches/0004-bmo-847568-Support-system-graphite2.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
