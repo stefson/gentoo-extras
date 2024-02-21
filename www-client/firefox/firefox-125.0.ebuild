@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-123-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-123-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -519,7 +519,6 @@ src_prepare() {
 	# upstreamed to 124 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-	rm -v "${WORKDIR}"/firefox-patches/0004-bmo-847568-Support-system-graphite2.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
