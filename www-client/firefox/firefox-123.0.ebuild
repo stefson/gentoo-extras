@@ -673,16 +673,16 @@ src_prepare() {
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
 
-	# Workaround for bgo#915651
-	if ! use elibc_glibc ; then
-		if use amd64 ; then
-			export RUST_TARGET="x86_64-unknown-linux-musl"
-		elif use x86 ; then
-			export RUST_TARGET="i686-unknown-linux-musl"
-		else
-			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
-		fi
-	fi
+#	# Workaround for bgo#915651
+#	if ! use elibc_glibc ; then
+#		if use amd64 ; then
+#			export RUST_TARGET="x86_64-unknown-linux-musl"
+#		elif use x86 ; then
+#			export RUST_TARGET="i686-unknown-linux-musl"
+#		else
+#			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
+#		fi
+#	fi
 
 	# Make LTO respect MAKEOPTS
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
