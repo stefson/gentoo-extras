@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-123-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-123-patches-04.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -516,9 +516,10 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 124 branch
+	# upstreamed to 125 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1881123-musl-use-res_query.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
