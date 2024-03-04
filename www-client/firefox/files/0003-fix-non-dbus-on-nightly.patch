@@ -1,0 +1,207 @@
+diff --git a/widget/gtk/NativeMenuGtk.h b/widget/gtk/NativeMenuGtk.h
+--- a/widget/gtk/NativeMenuGtk.h
++++ b/widget/gtk/NativeMenuGtk.h
+@@ -59,10 +59,12 @@
+   RefPtr<GtkWidget> mNativeMenu;
+   RefPtr<MenuModelGMenu> mMenuModel;
+   nsTArray<NativeMenu::Observer*> mObservers;
+ };
+ 
++#ifdef MOZ_ENABLE_DBUS
++
+ class DBusMenuBar final : public RefCounted<DBusMenuBar> {
+  public:
+   MOZ_DECLARE_REFCOUNTED_TYPENAME(DBusMenuBar)
+   static RefPtr<DBusMenuBar> Create(dom::Element*);
+   ~DBusMenuBar();
+@@ -80,9 +82,11 @@
+ #ifdef MOZ_WAYLAND
+   xdg_dbus_annotation_v1* mAnnotation = nullptr;
+ #endif
+ };
+ 
++#endif
++
+ }  // namespace widget
+ }  // namespace mozilla
+ 
+ #endif
+diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
+--- a/widget/gtk/NativeMenuGtk.cpp
++++ b/widget/gtk/NativeMenuGtk.cpp
+@@ -442,10 +442,12 @@
+ 
+ void NativeMenuGtk::CloseSubmenu(dom::Element*) {
+   // TODO: For testing mostly.
+ }
+ 
++#ifdef MOZ_ENABLE_DBUS
++
+ class MenubarModelDBus final : public MenuModel {
+  public:
+   explicit MenubarModelDBus(dom::Element* aElement) : MenuModel(aElement) {
+     mRoot = dont_AddRef(dbusmenu_menuitem_new());
+     dbusmenu_menuitem_set_root(mRoot.get(), true);
+@@ -515,11 +517,11 @@
+   element->GetAttr(nsGkAtoms::keycode, keycode);
+ 
+   return ParseKey(key, keycode);
+ }
+ 
+-// TODO(emilio): Unifiy with nsMenuUtilsX::GeckoModifiersForNodeAttribute (or
++// TODO(emilio): Unify with nsMenuUtilsX::GeckoModifiersForNodeAttribute (or
+ // at least switch to strtok_r).
+ static uint32_t ParseModifiers(const nsAString& aModifiers) {
+   if (aModifiers.IsEmpty()) {
+     return 0;
+   }
+@@ -728,11 +730,11 @@
+       static_cast<GdkWindow*>(widget->GetNativeData(NS_NATIVE_WINDOW));
+   if (NS_WARN_IF(!gdkWin)) {
+     return;
+   }
+ 
+-#ifdef MOZ_WAYLAND
++#  ifdef MOZ_WAYLAND
+   if (auto* display = widget::WaylandDisplayGet()) {
+     xdg_dbus_annotation_manager_v1* annotationManager =
+         display->GetXdgDbusAnnotationManager();
+     if (NS_WARN_IF(!annotationManager)) {
+       return;
+@@ -755,12 +757,12 @@
+ 
+     xdg_dbus_annotation_v1_set_address(mAnnotation, myServiceName,
+                                        mObjectPath.get());
+     return;
+   }
+-#endif
+-#ifdef MOZ_X11
++#  endif
++#  ifdef MOZ_X11
+   // legacy path
+   auto xid = GDK_WINDOW_XID(gdkWin);
+   widget::DBusProxyCall(mProxy, "RegisterWindow",
+                         g_variant_new("(uo)", xid, mObjectPath.get()),
+                         G_DBUS_CALL_FLAGS_NONE)
+@@ -772,11 +774,11 @@
+           [self = RefPtr{this}](GUniquePtr<GError>&& aError) {
+             g_printerr("Failed to register window menubar: %s\n",
+                        aError->message);
+             self->mMenuModel->Element()->SetBoolAttr(nsGkAtoms::hidden, false);
+           });
+-#endif
++#  endif
+ }
+ 
+ static unsigned sID = 0;
+ 
+ DBusMenuBar::DBusMenuBar(dom::Element* aElement)
+@@ -810,7 +812,8 @@
+           });
+   return self;
+ }
+ 
+ DBusMenuBar::~DBusMenuBar() = default;
++#endif
+ 
+ }  // namespace mozilla::widget
+diff --git a/widget/gtk/NativeMenuSupport.cpp b/widget/gtk/NativeMenuSupport.cpp
+--- a/widget/gtk/NativeMenuSupport.cpp
++++ b/widget/gtk/NativeMenuSupport.cpp
+@@ -16,15 +16,17 @@
+ void NativeMenuSupport::CreateNativeMenuBar(nsIWidget* aParent,
+                                             dom::Element* aMenuBarElement) {
+   MOZ_RELEASE_ASSERT(NS_IsMainThread(),
+                      "Attempting to create native menu bar on wrong thread!");
+ 
++#ifdef MOZ_ENABLE_DBUS
+   if (aMenuBarElement && StaticPrefs::widget_gtk_global_menu_enabled() &&
+       DBusMenuFunctions::Init()) {
+     static_cast<nsWindow*>(aParent)->SetDBusMenuBar(
+         DBusMenuBar::Create(aMenuBarElement));
+   }
++#endif
+ }
+ 
+ already_AddRefed<NativeMenu> NativeMenuSupport::CreateNativeContextMenu(
+     dom::Element* aPopup) {
+   return MakeAndAddRef<NativeMenuGtk>(aPopup);
+diff --git a/widget/gtk/moz.build b/widget/gtk/moz.build
+--- a/widget/gtk/moz.build
++++ b/widget/gtk/moz.build
+@@ -61,11 +61,10 @@
+ 
+ UNIFIED_SOURCES += [
+     "AsyncGtkClipboardRequest.cpp",
+     "CompositorWidgetChild.cpp",
+     "CompositorWidgetParent.cpp",
+-    "DBusMenu.cpp",
+     "DMABufLibWrapper.cpp",
+     "DMABufSurface.cpp",
+     "GfxInfo.cpp",
+     "gtk3drawing.cpp",
+     "GtkCompositorWidget.cpp",
+@@ -172,9 +171,10 @@
+     EXPORTS.mozilla.widget += [
+         "AsyncDBus.h",
+     ]
+     UNIFIED_SOURCES += [
+         "AsyncDBus.cpp",
++        "DBusMenu.cpp",
+     ]
+     CXXFLAGS += CONFIG["MOZ_DBUS_CFLAGS"]
+ 
+ CXXFLAGS += ["-Werror=switch"]
+diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
+--- a/widget/gtk/nsWindow.h
++++ b/widget/gtk/nsWindow.h
+@@ -372,11 +372,13 @@
+   mozilla::LayoutDeviceIntCoord GetTitlebarRadius();
+   LayoutDeviceIntRect GetTitlebarRect();
+   void UpdateWindowDraggingRegion(
+       const LayoutDeviceIntRegion& aRegion) override;
+ 
++#ifdef MOZ_ENABLE_DBUS
+   void SetDBusMenuBar(RefPtr<mozilla::widget::DBusMenuBar> aDbusMenuBar);
++#endif
+ 
+   // HiDPI scale conversion
+   gint GdkCeiledScaleFactor();
+   double FractionalScaleFactor();
+ 
+@@ -906,11 +908,13 @@
+ 
+   // Next/Previous popups in Wayland popup hierarchy.
+   RefPtr<nsWindow> mWaylandPopupNext;
+   RefPtr<nsWindow> mWaylandPopupPrev;
+ 
++#ifdef MOZ_ENABLE_DBUS
+   RefPtr<mozilla::widget::DBusMenuBar> mDBusMenuBar;
++#endif
+ 
+   // When popup is resized by Gtk by move-to-rect callback,
+   // we store final popup size here. Then we use mMoveToRectPopupSize size
+   // in following popup operations unless mLayoutPopupSizeCleared is set.
+   LayoutDeviceIntSize mMoveToRectPopupSize;
+diff --git a/widget/gtk/nsWindow.cpp b/widget/gtk/nsWindow.cpp
+--- a/widget/gtk/nsWindow.cpp
++++ b/widget/gtk/nsWindow.cpp
+@@ -6986,14 +6986,16 @@
+   if (mDraggableRegion != aRegion) {
+     mDraggableRegion = aRegion;
+   }
+ }
+ 
++#ifdef MOZ_ENABLE_DBUS
+ void nsWindow::SetDBusMenuBar(
+     RefPtr<mozilla::widget::DBusMenuBar> aDbusMenuBar) {
+   mDBusMenuBar = std::move(aDbusMenuBar);
+ }
++#endif
+ 
+ LayoutDeviceIntCoord nsWindow::GetTitlebarRadius() {
+   MOZ_RELEASE_ASSERT(NS_IsMainThread());
+   int32_t cssCoord = LookAndFeel::GetInt(LookAndFeel::IntID::TitlebarRadius);
+   return GdkCoordToDevicePixels(cssCoord);
+
+
