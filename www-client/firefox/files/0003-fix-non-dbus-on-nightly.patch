@@ -1,35 +1,21 @@
-diff --git a/widget/gtk/NativeMenuGtk.h b/widget/gtk/NativeMenuGtk.h
---- a/widget/gtk/NativeMenuGtk.h
-+++ b/widget/gtk/NativeMenuGtk.h
-@@ -59,10 +59,12 @@
-   RefPtr<GtkWidget> mNativeMenu;
-   RefPtr<MenuModelGMenu> mMenuModel;
-   nsTArray<NativeMenu::Observer*> mObservers;
- };
- 
-+#ifdef MOZ_ENABLE_DBUS
-+
- class DBusMenuBar final : public RefCounted<DBusMenuBar> {
-  public:
-   MOZ_DECLARE_REFCOUNTED_TYPENAME(DBusMenuBar)
-   static RefPtr<DBusMenuBar> Create(dom::Element*);
-   ~DBusMenuBar();
-@@ -80,9 +82,11 @@
- #ifdef MOZ_WAYLAND
-   xdg_dbus_annotation_v1* mAnnotation = nullptr;
- #endif
- };
- 
-+#endif
-+
- }  // namespace widget
- }  // namespace mozilla
- 
- #endif
+# HG changeset patch
+# User Emilio Cobos Álvarez <emilio@crisal.io>
+# Date 1709627168 0
+# Node ID f29f37a00080ad0295d0d084d55fedd112c0748e
+# Parent  011df63abebe9c01fc042ece1ebe70b0749ae71d
+Bug 1883254 - Fix dbus-disabled build after bug 1883184. r=stransky
+
+Ugh
+
+Differential Revision: https://phabricator.services.mozilla.com/D203487
+
 diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
 --- a/widget/gtk/NativeMenuGtk.cpp
 +++ b/widget/gtk/NativeMenuGtk.cpp
-@@ -442,10 +442,12 @@
+@@ -439,16 +439,18 @@ void NativeMenuGtk::ActivateItem(dom::El
+ void NativeMenuGtk::OpenSubmenu(dom::Element*) {
+   // TODO: For testing mostly.
+ }
  
  void NativeMenuGtk::CloseSubmenu(dom::Element*) {
    // TODO: For testing mostly.
@@ -42,7 +28,13 @@ diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
    explicit MenubarModelDBus(dom::Element* aElement) : MenuModel(aElement) {
      mRoot = dont_AddRef(dbusmenu_menuitem_new());
      dbusmenu_menuitem_set_root(mRoot.get(), true);
-@@ -515,11 +517,11 @@
+     mShowing = true;
+   }
+ 
+@@ -512,17 +514,17 @@ static uint32_t KeyFrom(const dom::Eleme
+   nsAutoString key;
+   nsAutoString keycode;
+   element->GetAttr(nsGkAtoms::key, key);
    element->GetAttr(nsGkAtoms::keycode, keycode);
  
    return ParseKey(key, keycode);
@@ -55,7 +47,13 @@ diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
    if (aModifiers.IsEmpty()) {
      return 0;
    }
-@@ -728,11 +730,11 @@
+ 
+   uint32_t modifier = 0;
+   char* str = ToNewUTF8String(aModifiers);
+@@ -725,17 +727,17 @@ void DBusMenuBar::OnNameOwnerChanged() {
+     return;
+   }
+   auto* gdkWin =
        static_cast<GdkWindow*>(widget->GetNativeData(NS_NATIVE_WINDOW));
    if (NS_WARN_IF(!gdkWin)) {
      return;
@@ -68,7 +66,13 @@ diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
          display->GetXdgDbusAnnotationManager();
      if (NS_WARN_IF(!annotationManager)) {
        return;
-@@ -755,12 +757,12 @@
+     }
+ 
+     wl_surface* surface = gdk_wayland_window_get_wl_surface(gdkWin);
+@@ -752,34 +754,34 @@ void DBusMenuBar::OnNameOwnerChanged() {
+     // FIXME(emilio, bug 1883209): Nothing deletes this as of right now.
+     mAnnotation = xdg_dbus_annotation_manager_v1_create_surface(
+         annotationManager, "com.canonical.dbusmenu", surface);
  
      xdg_dbus_annotation_v1_set_address(mAnnotation, myServiceName,
                                         mObjectPath.get());
@@ -83,7 +87,11 @@ diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
    widget::DBusProxyCall(mProxy, "RegisterWindow",
                          g_variant_new("(uo)", xid, mObjectPath.get()),
                          G_DBUS_CALL_FLAGS_NONE)
-@@ -772,11 +774,11 @@
+       ->Then(
+           GetCurrentSerialEventTarget(), __func__,
+           [self = RefPtr{this}](RefPtr<GVariant>&& aResult) {
+             self->mMenuModel->Element()->SetBoolAttr(nsGkAtoms::hidden, true);
+           },
            [self = RefPtr{this}](GUniquePtr<GError>&& aError) {
              g_printerr("Failed to register window menubar: %s\n",
                         aError->message);
@@ -96,7 +104,13 @@ diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
  static unsigned sID = 0;
  
  DBusMenuBar::DBusMenuBar(dom::Element* aElement)
-@@ -810,7 +812,8 @@
+     : mObjectPath(nsPrintfCString("/com/canonical/menu/%u", sID++)),
+       mMenuModel(MakeRefPtr<MenubarModelDBus>(aElement)),
+       mServer(dont_AddRef(dbusmenu_server_new(mObjectPath.get()))) {
+@@ -807,10 +809,11 @@ RefPtr<DBusMenuBar> DBusMenuBar::Create(
+           [](GUniquePtr<GError>&& aError) {
+             g_printerr("Failed to create DBUS proxy for menubar: %s\n",
+                        aError->message);
            });
    return self;
  }
@@ -105,10 +119,56 @@ diff --git a/widget/gtk/NativeMenuGtk.cpp b/widget/gtk/NativeMenuGtk.cpp
 +#endif
  
  }  // namespace mozilla::widget
+diff --git a/widget/gtk/NativeMenuGtk.h b/widget/gtk/NativeMenuGtk.h
+--- a/widget/gtk/NativeMenuGtk.h
++++ b/widget/gtk/NativeMenuGtk.h
+@@ -56,33 +56,37 @@ class NativeMenuGtk : public NativeMenu 
+   MOZ_CAN_RUN_SCRIPT void FireEvent(EventMessage);
+ 
+   bool mPoppedUp = false;
+   RefPtr<GtkWidget> mNativeMenu;
+   RefPtr<MenuModelGMenu> mMenuModel;
+   nsTArray<NativeMenu::Observer*> mObservers;
+ };
+ 
++#ifdef MOZ_ENABLE_DBUS
++
+ class DBusMenuBar final : public RefCounted<DBusMenuBar> {
+  public:
+   MOZ_DECLARE_REFCOUNTED_TYPENAME(DBusMenuBar)
+   static RefPtr<DBusMenuBar> Create(dom::Element*);
+   ~DBusMenuBar();
+ 
+  protected:
+   explicit DBusMenuBar(dom::Element* aElement);
+ 
+   static void NameOwnerChangedCallback(GObject*, GParamSpec*, gpointer);
+   void OnNameOwnerChanged();
+ 
+   nsCString mObjectPath;
+   RefPtr<MenubarModelDBus> mMenuModel;
+   RefPtr<DbusmenuServer> mServer;
+   RefPtr<GDBusProxy> mProxy;
+-#ifdef MOZ_WAYLAND
++#  ifdef MOZ_WAYLAND
+   xdg_dbus_annotation_v1* mAnnotation = nullptr;
++#  endif
++};
++
+ #endif
+-};
+ 
+ }  // namespace widget
+ }  // namespace mozilla
+ 
+ #endif
 diff --git a/widget/gtk/NativeMenuSupport.cpp b/widget/gtk/NativeMenuSupport.cpp
 --- a/widget/gtk/NativeMenuSupport.cpp
 +++ b/widget/gtk/NativeMenuSupport.cpp
-@@ -16,15 +16,17 @@
+@@ -13,21 +13,23 @@
+ 
+ namespace mozilla::widget {
+ 
  void NativeMenuSupport::CreateNativeMenuBar(nsIWidget* aParent,
                                              dom::Element* aMenuBarElement) {
    MOZ_RELEASE_ASSERT(NS_IsMainThread(),
@@ -126,10 +186,16 @@ diff --git a/widget/gtk/NativeMenuSupport.cpp b/widget/gtk/NativeMenuSupport.cpp
  already_AddRefed<NativeMenu> NativeMenuSupport::CreateNativeContextMenu(
      dom::Element* aPopup) {
    return MakeAndAddRef<NativeMenuGtk>(aPopup);
+ }
+ 
+ bool NativeMenuSupport::ShouldUseNativeContextMenus() {
 diff --git a/widget/gtk/moz.build b/widget/gtk/moz.build
 --- a/widget/gtk/moz.build
 +++ b/widget/gtk/moz.build
-@@ -61,11 +61,10 @@
+@@ -58,17 +58,16 @@ EXPORTS.mozilla.widget += [
+     "WindowSurface.h",
+     "WindowSurfaceProvider.h",
+ ]
  
  UNIFIED_SOURCES += [
      "AsyncGtkClipboardRequest.cpp",
@@ -141,7 +207,13 @@ diff --git a/widget/gtk/moz.build b/widget/gtk/moz.build
      "GfxInfo.cpp",
      "gtk3drawing.cpp",
      "GtkCompositorWidget.cpp",
-@@ -172,9 +171,10 @@
+     "IMContextWrapper.cpp",
+     "InProcessGtkCompositorWidget.cpp",
+     "MozContainer.cpp",
+@@ -169,12 +168,13 @@ if CONFIG["MOZ_WAYLAND"]:
+     CXXFLAGS += CONFIG["MOZ_WAYLAND_CFLAGS"]
+ 
+ if CONFIG["MOZ_ENABLE_DBUS"]:
      EXPORTS.mozilla.widget += [
          "AsyncDBus.h",
      ]
@@ -152,41 +224,13 @@ diff --git a/widget/gtk/moz.build b/widget/gtk/moz.build
      CXXFLAGS += CONFIG["MOZ_DBUS_CFLAGS"]
  
  CXXFLAGS += ["-Werror=switch"]
-diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
---- a/widget/gtk/nsWindow.h
-+++ b/widget/gtk/nsWindow.h
-@@ -372,11 +372,13 @@
-   mozilla::LayoutDeviceIntCoord GetTitlebarRadius();
-   LayoutDeviceIntRect GetTitlebarRect();
-   void UpdateWindowDraggingRegion(
-       const LayoutDeviceIntRegion& aRegion) override;
- 
-+#ifdef MOZ_ENABLE_DBUS
-   void SetDBusMenuBar(RefPtr<mozilla::widget::DBusMenuBar> aDbusMenuBar);
-+#endif
- 
-   // HiDPI scale conversion
-   gint GdkCeiledScaleFactor();
-   double FractionalScaleFactor();
- 
-@@ -906,11 +908,13 @@
- 
-   // Next/Previous popups in Wayland popup hierarchy.
-   RefPtr<nsWindow> mWaylandPopupNext;
-   RefPtr<nsWindow> mWaylandPopupPrev;
- 
-+#ifdef MOZ_ENABLE_DBUS
-   RefPtr<mozilla::widget::DBusMenuBar> mDBusMenuBar;
-+#endif
- 
-   // When popup is resized by Gtk by move-to-rect callback,
-   // we store final popup size here. Then we use mMoveToRectPopupSize size
-   // in following popup operations unless mLayoutPopupSizeCleared is set.
-   LayoutDeviceIntSize mMoveToRectPopupSize;
 diff --git a/widget/gtk/nsWindow.cpp b/widget/gtk/nsWindow.cpp
 --- a/widget/gtk/nsWindow.cpp
 +++ b/widget/gtk/nsWindow.cpp
-@@ -6986,14 +6986,16 @@
+@@ -6979,20 +6979,22 @@ void nsWindow::SetInputRegion(const Inpu
+ // with -moz-window-dragging: drag.
+ void nsWindow::UpdateWindowDraggingRegion(
+     const LayoutDeviceIntRegion& aRegion) {
    if (mDraggableRegion != aRegion) {
      mDraggableRegion = aRegion;
    }
@@ -203,5 +247,50 @@ diff --git a/widget/gtk/nsWindow.cpp b/widget/gtk/nsWindow.cpp
    MOZ_RELEASE_ASSERT(NS_IsMainThread());
    int32_t cssCoord = LookAndFeel::GetInt(LookAndFeel::IntID::TitlebarRadius);
    return GdkCoordToDevicePixels(cssCoord);
-
+ }
+ 
+ // See subtract_corners_from_region() at gtk/gtkwindow.c
+diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
+--- a/widget/gtk/nsWindow.h
++++ b/widget/gtk/nsWindow.h
+@@ -369,17 +369,19 @@ class nsWindow final : public nsBaseWidg
+   nsresult SetNonClientMargins(const LayoutDeviceIntMargin&) override;
+   void SetDrawsInTitlebar(bool aState);
+   void SetTitlebarRect();
+   mozilla::LayoutDeviceIntCoord GetTitlebarRadius();
+   LayoutDeviceIntRect GetTitlebarRect();
+   void UpdateWindowDraggingRegion(
+       const LayoutDeviceIntRegion& aRegion) override;
+ 
++#ifdef MOZ_ENABLE_DBUS
+   void SetDBusMenuBar(RefPtr<mozilla::widget::DBusMenuBar> aDbusMenuBar);
++#endif
+ 
+   // HiDPI scale conversion
+   gint GdkCeiledScaleFactor();
+   double FractionalScaleFactor();
+ 
+   // To GDK
+   gint DevicePixelsToGdkCoordRoundUp(int);
+   gint DevicePixelsToGdkCoordRoundDown(int);
+@@ -903,17 +905,19 @@ class nsWindow final : public nsBaseWidg
+   // Toplevel window (first element) of linked list of Wayland popups. It's null
+   // if we're the toplevel.
+   RefPtr<nsWindow> mWaylandToplevel;
+ 
+   // Next/Previous popups in Wayland popup hierarchy.
+   RefPtr<nsWindow> mWaylandPopupNext;
+   RefPtr<nsWindow> mWaylandPopupPrev;
+ 
++#ifdef MOZ_ENABLE_DBUS
+   RefPtr<mozilla::widget::DBusMenuBar> mDBusMenuBar;
++#endif
+ 
+   // When popup is resized by Gtk by move-to-rect callback,
+   // we store final popup size here. Then we use mMoveToRectPopupSize size
+   // in following popup operations unless mLayoutPopupSizeCleared is set.
+   LayoutDeviceIntSize mMoveToRectPopupSize;
+ 
+   /**
+    * |mIMContext| takes all IME related stuff.
 
