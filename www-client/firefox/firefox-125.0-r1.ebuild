@@ -684,6 +684,9 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
+	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
