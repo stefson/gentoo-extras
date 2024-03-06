@@ -669,11 +669,18 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-748849-RUST_TARGET_override.patch
 
-	# Workaround for bgo#915651 on musl
-	if use elibc_glibc ; then
-		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
-	fi
+	# upstreamed to 125 branch
+#	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0014-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1881123-musl-use-res_query.patch
+
+#	# Workaround for bgo#915651 on musl
+#	if use elibc_glibc ; then
+#		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+#	fi
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -683,16 +690,16 @@ src_prepare() {
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
 
-	# Workaround for bgo#915651
-	if ! use elibc_glibc ; then
-		if use amd64 ; then
-			export RUST_TARGET="x86_64-unknown-linux-musl"
-		elif use x86 ; then
-			export RUST_TARGET="i686-unknown-linux-musl"
-		else
-			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
-		fi
-	fi
+#	# Workaround for bgo#915651
+#	if ! use elibc_glibc ; then
+#		if use amd64 ; then
+#			export RUST_TARGET="x86_64-unknown-linux-musl"
+#		elif use x86 ; then
+#			export RUST_TARGET="i686-unknown-linux-musl"
+#		else
+#			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
+#		fi
+#	fi
 
 	# Make LTO respect MAKEOPTS
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
