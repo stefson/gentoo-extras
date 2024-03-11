@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-123-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-123-patches-08.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -669,13 +669,13 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
-	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-748849-RUST_TARGET_override.patch
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 125 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-	rm -v "${WORKDIR}"/firefox-patches/0014-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1881123-musl-use-res_query.patch
+	rm -v "${WORKDIR}"/firefox-patches/0013-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1881123-musl-use-res_query.patch
 
 #	# Workaround for bgo#915651 on musl
 #	if use elibc_glibc ; then
@@ -1153,6 +1153,9 @@ src_configure() {
 	if use valgrind; then
 		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
 	fi
+
+	# System-av1 fix
+	use system-av1 && append-ldflags "-Wl,--undefined-version"
 
 	# Allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
