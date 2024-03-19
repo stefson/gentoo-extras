@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-123-patches-08.tar.xz"
+FIREFOX_PATCHSET="firefox-124-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -673,9 +673,9 @@ src_prepare() {
 
 	# upstreamed to 125 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0001-Don-t-use-build-id.patch
-	rm -v "${WORKDIR}"/firefox-patches/0013-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1881123-musl-use-res_query.patch
+	rm -v "${WORKDIR}"/firefox-patches/0012-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1881123-musl-use-res_query.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
 
 #	# Workaround for bgo#915651 on musl
 #	if use elibc_glibc ; then
