@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-124-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-125-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -141,7 +141,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.99
+	>=dev-libs/nss-3.97
 	>=dev-libs/nspr-4.35
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -257,52 +257,52 @@ llvm_check_deps() {
 	einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
-#MOZ_LANGS=(
-#	af ar ast be bg br ca cak cs cy da de dsb
-#	el en-CA en-GB en-US es-AR es-ES et eu
-#	fi fr fy-NL ga-IE gd gl he hr hsb hu
-#	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
-#	pa-IN pl pt-BR pt-PT rm ro ru
-#	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
-#)
+MOZ_LANGS=(
+	af ar ast be bg br ca cak cs cy da de dsb
+	el en-CA en-GB en-US es-AR es-ES et eu
+	fi fr fy-NL ga-IE gd gl he hr hsb hu
+	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
+	pa-IN pl pt-BR pt-PT rm ro ru
+	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
+)
 
 # Firefox-only LANGS
-#MOZ_LANGS+=( ach )
-#MOZ_LANGS+=( an )
-#MOZ_LANGS+=( az )
-#MOZ_LANGS+=( bn )
-#MOZ_LANGS+=( bs )
-#MOZ_LANGS+=( ca-valencia )
-#MOZ_LANGS+=( eo )
-#MOZ_LANGS+=( es-CL )
-#MOZ_LANGS+=( es-MX )
-#MOZ_LANGS+=( fa )
-#MOZ_LANGS+=( ff )
-#MOZ_LANGS+=( fur )
-#MOZ_LANGS+=( gn )
-#MOZ_LANGS+=( gu-IN )
-#MOZ_LANGS+=( hi-IN )
-#MOZ_LANGS+=( hy-AM )
-#MOZ_LANGS+=( ia )
-#MOZ_LANGS+=( km )
-#MOZ_LANGS+=( kn )
-#MOZ_LANGS+=( lij )
-#MOZ_LANGS+=( mk )
-#MOZ_LANGS+=( mr )
-#MOZ_LANGS+=( my )
-#MOZ_LANGS+=( ne-NP )
-#MOZ_LANGS+=( oc )
-#MOZ_LANGS+=( sc )
-#MOZ_LANGS+=( sco )
-#MOZ_LANGS+=( si )
-#MOZ_LANGS+=( son )
-#MOZ_LANGS+=( szl )
-#MOZ_LANGS+=( ta )
-#MOZ_LANGS+=( te )
-#MOZ_LANGS+=( tl )
-#MOZ_LANGS+=( trs )
-#MOZ_LANGS+=( ur )
-#MOZ_LANGS+=( xh )
+MOZ_LANGS+=( ach )
+MOZ_LANGS+=( an )
+MOZ_LANGS+=( az )
+MOZ_LANGS+=( bn )
+MOZ_LANGS+=( bs )
+MOZ_LANGS+=( ca-valencia )
+MOZ_LANGS+=( eo )
+MOZ_LANGS+=( es-CL )
+MOZ_LANGS+=( es-MX )
+MOZ_LANGS+=( fa )
+MOZ_LANGS+=( ff )
+MOZ_LANGS+=( fur )
+MOZ_LANGS+=( gn )
+MOZ_LANGS+=( gu-IN )
+MOZ_LANGS+=( hi-IN )
+MOZ_LANGS+=( hy-AM )
+MOZ_LANGS+=( ia )
+MOZ_LANGS+=( km )
+MOZ_LANGS+=( kn )
+MOZ_LANGS+=( lij )
+MOZ_LANGS+=( mk )
+MOZ_LANGS+=( mr )
+MOZ_LANGS+=( my )
+MOZ_LANGS+=( ne-NP )
+MOZ_LANGS+=( oc )
+MOZ_LANGS+=( sc )
+MOZ_LANGS+=( sco )
+MOZ_LANGS+=( si )
+MOZ_LANGS+=( son )
+MOZ_LANGS+=( szl )
+MOZ_LANGS+=( ta )
+MOZ_LANGS+=( te )
+MOZ_LANGS+=( tl )
+MOZ_LANGS+=( trs )
+MOZ_LANGS+=( ur )
+MOZ_LANGS+=( xh )
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
@@ -671,21 +671,12 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 127 branch
+	# upstreamed to 126 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0012-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1881123-musl-use-res_query.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
-
-#	# Workaround for bgo#915651 on musl
-#	if use elibc_glibc ; then
-#		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
-#	fi
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
 
 	eapply "${WORKDIR}/firefox-patches"
-
-	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
-	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1001,15 +992,10 @@ src_configure() {
 		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3-x11-only
 	fi
 
-	# LTO is handled via configure
-	filter-lto
-
 	if use lto ; then
 		if use clang ; then
 			# Upstream only supports lld or mold when using clang.
 			if tc-ld-is-mold ; then
-				# mold expects the -flto line from *FLAGS configuration, bgo#923119
-				append-ldflags "-flto=thin"
 				mozconfig_add_options_ac "using ld=mold due to system selection" --enable-linker=mold
 			else
 				mozconfig_add_options_ac "forcing ld=lld due to USE=clang and USE=lto" --enable-linker=lld
@@ -1050,6 +1036,9 @@ src_configure() {
 			fi
 		fi
 	fi
+
+	# LTO flag was handled via configure
+	filter-lto
 
 	mozconfig_use_enable debug
 	if use debug ; then
@@ -1484,4 +1473,3 @@ pkg_postinst() {
 		elog
 	fi
 }
-
