@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-124-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-125-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -666,17 +666,17 @@ src_prepare() {
 
 	# Workaround for bgo#917599
 	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
-		eapply "${WORKDIR}"/firefox-patches/0022-bmo-1862601-system-icu-74.patch
+		eapply "${WORKDIR}"/firefox-patches/0021-bmo-1862601-system-icu-74.patch
 	fi
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1862601-system-icu-74.patch || die
-	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-748849-RUST_TARGET_override.patch
+	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/0022-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 125 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0012-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1881123-musl-use-res_query.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
-
+#	rm -v "${WORKDIR}"/firefox-patches/0012-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1881123-musl-use-res_query.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
+#
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
