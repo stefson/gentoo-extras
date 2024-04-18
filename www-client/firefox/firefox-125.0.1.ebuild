@@ -100,15 +100,6 @@ BDEPEND="${PYTHON_DEPS}
 				pgo? ( =sys-libs/compiler-rt-sanitizers-17*[profile] )
 			)
 		)
-		(
-			sys-devel/clang:16
-			sys-devel/llvm:16
-			clang? (
-				sys-devel/lld:16
-				virtual/rust:0/llvm-16
-				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
-			)
-		)
 	)
 	app-alternatives/awk
 	app-arch/unzip
