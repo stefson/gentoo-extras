@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-124-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-125-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -98,15 +98,6 @@ BDEPEND="${PYTHON_DEPS}
 				sys-devel/lld:17
 				virtual/rust:0/llvm-17
 				pgo? ( =sys-libs/compiler-rt-sanitizers-17*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:16
-			sys-devel/llvm:16
-			clang? (
-				sys-devel/lld:16
-				virtual/rust:0/llvm-16
-				pgo? ( =sys-libs/compiler-rt-sanitizers-16*[profile] )
 			)
 		)
 	)
@@ -673,9 +664,9 @@ src_prepare() {
 
 	# upstreamed to 127 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0012-Enable-FLAC-on-platforms-without-ffvpx-via-ffmpeg.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1881123-musl-use-res_query.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
 
 #	# Workaround for bgo#915651 on musl
 #	if use elibc_glibc ; then
