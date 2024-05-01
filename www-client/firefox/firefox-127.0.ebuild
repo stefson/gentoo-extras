@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-125-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-125-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -651,10 +651,6 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	if ! use ppc64; then
-		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
-	fi
-
 	# Workaround for bgo#917599
 	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
 		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
@@ -664,8 +660,8 @@ src_prepare() {
 
 	# upstreamed to 127 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
 #	rm -v "${WORKDIR}"/firefox-patches/0028-dont-use-build-id.patch
 
 #	# Workaround for bgo#915651 on musl
