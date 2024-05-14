@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-125-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-126-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -660,8 +660,8 @@ src_prepare() {
 
 	# upstreamed to 126 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
