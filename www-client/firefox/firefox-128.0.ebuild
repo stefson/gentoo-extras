@@ -659,6 +659,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 128 branch
+	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
 	rm -v "${WORKDIR}"/firefox-patches/
 
