@@ -1,0 +1,26 @@
+diff --git a/media/libjpeg/jconfig.h b/media/libjpeg/jconfig.h
+index 24743be..78b7920 100644
+--- a/media/libjpeg/jconfig.h
++++ b/media/libjpeg/jconfig.h
+@@ -19,7 +19,7 @@
+ #define MEM_SRCDST_SUPPORTED 1
+ 
+ /* Use accelerated SIMD routines. */
+-#if defined(__sparc__)
++#if defined(__sparc__) || defined(__arm__)
+ #undef  WITH_SIMD
+ #else
+ #define WITH_SIMD 1
+diff --git a/media/libjpeg/jconfigint.h b/media/libjpeg/jconfigint.h
+index 35bc9c6..edb980e 100644
+--- a/media/libjpeg/jconfigint.h
++++ b/media/libjpeg/jconfigint.h
+@@ -81,7 +81,7 @@
+ /* #undef D_ARITH_CODING_SUPPORTED */
+ 
+ /* Use accelerated SIMD routines. */
+-#if defined(__sparc__)
++#if defined(__sparc__) || defined(__arm__)
+ #undef  WITH_SIMD
+ #else
+ #define WITH_SIMD 1
