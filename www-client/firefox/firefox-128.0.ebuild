@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-126-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-126-patches-01a.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -661,7 +661,7 @@ src_prepare() {
 	# upstreamed to 128 branch
 	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
-	rm -v "${WORKDIR}"/firefox-patches/
+#	rm -v "${WORKDIR}"/firefox-patches/
 
 #	# Workaround for bgo#915651 on musl
 #	if use elibc_glibc ; then
@@ -673,6 +673,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-simd-in-libjpeg-for-arm.patch
+	eapply "${FILESDIR}/"0004-revert-mozbg-1776255.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
