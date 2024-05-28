@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-126-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-126-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -661,6 +661,7 @@ src_prepare() {
 	# upstreamed to 127 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1892694-add-missing-include-on-wayland-only-builds.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
