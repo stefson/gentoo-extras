@@ -657,6 +657,7 @@ src_prepare() {
 	# upstreamed to 128 branch
 	rm -v "${WORKDIR}"/firefox-patches/0002-bmo-847568-Support-system-harfbuzz.patch
 	rm -v "${WORKDIR}"/firefox-patches/0003-bmo-847568-Support-system-graphite2.patch
+	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
