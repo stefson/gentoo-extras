@@ -659,7 +659,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 128 branch
-	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
@@ -674,7 +673,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-simd-in-libjpeg-for-arm.patch
-#	eapply "${FILESDIR}/"0004-revert-mozbg-1776255.patch
+	eapply "${FILESDIR}/"0004-revert-mozbg-1776255.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
