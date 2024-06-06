@@ -658,11 +658,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 126 branch
-#	rm -v "${WORKDIR}"/firefox-patches/
-#	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889054-fix-issues-with-non-unified-builds-missing-headers.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1890593-GetSystemWPADSetting-for-libproxy-enabled-builds.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Allow user to apply any additional patches without modifing ebuild
