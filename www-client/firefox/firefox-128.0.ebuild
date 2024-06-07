@@ -63,9 +63,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
 IUSE+=" jack +jumbo-build libproxy lto openh264 pgo pulseaudio sndio selinux"
-IUSE+=" +system-av1 +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
+IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
 IUSE+=" +telemetry valgrind wayland wifi +X"
-# +system-harfbuzz
 # Firefox-only IUSE
 IUSE+=" geckodriver +gmp-autoupdate"
 
@@ -161,6 +160,10 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=
 		>=media-libs/libaom-1.0.0:=
+	)
+	system-harfbuzz? (
+		>=media-gfx/graphite2-1.3.13
+		>=media-libs/harfbuzz-2.8.1:0=
 	)
 	system-icu? ( >=dev-libs/icu-73.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
@@ -655,8 +658,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 128 branch
-	rm -v "${WORKDIR}"/firefox-patches/0002-bmo-847568-Support-system-harfbuzz.patch
-	rm -v "${WORKDIR}"/firefox-patches/0003-bmo-847568-Support-system-graphite2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
@@ -671,7 +672,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-#	eapply "${FILESDIR}/"0003-fix-simd-in-libjpeg-for-arm.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -942,8 +942,8 @@ src_configure() {
 	fi
 
 	mozconfig_use_with system-av1
-#	mozconfig_use_with system-harfbuzz
-#	mozconfig_use_with system-harfbuzz system-graphite2
+	mozconfig_use_with system-harfbuzz
+	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
@@ -1322,12 +1322,12 @@ src_install() {
 		done
 	fi
 
-#	# Force the graphite pref if USE=system-harfbuzz is enabled, since the pref cannot disable it
-#	if use system-harfbuzz ; then
-#		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set gfx.font_rendering.graphite.enabled pref"
-#		sticky_pref("gfx.font_rendering.graphite.enabled", true);
-#		EOF
-#	fi
+	# Force the graphite pref if USE=system-harfbuzz is enabled, since the pref cannot disable it
+	if use system-harfbuzz ; then
+		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set gfx.font_rendering.graphite.enabled pref"
+		sticky_pref("gfx.font_rendering.graphite.enabled", true);
+		EOF
+	fi
 
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
