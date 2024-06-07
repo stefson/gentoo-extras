@@ -672,6 +672,8 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+	eapply "${FILESDIR}/"0003-fixup-MOZ_SYSTEM_JPEG.patch
+
 	eapply "${FILESDIR}"/privacy-patchset-115/firefox-60-disable-data-sharing-infobar.patch
 	eapply "${FILESDIR}"/privacy-patchset-115/firefox-60-disable-telemetry.patch
 
