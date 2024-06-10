@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-126-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-127-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -658,16 +658,10 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 127 branch
-#	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1889045-update-sandbox-for-new-syscalls.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1892694-add-missing-include-on-wayland-only-builds.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fixup-MOZ_SYSTEM_JPEG.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
