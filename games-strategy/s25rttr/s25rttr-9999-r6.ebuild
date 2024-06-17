@@ -26,7 +26,7 @@ RDEPEND=">=app-arch/bzip2-1.0.6-r11
 	>=media-libs/libsdl2-2.0.12-r1[X,sound,static-libs,opengl,video]
 	>=media-libs/sdl2-mixer-2.0.4[vorbis]
 	media-libs/libsndfile
-	net-libs/miniupnpc
+	net-libs/miniupnpc:=
 	virtual/libiconv
 	virtual/opengl"
 DEPEND="${RDEPEND}
