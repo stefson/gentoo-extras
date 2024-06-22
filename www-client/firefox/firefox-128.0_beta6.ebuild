@@ -661,12 +661,12 @@ src_prepare() {
 	# upstreamed to 128 branch
 	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1900701-set-MOZ_SYSTEM_JPEG-when-with-system-jpeg-is-requested.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1900899-relrhack.cpp-add-missing-include-array.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fix-how-libjpeg-turbo-build-enables-simd-code.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
