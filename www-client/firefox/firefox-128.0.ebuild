@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-127-patches-02a.tar.xz"
+FIREFOX_PATCHSET="firefox-128-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -661,8 +661,9 @@ src_prepare() {
 	# upstreamed to 128 branch
 	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1900701-set-MOZ_SYSTEM_JPEG-when-with-system-jpeg-is-requested.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1900899-relrhack.cpp-add-missing-include-array.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-dont-use-build-id.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1900701-set-MOZ_SYSTEM_JPEG-when-with-system-jpeg-is-requested.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1900899-relrhack.cpp-add-missing-include-array.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
