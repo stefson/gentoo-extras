@@ -254,7 +254,7 @@ MOZ_LANGS=(
 	fi fr fy-NL ga-IE gd gl he hr hsb hu
 	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
 	pa-IN pl pt-BR pt-PT rm ro ru
-	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
+	sk skr sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 )
 
 # Firefox-only LANGS
