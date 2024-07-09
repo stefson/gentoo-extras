@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-127-patches-01a.tar.xz"
+FIREFOX_PATCHSET="firefox-128-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -66,7 +66,7 @@ IUSE+=" jack +jumbo-build libproxy lto openh264 pgo pulseaudio sndio selinux"
 IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
 IUSE+=" +telemetry valgrind wayland wifi +X"
 # Firefox-only IUSE
-IUSE+=" geckodriver +gmp-autoupdate"
+IUSE+=" +gmp-autoupdate"
 
 # "-jumbo-build +system-icu": build failure on firefox-120:
 #   firefox-120.0/intl/components/src/TimeZone.cpp:345:3: error: use of undeclared identifier 'MOZ_TRY'
@@ -657,11 +657,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 128 branch
-	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
-	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1900701-set-MOZ_SYSTEM_JPEG-when-with-system-jpeg-is-requested.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1900899-relrhack.cpp-add-missing-include-array.patch
+	# upstreamed to 130 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 #	# Workaround for bgo#915651 on musl
@@ -850,6 +846,7 @@ src_configure() {
 		--disable-cargo-incremental \
 		--disable-crashreporter \
 		--disable-disk-remnant-avoidance \
+		--disable-geckodriver \
 		--disable-gpsd \
 		--disable-install-strip \
 		--disable-legacy-profile-creation \
@@ -957,8 +954,6 @@ src_configure() {
 	mozconfig_use_enable valgrind
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
-
-	mozconfig_use_enable geckodriver
 
 	if use hardened ; then
 		mozconfig_add_options_ac "+hardened" --enable-hardening
@@ -1334,16 +1329,6 @@ src_install() {
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
 		moz_install_xpi "${MOZILLA_FIVE_HOME}/distribution/extensions" "${langpacks[@]}"
-	fi
-
-	# Install geckodriver
-	if use geckodriver ; then
-		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
-		pax-mark m "${BUILD_DIR}"/dist/bin/geckodriver
-		exeinto "${MOZILLA_FIVE_HOME}"
-		doexe "${BUILD_DIR}"/dist/bin/geckodriver
-
-		dosym ${MOZILLA_FIVE_HOME}/geckodriver /usr/bin/geckodriver
 	fi
 
 	# Install icons
