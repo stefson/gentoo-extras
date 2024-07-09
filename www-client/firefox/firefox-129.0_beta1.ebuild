@@ -659,9 +659,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 129 branch
-	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
-	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-dont-use-build-id.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0015-bgo-860033-firefox-wayland-no-dbus.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0020-gcc-lto-patch-from-fedora.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0025-dont-use-build-id.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
