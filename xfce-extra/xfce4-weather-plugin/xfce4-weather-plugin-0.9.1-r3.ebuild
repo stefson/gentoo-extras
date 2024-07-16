@@ -1,9 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit eutils gnome2-utils
+inherit gnome2-utils
 
 DESCRIPTION="A weather plug-in for the Xfce desktop environment"
 HOMEPAGE="https://goodies.xfce.org/projects/panel-plugins/xfce4-weather-plugin"
