@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit gnome2-utils toolchain-funcs xdg-utils
+inherit toolchain-funcs xdg-utils
 
 DESCRIPTION="Panel for the Xfce desktop environment"
 HOMEPAGE="https://www.xfce.org/projects/"
@@ -52,11 +52,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
-	xdg_desktop_database_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
-	xdg_desktop_database_update
+	xdg_icon_cache_update
 }

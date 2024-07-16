@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit gnome2-utils
+inherit xdg-utils
 
 DESCRIPTION="A session manager for the Xfce desktop environment"
 HOMEPAGE="https://docs.xfce.org/xfce/xfce4-session/start"
@@ -70,9 +70,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }

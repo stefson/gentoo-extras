@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit gnome2-utils vala
+inherit xdg-utils vala
 
 DESCRIPTION="Unified widget and session management libs for Xfce"
 HOMEPAGE="https://wiki.gentoo.org/wiki/No_homepage"
@@ -64,9 +64,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }

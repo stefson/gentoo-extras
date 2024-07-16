@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit gnome2-utils
+inherit xdg-utils
 
 DESCRIPTION="Daemon that enforces volume-related policies"
 HOMEPAGE="https://goodies.xfce.org/projects/thunar-plugins/thunar-volman"
@@ -40,9 +40,9 @@ src_configure() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }

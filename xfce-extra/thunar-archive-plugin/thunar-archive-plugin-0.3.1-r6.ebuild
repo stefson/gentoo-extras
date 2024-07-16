@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit autotools gnome2-utils
+inherit autotools xdg-utils
 
 DESCRIPTION="Archive plug-in for the Thunar filemanager"
 HOMEPAGE="https://goodies.xfce.org/projects/thunar-plugins/thunar-archive-plugin"
@@ -43,9 +43,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }

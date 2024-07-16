@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit gnome2-utils
+inherit xdg-utils
 
 DESCRIPTION="Extensions, widgets and framework library with session support for Xfce"
 HOMEPAGE="https://www.xfce.org/projects/"
@@ -33,9 +33,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }

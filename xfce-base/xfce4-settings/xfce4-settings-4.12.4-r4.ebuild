@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-inherit gnome2-utils
+inherit xdg-utils
 
 DESCRIPTION="Configuration system for the Xfce desktop environment"
 HOMEPAGE="https://www.xfce.org/projects/"
@@ -53,9 +53,9 @@ src_configure() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
