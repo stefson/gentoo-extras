@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit gnome2-utils
 
@@ -9,27 +9,25 @@ DESCRIPTION="Desktop manager for the Xfce desktop environment"
 HOMEPAGE="https://www.xfce.org/projects/"
 SRC_URI="https://archive.xfce.org/src/xfce/${PN}/${PV%.*}/${P}.tar.bz2"
 
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="alpha amd64 arm ~arm64 hppa ~ia64 ~mips ppc ppc64 ~sparc x86 ~amd64-linux ~x86-linux ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux ~x86-solaris"
 IUSE="debug libnotify +thunar"
 
-# src/xfdesktop-file-utils.c:#if GLIB_CHECK_VERSION (2, 38, 0)
-RDEPEND=">=x11-libs/cairo-1.6:=
-	>=dev-libs/dbus-glib-0.100:=
-	>=dev-libs/glib-2.20:=
-	>=x11-libs/gtk+-2.24:2=
-	>=x11-libs/libwnck-2.30:1=
+RDEPEND=">=x11-libs/cairo-1.12:=
+	>=dev-libs/glib-2.42:=
+	>=x11-libs/gtk+-3.22:3=
+	>=x11-libs/libwnck-3.14:3=
 	x11-libs/libX11:=
-	>=xfce-base/exo-0.8:=
-	>=xfce-base/garcon-0.3:=
-	>=xfce-base/libxfce4ui-4.11:=[gtk2(+)]
-	>=xfce-base/libxfce4util-4.11:=
-	>=xfce-base/xfconf-4.10:=
+	>=xfce-base/exo-0.11:=
+	>=xfce-base/garcon-0.6:=
+	>=xfce-base/libxfce4ui-4.13:=
+	>=xfce-base/libxfce4util-4.13:=
+	>=xfce-base/xfconf-4.12.1:=
 	libnotify? ( >=x11-libs/libnotify-0.7:= )
 	thunar? (
 		>=dev-libs/glib-2.38:=
-		=xfce-base/thunar-1.6*:=[dbus]
+		>=xfce-base/thunar-1.7:=
 		)"
 DEPEND="${RDEPEND}
 	dev-util/intltool
