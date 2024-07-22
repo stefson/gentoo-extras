@@ -1,0 +1,15 @@
+diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.configure
+index 9879c36..c6a00d8 100644
+--- a/build/moz.configure/flags.configure
++++ b/build/moz.configure/flags.configure
+@@ -606,7 +606,9 @@ def host_ldflags(env_ldflags, linker_flags, host_linker_ldflags, host, compiler)
+ @depends("CPPFLAGS")
+ @imports(_from="mozbuild.shellutil", _import="split")
+ def os_cppflags(env_cppflags):
+-    flags = split(env_cppflags[0])
++    flags = []
++    if env_cppflags:
++         flags.extend(split(env_cppflags[0]))
+     return flags
+ 
+ 
