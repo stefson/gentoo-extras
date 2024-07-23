@@ -1,7 +1,27 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1721709229 0
+# Node ID 8f0a27b175cc061981784876003ea1118ec03ece
+# Parent  0d7d37ad97feb84af4711cf11b7e60218df9eb1b
+Bug 1907258 - Check that flags are not "empty" before splitting them. r=firefox-build-system-reviewers,ahochheiden
+
+The various *FLAGS variables are defined as nargs=1, which guarantees
+that if they are set they are going to have a value. They also come with
+a default value of "", which works just fine in the default case.
+
+Things change, though, when the variable is explicitly set to an empty
+value, which then makes it a NegativeOptionValue, which is different
+from the default and needs to be handled.
+
+Differential Revision: https://phabricator.services.mozilla.com/D217328
+
 diff --git a/build/moz.configure/finalize-flags.configure b/build/moz.configure/finalize-flags.configure
 --- a/build/moz.configure/finalize-flags.configure
 +++ b/build/moz.configure/finalize-flags.configure
-@@ -25,11 +25,12 @@
+@@ -22,17 +22,18 @@ def os_ldflags(
+     android_flags,
+     thumb_option,
+ ):
      flags = []
      if android_flags:
          flags.extend(android_flags.ldflags)
@@ -15,10 +35,16 @@ diff --git a/build/moz.configure/finalize-flags.configure b/build/moz.configure/
          flags.extend(linker_ldflags)
      if pack_relative_relocs_flags:
          flags.extend(pack_relative_relocs_flags)
+     return flags
+ 
+ 
 diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.configure
 --- a/build/moz.configure/flags.configure
 +++ b/build/moz.configure/flags.configure
-@@ -567,34 +567,39 @@
+@@ -564,80 +564,89 @@ def host_cppflags(base_cppflags, host, c
+             flags += ["-mwindows"]
+         flags += ["-DXP_WIN", "-DWIN32", "-D_WIN32", "-D_CRT_SECURE_NO_WARNINGS"]
+         if host.cpu == "x86_64":
              flags += ["-D_AMD64_"]
      elif host.kernel == "Darwin":
          flags += ["-DXP_UNIX", "-DXP_MACOSX"]
@@ -62,7 +88,9 @@ diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.con
          if host.cpu == "x86":
              flags += ["-MACHINE:X86"]
          elif host.cpu == "x86_64":
-@@ -604,11 +609,13 @@
+             flags += ["-MACHINE:X64"]
+     flags += linker_flags.host_ldflags
+     return flags
  
  
  @depends("CPPFLAGS")
@@ -77,7 +105,8 @@ diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.con
  
  @depends("CFLAGS", compilation_flags, android_flags, all_arm_flags)
  @imports(_from="mozbuild.shellutil", _import="split")
-@@ -617,11 +624,12 @@
+ def os_cflags(env_cflags, compilation_flags, android_flags, all_arm_flags):
+     flags = []
      if android_flags:
          flags.extend(android_flags.cflags)
      if all_arm_flags:
@@ -91,7 +120,8 @@ diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.con
  
  @depends("CXXFLAGS", compilation_flags, android_flags, all_arm_flags)
  @imports(_from="mozbuild.shellutil", _import="split")
-@@ -630,11 +638,12 @@
+ def os_cxxflags(env_cxxflags, compilation_flags, android_flags, all_arm_flags):
+     flags = []
      if android_flags:
          flags.extend(android_flags.cxxflags)
      if all_arm_flags:
@@ -105,7 +135,13 @@ diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.con
  
  @depends(
      "ASFLAGS",
-@@ -662,11 +671,12 @@
+     asm_flags,
+     android_flags,
+     all_arm_flags,
+@@ -659,17 +668,18 @@ def os_asflags(
+     if android_flags:
+         flags.extend(android_flags.asflags)
+         flags.append("-DANDROID")
      if all_arm_flags:
          flags.extend(all_arm_flags)
      flags.extend(asm_flags.asflags)
@@ -119,10 +155,16 @@ diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.con
  
  # VS2012+ defaults to -arch:SSE2. We want to target nothing more recent, so set
  # that explicitly here unless another target arch has already been set.
+ @template
+ def add_sse2_flag_if_needed(flags):
+     @depends(
 diff --git a/build/moz.configure/toolchain.configure b/build/moz.configure/toolchain.configure
 --- a/build/moz.configure/toolchain.configure
 +++ b/build/moz.configure/toolchain.configure
-@@ -119,11 +119,11 @@
+@@ -116,17 +116,17 @@ def moz_optimize_flags(option, forced_pg
+         return [forced_pgo_optimization_level]
+ 
+ 
  set_config("MOZ_OPTIMIZE", moz_optimize)
  add_old_configure_assignment("MOZ_OPTIMIZE", moz_optimize)
  add_old_configure_assignment("MOZ_CONFIGURE_OPTIMIZE_FLAGS", moz_optimize_flags)
@@ -133,6 +175,9 @@ diff --git a/build/moz.configure/toolchain.configure b/build/moz.configure/toolc
  @imports(_from="mozbuild.shellutil", _import="split")
  def moz_optimize_flags(env_optimize_flags):
      return split(env_optimize_flags[0])
+ 
+ 
+ add_old_configure_assignment("MOZ_OPTIMIZE_FLAGS", moz_optimize_flags)
  
  
 
