@@ -665,11 +665,13 @@ src_prepare() {
 #		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 #	fi
 
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1898476-nvidia-wayland-egl-sync.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-revert-move-CPPFLAGS-from-old-configure-to-moz.configure.patch
+	eapply "${FILESDIR}/"0003-fixup-config-nightly.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
