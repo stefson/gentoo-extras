@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-128-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-128-patches-05.tar.xz"
 
 LLVM_MAX_SLOT=18
 
@@ -665,15 +665,16 @@ src_prepare() {
 #		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 #	fi
 
+	# upstreamed into 130 branch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-907963-rustflags-single-string.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1898476-nvidia-wayland-egl-sync.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1902227-backport-ffmpeg-av1-vaapi-fixes-for-mesa-24.0.7plus.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fixup-nspr-config-nightly.patch
-#	eapply "${FILESDIR}/"0004-revert-move-LDDFLAGS-from-old-configure-to-moz.configure.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
