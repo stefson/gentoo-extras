@@ -1,15 +1,107 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1721770886 0
+# Node ID 26dea989d6785392171976f6243a9d25464a388a
+# Parent  cfa834c6d8a583e3ff15cf6766ee8e0243f0ecd2
+Bug 1907258 - Check that flags are not "empty" before splitting them. r=firefox-build-system-reviewers,ahochheiden a=dmeehan
+
+The various *FLAGS variables are defined as nargs=1, which guarantees
+that if they are set they are going to have a value. They also come with
+a default value of "", which works just fine in the default case.
+
+Things change, though, when the variable is explicitly set to an empty
+value, which then makes it a NegativeOptionValue, which is different
+from the default and needs to be handled.
+
+Original Revision: https://phabricator.services.mozilla.com/D217328
+
+Differential Revision: https://phabricator.services.mozilla.com/D217329
+
 diff --git a/build/moz.configure/flags.configure b/build/moz.configure/flags.configure
-index 9879c36..c6a00d8 100644
 --- a/build/moz.configure/flags.configure
 +++ b/build/moz.configure/flags.configure
-@@ -606,7 +606,9 @@ def host_ldflags(env_ldflags, linker_flags, host_linker_ldflags, host, compiler)
+@@ -564,68 +564,76 @@ def host_cppflags(base_cppflags, host, c
+             flags += ["-mwindows"]
+         flags += ["-DXP_WIN", "-DWIN32", "-D_WIN32", "-D_CRT_SECURE_NO_WARNINGS"]
+         if host.cpu == "x86_64":
+             flags += ["-D_AMD64_"]
+     elif host.kernel == "Darwin":
+         flags += ["-DXP_UNIX", "-DXP_MACOSX"]
+     else:
+         flags += ["-DXP_UNIX"]
+-    flags += split(base_cppflags[0])
++    if base_cppflags:
++        flags += split(base_cppflags[0])
+     return flags
+ 
+ 
+ @depends("HOST_CFLAGS", compilation_flags)
+ @imports(_from="mozbuild.shellutil", _import="split")
+ def host_cflags(base_cflags, compilation_flags):
+     flags = list(compilation_flags.host_cflags)
+-    flags += split(base_cflags[0])
++    if base_cflags:
++        flags += split(base_cflags[0])
+     return flags
+ 
+ 
+ @depends("HOST_CXXFLAGS", compilation_flags)
+ @imports(_from="mozbuild.shellutil", _import="split")
+ def host_cxxflags(base_cxxflags, compilation_flags):
+     flags = list(compilation_flags.host_cxxflags)
+-    flags += split(base_cxxflags[0])
++    if base_cxxflags:
++        flags += split(base_cxxflags[0])
+     return flags
+ 
+ 
+ @depends("HOST_LDFLAGS", linker_flags, host_linker_ldflags, host, host_c_compiler)
+ @imports(_from="mozbuild.shellutil", _import="split")
+ def host_ldflags(env_ldflags, linker_flags, host_linker_ldflags, host, compiler):
+-    flags = split(env_ldflags[0])
++    flags = []
++    if env_ldflags:
++        flags += split(env_ldflags[0])
+     flags += host_linker_ldflags
+     if host.kernel == "WINNT" and compiler.type == "clang-cl":
+         if host.cpu == "x86":
+             flags += ["-MACHINE:X86"]
+         elif host.cpu == "x86_64":
+             flags += ["-MACHINE:X64"]
+     flags += linker_flags.host_ldflags
+     return flags
+ 
+ 
  @depends("CPPFLAGS")
  @imports(_from="mozbuild.shellutil", _import="split")
  def os_cppflags(env_cppflags):
 -    flags = split(env_cppflags[0])
 +    flags = []
 +    if env_cppflags:
-+         flags.extend(split(env_cppflags[0]))
++        flags = split(env_cppflags[0])
      return flags
  
  
+ @depends("ASFLAGS", asm_flags, android_flags, all_arm_flags)
+ @imports(_from="mozbuild.shellutil", _import="split")
+ def os_asflags(env_asflags, asm_flags, android_flags, all_arm_flags):
+     flags = []
+     if android_flags:
+         flags.extend(android_flags.asflags)
+         flags.append("-DANDROID")
+     if all_arm_flags:
+         flags.extend(all_arm_flags)
+     flags.extend(asm_flags.asflags)
+-    flags.extend(split(env_asflags[0]))
++    if env_asflags:
++        flags.extend(split(env_asflags[0]))
+     return flags
+ 
+ 
+ # Please keep these last in this file.
+ add_old_configure_assignment("_COMPILATION_LDFLAGS", linker_flags.ldflags)
+ add_old_configure_assignment(
+     "_COMPILATION_OPTIMIZE_LDFLAGS", linker_optimize_flags.ldflags
+ )
+
+
