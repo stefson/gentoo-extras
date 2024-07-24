@@ -5,7 +5,7 @@ EAPI=8
 
 FIREFOX_PATCHSET="firefox-128-patches-05.tar.xz"
 
-LLVM_MAX_SLOT=18
+LLVM_MAX_SLOT=19
 
 PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -81,6 +81,15 @@ FF_ONLY_DEPEND="!www-client/firefox:0
 	selinux? ( sec-policy/selinux-mozilla )"
 BDEPEND="${PYTHON_DEPS}
 	|| (
+		(
+			sys-devel/clang:19
+			sys-devel/llvm:19
+			clang? (
+				sys-devel/lld:19
+				virtual/rust:0/llvm-19
+				pgo? ( =sys-libs/compiler-rt-sanitizers-19*[profile] )
+			)
+		)
 		(
 			sys-devel/clang:18
 			sys-devel/llvm:18
