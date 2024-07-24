@@ -75,6 +75,7 @@ REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
 	!jumbo-build? ( !system-icu )
 	pgo? ( lto )
+	wayland? ( dbus )
 	wifi? ( dbus )"
 
 FF_ONLY_DEPEND="!www-client/firefox:0
