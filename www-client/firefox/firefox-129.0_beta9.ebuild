@@ -143,7 +143,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	sys-libs/zlib
 	virtual/freedesktop-icon-theme
 	x11-libs/cairo
-	x11-libs/gdk-pixbuf
+	x11-libs/gdk-pixbuf:2
 	x11-libs/pango
 	x11-libs/pixman
 	dbus? (
@@ -168,7 +168,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 		>=media-libs/harfbuzz-2.8.1:0=
 	)
 	system-icu? ( >=dev-libs/icu-73.1:= )
-	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
+	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1:= )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
 	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
@@ -177,7 +177,6 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1
 		x11-libs/gtk+:3[wayland]
-		x11-libs/libxkbcommon[wayland]
 	)
 	wifi? (
 		kernel_linux? (
@@ -194,9 +193,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 		x11-libs/libXdamage
 		x11-libs/libXext
 		x11-libs/libXfixes
-		x11-libs/libxkbcommon[X]
 		x11-libs/libXrandr
-		x11-libs/libXtst
 		x11-libs/libxcb:=
 	)"
 RDEPEND="${COMMON_DEPEND}
@@ -255,7 +252,7 @@ MOZ_LANGS=(
 	fi fr fy-NL ga-IE gd gl he hr hsb hu
 	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
 	pa-IN pl pt-BR pt-PT rm ro ru
-	sk skr sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
+	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 )
 
 # Firefox-only LANGS
@@ -288,6 +285,7 @@ MOZ_LANGS+=( sc )
 MOZ_LANGS+=( sco )
 MOZ_LANGS+=( si )
 MOZ_LANGS+=( son )
+MOZ_LANGS+=( skr )
 MOZ_LANGS+=( szl )
 MOZ_LANGS+=( ta )
 MOZ_LANGS+=( te )
