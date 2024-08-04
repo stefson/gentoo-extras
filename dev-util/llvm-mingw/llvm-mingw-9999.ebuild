@@ -1,10 +1,10 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake check-reqs python-any-r1
+PYTHON_COMPAT=( python3_{10..13} )
+inherit cmake python-any-r1
 
 DESCRIPTION="LLVM/CLANG/LLD based mingw64-toolchain"
 HOMEPAGE="https://github.com/mstorsjo/llvm-mingw"
