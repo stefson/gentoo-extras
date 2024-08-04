@@ -134,8 +134,6 @@ pkg_setup() {
 	pre_build_checks
 	python-any-r1_pkg_setup
 	
-	use system-bootstrap && bootstrap_rust_version_check
-	
 	if use system-llvm; then
 		EGIT_SUBMODULES=( "*" "-src/llvm-project" )
 		llvm_pkg_setup
