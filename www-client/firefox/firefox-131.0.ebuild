@@ -674,7 +674,7 @@ src_prepare() {
 #		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 #	fi
 
-	# upstreamed into 130 branch
+	# upstreamed into 131 branch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-907963-rustflags-single-string.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1898476-nvidia-wayland-egl-sync.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1902227-backport-ffmpeg-av1-vaapi-fixes-for-mesa-24.0.7plus.patch
@@ -862,7 +862,6 @@ src_configure() {
 		--disable-crashreporter \
 		--disable-disk-remnant-avoidance \
 		--disable-geckodriver \
-		--disable-gpsd \
 		--disable-install-strip \
 		--disable-legacy-profile-creation \
 		--disable-parental-controls \
