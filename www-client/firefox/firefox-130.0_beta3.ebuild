@@ -658,12 +658,17 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed to 129 branch
+	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-907963-rustflags-single-string.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1898476-nvidia-wayland-egl-sync.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1902227-backport-ffmpeg-av1-vaapi-fixes-for-mesa-24.0.7plus.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
+	eapply "${FILESDIR}/"0004-fix-cbindgen-0.27.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
