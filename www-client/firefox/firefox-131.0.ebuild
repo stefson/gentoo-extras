@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-128-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-129-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=19
 
@@ -666,7 +666,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed to 130 branch
+	# upstreamed to 131 branch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1912663-cbindgen-0.27.0-fixes.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 #	# Workaround for bgo#915651 on musl
@@ -684,7 +685,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
-	eapply "${FILESDIR}/"0004-fix-cbindgen-0.27.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -744,7 +744,6 @@ src_prepare() {
 
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
-	moz_clear_vendor_checksums proc-macro2
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
