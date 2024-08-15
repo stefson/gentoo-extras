@@ -623,6 +623,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-907963-rustflags-single-string.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1898476-nvidia-wayland-egl-sync.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1902227-backport-ffmpeg-av1-vaapi-fixes-for-mesa-24.0.7plus.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1912663-cbindgen-0.27.0-fixes.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
