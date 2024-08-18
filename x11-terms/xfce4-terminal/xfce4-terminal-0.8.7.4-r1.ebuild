@@ -1,9 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-inherit eapi7-ver
+EAPI=7
 
 DESCRIPTION="A terminal emulator for the Xfce desktop environment"
 HOMEPAGE="https://docs.xfce.org/apps/terminal/start"
