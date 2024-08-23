@@ -11,7 +11,7 @@ PLOCALE_BACKUP="en_GB"
 inherit autotools gnome2-utils plocale xdg-utils
 
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
-KEYWORDS="~amd64 ~arm ~x86"
+#KEYWORDS="~amd64 ~arm ~x86"
 
 DESCRIPTION="foobar2k-like music player"
 HOMEPAGE="http://deadbeef.sourceforge.net"
@@ -176,6 +176,7 @@ src_prepare() {
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-clang-16.patch"
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-popup-log-on-errors.patch"
 	eapply "${FILESDIR}/deadbeef-1.9.5-fixup-musl-1.2.4-lfs.patch"
+#	eapply "${FILESDIR}/deadbeef-1.9.6-fixup-ffmpeg-7.patch"
 
 	rm -fr intl || die
 
