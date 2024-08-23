@@ -176,7 +176,7 @@ src_prepare() {
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-clang-16.patch"
 	eapply "${FILESDIR}/deadbeef-1.8.8-fix-popup-log-on-errors.patch"
 	eapply "${FILESDIR}/deadbeef-1.9.5-fixup-musl-1.2.4-lfs.patch"
-	eapply "${FILESDIR}/deadbeef-1.9.6-fixup-ffmpeg-7.patch"
+#	eapply "${FILESDIR}/deadbeef-1.9.6-fixup-ffmpeg-7.patch"
 
 	rm -fr intl || die
 
