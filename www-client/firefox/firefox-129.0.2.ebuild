@@ -106,8 +106,8 @@ BDEPEND="${PYTHON_DEPS}
 		)
 		!X? (
 			|| (
-			gui-wm/tinywl
-			<gui-libs/wlroots-0.17.3[tinywl(-)]
+				gui-wm/tinywl
+				<gui-libs/wlroots-0.17.3[tinywl(-)]
 			)
 			x11-misc/xkeyboard-config
 		)
