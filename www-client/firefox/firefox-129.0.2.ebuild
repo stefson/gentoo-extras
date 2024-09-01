@@ -63,17 +63,14 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
 IUSE+=" jack +jumbo-build libproxy lto openh264 pgo pulseaudio sndio selinux"
-IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png system-python-libs +system-webp"
+IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png +system-webp"
 IUSE+=" +telemetry valgrind wayland wifi +X"
 
 # Firefox-only IUSE
 IUSE+=" +gmp-autoupdate"
 
-# "-jumbo-build +system-icu": build failure on firefox-120:
-#   firefox-120.0/intl/components/src/TimeZone.cpp:345:3: error: use of undeclared identifier 'MOZ_TRY'
 REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
-	!jumbo-build? ( !system-icu )
 	pgo? ( lto )
 	wayland? ( dbus )
 	wifi? ( dbus )"
@@ -108,7 +105,10 @@ BDEPEND="${PYTHON_DEPS}
 			x11-apps/xhost
 		)
 		!X? (
-			>=gui-libs/wlroots-0.15.1-r1[tinywl]
+			|| (
+			gui-wm/tinywl
+			<gui-libs/wlroots-0.17.3[tinywl(-)]
+			)
 			x11-misc/xkeyboard-config
 		)
 	)"
@@ -271,8 +271,8 @@ MOZ_LANGS+=( oc )
 MOZ_LANGS+=( sc )
 MOZ_LANGS+=( sco )
 MOZ_LANGS+=( si )
-MOZ_LANGS+=( son )
 MOZ_LANGS+=( skr )
+MOZ_LANGS+=( son )
 MOZ_LANGS+=( szl )
 MOZ_LANGS+=( ta )
 MOZ_LANGS+=( te )
@@ -412,40 +412,6 @@ mozconfig_use_with() {
 
 	local flag=$(use_with "${@}")
 	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
-}
-
-# This is a straight copypaste from toolchain-funcs.eclass's 'tc-ld-is-lld', and is temporarily
-# placed here until toolchain-funcs.eclass gets an official support for mold linker.
-# Please see:
-# https://github.com/gentoo/gentoo/pull/28366 ||
-# https://github.com/gentoo/gentoo/pull/28355
-tc-ld-is-mold() {
-	local out
-
-	# Ensure ld output is in English.
-	local -x LC_ALL=C
-
-	# First check the linker directly.
-	out=$($(tc-getLD "$@") --version 2>&1)
-	if [[ ${out} == *"mold"* ]] ; then
-		return 0
-	fi
-
-	# Then see if they're selecting mold via compiler flags.
-	# Note: We're assuming they're using LDFLAGS to hold the
-	# options and not CFLAGS/CXXFLAGS.
-	local base="${T}/test-tc-linker"
-	cat <<-EOF > "${base}.c"
-	int main() { return 0; }
-	EOF
-	out=$($(tc-getCC "$@") ${CFLAGS} ${CPPFLAGS} ${LDFLAGS} -Wl,--version "${base}.c" -o "${base}" 2>&1)
-	rm -f "${base}"*
-	if [[ ${out} == *"mold"* ]] ; then
-		return 0
-	fi
-
-	# No mold here!
-	return 1
 }
 
 virtwl() {
@@ -1132,11 +1098,7 @@ src_configure() {
 	# Use system's Python environment
 	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
 
-	if use system-python-libs; then
-		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
-	else
-		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
-	fi
+	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
 
 	if ! use telemetry; then
 		mozconfig_add_options_mk '-telemetry setting' "MOZ_CRASHREPORTER=0"
