@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-129-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-130-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 )
 
@@ -587,13 +587,6 @@ src_prepare() {
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
-
-	# upstreamed to 130 branch
-	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-907963-rustflags-single-string.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1898476-nvidia-wayland-egl-sync.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1902227-backport-ffmpeg-av1-vaapi-fixes-for-mesa-24.0.7plus.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1912663-cbindgen-0.27.0-fixes.patch
-#	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
 
