@@ -109,7 +109,7 @@ multilib_src_install_all() {
 	done
 
 	# Punt useless .la files
-	prune_libtool_files --modules
+	find "${ED}" -type f -name '*.la' -delete || die
 
 	# Needed for orc-using gst plugins on hardened/PaX systems, bug #421579
 	use orc && pax-mark -m "${ED}usr/bin/gst-launch-${SLOT}"
