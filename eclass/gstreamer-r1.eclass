@@ -25,7 +25,7 @@
 # plugin, consider adding media-plugins/gst-plugins-meta dependency, but
 # also list any packages that provide explicitly requested plugins.
 
-inherit eutils ltprune multilib multilib-minimal toolchain-funcs versionator xdg-utils
+inherit eutils multilib multilib-minimal toolchain-funcs versionator xdg-utils
 
 case "${EAPI:-0}" in
 	5|6)
@@ -264,6 +264,4 @@ gstreamer_multilib_src_install_all() {
 		local dir=$(gstreamer_get_plugin_dir ${plugin_dir})
 		[[ -e ${dir}/README ]] && dodoc "${dir}"/README
 	done
-
-	prune_libtool_files --modules
 }

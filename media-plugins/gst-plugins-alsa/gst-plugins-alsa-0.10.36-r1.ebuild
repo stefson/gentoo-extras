@@ -4,7 +4,7 @@
 EAPI="6"
 
 GST_ORG_MODULE=gst-plugins-base
-inherit gstreamer
+inherit gstreamer-r1
 
 KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-linux ~x86-linux"
 IUSE=""

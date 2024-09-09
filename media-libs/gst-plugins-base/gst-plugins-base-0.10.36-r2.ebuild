@@ -4,7 +4,7 @@
 EAPI="6"
 
 GST_ORG_MODULE="gst-plugins-base"
-inherit eutils gstreamer
+inherit eutils gstreamer-r1
 
 DESCRIPTION="Basepack of plugins for gstreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
