@@ -588,6 +588,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
+	# upstreamed into 131 branch
+#	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-fix-loading-avif-files-when-using-gcc.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch

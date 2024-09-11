@@ -591,7 +591,7 @@ src_prepare() {
 	# upstreamed into 132 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1913286-filter-out-unsupported-devices-for-pipewire-camera-screencasting.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-add-volatile-for-gcc-inline-to-avoid-being-removed.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-fix-loading-avif-files-when-using-gcc.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
