@@ -592,6 +592,7 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1913286-filter-out-unsupported-devices-for-pipewire-camera-screencasting.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-fix-loading-avif-files-when-using-gcc.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1917964-gcc-15-swgl-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
