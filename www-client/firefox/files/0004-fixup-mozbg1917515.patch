@@ -1,7 +1,19 @@
+# HG changeset patch
+# User stransky <stransky@redhat.com>
+# Date 1726298019 0
+# Node ID 2e3a252232c142725a6e630a88325ebf451d6b97
+# Parent  fb7e8b154da41117783417c7d4aaa937b410bde9
+Bug 1918606 [Linux/X11] Use XWindowProperty property len for remoting r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D222094
+
 diff --git a/toolkit/components/remote/nsXRemoteServer.cpp b/toolkit/components/remote/nsXRemoteServer.cpp
 --- a/toolkit/components/remote/nsXRemoteServer.cpp
 +++ b/toolkit/components/remote/nsXRemoteServer.cpp
-@@ -95,35 +95,39 @@
+@@ -92,41 +92,45 @@ void nsXRemoteServer::HandleCommandsFor(
+ 
+ bool nsXRemoteServer::HandleNewProperty(XID aWindowId, Display* aDisplay,
+                                         Time aEventTime, Atom aChangedAtom) {
    if (aChangedAtom == sMozCommandLineAtom) {
      // We got a new command atom.
      int result;
@@ -47,5 +59,8 @@ diff --git a/toolkit/components/remote/nsXRemoteServer.cpp b/toolkit/components/
      XChangeProperty(aDisplay, aWindowId, sMozResponseAtom, XA_STRING, 8,
                      PropModeReplace, (const unsigned char*)response,
                      strlen(response));
+     XFree(data);
+     return true;
+   }
 
 
