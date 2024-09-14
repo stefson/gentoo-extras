@@ -1,9 +1,9 @@
 # Copyright (c) 2016 Stuart Shelton <stuart@shelton.me>
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI="8"
 
-inherit eutils webapp
+inherit webapp
 
 DESCRIPTION="RPi-Monitor - always keep an eye on your Raspberry Pi"
 HOMEPAGE="http://rpi-experiences.blogspot.fr"
@@ -47,7 +47,7 @@ src_prepare() {
 			"${WORKDIR}"/patches/*.patch
 	fi
 	for patch in "${WORKDIR}"/patches/*.patch; do
-		epatch "${patch}" || die "epatch failed"
+		eapply "${patch}" || die "epatch failed"
 	done
 
 	# Fix version string...
