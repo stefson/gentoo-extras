@@ -107,16 +107,6 @@ src_prepare() {
 			"${S}"/build/unix/run-mozilla.sh || die "sed failed!"
 	fi
 
-	# Drop -Wl,--as-needed related manipulation for ia64 as it causes ld sefgaults, bug #582432
-	if use ia64 ; then
-		sed -i \
-		-e '/^OS_LIBS += no_as_needed/d' \
-		-e '/^OS_LIBS += as_needed/d' \
-		"${S}"/widget/gtk/mozgtk/gtk2/moz.build \
-		"${S}"/widget/gtk/mozgtk/gtk3/moz.build \
-		|| die "sed failed to drop --as-needed for ia64"
-	fi
-
 	# Ensure that our plugins dir is enabled as default
 	sed -i -e "s:/usr/lib/mozilla/plugins:/usr/lib/nsbrowser/plugins:" \
 		"${S}"/xpcom/io/nsAppFileLocationProvider.cpp || die "sed failed to replace plugin path for 32bit!"
