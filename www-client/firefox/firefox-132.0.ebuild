@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-130-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-130-patches-04.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -591,8 +591,8 @@ src_prepare() {
 	# upstreamed into 132 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1913286-filter-out-unsupported-devices-for-pipewire-camera-screencasting.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-fix-loading-avif-files-when-using-gcc.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1917964-gcc-15-swgl-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1917964-gcc-15-swgl-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1917964-gcc-15-swgl-fix-2.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

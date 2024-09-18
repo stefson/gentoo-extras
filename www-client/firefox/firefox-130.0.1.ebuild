@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-130-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-130-patches-04.tar.xz"
 
 LLVM_COMPAT=( 17 18 )
 
@@ -586,8 +586,6 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
-
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-fix-loading-avif-files-when-using-gcc.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

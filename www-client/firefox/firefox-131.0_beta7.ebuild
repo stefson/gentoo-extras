@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-130-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-130-patches-04.tar.xz"
 
 LLVM_COMPAT=( 17 18 )
 
@@ -589,14 +589,12 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed into 131 branch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1916038-fix-loading-avif-files-when-using-gcc.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
-	eapply "${FILESDIR}/"0004-use-builtin-convertvector-for-gcc-15.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
