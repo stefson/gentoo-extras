@@ -62,16 +62,18 @@ S="${WORKDIR}/${PN}-${PV%_*}"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 
-IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto"
-IUSE+=" openh264 pgo pulseaudio sndio selinux +system-av1 +system-harfbuzz +system-icu"
+IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto openh264 pgo"
+IUSE+=" pulseaudio sndio selinux +system-av1 +system-harfbuzz +system-icu +system-jpeg"
 IUSE+=" +system-jpeg +system-libevent +system-libvpx system-png +system-webp +telemetry valgrind"
 IUSE+=" wayland wifi +X"
 
 # Firefox-only IUSE
-IUSE+=" +gmp-autoupdate"
+IUSE+=" +gmp-autoupdate gnome-shell"
 
+# !jumbo-build? ( clang ) -> bmo#1914774, bgo#939004 - causes seemingly random compile crashes with gcc.
 REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
+	!jumbo-build? ( clang )
 	pgo? ( lto )
 	wayland? ( dbus )
 	wifi? ( dbus )"
@@ -326,8 +328,7 @@ moz_clear_vendor_checksums() {
 
 	sed -i \
 		-e 's/\("files":{\)[^}]*/\1/' \
-		"${S}"/third_party/rust/${1}/.cargo-checksum.json \
-		|| die
+		"${S}"/third_party/rust/${1}/.cargo-checksum.json || die
 }
 
 moz_install_xpi() {
@@ -587,7 +588,10 @@ src_prepare() {
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 
-	# upstreamed into 131 branch
+	# Workaround for bgo#915651 on musl
+	if use elibc_glibc ; then
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+	fi
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -622,14 +626,6 @@ src_prepare() {
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}"/build/moz.configure/lto-pgo.configure || die "Failed sedding multiprocessing.cpu_count"
 
-	# Make ICU respect MAKEOPTS
-	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/intl/icu_sources_data.py || die "Failed sedding multiprocessing.cpu_count"
-
-	# Respect MAKEOPTS all around (maybe some find+sed is better)
-	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/python/mozbuild/mozbuild/base.py || die "Failed sedding multiprocessing.cpu_count"
-
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}"/third_party/libwebrtc/build/toolchain/get_cpu_count.py || die "Failed sedding multiprocessing.cpu_count"
 
@@ -640,19 +636,14 @@ src_prepare() {
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}"/third_party/python/gyp/pylib/gyp/input.py || die "Failed sedding multiprocessing.cpu_count"
 
-	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/python/mozbuild/mozbuild/code_analysis/mach_commands.py || die "Failed sedding multiprocessing.cpu_count"
-
 	# sed-in toolchain prefix
 	sed -i \
 		-e "s/objdump/${CHOST}-objdump/" \
-		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
-		|| die "sed failed to set toolchain prefix"
+		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py || die "sed failed to set toolchain prefix"
 
 	sed -i \
 		-e 's/ccache_stats = None/return None/' \
-		"${S}"/python/mozbuild/mozbuild/controller/building.py \
-		|| die "sed failed to disable ccache stats call"
+		"${S}"/python/mozbuild/mozbuild/controller/building.py || die "sed failed to disable ccache stats call"
 
 	einfo "Removing pre-built binaries ..."
 
@@ -755,9 +746,6 @@ src_configure() {
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
-
-	# for musl: add alpine patch and then uncomment
-	# export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 
 	# Set state path
 	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
@@ -1312,23 +1300,36 @@ src_install() {
 		-e "s:@NAME@:${app_name}:" \
 		-e "s:@EXEC@:${exec_command}:" \
 		-e "s:@ICON@:${icon}:" \
-		"${WORKDIR}/${PN}.desktop-template" \
-		|| die
+		"${WORKDIR}/${PN}.desktop-template" || die
 
 	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-	# Install search provider for Gnome
-	insinto /usr/share/gnome-shell/search-providers/
-	doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
+	if use gnome-shell ; then
+		# Install search provider for Gnome
+		insinto /usr/share/gnome-shell/search-providers/
+		doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
 
-	insinto /usr/share/dbus-1/services/
-	doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
+		insinto /usr/share/dbus-1/services/
+		doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
 
-	sed -e "s/firefox.desktop/${desktop_filename}/g" \
-		-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
-			die "Failed to sed search-provider file."
+		# Toggle between rapid and esr desktop file names
+		sed -e "s/firefox.desktop/${desktop_filename}/g" \
+			-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" ||
+				die "Failed to sed org.mozilla.firefox.search-provider.ini file."
+
+		# Make the dbus service aware of a previous session, bgo#939196
+		sed -e \
+			"s/Exec=\/usr\/bin\/firefox/Exec=\/usr\/$(get_libdir)\/firefox\/firefox --dbus-service \/usr\/bin\/firefox/g" \
+			-i "${ED}/usr/share/dbus-1/services/org.mozilla.firefox.SearchProvider.service" ||
+				die "Failed to sed org.mozilla.firefox.SearchProvider.service dbus file"
+
+		# Update prefs to enable Gnome search provider
+		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable gnome-search-provider via prefs"
+		pref("browser.gnome-search-provider.enabled", true);
+		EOF
+	fi
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -1340,8 +1341,7 @@ src_install() {
 		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
 		-e "s:@APULSELIB_DIR@:${apulselib}:" \
 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-		"${ED}/usr/bin/${PN}" \
-		|| die
+		"${ED}/usr/bin/${PN}" || die
 
 	readme.gentoo_create_doc
 }
@@ -1411,3 +1411,4 @@ pkg_postinst() {
 		elog
 	fi
 }
+
