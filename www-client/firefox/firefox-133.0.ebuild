@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-130-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-131-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -593,6 +593,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1913286-filter-out-unsupported-devices-for-pipewire-camera-screencasting.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1917964-gcc-15-swgl-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1917964-gcc-15-swgl-fix-2.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1634961-add-option-to-list-switch-to-open-tabs-in-gnome-shell-provider.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
