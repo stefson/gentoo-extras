@@ -11,7 +11,7 @@
 # Saleem Abdulrasool <compnerd@gentoo.org>
 # foser <foser@gentoo.org>
 # zaheerm <zaheerm@gentoo.org>
-# @SUPPORTED_EAPIS: 5 6 7 8
+# @SUPPORTED_EAPIS: 7 8
 # @PROVIDES: multilib-minimal
 # @BLURB: Helps building core & split gstreamer plugins.
 # @DESCRIPTION:
@@ -28,9 +28,9 @@
 inherit multilib multilib-minimal toolchain-funcs xdg-utils
 
 case "${EAPI:-0}" in
-	6|7|8)
+	7|8)
 		;;
-	0|1|2|3|4|5)
+	0|1|2|3|4|5|6)
 		die "EAPI=\"${EAPI:-0}\" is not supported anymore"
 		;;
 	*)
