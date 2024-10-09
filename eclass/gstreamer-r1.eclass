@@ -25,7 +25,7 @@
 # plugin, consider adding media-plugins/gst-plugins-meta dependency, but
 # also list any packages that provide explicitly requested plugins.
 
-inherit eutils multilib multilib-minimal toolchain-funcs versionator xdg-utils
+inherit multilib multilib-minimal toolchain-funcs versionator xdg-utils
 
 case "${EAPI:-0}" in
 	6|7)
