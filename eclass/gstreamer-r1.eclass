@@ -11,7 +11,7 @@
 # Saleem Abdulrasool <compnerd@gentoo.org>
 # foser <foser@gentoo.org>
 # zaheerm <zaheerm@gentoo.org>
-# @SUPPORTED_EAPIS: 5 6
+# @SUPPORTED_EAPIS: 5 6 7 8
 # @PROVIDES: multilib-minimal
 # @BLURB: Helps building core & split gstreamer plugins.
 # @DESCRIPTION:
@@ -25,10 +25,10 @@
 # plugin, consider adding media-plugins/gst-plugins-meta dependency, but
 # also list any packages that provide explicitly requested plugins.
 
-inherit multilib multilib-minimal toolchain-funcs versionator xdg-utils
+inherit multilib multilib-minimal toolchain-funcs xdg-utils
 
 case "${EAPI:-0}" in
-	6|7)
+	6|7|8)
 		;;
 	0|1|2|3|4|5)
 		die "EAPI=\"${EAPI:-0}\" is not supported anymore"
@@ -75,8 +75,7 @@ fi
 # @INTERNAL
 # @DESCRIPTION:
 # Major and minor numbers of the version number.
-: ${GST_ORG_PVP:=$(get_version_component_range 1-2)}
-
+: ${GST_ORG_PVP:=$(ver_cut 1-2)}
 
 DESCRIPTION="${BUILD_GST_PLUGINS} plugin for gstreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
