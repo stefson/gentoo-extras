@@ -592,6 +592,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1917964-gcc-15-swgl-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1917964-gcc-15-swgl-fix-2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1634961-add-option-to-list-switch-to-open-tabs-in-gnome-shell-provider.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1921719-dont-crash-in-gnome-shell-if-there-are-no-search-results.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
