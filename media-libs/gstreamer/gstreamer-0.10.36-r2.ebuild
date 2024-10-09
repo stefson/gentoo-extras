@@ -1,9 +1,9 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit eutils multilib multilib-minimal pax-utils
+inherit multilib multilib-minimal pax-utils
 
 DESCRIPTION="Streaming media framework"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
@@ -32,10 +32,10 @@ RDEPEND="${RDEPEND}
 src_prepare() {
 	default
 	# Disable silly test that's not guaranteed to pass on an arbitrary machine
-	epatch "${FILESDIR}/${PN}-0.10.36-disable-test_fail_abstract_new.patch"
+	eapply "${FILESDIR}/${PN}-0.10.36-disable-test_fail_abstract_new.patch"
 
 	# Fix compilation with >=sys-devel/bison-3.0 (#478676)
-	epatch "${FILESDIR}/${PN}-make-grammar.y-work-with-bison-3.patch"
+	eapply "${FILESDIR}/${PN}-make-grammar.y-work-with-bison-3.patch"
 
 	# Disable windows-portability tests that are relevant only on x86 and amd64
 	# and can fail on other arches (bug #455038)
