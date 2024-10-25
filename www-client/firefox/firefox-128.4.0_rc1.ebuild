@@ -591,6 +591,13 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
+#	eapply "${FILESDIR}"/privacy-patchset-128/firefox-60-disable-data-sharing-infobar.patch
+#	eapply "${FILESDIR}"/privacy-patchset-128/firefox-60-disable-telemetry.patch
+
+	# disable unwanted addons and pocket as well
+#	eapply "${FILESDIR}"/privacy-patchset-128/disable-pocket.patch
+#	eapply "${FILESDIR}"/privacy-patchset-128/remove_addons.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -681,6 +688,8 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
+
+	rm -rv browser/extensions/{formautofill,screenshots,webcompat,report-site-issue}
 
 	xdg_environment_reset
 }

@@ -10,5 +10,3 @@ pref("intl.locale.requested",              "");
 pref("network.trr.mode",                   5);
 /* Disable use of Mozilla Normandy service by default */
 pref("app.normandy.enabled",               false);
-/* Disable website advertising preferences by default */
-pref("dom.private-attribution.submission.enabled",  false);

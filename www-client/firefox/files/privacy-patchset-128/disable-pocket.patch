@@ -1,0 +1,39 @@
+diff --git a/browser/components/BrowserGlue.sys.mjs b/browser/components/BrowserGlue.sys.mjs
+index 92acb0c..ec36281 100644
+--- a/browser/components/BrowserGlue.sys.mjs
++++ b/browser/components/BrowserGlue.sys.mjs
+@@ -1297,8 +1297,6 @@ BrowserGlue.prototype = {
+       lazy.Normandy.init();
+     }
+ 
+-    lazy.SaveToPocket.init();
+-
+     AboutHomeStartupCache.init();
+ 
+     Services.obs.notifyObservers(null, "browser-ui-startup-complete");
+
+diff --git a/browser/components/moz.build b/browser/components/moz.build
+index 63fd688..541dc45 100644
+--- a/browser/components/moz.build
++++ b/browser/components/moz.build
+@@ -44,7 +44,6 @@ DIRS += [
+     "originattributes",
+     "pagedata",
+     "places",
+-    "pocket",
+     "preferences",
+     "privatebrowsing",
+     "prompts",
+diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
+index c322922..0868abf 100644
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -5317,8 +5317,6 @@ var XULBrowserWindow = {
+ 
+     SafeBrowsingNotificationBox.onLocationChange(aLocationURI);
+ 
+-    SaveToPocket.onLocationChange(window);
+-
+     let originalURI;
+     if (aRequest instanceof Ci.nsIChannel) {
+       originalURI = aRequest.originalURI;
