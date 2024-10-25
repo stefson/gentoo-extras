@@ -607,6 +607,8 @@ src_prepare() {
 			export RUST_TARGET="aarch64-unknown-linux-musl"
 		elif use ppc64 ; then
 			export RUST_TARGET="powerpc64le-unknown-linux-musl"
+		elif use arm ; then
+			export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 		else
 			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
 		fi
