@@ -591,7 +591,6 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-#	eapply "${FILESDIR}"/privacy-patchset-128/firefox-60-disable-data-sharing-infobar.patch
 #	eapply "${FILESDIR}"/privacy-patchset-128/firefox-60-disable-telemetry.patch
 
 	# disable unwanted addons and pocket as well
