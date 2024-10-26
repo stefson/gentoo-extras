@@ -1,20 +1,20 @@
-diff --git a/browser/components/BrowserGlue.jsm b/browser/components/BrowserGlue.sys.mjs
-index b2479db..7670f08 100644
+diff --git a/browser/components/BrowserGlue.sys.mjs b/browser/components/BrowserGlue.sys.mjs
+index 67b3618..c3e646d 100644
 --- a/browser/components/BrowserGlue.sys.mjs
 +++ b/browser/components/BrowserGlue.sys.mjs
-@@ -1274,7 +1274,6 @@ BrowserGlue.prototype = {
+@@ -1501,7 +1501,6 @@ BrowserGlue.prototype = {
        lazy.Normandy.init();
      }
  
 -    lazy.SaveToPocket.init();
  
-     AboutHomeStartupCache.init();
-
+     lazy.ResetPBMPanel.init();
+ 
 diff --git a/browser/components/moz.build b/browser/components/moz.build
-index 3b2126e..32b7831 100644
+index 6cbb7ce..37d98cd 100644
 --- a/browser/components/moz.build
 +++ b/browser/components/moz.build
-@@ -44,7 +44,6 @@ DIRS += [
+@@ -49,7 +49,6 @@ DIRS += [
      "originattributes",
      "pagedata",
      "places",
@@ -23,14 +23,14 @@ index 3b2126e..32b7831 100644
      "privatebrowsing",
      "prompts",
 diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
-index 43c84c3..4b4aad2 100644
+index 3b2b6e6..c46d84f 100644
 --- a/browser/base/content/browser.js
 +++ b/browser/base/content/browser.js
-@@ -5478,7 +5478,6 @@ var XULBrowserWindow = {
+@@ -3630,7 +3630,6 @@ var XULBrowserWindow = {
  
      SafeBrowsingNotificationBox.onLocationChange(aLocationURI);
  
 -    SaveToPocket.onLocationChange(window);
  
      let originalURI;
-     if (
+     if (aRequest instanceof Ci.nsIChannel) {
