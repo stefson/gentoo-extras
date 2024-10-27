@@ -1,0 +1,22 @@
+diff --git a/mozglue/interposers/pthread_atfork_interposer.cpp b/mozglue/interposers/pthread_atfork_interposer.cpp
+index 8629fe0..4f8694b 100644
+--- a/mozglue/interposers/pthread_atfork_interposer.cpp
++++ b/mozglue/interposers/pthread_atfork_interposer.cpp
+@@ -164,6 +164,8 @@ __attribute__((used)) __attribute__((constructor)) void register_atfork_setup(
+       "GLIBC_2.3.2"
+ #    elif defined(__aarch64__)
+       "GLIBC_2.17"
++#    elif defined(__arm__)
++      "GLIBC_2.4"
+ #    else
+ #      error \
+           "Missing GLIBC version for __register_atfork(). Please objdump -tTC libc.so.6 and add"
+@@ -185,6 +187,8 @@ __attribute__((used)) __attribute__((constructor)) void register_atfork_setup(
+       "GLIBC_2.2.5"
+ #    elif defined(__aarch64__)
+       "GLIBC_2.17"
++#    elif defined(__arm__)
++      "GLIBC_2.4"
+ #    else
+ #      error \
+           "Missing GLIBC version for __cxa_finalize(). Please objdump -tTC libc.so.6 and add"
