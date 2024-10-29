@@ -1,7 +1,26 @@
+# HG changeset patch
+# User Alexandre Lissy <lissyx+mozillians@lissyx.dyndns.org>
+# Date 1730190122 0
+# Node ID 10accc07a69d7bff15cb18a73274093db131fbed
+# Parent  294acbbb2573bfa083ebabe99c99b43a730c438e
+Bug 1927320 - Use GET_REAL_SYMBOL() interposition for __register_atfork() / __cxa_finalize() r=glandium
+
+In earlier version of working on those interposers, for some
+undetermined reason the resolution would fail to find the glibc symbol
+when using GET_REAL_SYMBOL() and we had to make use of dlvsym() instead.
+
+After testing again this seems not to hold anymore so we can just make
+use of GET_REAL_SYMBOL().
+
+Differential Revision: https://phabricator.services.mozilla.com/D226984
+
 diff --git a/mozglue/interposers/pthread_atfork_interposer.cpp b/mozglue/interposers/pthread_atfork_interposer.cpp
 --- a/mozglue/interposers/pthread_atfork_interposer.cpp
 +++ b/mozglue/interposers/pthread_atfork_interposer.cpp
-@@ -74,17 +74,14 @@
+@@ -71,23 +71,20 @@ struct moz_pthread_atfork_handler {
+ struct moz_pthread_atfork_handler mozPthreadHandlers;
+ 
+ #  if defined(LIBC_GLIBC)
  // On glibc the pthread_atfork may be available only from libc_nonshared.a
  // so prefer interposing the linker-resolved __register_atfork()
  
@@ -21,7 +40,13 @@ diff --git a/mozglue/interposers/pthread_atfork_interposer.cpp b/mozglue/interpo
  
  static int notReadyCount = 0;
  
-@@ -148,57 +145,21 @@
+ extern "C" {
+ 
+ #  if defined(LIBC_GLIBC)
+@@ -145,81 +142,41 @@ MFBT_API int pthread_atfork(void (*aPref
+     rv = ENOMEM;
+   }
+ 
    return rv;
  }
  
@@ -81,7 +106,9 @@ diff --git a/mozglue/interposers/pthread_atfork_interposer.cpp b/mozglue/interpo
      for (int i = 0; i < notReadyCount; ++i) {
        real_register_atfork(mozPthreadHandlers.handlers[i][idxPreFork],
                             mozPthreadHandlers.handlers[i][idxPostForkParent],
-@@ -208,15 +169,11 @@
+                            mozPthreadHandlers.handlers[i][idxPostForkChild],
+                            __dso_handle);
+     }
    }
  }
  #  else
@@ -98,5 +125,8 @@ diff --git a/mozglue/interposers/pthread_atfork_interposer.cpp b/mozglue/interpo
      for (int i = 0; i < notReadyCount; ++i) {
        real_pthread_atfork(mozPthreadHandlers.handlers[i][idxPreFork],
                            mozPthreadHandlers.handlers[i][idxPostForkParent],
+                           mozPthreadHandlers.handlers[i][idxPostForkChild]);
+     }
+   }
 
 
