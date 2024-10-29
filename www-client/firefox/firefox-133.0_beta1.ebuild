@@ -117,8 +117,8 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.104
-	>=dev-libs/nspr-4.35
+	>=dev-libs/nss-3.106
+	>=dev-libs/nspr-4.36
 	media-libs/alsa-lib
 	media-libs/fontconfig
 	media-libs/freetype
