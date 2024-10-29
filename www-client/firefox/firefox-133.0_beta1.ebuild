@@ -587,6 +587,10 @@ src_prepare() {
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 
+	# upstreamed to 133 branch
+	rm -v "${WORKDIR}"/firefox-patches/0013-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
+#	rm -v "${WORKDIR}"/firefox-patches/
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
@@ -628,12 +632,12 @@ src_prepare() {
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}"/python/mozbuild/mozbuild/base.py || die "Failed sedding multiprocessing.cpu_count"
 
-	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/third_party/libwebrtc/build/toolchain/get_cpu_count.py || die "Failed sedding multiprocessing.cpu_count"
+#	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
+#		"${S}"/third_party/libwebrtc/build/toolchain/get_cpu_count.py || die "Failed sedding multiprocessing.cpu_count"
 
-	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/third_party/libwebrtc/build/toolchain/get_concurrent_links.py ||
-			die "Failed sedding multiprocessing.cpu_count"
+#	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
+#		"${S}"/third_party/libwebrtc/build/toolchain/get_concurrent_links.py ||
+#			die "Failed sedding multiprocessing.cpu_count"
 
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}"/third_party/python/gyp/pylib/gyp/input.py || die "Failed sedding multiprocessing.cpu_count"
