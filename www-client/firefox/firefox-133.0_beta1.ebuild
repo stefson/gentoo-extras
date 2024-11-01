@@ -596,7 +596,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
-	eapply "${FILESDIR}/"0004-revert-mozbg1917548.patch
+#	eapply "${FILESDIR}/"0004-revert-mozbg1917548.patch
+	eapply "${FILESDIR}/"0004-fix-mozbg1917548.patch
 	eapply "${FILESDIR}/"0005-use-get-real-symbol-interposition-for-register-atfork.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
