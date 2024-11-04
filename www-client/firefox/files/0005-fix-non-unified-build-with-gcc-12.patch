@@ -1,0 +1,51 @@
+diff --git a/gfx/webrender_bindings/RenderTextureHost.h b/gfx/webrender_bindings/RenderTextureHost.h
+--- a/gfx/webrender_bindings/RenderTextureHost.h
++++ b/gfx/webrender_bindings/RenderTextureHost.h
+@@ -87,13 +87,11 @@
+                                        RenderCompositor* aCompositor);
+ 
+   virtual void UnlockSWGL() {}
+ 
+   virtual RefPtr<layers::TextureSource> CreateTextureSource(
+-      layers::TextureSourceProvider* aProvider) {
+-    return nullptr;
+-  }
++      layers::TextureSourceProvider* aProvider);
+ 
+   virtual void ClearCachedResources() {}
+ 
+   // Called asynchronouly when corresponding TextureHost's mCompositableCount
+   // becomes from 0 to 1. For now, it is used only for
+diff --git a/gfx/webrender_bindings/RenderTextureHost.cpp b/gfx/webrender_bindings/RenderTextureHost.cpp
+--- a/gfx/webrender_bindings/RenderTextureHost.cpp
++++ b/gfx/webrender_bindings/RenderTextureHost.cpp
+@@ -6,10 +6,11 @@
+ 
+ #include "RenderTextureHost.h"
+ 
+ #include "GLContext.h"
+ #include "mozilla/layers/CompositorThread.h"
++#include "mozilla/layers/TextureHost.h"
+ #include "RenderThread.h"
+ 
+ namespace mozilla {
+ namespace wr {
+ 
+@@ -42,10 +43,15 @@
+                                                 void* aContext,
+                                                 RenderCompositor* aCompositor) {
+   return InvalidToWrExternalImage();
+ }
+ 
++RefPtr<layers::TextureSource> RenderTextureHost::CreateTextureSource(
++    layers::TextureSourceProvider* aProvider) {
++  return nullptr;
++}
++
+ void RenderTextureHost::Destroy() {
+   MOZ_ASSERT_UNREACHABLE("unexpected to be called");
+ }
+ 
+ RefPtr<RenderTextureHostUsageInfo> RenderTextureHost::GetOrMergeUsageInfo(
+
+
