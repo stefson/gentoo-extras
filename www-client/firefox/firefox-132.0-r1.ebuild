@@ -62,7 +62,7 @@ S="${WORKDIR}/${PN}-${PV%_*}"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 
-IUSE="clang dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto openh264 pgo"
+IUSE="clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto openh264 pgo"
 IUSE+=" pulseaudio sndio selinux +system-av1 +system-harfbuzz +system-icu +system-jpeg"
 IUSE+=" +system-jpeg +system-libevent +system-libvpx system-png +system-webp +telemetry valgrind"
 IUSE+=" wayland wifi +X"
@@ -803,7 +803,7 @@ src_configure() {
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
-	if ! use x86 ; then
+	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
 	fi
 
@@ -995,6 +995,29 @@ src_configure() {
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
 
+	# Modifications to better support ARM, bug #553364
+	if use cpu_flags_arm_neon ; then
+		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
+
+		if ! tc-is-clang ; then
+			# thumb options aren't supported when using clang, bug 666966
+			mozconfig_add_options_ac '+cpu_flags_arm_neon' \
+				--with-thumb=yes \
+				--with-thumb-interwork=no
+		fi
+	fi
+
+	if [[ ${CHOST} == armv*h* ]] ; then
+		mozconfig_add_options_ac 'CHOST=armv*h*' --with-float-abi=hard
+
+		if ! use system-libvpx ; then
+			sed -i \
+				-e "s|softfp|hard|" \
+				"${S}"/media/libvpx/moz.build \
+				|| die
+		fi
+	fi
+
 	# elf-hack
 	# Filter "-z,pack-relative-relocs" and let the build system handle it instead.
 	if use amd64 || use x86 ; then
@@ -1013,6 +1036,21 @@ src_configure() {
 	else
 		mozconfig_add_options_ac 'disable elf-hack on non-supported arches' --disable-elf-hack
 	fi
+
+	# Additional ARCH support
+	case "${ARCH}" in
+		arm)
+			# Reduce the memory requirements for linking
+			if use clang ; then
+				# Nothing to do
+				:;
+			elif use lto ; then
+				append-ldflags -Wl,--no-keep-memory
+			else
+				append-ldflags -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
+			fi
+			;;
+	esac
 
 	if ! use elibc_glibc; then
 		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
