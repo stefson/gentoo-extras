@@ -595,6 +595,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
 	eapply "${FILESDIR}/"0004-revert-mozbg1917548.patch
 	eapply "${FILESDIR}/"0005-fix-non-unified-build-with-gcc-12.patch
+	eapply "${FILESDIR}/"0006-fixup-atfork-interposer-on-musl.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
