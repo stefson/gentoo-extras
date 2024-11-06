@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-132-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-132-patches-02.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -598,7 +598,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
-	eapply "${FILESDIR}/"0005-fix-non-unified-build-with-gcc-12.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-132-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-132-patches-02.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -589,7 +589,7 @@ src_prepare() {
 
 	# upstreamed to 133 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0013-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
+	rm -v "${WORKDIR}"/firefox-patches/0012-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -597,7 +597,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
 	eapply "${FILESDIR}/"0004-revert-mozbg1917548.patch
-	eapply "${FILESDIR}/"0005-fix-non-unified-build-with-gcc-12.patch
 	eapply "${FILESDIR}/"0006-fixup-atfork-interposer-on-musl.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
