@@ -1,0 +1,13 @@
+diff --git a/widget/gtk/WakeLockListener.cpp b/widget/gtk/WakeLockListener.cpp
+index 787969a..68c4c82 100644
+--- a/widget/gtk/WakeLockListener.cpp
++++ b/widget/gtk/WakeLockListener.cpp
+@@ -9,6 +9,8 @@
+ #include "WidgetUtilsGtk.h"
+ #include "mozilla/ScopeExit.h"
+ 
++#include <queue>
++
+ #ifdef MOZ_ENABLE_DBUS
+ #  include <gio/gio.h>
+ #  include "AsyncDBus.h"
