@@ -65,7 +65,7 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 IUSE="clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto openh264 pgo"
 IUSE+=" pulseaudio sndio selinux +system-av1 +system-harfbuzz +system-icu +system-jpeg"
 IUSE+=" +system-jpeg +system-libevent +system-libvpx system-png +system-webp +telemetry valgrind"
-IUSE+=" wayland wifi +X"
+IUSE+=" wasm-sandbox wayland wifi +X"
 
 # Firefox-only IUSE
 IUSE+=" +gmp-autoupdate gnome-shell"
@@ -599,6 +599,8 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
 
+	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -1058,6 +1060,12 @@ src_configure() {
 
 	if use valgrind; then
 		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
+	fi
+
+	if use wasm-sandbox; then
+		mozconfig_add_options_ac 'enable wasm sandbox' --with-wasi-sysroot="${EROOT}/usr/wasm32-wasi"
+	else
+		mozconfig_add_options_ac 'disable wasm sandbox' --without-wasm-sandboxed-libraries
 	fi
 
 	# System-av1 fix
