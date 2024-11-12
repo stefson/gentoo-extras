@@ -1,13 +1,33 @@
+# HG changeset patch
+# User Landry Breuil <landry@openbsd.org>
+# Date 1731406280 0
+# Node ID 1bec81551b1830ac63ebe58490160afa3db40ef6
+# Parent  1352d3789a97da4a8bf6a6ae3b3702805c2a9c2e
+Bug 1926030: add missing #include <queue> r=stransky
+
+fixes a build failure on non-wayland builds.
+
+Differential Revision: https://phabricator.services.mozilla.com/D228535
+
 diff --git a/widget/gtk/WakeLockListener.cpp b/widget/gtk/WakeLockListener.cpp
-index 787969a..68c4c82 100644
 --- a/widget/gtk/WakeLockListener.cpp
 +++ b/widget/gtk/WakeLockListener.cpp
-@@ -9,6 +9,8 @@
- #include "WidgetUtilsGtk.h"
- #include "mozilla/ScopeExit.h"
+@@ -1,15 +1,17 @@
+ /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+ /* vim:expandtab:shiftwidth=2:tabstop=2:
+  */
+ /* This Source Code Form is subject to the terms of the Mozilla Public
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
  
 +#include <queue>
 +
+ #include "WakeLockListener.h"
+ #include "WidgetUtilsGtk.h"
+ #include "mozilla/ScopeExit.h"
+ 
  #ifdef MOZ_ENABLE_DBUS
  #  include <gio/gio.h>
  #  include "AsyncDBus.h"
+ #endif
+
