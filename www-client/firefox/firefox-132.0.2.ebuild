@@ -593,7 +593,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 	fi
 
-#	rm -v "${WORKDIR}"/firefox-patches/0029-bgo-940031-wasm-support.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bgo-940031-wasm-support.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
