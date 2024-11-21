@@ -588,6 +588,7 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0012-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1914774-fix-non-unified-gcc-build.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1928364-musl-make-sys_fork-non-fatal.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
