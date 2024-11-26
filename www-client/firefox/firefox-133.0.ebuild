@@ -10,7 +10,7 @@ LLVM_COMPAT=( 17 18 19 )
 PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
-WANT_AUTOCONF="2.1"
+WANT_AUTOCONF="2.71"
 
 VIRTUALX_REQUIRED="manual"
 
@@ -586,10 +586,6 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
-
-	# upstreamed to 133 branch
-#	rm -v "${WORKDIR}"/firefox-patches/
-#	rm -v "${WORKDIR}"/firefox-patches/0012-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

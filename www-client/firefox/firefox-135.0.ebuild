@@ -10,7 +10,7 @@ LLVM_COMPAT=( 17 18 19 )
 PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
-WANT_AUTOCONF="2.1"
+WANT_AUTOCONF="2.71"
 
 VIRTUALX_REQUIRED="manual"
 
