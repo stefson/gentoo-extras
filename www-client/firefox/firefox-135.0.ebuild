@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-132-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-133-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -584,11 +584,10 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed into 134 branch
+	# upstreamed into 135 branch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1914774-fix-non-unified-gcc-build.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1928364-musl-make-sys_fork-non-fatal.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0012-bmo-1196777-Set-GDK_FOCUS_CHANGE_MASK.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1914774-fix-non-unified-gcc-build.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1928364-musl-make-sys_fork-non-fatal.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
