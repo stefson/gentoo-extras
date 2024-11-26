@@ -117,7 +117,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.106
+	>=dev-libs/nss-3.107
 	>=dev-libs/nspr-4.36
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -582,10 +582,10 @@ src_prepare() {
 	fi
 
 	# Workaround for bgo#917599
-	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
-		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
-	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
+
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1914774-fix-non-unified-gcc-build.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1928364-musl-make-sys_fork-non-fatal.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
