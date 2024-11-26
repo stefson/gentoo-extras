@@ -586,6 +586,7 @@ src_prepare() {
 		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
