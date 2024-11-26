@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-128esr-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-128esr-patches-05.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -591,7 +591,7 @@ src_prepare() {
 
 	eapply "${WORKDIR}/firefox-patches"
 
-	eapply "${FILESDIR}"/0001-fixup-warnings-in-esr.patch
+#	eapply "${FILESDIR}"/0001-fixup-warnings-in-esr.patch
 
 	eapply "${FILESDIR}"/privacy-patchset-128/firefox-60-disable-telemetry.patch
 
