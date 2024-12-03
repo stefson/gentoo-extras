@@ -8,7 +8,7 @@ PLOCALES="be bg bn ca cs da de el en_GB es et eu fa fi fr gl he hr hu id it ja k
 
 PLOCALE_BACKUP="en_GB"
 
-inherit autotools gnome2-utils plocale xdg-utils
+inherit autotools plocale xdg-utils
 
 SRC_URI="https://sourceforge.net/projects/${PN}/files/travis/linux/${PV}/deadbeef-${PV}.tar.bz2/download
 	-> ${P}.tar.bz2"
@@ -240,10 +240,10 @@ src_configure() {
 		$(use_enable zip vfs-zip)
 }
 
-pkg_preinst() {
-	if use gtk2 || use gtk3 ; then
-		gnome2_icon_savelist
-	fi
+src_install() {
+	default
+
+	find "${ED}" -name '*.la' -delete || die
 }
 
 pkg_postinst() {
