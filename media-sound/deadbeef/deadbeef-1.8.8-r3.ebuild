@@ -37,7 +37,6 @@ LICENSE="BSD
 	gtk2? ( GPL-2 )
 	gtk3? ( GPL-2 )
 	hotkeys? ( ZLIB )
-	libnotify? ( GPL-2 )
 	libsamplerate? ( GPL-2 )
 	m3u? ( ZLIB )
 	mac? ( GPL-2 )
@@ -68,7 +67,7 @@ SLOT="0"
 
 IUSE="+alsa +flac +gtk2 +hotkeys +m3u +mad +mp3 +sndfile +vorbis
 	aac alac cdda cdparanoia converter cover cover-imlib2 cover-network curl dts dumb equalizer
-	ffmpeg gme gtk3 libnotify libsamplerate mac midi mms mono2stereo mpg123 musepack nls
+	ffmpeg gme gtk3 libsamplerate mac midi mms mono2stereo mpg123 musepack nls
 	nullout opus oss playlist-browser psf pulseaudio sc68 shell-exec shn sid tta unity vtx wavpack wma zip"
 
 REQUIRED_USE="cdparanoia? ( cdda )
@@ -107,7 +106,6 @@ RDEPEND="dev-libs/glib:2
 	gtk3? ( dev-libs/jansson:=
 		x11-libs/gtk+:3 )
 	hotkeys? ( x11-libs/libX11:0 )
-	libnotify? ( sys-apps/dbus:0 )
 	libsamplerate? ( media-libs/libsamplerate:0 )
 	mad? ( media-libs/libmad:0 )
 	midi? ( media-sound/timidity-freepats:0 )
@@ -212,7 +210,7 @@ src_configure() {
 		$(use_enable gtk3) \
 		$(use_enable hotkeys) \
 		--disable-lfm \
-		$(use_enable libnotify notify) \
+		--disable-notify \
 		$(use_enable libsamplerate src) \
 		$(use_enable m3u) \
 		$(use_enable mac ffap) \
