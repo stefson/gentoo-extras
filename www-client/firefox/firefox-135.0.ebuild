@@ -585,6 +585,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed into 135 branch
+	rm -v "${WORKDIR}"/firefox-patches/0022-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1914774-fix-non-unified-gcc-build.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1928364-musl-make-sys_fork-non-fatal.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
