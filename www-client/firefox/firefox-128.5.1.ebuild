@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-128esr-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-128esr-patches-07.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -588,6 +588,8 @@ src_prepare() {
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 	fi
+
+	rm -v "${WORKDIR}"/firefox-patches/0030-bgo-940031-wasm-support.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
