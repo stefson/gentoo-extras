@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-133-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-133-patches-03.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -587,6 +587,7 @@ src_prepare() {
 	fi
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
