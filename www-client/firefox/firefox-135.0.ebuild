@@ -583,11 +583,13 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 
 	# upstreamed into 135 branch
 	rm -v "${WORKDIR}"/firefox-patches/0022-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1914774-fix-non-unified-gcc-build.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1928364-musl-make-sys_fork-non-fatal.patch
+	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1935621-python-3.12.8-mach-fix.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
