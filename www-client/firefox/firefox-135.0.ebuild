@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-133-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-133-patches-04.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -581,15 +581,19 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
+	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	# upstreamed into 135 branch
-	rm -v "${WORKDIR}"/firefox-patches/0022-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1914774-fix-non-unified-gcc-build.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-1928364-musl-make-sys_fork-non-fatal.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-bmo-1935621-python-3.12.8-mach-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0021-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1914774-fix-non-unified-gcc-build.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1928364-musl-make-sys_fork-non-fatal.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1935621-python-3.12.8-mach-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1932163-python-3.13-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1925198-python-3.13-fix2.patch
+	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1926140-python-3.13-fix3.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
@@ -945,6 +949,9 @@ src_configure() {
 			if use clang ; then
 				# Used in build/pgo/profileserver.py
 				export LLVM_PROFDATA="llvm-profdata"
+			else	
+				export GCOV_PREFIX="${BUILD_DIR}"/instrumented
+				export GCOV_PREFIX_STRIP=$(( $(echo "${BUILD_DIR}"|tr -c -d '/' |wc -c )+2 ))
 			fi
 		fi
 	else
