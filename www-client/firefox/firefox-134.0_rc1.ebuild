@@ -589,6 +589,7 @@ src_prepare() {
 	# upstreamed to 134.0
 	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1914774-fix-non-unified-gcc-build.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1928364-musl-make-sys_fork-non-fatal.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1935621-python-3.12.8-mach-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1925198-python-3.13-fix2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1926140-python-3.13-fix3.patch
 
