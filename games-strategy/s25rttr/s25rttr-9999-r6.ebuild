@@ -2,7 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-inherit cmake git-r3 xdg
+
+LUA_COMPAT=( lua5-3 )
+
+inherit cmake lua-single git-r3 xdg
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
@@ -37,6 +40,10 @@ BDEPEND="app-arch/unzip"
 
 #PATCHES=( "${FILESDIR}"/lang.patch )
 
+PATCHES=(
+	"${FILESDIR}"/${PN}-0.9.0_pre20200723-cmake_lua_version.patch
+)
+
 src_prepare() {
 
 	# Ensure no bundled libraries are used
@@ -55,6 +62,8 @@ src_prepare() {
 	rm -r external/languages/.github/ || die
 	rm external/languages/.gitignore || die
 #	rm data/RTTR/assets/base/credits/*.bmp || die
+
+#	rm -v external/{kaguya,libutil}/cmake/FindLua.cmake || die
 
 	CMAKE_BUILD_TYPE="Debug"
 
@@ -77,6 +86,7 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=ON
+		-DLUA_VERSION=$(lua_get_version)
 		-DRTTR_DRIVERDIR="$(get_libdir)/${PN}"
 		-DRTTR_GAMEDIR="share/s25rttr/S2/"
 		-DRTTR_LIBDIR="$(get_libdir)/${PN}"
