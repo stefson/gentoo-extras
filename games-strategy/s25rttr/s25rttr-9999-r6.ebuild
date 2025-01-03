@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-inherit cmake git-r3 xdg-utils
+inherit cmake git-r3 xdg
 
 DESCRIPTION="Open Source remake of The Settlers II game (needs original game files)"
 HOMEPAGE="http://www.siedler25.org/ https://github.com/Return-To-The-Roots/s25client/"
@@ -140,11 +140,11 @@ src_install() {
 }
 
 pkg_postinst() {
-	elog "Copy your Settlers2 game files into /usr/share/${PN}/S2"
+	xdg_pkg_postinst
 
-	xdg_icon_cache_update
-}
-
-pkg_postrm() {
-	xdg_icon_cache_update
+	if ! has_version -r games-strategy/settlers-2-gold-data; then
+		elog "Install games-strategy/settlers-2-gold-data or manually copy the DATA"
+		elog "and GFX directories from original data files into"
+		elog "${EPREFIX}/usr/share/${PN}/S2."
+	fi
 }
