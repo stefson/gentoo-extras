@@ -23,12 +23,21 @@ RDEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	sys-devel/llvm:${LLVM_MAJOR}
+	test? (
+		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+	)
 "
 
 LLVM_COMPONENTS=( mlir cmake )
 # tablegen tests use *.td files there
 LLVM_TEST_COMPONENTS=( llvm/include )
 llvm.org_set_globals
+
+python_check_deps() {
+	if use test; then
+		python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	fi
+}
 
 src_prepare() {
 	llvm.org_src_prepare
@@ -185,3 +194,4 @@ multilib_src_test() {
 multilib_src_install() {
 	DESTDIR=${D} cmake_build install-distribution
 }
+

@@ -15,7 +15,7 @@ IUSE="+debug test"
 RESTRICT="!test? ( test )"
 
 DEPEND="
-	=sys-devel/llvm-${PV}-r1[debug=,${MULTILIB_USEDEP}]
+	~sys-devel/llvm-${PV}[debug=,${MULTILIB_USEDEP}]
 "
 RDEPEND="
 	${DEPEND}
@@ -23,12 +23,21 @@ RDEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	sys-devel/llvm:${LLVM_MAJOR}
+	test? (
+		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+	)
 "
 
 LLVM_COMPONENTS=( mlir cmake )
 # tablegen tests use *.td files there
 LLVM_TEST_COMPONENTS=( llvm/include )
 llvm.org_set_globals
+
+python_check_deps() {
+	if use test; then
+		python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	fi
+}
 
 src_prepare() {
 	llvm.org_src_prepare
@@ -142,8 +151,7 @@ multilib_src_configure() {
 		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DMLIR_BUILD_MLIR_C_DYLIB=OFF
 		-DMLIR_LINK_MLIR_DYLIB=ON
-		# https://github.com/llvm/llvm-project/pull/120911
-		-DMLIR_INCLUDE_TESTS=$(multilib_native_usex test)
+		-DMLIR_INCLUDE_TESTS=$(usex test)
 		-DMLIR_INCLUDE_INTEGRATION_TESTS=OFF
 		-DLLVM_DISTRIBUTION_COMPONENTS=$(get_distribution_components)
 		# this enables installing mlir-tblgen and mlir-pdll
@@ -180,9 +188,10 @@ multilib_src_compile() {
 multilib_src_test() {
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-	multilib_is_native_abi && cmake_build check-mlir
+	cmake_build check-mlir
 }
 
 multilib_src_install() {
 	DESTDIR=${D} cmake_build install-distribution
 }
+
