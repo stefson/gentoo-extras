@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-133-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-134-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -582,16 +582,8 @@ src_prepare() {
 	fi
 
 	# Workaround for bgo#917599
-	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
-
-	# upstreamed to 134.0
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1914774-fix-non-unified-gcc-build.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1928364-musl-make-sys_fork-non-fatal.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-1935621-python-3.12.8-mach-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0032-bmo-1925198-python-3.13-fix2.patch
-	rm -v "${WORKDIR}"/firefox-patches/0033-bmo-1926140-python-3.13-fix3.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
