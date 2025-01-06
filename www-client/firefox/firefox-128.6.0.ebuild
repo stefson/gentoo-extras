@@ -590,6 +590,7 @@ src_prepare() {
 	fi
 
 	rm -v "${WORKDIR}"/firefox-patches/0030-bgo-940031-wasm-support.patch
+	rm -v "${WORKDIR}"/firefox-patches/0031-bmo-1935621-python-3.12.8-mach-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
