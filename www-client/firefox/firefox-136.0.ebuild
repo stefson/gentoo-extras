@@ -585,6 +585,7 @@ src_prepare() {
 
 	# upstreamed into 136 branch
 	rm -v "${WORKDIR}"/firefox-patches/0019-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1559213-support-system-av1-and-libvpx.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
