@@ -1,7 +1,20 @@
+# HG changeset patch
+# User Mike Hommey <mh+mozilla@glandium.org>
+# Date 1737577243 0
+# Node ID 1fc02d8af4745ec306156811da75dae974afa26b
+# Parent  bcb84716fea47b6d058622a4020cd9768431aa5b
+Bug 1910289 - Apply the neon flags to libyuv_neon, not libyuv. r=ng
+
+The misapplication of the flags doesn't cause problems on targets that
+default to neon, where it's a no-op, but on targets that don't, applying
+the flag to the wrong library means the neon parts are not built in.
+
+Differential Revision: https://phabricator.services.mozilla.com/D235088
+
 diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch
 --- a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch
 +++ b/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch
-@@ -1,6 +1,7 @@
+@@ -1,23 +1,41 @@
  diff --git a/libyuv.gyp b/libyuv.gyp
 +index 45df0d2e26192..e2aa2d7c69404 100644
  --- a/libyuv.gyp
@@ -9,7 +22,9 @@ diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv
  @@ -71,9 +71,7 @@
               # '-mthumb',  # arm32 not thumb
             ],
-@@ -10,11 +11,28 @@
+            'cflags_mozilla!': [
+ -            '-mfpu=vfp',
+ -            '-mfpu=vfpv3',
  -            '-mfpu=vfpv3-d16',
  +            '<@(moz_neon_cflags_block_list)',
             ],
@@ -39,7 +54,13 @@ diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv
             }],
  +          ['target_arch == "armv7" or target_arch == "arm64" and moz_have_arm_i8mm_and_dot_prod == 1 and build_with_mozilla == 1', {
  +            'dependencies': [
-@@ -53,10 +71,20 @@
+ +                 ':libyuv_neon',
+ +            ],
+ +          }],
+@@ -50,16 +68,26 @@ diff --git a/libyuv.gyp b/libyuv.gyp
+ +        'optimize': 'max',  # enable O2 and ltcg.
+ +      },
+ +      'conditions': [
  +        ['target_arch == "arm64" and moz_have_arm_i8mm_and_dot_prod == 1 and build_with_mozilla == 1', {
  +          'cflags_mozilla': [
  +            '-march=armv8.2-a+dotprod+i8mm',
@@ -60,7 +81,13 @@ diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv
  +            '<@(moz_neon_cflags_block_list)',
  +          ],
  +          'sources': [
-@@ -107,10 +135,11 @@
+ +            '<@(libyuv_neon_sources)',
+ +          ],
+ +        }],
+@@ -104,16 +132,17 @@ diff --git a/libyuv.gyp b/libyuv.gyp
+ +          '.',
+ +        ], #conditions
+ +      },
  +    },
     ], # targets.
   }
@@ -72,7 +99,13 @@ diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv
  @@ -8,6 +8,29 @@
   
   {
-@@ -139,20 +168,20 @@
+    'variables': {
+ +    'moz_have_arm_sve2%': '<(moz_have_arm_sve2)',
+ +    'moz_have_arm_i8mm_and_dot_prod%': '<(moz_have_arm_i8mm_and_dot_prod)',
+@@ -136,42 +165,42 @@ diff --git a/libyuv.gypi b/libyuv.gypi
+ +      "source/row_neon.cc",
+ +      "source/row_neon64.cc",
+ +      "source/scale_neon.cc",
  +      "source/scale_neon64.cc",
  +    ],
       'libyuv_sources': [
@@ -95,7 +128,11 @@ diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv
         'source/rotate_msa.cc',
  -      'source/rotate_neon.cc',
  -      'source/rotate_neon64.cc',
-@@ -164,11 +193,11 @@
+        'source/rotate_win.cc',
+        'source/row_any.cc',
+        'source/row_common.cc',
+        'source/row_gcc.cc',
+        'source/row_msa.cc',
  -      'source/row_neon.cc',
  -      'source/row_neon64.cc',
         'source/row_win.cc',
@@ -108,10 +145,16 @@ diff --git a/media/libyuv/03_add_neon64_and_sve_gyp_targets.patch b/media/libyuv
         'source/scale_msa.cc',
  -      'source/scale_neon.cc',
  -      'source/scale_neon64.cc',
+        'source/scale_rgb.cc',
+        'source/scale_uv.cc',
+        'source/scale_win.cc',
 diff --git a/media/libyuv/libyuv/libyuv.gyp b/media/libyuv/libyuv/libyuv.gyp
 --- a/media/libyuv/libyuv/libyuv.gyp
 +++ b/media/libyuv/libyuv/libyuv.gyp
-@@ -80,20 +80,10 @@
+@@ -77,26 +77,16 @@
+           'conditions': [
+             # Disable LTO in libyuv_neon target due to gcc 4.9 compiler bug.
+             ['clang == 0 and use_lto == 1', {
                'cflags!': [
                  '-flto',
                  '-ffat-lto-objects',
@@ -132,7 +175,13 @@ diff --git a/media/libyuv/libyuv/libyuv.gyp b/media/libyuv/libyuv/libyuv.gyp
          ['build_msa != 0', {
            'defines': [
              'LIBYUV_MSA',
-@@ -208,10 +198,20 @@
+           ],
+         }],
+         ['build_lsx == 0', {
+@@ -205,16 +195,26 @@
+         'optimize': 'max',  # enable O2 and ltcg.
+       },
+       'conditions': [
          ['target_arch == "arm64" and moz_have_arm_i8mm_and_dot_prod == 1 and build_with_mozilla == 1', {
            'cflags_mozilla': [
              '-march=armv8.2-a+dotprod+i8mm',
@@ -153,5 +202,8 @@ diff --git a/media/libyuv/libyuv/libyuv.gyp b/media/libyuv/libyuv/libyuv.gyp
              '<@(moz_neon_cflags_block_list)',
            ],
            'sources': [
+             '<@(libyuv_neon_sources)',
+           ],
+         }],
 
 
