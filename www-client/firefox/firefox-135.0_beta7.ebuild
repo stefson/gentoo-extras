@@ -593,7 +593,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
+#	eapply "${FILESDIR}/"0003-revert-latest-libyuv-patch.patch
+	eapply "${FILESDIR}/"0003-fix-linking-errors-in-libyuv-without-neon-on-arm.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
