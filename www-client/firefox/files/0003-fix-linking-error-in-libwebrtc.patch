@@ -1,0 +1,14 @@
+diff --git a/third_party/abseil-cpp/absl/random/internal/randen_detect.cc b/third_party/abseil-cpp/absl/random/internal/randen_detect.cc
+index bdeab877b98e..3d5f91a84869 100644
+--- a/third_party/abseil-cpp/absl/random/internal/randen_detect.cc
++++ b/third_party/abseil-cpp/absl/random/internal/randen_detect.cc
+@@ -62,8 +62,7 @@ static void __cpuid(int cpu_info[4], int info_type) {
+ 
+ // On linux, just use the c-library getauxval call.
+ #if defined(ABSL_INTERNAL_USE_LINUX_GETAUXVAL)
+-
+-extern "C" unsigned long getauxval(unsigned long type);  // NOLINT(runtime/int)
++#include <sys/auxv.h>
+ 
+ static uint32_t GetAuxval(uint32_t hwcap_type) {
+   return static_cast<uint32_t>(getauxval(hwcap_type));
