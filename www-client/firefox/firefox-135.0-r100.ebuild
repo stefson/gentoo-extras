@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-134-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-135-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 )
 
@@ -586,7 +586,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	# upstreamed to 135 branch
-	rm -v "${WORKDIR}"/firefox-patches/0019-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0019-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
