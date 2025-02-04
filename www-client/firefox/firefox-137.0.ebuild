@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-134-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-135-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 20 )
 
@@ -583,10 +583,9 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# upstreamed into 136 branch
+	# upstreamed into 137 branch
 	rm -v "${WORKDIR}"/firefox-patches/0013-enable-vaapi-on-all-amd-cards.patch
-	rm -v "${WORKDIR}"/firefox-patches/0019-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1559213-support-system-av1-and-libvpx.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1559213-support-system-av1-and-libvpx.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
