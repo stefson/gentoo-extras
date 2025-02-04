@@ -5,7 +5,7 @@ EAPI=8
 
 FIREFOX_PATCHSET="firefox-135-patches-01.tar.xz"
 
-LLVM_COMPAT=( 17 18 19 )
+LLVM_COMPAT=( 17 18 19 20 )
 
 PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -584,10 +584,6 @@ src_prepare() {
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
-
-	# upstreamed to 135 branch
-#	rm -v "${WORKDIR}"/firefox-patches/0019-mozilla-bundled-ffmpeg-7-gcc-14-incompatible-pointer-types.patch
-#	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
 
