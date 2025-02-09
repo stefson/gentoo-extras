@@ -72,7 +72,7 @@ MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm-r1 multiprocessing \
-	optfeature pax-utils python-any-r1 readme.gentoo-r1 rust toolchain-funcs virtualx xdg
+	optfeature pax-utils python-any-r1 readme.gentoo-r1 toolchain-funcs virtualx xdg
 
 if [[ -z ${MOZ_NIGHTLY} ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
@@ -533,7 +533,6 @@ pkg_setup() {
 
 		check-reqs_pkg_setup
 		llvm-r1_pkg_setup
-		rust_pkg_setup
 		python-any-r1_pkg_setup
 
 		# Avoid PGO profiling problems due to enviroment leakage
