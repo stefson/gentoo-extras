@@ -4,9 +4,9 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-135-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-135-patches-01.tar.xz"
 
-LLVM_COMPAT=( 17 18 19 )
+LLVM_COMPAT=( 17 18 19 20 )
 
 # This will also filter rust versions that don't match LLVM_COMPAT in the non-clang path; this is fine.
 RUST_NEEDS_LLVM=1
@@ -20,11 +20,6 @@ PYTHON_REQ_USE="ncurses,sqlite,ssl"
 WANT_AUTOCONF="2.71"
 
 VIRTUALX_REQUIRED="manual"
-
-# Information about the bundled wasi toolchain from
-# https://github.com/WebAssembly/wasi-sdk/
-WASI_SDK_VER=25.0
-WASI_SDK_LLVM_VER=19
 
 MOZ_ESR=
 MOZ_NIGHTLY=
@@ -96,10 +91,6 @@ if [[ -z ${MOZ_NIGHTLY} ]] ; then
 	SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz"
 fi
 SRC_URI+="${PATCH_URIS[@]}
-	wasm-sandbox? (
-		amd64? ( https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz )
-		arm64? ( https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz )
-	)"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -112,16 +103,11 @@ IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-jpeg +syst
 IUSE+=" +system-libvpx system-png +system-webp valgrind wayland wifi +X"
 
 # Firefox-only IUSE
-IUSE+=" +gmp-autoupdate gnome-shell +jumbo-build openh264 +telemetry wasm-sandbox"
+IUSE+=" +gmp-autoupdate gnome-shell +jumbo-build openh264 +telemetry"
 
-# "wasm-sandbox? ( llvm_slot_19 )" - most likely due to wasi-sdk-25.0 being llvm-19 based, and
-# llvm/clang-19 turning on reference types for wasm targets. Luckily clang-19 is already stable in
-# Gentoo so it should be widely adopted already - however, it might be possible to workaround
-# the constraint simply by modifying CFLAGS when using clang-17/18. Will need to investigate (bmo#1905251)
 REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
 	pgo? ( jumbo-build )
-	wasm-sandbox? ( llvm_slot_19 )
 	wayland? ( dbus )
 	wifi? ( dbus )
 "
@@ -136,7 +122,6 @@ BDEPEND="${PYTHON_DEPS}
 			llvm-core/lld:${LLVM_SLOT}
 			pgo? ( llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[profile] )
 		)
-		wasm-sandbox? ( llvm-core/lld:${LLVM_SLOT} )
 	')
 	app-alternatives/awk
 	app-arch/unzip
@@ -192,7 +177,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	)
 	system-harfbuzz? (
 		>=media-libs/harfbuzz-2.8.1:0=
-		!wasm-sandbox? ( >=media-gfx/graphite2-1.3.13 )
+		>=media-gfx/graphite2-1.3.13
 	)
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1:= )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
@@ -670,33 +655,11 @@ src_prepare() {
 			export RUST_TARGET="aarch64-unknown-linux-musl"
 		elif use ppc64 ; then
 			export RUST_TARGET="powerpc64le-unknown-linux-musl"
-		elif use riscv ; then
-			# We can pretty safely rule out any 32-bit riscvs, but 64-bit riscvs also have tons of
-			# different ABIs available. riscv64gc-unknown-linux-musl seems to be the best working
-			# guess right now though.
-			elog "riscv detected, forcing a riscv64 target for now."
-			export RUST_TARGET="riscv64gc-unknown-linux-musl"
+		elif use arm ; then
+			export RUST_TARGET="armv7a-unknown-linux-musleabihf"
 		else
-			die "Unknown musl chost, please post a new bug with your rustc -vV along with emerge --info"
+			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
 		fi
-	fi
-
-	# Pre-built wasm-sandbox path manipulation.
-	if use wasm-sandbox ; then
-		if use amd64 ; then
-			export wasi_arch="x86_64"
-		elif use arm64 ; then
-			export wasi_arch="arm64"
-		else
-			die "wasm-sandbox enabled on unknown/unsupported arch!"
-		fi
-
-		sed -i \
-			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
-			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
-			-e "s:%%WASI_SDK_VER%%:${WASI_SDK_VER}:" \
-			-e "s:%%WASI_SDK_LLVM_VER%%:${WASI_SDK_LLVM_VER}:" \
-			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
 	# Make LTO respect MAKEOPTS
@@ -993,15 +956,6 @@ src_configure() {
 		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
 	else
 		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3-x11-only
-	fi
-
-	# wasm-sandbox
-	# Since graphite2 is one of the sandboxed libraries, system-graphite2 obviously can't work with +wasm-sandbox.
-	if use wasm-sandbox ; then
-		mozconfig_add_options_ac '+wasm-sandbox' --with-wasi-sysroot="${WORKDIR}/wasi-sdk-${WASI_SDK_VER}-${wasi_arch}-linux/share/wasi-sysroot/"
-	else
-		mozconfig_add_options_ac 'no wasm-sandbox' --without-wasm-sandboxed-libraries
-		mozconfig_use_with system-harfbuzz system-graphite2
 	fi
 
 	if [[ ${use_lto} == "yes" ]] ; then
