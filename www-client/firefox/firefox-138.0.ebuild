@@ -3,18 +3,18 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-128esr-patches-08.tar.xz"
+FIREFOX_PATCHSET="firefox-136-patches-01.tar.xz"
 
-LLVM_COMPAT=( 17 18 19 )
+LLVM_COMPAT=( 17 18 19 20 )
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
-WANT_AUTOCONF="2.1"
+WANT_AUTOCONF="2.71"
 
 VIRTUALX_REQUIRED="manual"
 
-MOZ_ESR=yes
+MOZ_ESR=
 
 MOZ_PV=${PV}
 MOZ_PV_SUFFIX=
@@ -60,14 +60,15 @@ SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}
 	${PATCH_URIS[@]}"
 S="${WORKDIR}/${PN}-${PV%_*}"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-#KEYWORDS="amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 
-IUSE="+clang dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto openh264 pgo"
-IUSE+=" pulseaudio selinux sndio +system-av1 +system-harfbuzz +system-icu +system-jpeg"
-IUSE+=" +system-libevent +system-libvpx system-png +system-webp +telemetry wayland wifi +X"
+IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto"
+IUSE+=" openh264 pgo pulseaudio sndio selinux +system-av1 +system-harfbuzz +system-icu"
+IUSE+=" +system-jpeg +system-libevent +system-libvpx system-png +system-webp +telemetry valgrind"
+IUSE+=" wasm-sandbox wayland wifi +X"
 
 # Firefox-only IUSE
-IUSE+=" +gmp-autoupdate gnome-shell"
+IUSE+=" +gmp-autoupdate"
 
 REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
@@ -93,7 +94,7 @@ BDEPEND="${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.26.0
 	net-libs/nodejs
 	virtual/pkgconfig
-	!clang? ( >=virtual/rust-1.76 )
+	!clang? ( >=virtual/rust-1.82 )
 	!elibc_glibc? ( dev-lang/rust )
 	amd64? ( >=dev-lang/nasm-2.14 )
 	x86? ( >=dev-lang/nasm-2.14 )
@@ -116,8 +117,8 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.101
-	>=dev-libs/nspr-4.35
+	>=dev-libs/nss-3.109
+	>=dev-libs/nspr-4.36
 	media-libs/alsa-lib
 	media-libs/fontconfig
 	media-libs/freetype
@@ -150,12 +151,13 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 		>=media-gfx/graphite2-1.3.13
 		>=media-libs/harfbuzz-2.8.1:0=
 	)
-	system-icu? ( >=dev-libs/icu-73.1:= )
+	system-icu? ( >=dev-libs/icu-76.1:= )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1:= )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
-	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
+	system-png? ( >=media-libs/libpng-1.6.45:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
+	valgrind? ( dev-debug/valgrind )
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1
 		x11-libs/gtk+:3[wayland]
@@ -237,53 +239,53 @@ llvm_check_deps() {
 	einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
-MOZ_LANGS=(
-	af ar ast be bg br ca cak cs cy da de dsb
-	el en-CA en-GB en-US es-AR es-ES et eu
-	fi fr fy-NL ga-IE gd gl he hr hsb hu
-	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
-	pa-IN pl pt-BR pt-PT rm ro ru
-	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
-)
+#MOZ_LANGS=(
+#	af ar ast be bg br ca cak cs cy da de dsb
+#	el en-CA en-GB en-US es-AR es-ES et eu
+#	fi fr fy-NL ga-IE gd gl he hr hsb hu
+#	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
+#	pa-IN pl pt-BR pt-PT rm ro ru
+#	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
+#)
 
 # Firefox-only LANGS
-MOZ_LANGS+=( ach )
-MOZ_LANGS+=( an )
-MOZ_LANGS+=( az )
-MOZ_LANGS+=( bn )
-MOZ_LANGS+=( bs )
-MOZ_LANGS+=( ca-valencia )
-MOZ_LANGS+=( eo )
-MOZ_LANGS+=( es-CL )
-MOZ_LANGS+=( es-MX )
-MOZ_LANGS+=( fa )
-MOZ_LANGS+=( ff )
-MOZ_LANGS+=( fur )
-MOZ_LANGS+=( gn )
-MOZ_LANGS+=( gu-IN )
-MOZ_LANGS+=( hi-IN )
-MOZ_LANGS+=( hy-AM )
-MOZ_LANGS+=( ia )
-MOZ_LANGS+=( km )
-MOZ_LANGS+=( kn )
-MOZ_LANGS+=( lij )
-MOZ_LANGS+=( mk )
-MOZ_LANGS+=( mr )
-MOZ_LANGS+=( my )
-MOZ_LANGS+=( ne-NP )
-MOZ_LANGS+=( oc )
-MOZ_LANGS+=( sc )
-MOZ_LANGS+=( sco )
-MOZ_LANGS+=( si )
-MOZ_LANGS+=( skr )
-MOZ_LANGS+=( son )
-MOZ_LANGS+=( szl )
-MOZ_LANGS+=( ta )
-MOZ_LANGS+=( te )
-MOZ_LANGS+=( tl )
-MOZ_LANGS+=( trs )
-MOZ_LANGS+=( ur )
-MOZ_LANGS+=( xh )
+#MOZ_LANGS+=( ach )
+#MOZ_LANGS+=( an )
+#MOZ_LANGS+=( az )
+#MOZ_LANGS+=( bn )
+#MOZ_LANGS+=( bs )
+#MOZ_LANGS+=( ca-valencia )
+#MOZ_LANGS+=( eo )
+#MOZ_LANGS+=( es-CL )
+#MOZ_LANGS+=( es-MX )
+#MOZ_LANGS+=( fa )
+#MOZ_LANGS+=( ff )
+#MOZ_LANGS+=( fur )
+#MOZ_LANGS+=( gn )
+#MOZ_LANGS+=( gu-IN )
+#MOZ_LANGS+=( hi-IN )
+#MOZ_LANGS+=( hy-AM )
+#MOZ_LANGS+=( ia )
+#MOZ_LANGS+=( km )
+#MOZ_LANGS+=( kn )
+#MOZ_LANGS+=( lij )
+#MOZ_LANGS+=( mk )
+#MOZ_LANGS+=( mr )
+#MOZ_LANGS+=( my )
+#MOZ_LANGS+=( ne-NP )
+#MOZ_LANGS+=( oc )
+#MOZ_LANGS+=( sc )
+#MOZ_LANGS+=( sco )
+#MOZ_LANGS+=( si )
+#MOZ_LANGS+=( skr )
+#MOZ_LANGS+=( son )
+#MOZ_LANGS+=( szl )
+#MOZ_LANGS+=( ta )
+#MOZ_LANGS+=( te )
+#MOZ_LANGS+=( tl )
+#MOZ_LANGS+=( trs )
+#MOZ_LANGS+=( ur )
+#MOZ_LANGS+=( xh )
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
@@ -324,7 +326,8 @@ moz_clear_vendor_checksums() {
 
 	sed -i \
 		-e 's/\("files":{\)[^}]*/\1/' \
-		"${S}"/third_party/rust/${1}/.cargo-checksum.json || die
+		"${S}"/third_party/rust/${1}/.cargo-checksum.json \
+		|| die
 }
 
 moz_install_xpi() {
@@ -450,7 +453,7 @@ pkg_pretend() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6600M"
+			CHECKREQS_DISK_BUILD="7400M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -469,7 +472,7 @@ pkg_setup() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6400M"
+			CHECKREQS_DISK_BUILD="7400M"
 		fi
 
 		check-reqs_pkg_setup
@@ -578,28 +581,19 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	# Workaround for bgo#917599
-	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
-		eapply "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch
-	fi
-	rm -v "${WORKDIR}"/firefox-patches/*-bmo-1862601-system-icu-74.patch || die
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-	# Workaround for bgo#915651 on musl
-	if use elibc_glibc ; then
-		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
-	fi
-
-	rm -v "${WORKDIR}"/firefox-patches/0030-bgo-940031-wasm-support.patch
+	# upstreamed into 138 branch
+#	rm -v "${WORKDIR}"/firefox-patches/0013-enable-vaapi-on-all-amd-cards.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1559213-support-system-av1-and-libvpx.patch
+#	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
 
-#	eapply "${FILESDIR}"/0001-fixup-warnings-in-esr.patch
+	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
+	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 
-	eapply "${FILESDIR}"/privacy-patchset-128/firefox-60-disable-telemetry.patch
-
-	# disable unwanted addons and pocket as well
-	eapply "${FILESDIR}"/privacy-patchset-128/disable-pocket.patch
-	eapply "${FILESDIR}"/privacy-patchset-128/remove_addons.patch
+	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -637,10 +631,10 @@ src_prepare() {
 		"${S}"/python/mozbuild/mozbuild/base.py || die "Failed sedding multiprocessing.cpu_count"
 
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/third_party/libwebrtc/build/toolchain/get_cpu_count.py || die "Failed sedding multiprocessing.cpu_count"
+		"${S}"/third_party/chromium/build/toolchain/get_cpu_count.py || die "Failed sedding multiprocessing.cpu_count"
 
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/third_party/libwebrtc/build/toolchain/get_concurrent_links.py ||
+		"${S}"/third_party/chromium/build/toolchain/get_concurrent_links.py ||
 			die "Failed sedding multiprocessing.cpu_count"
 
 	sed -i -e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
@@ -652,11 +646,13 @@ src_prepare() {
 	# sed-in toolchain prefix
 	sed -i \
 		-e "s/objdump/${CHOST}-objdump/" \
-		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py || die "sed failed to set toolchain prefix"
+		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
+		|| die "sed failed to set toolchain prefix"
 
 	sed -i \
 		-e 's/ccache_stats = None/return None/' \
-		"${S}"/python/mozbuild/mozbuild/controller/building.py || die "sed failed to disable ccache stats call"
+		"${S}"/python/mozbuild/mozbuild/controller/building.py \
+		|| die "sed failed to disable ccache stats call"
 
 	einfo "Removing pre-built binaries ..."
 
@@ -691,8 +687,6 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
-
-	rm -rv browser/extensions/{formautofill,screenshots,webcompat,report-site-issue}
 
 	xdg_environment_reset
 }
@@ -783,20 +777,18 @@ src_configure() {
 		--disable-crashreporter \
 		--disable-disk-remnant-avoidance \
 		--disable-geckodriver \
-		--disable-gpsd \
 		--disable-install-strip \
 		--disable-legacy-profile-creation \
 		--disable-parental-controls \
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
-		--disable-valgrind \
 		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
-		--enable-system-ffi \
+		--with-system-ffi \
 		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CBUILD:-${CHOST}}" \
@@ -804,7 +796,6 @@ src_configure() {
 		--prefix="${EPREFIX}/usr" \
 		--target="${CHOST}" \
 		--without-ccache \
-		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
 		--with-system-nspr \
@@ -818,9 +809,9 @@ src_configure() {
 	# Set update channel
 	local update_channel=release
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
-	mozconfig_add_options_ac '' --update-channel=${update_channel}
+	mozconfig_add_options_ac '' --enable-update-channel=${update_channel}
 
-	if ! use x86 ; then
+	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
 	fi
 
@@ -830,14 +821,15 @@ src_configure() {
 	# bug 833001, bug 903411#c8
 	if use ppc64 || use riscv; then
 		mozconfig_add_options_ac '' --disable-sandbox
+	elif use valgrind; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-sandbox
 	else
 		mozconfig_add_options_ac '' --enable-sandbox
 	fi
 
-	# Enable JIT on riscv64 explicitly, since it's not activated automatically via "known arches" list.
-	# Update 128.1.0: Disable jit on riscv (this line can be blanked to disable by default),
-	# bgo#937867.
-	use riscv && mozconfig_add_options_ac 'Disable JIT for RISC-V 64' --disable-jit
+	# Enable JIT on riscv64 explicitly
+	# Can be removed once upstream enable it by default in the future.
+	use riscv && mozconfig_add_options_ac 'Enable JIT for RISC-V 64' --enable-jit
 
 	if [[ -s "${S}/api-google.key" ]] ; then
 		local key_origin="Gentoo default"
@@ -887,6 +879,7 @@ src_configure() {
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
+	mozconfig_use_enable valgrind
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
@@ -1007,6 +1000,29 @@ src_configure() {
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
 
+	# Modifications to better support ARM, bug #553364
+	if use cpu_flags_arm_neon ; then
+		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
+
+		if ! tc-is-clang ; then
+			# thumb options aren't supported when using clang, bug 666966
+			mozconfig_add_options_ac '+cpu_flags_arm_neon' \
+				--with-thumb=yes \
+				--with-thumb-interwork=no
+		fi
+	fi
+
+	if [[ ${CHOST} == armv*h* ]] ; then
+		mozconfig_add_options_ac 'CHOST=armv*h*' --with-float-abi=hard
+
+		if ! use system-libvpx ; then
+			sed -i \
+				-e "s|softfp|hard|" \
+				"${S}"/media/libvpx/moz.build \
+				|| die
+		fi
+	fi
+
 	# elf-hack
 	# Filter "-z,pack-relative-relocs" and let the build system handle it instead.
 	if use amd64 || use x86 ; then
@@ -1026,8 +1042,33 @@ src_configure() {
 		mozconfig_add_options_ac 'disable elf-hack on non-supported arches' --disable-elf-hack
 	fi
 
+	# Additional ARCH support
+	case "${ARCH}" in
+		arm)
+			# Reduce the memory requirements for linking
+			if use clang ; then
+				# Nothing to do
+				:;
+			elif use lto ; then
+				append-ldflags -Wl,--no-keep-memory
+			else
+				append-ldflags -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
+			fi
+			;;
+	esac
+
 	if ! use elibc_glibc; then
 		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
+	fi
+
+	if use valgrind; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
+	fi
+
+	if use wasm-sandbox; then
+		mozconfig_add_options_ac 'enable wasm sandbox' --with-wasi-sysroot="${EROOT}/usr/wasm32-wasi"
+	else
+		mozconfig_add_options_ac 'disable wasm sandbox' --without-wasm-sandboxed-libraries
 	fi
 
 	# System-av1 fix
@@ -1093,6 +1134,10 @@ src_configure() {
 	done
 	echo "=========================================================="
 	echo
+
+	if use valgrind; then
+		sed -i -e 's/--enable-optimize=-O[0-9s]/--enable-optimize="-g -O2"/' .mozconfig || die
+	fi
 
 	./mach configure || die
 }
@@ -1221,10 +1266,6 @@ src_install() {
 		EOF
 	fi
 
-	cat "${FILESDIR}"/privacy-patchset-128/128.0-privacy.js-1 >> \
-	"${GENTOO_PREFS}" \
-	|| die
-
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
@@ -1273,36 +1314,23 @@ src_install() {
 		-e "s:@NAME@:${app_name}:" \
 		-e "s:@EXEC@:${exec_command}:" \
 		-e "s:@ICON@:${icon}:" \
-		"${WORKDIR}/${PN}.desktop-template" || die
+		"${WORKDIR}/${PN}.desktop-template" \
+		|| die
 
 	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-	if use gnome-shell ; then
-		# Install search provider for Gnome
-		insinto /usr/share/gnome-shell/search-providers/
-		doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
+	# Install search provider for Gnome
+	insinto /usr/share/gnome-shell/search-providers/
+	doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
 
-		insinto /usr/share/dbus-1/services/
-		doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
+	insinto /usr/share/dbus-1/services/
+	doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
 
-		# Toggle between rapid and esr desktop file names
-		sed -e "s/firefox.desktop/${desktop_filename}/g" \
-			-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" ||
-				die "Failed to sed org.mozilla.firefox.search-provider.ini file."
-
-		# Make the dbus service aware of a previous session, bgo#939196
-		sed -e \
-			"s/Exec=\/usr\/bin\/firefox/Exec=\/usr\/$(get_libdir)\/firefox\/firefox --dbus-service \/usr\/bin\/firefox/g" \
-			-i "${ED}/usr/share/dbus-1/services/org.mozilla.firefox.SearchProvider.service" ||
-				die "Failed to sed org.mozilla.firefox.SearchProvider.service dbus file"
-
-		# Update prefs to enable Gnome search provider
-		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable gnome-search-provider via prefs"
-		pref("browser.gnome-search-provider.enabled", true);
-		EOF
-	fi
+	sed -e "s/firefox.desktop/${desktop_filename}/g" \
+		-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
+			die "Failed to sed search-provider file."
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -1314,7 +1342,8 @@ src_install() {
 		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
 		-e "s:@APULSELIB_DIR@:${apulselib}:" \
 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-		"${ED}/usr/bin/${PN}" || die
+		"${ED}/usr/bin/${PN}" \
+		|| die
 
 	readme.gentoo_create_doc
 }
@@ -1384,4 +1413,3 @@ pkg_postinst() {
 		elog
 	fi
 }
-
