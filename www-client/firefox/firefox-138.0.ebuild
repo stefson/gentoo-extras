@@ -584,7 +584,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed into 138 branch
-#	rm -v "${WORKDIR}"/firefox-patches/0013-enable-vaapi-on-all-amd-cards.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-bgo-944056-fix-wasm-on-llvm-profile.patch
 #	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1559213-support-system-av1-and-libvpx.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
