@@ -1,0 +1,11 @@
+diff --git a/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h b/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h
+--- a/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h
++++ b/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h
+@@ -32,6 +32,7 @@ enum class StackCaptureOptions {
+ #include "mozilla/TimeStamp.h"
+ #include "mozilla/UniquePtr.h"
+ #include "mozilla/Variant.h"
++#include "X11UndefineNone.h"
+ 
+ #include <initializer_list>
+ #include <string_view>
