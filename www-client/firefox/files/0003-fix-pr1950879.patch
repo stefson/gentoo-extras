@@ -1,11 +1,33 @@
+From 71f64055e9450ac1d05c43864d73d24771f61649 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Naz=C4=B1m=20Can=20Alt=C4=B1nova?= <canaltinova@gmail.com>
+Date: Thu, 6 Mar 2025 23:04:53 +0000
+Subject: [PATCH] Bug 1950879 - Make sure that None macro that's defined by
+ X11.h doesn't clash with the enum variant r=profiler-reviewers,mstange
+
+X11/X.h defines a `None` macro that clashes with our PayloadFlags::None variant.
+We undefine it here if it's defined already.
+
+Differential Revision: https://phabricator.services.mozilla.com/D240647
+---
+ .../baseprofiler/public/BaseProfilerMarkersPrerequisites.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
 diff --git a/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h b/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h
+index 3d8abcc258354b..32a379bd867bdb 100644
 --- a/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h
 +++ b/mozglue/baseprofiler/public/BaseProfilerMarkersPrerequisites.h
-@@ -32,6 +32,7 @@ enum class StackCaptureOptions {
- #include "mozilla/TimeStamp.h"
- #include "mozilla/UniquePtr.h"
- #include "mozilla/Variant.h"
-+#include "X11UndefineNone.h"
+@@ -40,6 +40,13 @@ enum class StackCaptureOptions {
+ #include <utility>
+ #include <vector>
  
- #include <initializer_list>
- #include <string_view>
++// The header <X11/X.h> defines "None" as a macro that expands to "0L".
++// This is terrible because we have an enum variant named "None" too in this
++// file. To work around this, we undefine the macro "None".
++#ifdef None
++#  undef None
++#endif
++
+ namespace mozilla {
+ 
+ // Return a NotNull<const CHAR*> pointing at the literal empty string `""`.
+
