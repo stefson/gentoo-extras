@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-136-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-136-patches-03.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 20 )
 
@@ -584,6 +584,7 @@ src_prepare() {
 
 	# upstreamed into 138 branch
 	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1951581-add-missing-libaom-includes.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1941479-libcxx-19-fix.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
