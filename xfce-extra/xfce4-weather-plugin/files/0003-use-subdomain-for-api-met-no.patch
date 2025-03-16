@@ -1,0 +1,23 @@
+diff --git a/panel-plugin/weather.c b/panel-plugin/weather.c
+index 1520e54..c44e587 100644
+--- a/panel-plugin/weather.c
++++ b/panel-plugin/weather.c
+@@ -628,7 +628,7 @@ update_handler(plugin_data *data)
+         data->astro_update->started = TRUE;
+ 
+         /* build url */
+-        url = g_strdup_printf("https://api.met.no/weatherapi"
++        url = g_strdup_printf("https://aa062reffgwvo1efa.api.met.no/weatherapi"
+                               "/sunrise/2.0/?lat=%s&lon=%s&"
+                               "date=%04d-%02d-%02d&"
+                               "offset=%s&days=%u",
+@@ -654,7 +654,7 @@ update_handler(plugin_data *data)
+         data->weather_update->started = TRUE;
+ 
+         /* build url */
+-        url = g_strdup_printf("https://api.met.no"
++        url = g_strdup_printf("https://aa062reffgwvo1efa.api.met.no/weatherapi"
+                               "/weatherapi/locationforecast/%s/"
+                               "classic?lat=%s&lon=%s&altitude=%d",
+                               api_version,
+

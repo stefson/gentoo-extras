@@ -1,5 +1,15 @@
-diff --git a/xfce4-weather-plugin-0.9.1/panel-plugin/weather.c b/xfce4-weather-plugin-0.9.1-r1/panel-plugin/weather.c
-index abd9779..1520e54 100644
+From 97601ab2ad1f9810516be6d3d91c5c9b16d6397a Mon Sep 17 00:00:00 2001
+From: Olivier Duchateau <duchateau.olivier@gmail.com>
+Date: Sun, 28 Jun 2020 18:23:29 +0200
+Subject: [PATCH] Switch to the 2.0 API
+
+---
+ panel-plugin/weather.c | 2 +-
+ panel-plugin/weather.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/panel-plugin/weather.c b/panel-plugin/weather.c
+index 8780c0ef..d4dd8de5 100644
 --- a/panel-plugin/weather.c
 +++ b/panel-plugin/weather.c
 @@ -656,7 +656,7 @@ update_handler(plugin_data *data)
@@ -11,8 +21,8 @@ index abd9779..1520e54 100644
                                api_version,
                                data->lat, data->lon, data->msl);
  
-diff --git a/xfce4-weather-plugin-0.9.1/panel-plugin/weather.h b/xfce4-weather-plugin-0.9.1-r1/panel-plugin/weather.h
-index 815cfff..3d8d801 100644
+diff --git a/panel-plugin/weather.h b/panel-plugin/weather.h
+index 2723fc4c..921434f1 100644
 --- a/panel-plugin/weather.h
 +++ b/panel-plugin/weather.h
 @@ -31,7 +31,7 @@
@@ -24,3 +34,5 @@ index 815cfff..3d8d801 100644
  
  G_BEGIN_DECLS
  
+-- 
+
