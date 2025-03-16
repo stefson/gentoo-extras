@@ -1,0 +1,43 @@
+From 908a51be5e12bcf5d2aa22d8b037d4c345ef3bbd Mon Sep 17 00:00:00 2001
+From: Olaf Hering <olaf@aepfle.de>
+Date: Sat, 19 Dec 2020 16:15:16 +0100
+Subject: [PATCH] Fix missing-prototypes
+
+weather-parsers.c:192:1: error: no previous prototype for 'parse_moonposition' [-Werror=missing-prototypes]
+
+Signed-off-by: Olaf Hering <olaf@aepfle.de>
+---
+ panel-plugin/weather-parsers.c | 2 +-
+ panel-plugin/weather-parsers.h | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/panel-plugin/weather-parsers.c b/panel-plugin/weather-parsers.c
+index baa0250e..ad5fb615 100644
+--- a/panel-plugin/weather-parsers.c
++++ b/panel-plugin/weather-parsers.c
+@@ -188,7 +188,7 @@ parse_timestring(const gchar *ts,
+ }
+ 
+ 
+-const gchar *
++static const gchar *
+ parse_moonposition (gdouble pos) {
+     if (pos < 0.0 || pos > 100.0)
+         return "Unknown";
+diff --git a/panel-plugin/weather-parsers.h b/panel-plugin/weather-parsers.h
+index ea1f8f68..f0697a74 100644
+--- a/panel-plugin/weather-parsers.h
++++ b/panel-plugin/weather-parsers.h
+@@ -133,8 +133,6 @@ time_t parse_timestring(const gchar *ts,
+ gboolean parse_weather(xmlNode *cur_node,
+                        xml_weather *wd);
+ 
+-const gchar *parse_moonposition (gdouble pos);
+-
+ xml_astro *parse_astro(xmlNode *cur_node);
+ 
+ gboolean parse_astrodata(xmlNode *cur_node,
+-- 
+GitLab
+
+

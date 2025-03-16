@@ -1,0 +1,30 @@
+From 33cae35fd68cd27a9e9873222d73386c70558d43 Mon Sep 17 00:00:00 2001
+From: Harald Judt <h.judt@gmx.at>
+Date: Sat, 4 Apr 2020 23:26:09 +0200
+Subject: [PATCH] Fix unprintable character in summary subtitle (bug #16394)
+
+Due to the CSD changes, the subtitle will now no longer be split into
+two lines, and an unprintable character will be shown instead of the
+newline. Let's just separate location and date a bit using simple
+spaces.
+---
+ panel-plugin/weather-summary.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/panel-plugin/weather-summary.c b/panel-plugin/weather-summary.c
+index afce9394..a8da723d 100644
+--- a/panel-plugin/weather-summary.c
++++ b/panel-plugin/weather-summary.c
+@@ -1140,7 +1140,7 @@ update_summary_subtitle(plugin_data *data)
+ 
+     time(&now_t);
+     date = format_date(now_t, "%Y-%m-%d %H:%M:%S (%Z)", TRUE);
+-    title = g_strdup_printf("%s\n%s", data->location_name, date);
++    title = g_strdup_printf("%s   %s", data->location_name, date);
+     g_free(date);
+     xfce_titled_dialog_set_subtitle(XFCE_TITLED_DIALOG(data->summary_window),
+                                     title);
+-- 
+GitLab
+
+

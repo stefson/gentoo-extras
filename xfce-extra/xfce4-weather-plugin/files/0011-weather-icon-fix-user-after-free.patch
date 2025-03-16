@@ -1,0 +1,34 @@
+From 72d8a7eae7cd4f1c8126346bcf99669f5b398ef9 Mon Sep 17 00:00:00 2001
+From: "John C. Allwein" <git@johnnyapol.me>
+Date: Sun, 2 Aug 2020 16:01:15 -0400
+Subject: [PATCH] weather-icon: fix use-after-free in get_user_icons_dir
+
+---
+ panel-plugin/weather-icon.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/panel-plugin/weather-icon.c b/panel-plugin/weather-icon.c
+index 3ec0b4ab..90dc0a5f 100644
+--- a/panel-plugin/weather-icon.c
++++ b/panel-plugin/weather-icon.c
+@@ -447,7 +447,7 @@ find_icon_themes(void)
+     /* look in user directory first */
+     dir = get_user_icons_dir();
+     found = find_themes_in_dir(dir);
+-    g_free(dir);
++
+     if (found) {
+         if (found->len > 0)
+             themes = g_array_append_vals(themes, found->data, found->len);
+@@ -463,6 +463,7 @@ find_icon_themes(void)
+     }
+ 
+     weather_debug("Found %d icon themes in total.", themes->len, dir);
++    g_free(dir);
+     return themes;
+ }
+ 
+-- 
+GitLab
+
+

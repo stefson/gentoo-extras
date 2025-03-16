@@ -1,0 +1,184 @@
+From 1b32d277eba940261bfeeae91298c4972744465b Mon Sep 17 00:00:00 2001
+From: Romain Bouvier <skunnyk@alteroot.org>
+Date: Sat, 12 Dec 2020 19:11:13 +0100
+Subject: [PATCH] Enable debug=yes when compiling from git and fix warnings
+
+- Fix related warnings spotted by --enable-debug=yes
+- Update configure.ac.in syntax
+---
+ configure.ac                     | 25 ++++++++++++++++++-------
+ panel-plugin/weather-config.c    |  2 +-
+ panel-plugin/weather-data.c      |  3 +++
+ panel-plugin/weather-parsers.h   |  2 ++
+ panel-plugin/weather-scrollbox.c |  8 ++------
+ panel-plugin/weather.c           |  2 +-
+ 6 files changed, 27 insertions(+), 15 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 98897f9..027472c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -20,13 +20,18 @@ m4_define([weather_version_build], [f63cf80])
+ m4_define([weather_version_tag], [])
+ m4_define([weather_version], [weather_version_major().weather_version_minor().weather_version_micro()ifelse(weather_version_tag(), [git], [weather_version_tag()-weather_version_build()], [weather_version_tag()])])
+ 
++dnl *******************************************
++dnl *** Debugging support for git snapshots ***
++dnl *******************************************
++m4_define([weather_debug_default], [ifelse(weather_version_tag(), [git], [yes], [minimum])])
++
+ dnl ***************************
+ dnl *** Initialize autoconf ***
+ dnl ***************************
+ AC_COPYRIGHT([Copyright (c) 2006-2020
+         The Xfce development team. All rights reserved.])
+ AC_INIT([xfce4-weather-plugin], [weather_version], [https://gitlab.xfce.org/panel-plugins/xfce4-weather-plugin], [xfce4-weather-plugin])
+-AC_PREREQ([2.60])
++AC_PREREQ([2.69])
+ AC_CONFIG_MACRO_DIR([m4])
+ 
+ dnl ***************************
+@@ -40,7 +45,7 @@ dnl ********************************
+ dnl *** Check for basic programs ***
+ dnl ********************************
+ AC_PROG_CC()
+-AC_PROG_LD()
++LT_PATH_LD([])
+ AC_PROG_INSTALL()
+ IT_PROG_INTLTOOL([0.35.0])
+ LT_PREREQ([2.2.6])
+@@ -52,7 +57,7 @@ dnl *** Check for standard headers ***
+ dnl **********************************
+ AC_HEADER_STDC()
+ AC_CHECK_HEADERS([math.h stdarg.h stddef.h stdlib.h string.h sys/stat.h time.h])
+-AC_CHECK_LIBM
++LT_LIB_M
+ AC_SUBST(LIBM)
+ 
+ dnl ******************************
+@@ -64,8 +69,8 @@ dnl ***********************************
+ dnl *** Check for required packages ***
+ dnl ***********************************
+ XDT_CHECK_PACKAGE([GTK], [gtk+-3.0], [3.22.0])
+-XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.42.0])
+-XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.42.0])
++XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.50.0])
++XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.50.0])
+ XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.12.0])
+ XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-2], [4.12.0])
+ XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-2.0], [4.12.0])
+@@ -88,9 +93,9 @@ AS_IF([test "x$GEONAMES_USERNAME" = x], [GEONAMES_USERNAME="xfce4weatherplugin"]
+ dnl ***********************************
+ dnl *** Check for debugging support ***
+ dnl ***********************************
+-XDT_FEATURE_DEBUG()
++XDT_FEATURE_DEBUG([weather_debug_default])
+ 
+-AC_OUTPUT([
++AC_CONFIG_FILES([
+ Makefile
+ panel-plugin/Makefile
+ po/Makefile.in
+@@ -109,3 +114,9 @@ icons/simplistic/48/Makefile
+ icons/simplistic/128/Makefile
+ icons/48x48/Makefile
+ ])
++AC_OUTPUT
++
++echo
++echo "Build Configuration:"
++echo
++echo "* Debug Support:             $enable_debug"
+diff --git a/panel-plugin/weather-config.c b/panel-plugin/weather-config.c
+index b5f9aa5..d90bd2b 100644
+--- a/panel-plugin/weather-config.c
++++ b/panel-plugin/weather-config.c
+@@ -240,7 +240,7 @@ cb_lookup_altitude(SoupSession *session,
+ {
+     xfceweather_dialog *dialog = (xfceweather_dialog *) user_data;
+     xml_altitude *altitude;
+-    gdouble alt;
++    gdouble alt = 0;
+ 
+     altitude = (xml_altitude *)
+         parse_xml_document(msg, (XmlParseFunc) parse_altitude);
+diff --git a/panel-plugin/weather-data.c b/panel-plugin/weather-data.c
+index fa6a4bd..2662c95 100644
+--- a/panel-plugin/weather-data.c
++++ b/panel-plugin/weather-data.c
+@@ -343,6 +343,7 @@ get_data(const xml_time *timeslice,
+             val /= 0.3048;
+             return g_strdup_printf(ROUND_TO_INT("%.2f"), val);
+         }
++        break;
+ 
+     case LATITUDE:
+         return LOCALE_DOUBLE(loc->latitude, "%.4f");
+@@ -498,6 +499,7 @@ get_unit(const units_config *units,
+         case TORR:
+             return _("mmHg");
+         }
++        break;
+     case WIND_SPEED:
+         switch (units->windspeed) {
+         case KMH:
+@@ -511,6 +513,7 @@ get_unit(const units_config *units,
+         case KNOTS:
+             return _("kt");
+         }
++        break;
+     case WIND_DIRECTION_DEG:
+     case LATITUDE:
+     case LONGITUDE:
+diff --git a/panel-plugin/weather-parsers.h b/panel-plugin/weather-parsers.h
+index f0697a7..ea1f8f6 100644
+--- a/panel-plugin/weather-parsers.h
++++ b/panel-plugin/weather-parsers.h
+@@ -133,6 +133,8 @@ time_t parse_timestring(const gchar *ts,
+ gboolean parse_weather(xmlNode *cur_node,
+                        xml_weather *wd);
+ 
++const gchar *parse_moonposition (gdouble pos);
++
+ xml_astro *parse_astro(xmlNode *cur_node);
+ 
+ gboolean parse_astrodata(xmlNode *cur_node,
+diff --git a/panel-plugin/weather-scrollbox.c b/panel-plugin/weather-scrollbox.c
+index 1c5afb9..6c20c10 100644
+--- a/panel-plugin/weather-scrollbox.c
++++ b/panel-plugin/weather-scrollbox.c
+@@ -92,9 +92,7 @@ static void
+ gtk_scrollbox_labels_free(GtkScrollbox *self)
+ {
+     /* free all the labels */
+-    g_list_foreach(self->labels, (GFunc) g_object_unref, NULL);
+-    g_list_free(self->labels);
+-    self->labels = NULL;
++    g_list_free_full(self->labels, g_object_unref);
+ }
+ 
+ 
+@@ -472,9 +470,7 @@ gtk_scrollbox_clear_new(GtkScrollbox *self)
+     g_return_if_fail(GTK_IS_SCROLLBOX(self));
+ 
+     /* free all the new labels */
+-    g_list_foreach(self->labels_new, (GFunc) g_object_unref, NULL);
+-    g_list_free(self->labels_new);
+-    self->labels_new = NULL;
++    g_list_free_full(self->labels_new, g_object_unref);
+ }
+ 
+ 
+diff --git a/panel-plugin/weather.c b/panel-plugin/weather.c
+index a3d57c3..0c94d45 100644
+--- a/panel-plugin/weather.c
++++ b/panel-plugin/weather.c
+@@ -1714,7 +1714,7 @@ weather_get_tooltip_text(const plugin_data *data)
+     gchar *text, *sym, *alt, *temp;
+     gchar *windspeed, *windbeau, *winddir, *winddeg;
+     gchar *pressure, *humidity, *precipitation;
+-    gchar *fog, *cloudiness, *sunval, *value;
++    gchar *fog, *cloudiness, *sunval = NULL, *value;
+     gchar *point, *interval_start, *interval_end, *sunrise, *sunset = NULL;
+     const gchar *unit;
+ 

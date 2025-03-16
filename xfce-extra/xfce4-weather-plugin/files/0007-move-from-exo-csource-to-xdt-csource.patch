@@ -1,0 +1,27 @@
+From 52504c36499aefdd99439a55bbe9ae93ec7767ae Mon Sep 17 00:00:00 2001
+From: Romain Bouvier <skunnyk@alteroot.org>
+Date: Sun, 19 Apr 2020 16:53:01 +0200
+Subject: [PATCH] Bug #16717: Move from exo-csource to xdt-csource
+
+- exo-csource is deprecated and moved to xdt-csource
+- Bump minimal xdt version
+---
+ panel-plugin/Makefile.am | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/panel-plugin/Makefile.am b/panel-plugin/Makefile.am
+index d4f0dcbf..139a6efa 100644
+--- a/panel-plugin/Makefile.am
++++ b/panel-plugin/Makefile.am
+@@ -69,7 +69,7 @@ BUILT_SOURCES = \
+ 	weather-config_ui.h
+ 
+ weather-config_ui.h: weather-config.ui
+-	exo-csource --static --strip-comments --strip-content --name=weather_config_ui $< >$@
++	xdt-csource --static --strip-comments --strip-content --name=weather_config_ui $< >$@
+ 
+ endif
+ 
+-- 
+GitLab
+

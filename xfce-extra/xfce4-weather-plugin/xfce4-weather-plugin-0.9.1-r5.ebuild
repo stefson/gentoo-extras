@@ -29,7 +29,24 @@ DEPEND="${RDEPEND}
 src_prepare() {
 	default
 	eapply "${FILESDIR}"/0001-Switch-to-locationforecast-product.patch
-	eapply "${FILESDIR}"/0002-update-forecast-api-to-v2.0.patch
+	eapply "${FILESDIR}"/0002-fix-day-night-calculation.patch
+	eapply "${FILESDIR}"/0003-support-solarnoon-and-solarmidnight.patch
+	eapply "${FILESDIR}"/0004-enable-keyboard-scrolling-in-details-pane.patch
+	eapply "${FILESDIR}"/0005-improve-contrast-in-weather-report.patch
+	eapply "${FILESDIR}"/0006-fix-unprintable-character-in-sumarry-subtitle.patch
+	eapply "${FILESDIR}"/0007-move-from-exo-csource-to-xdt-csource.patch
+	eapply "${FILESDIR}"/0008-switch-to-the-2.0-api.patch
+	eapply "${FILESDIR}"/0009-update-copyright-bugzilla-urls.patch
+	eapply "${FILESDIR}"/0010-fix-gtimeval-deprecation.patch
+	eapply "${FILESDIR}"/0011-weather-icon-fix-user-after-free.patch
+	eapply "${FILESDIR}"/0012-remove-gsourcefunc-casts.patch
+	eapply "${FILESDIR}"/0013-enable-debug-yes-when-compiling-from-git.patch
+	eapply "${FILESDIR}"/0014-fix-missing-prototypes.patch
+#	eapply "${FILESDIR}"/
+
+#	eautoconf #need autotools
+#	elibtoolize #need autoools
+
 }
 
 src_configure() {
