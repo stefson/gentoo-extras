@@ -30,7 +30,6 @@ src_prepare() {
 	default
 	eapply "${FILESDIR}"/0001-Switch-to-locationforecast-product.patch
 	eapply "${FILESDIR}"/0002-update-forecast-api-to-v2.0.patch
-	eapply "${FILESDIR}"/0003-use-subdomain-for-api-met-no.patch
 }
 
 src_configure() {
