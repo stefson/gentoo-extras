@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-136-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-136-patches-04.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 20 )
 
@@ -585,6 +585,7 @@ src_prepare() {
 
 	# upstreamed to 137 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-949280-mls-rs-dwarf-rust-workaround-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
