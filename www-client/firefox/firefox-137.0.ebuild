@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-136-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-137-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 20 )
 
@@ -582,10 +582,6 @@ src_prepare() {
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
-
-	# upstreamed to 137 branch
-#	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-949280-mls-rs-dwarf-rust-workaround-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

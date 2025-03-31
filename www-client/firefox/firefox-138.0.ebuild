@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-136-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-137-patches-01.tar.xz"
 
 LLVM_COMPAT=( 17 18 19 20 )
 
@@ -583,10 +583,9 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	# upstreamed into 138 branch
-	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1951581-add-missing-libaom-includes.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1941479-libcxx-19-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-949280-mls-rs-dwarf-rust-workaround-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1951581-add-missing-libaom-includes.patch
+	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1941479-libcxx-19-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
