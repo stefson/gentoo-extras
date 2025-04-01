@@ -7,7 +7,7 @@ FIREFOX_PATCHSET="firefox-137-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 )
 
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..12} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 VIRTUALX_REQUIRED="manual"
@@ -66,7 +66,7 @@ IUSE+=" +system-jpeg +system-libevent +system-libvpx system-png +system-webp +te
 IUSE+=" wasm-sandbox wayland wifi +X"
 
 # Firefox-only IUSE
-IUSE+=" +gmp-autoupdate"
+IUSE+=" +gmp-autoupdate gnome-shell"
 
 REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
@@ -78,10 +78,10 @@ FF_ONLY_DEPEND="!www-client/firefox:0
 	selinux? ( sec-policy/selinux-mozilla )"
 BDEPEND="${PYTHON_DEPS}
 	$(llvm_gen_dep '
-		sys-devel/clang:${LLVM_SLOT}
-		sys-devel/llvm:${LLVM_SLOT}
+		llvm-core/clang:${LLVM_SLOT}
+		llvm-core/llvm:${LLVM_SLOT}
 		clang? (
-			sys-devel/lld:${LLVM_SLOT}
+			llvm-core/lld:${LLVM_SLOT}
 			virtual/rust:0/llvm-${LLVM_SLOT}
 		)
 		pgo? ( sys-libs/compiler-rt-sanitizers:${LLVM_SLOT}[profile] )
@@ -89,7 +89,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.28.0
+	>=dev-util/cbindgen-0.26.0
 	net-libs/nodejs
 	virtual/pkgconfig
 	!clang? ( >=virtual/rust-1.82 )
@@ -115,7 +115,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.110
+	>=dev-libs/nss-3.109
 	>=dev-libs/nspr-4.36
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -209,14 +209,14 @@ if [[ -z "${MOZ_GMP_PLUGIN_LIST+set}" ]] ; then
 fi
 
 llvm_check_deps() {
-	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-		einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+	if ! has_version -b "llvm-core/clang:${LLVM_SLOT}" ; then
+		einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 		return 1
 	fi
 
 	if use clang && ! tc-ld-is-mold ; then
-		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-			einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		if ! has_version -b "llvm-core/lld:${LLVM_SLOT}" ; then
+			einfo "llvm-core/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
@@ -237,53 +237,53 @@ llvm_check_deps() {
 	einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
-#MOZ_LANGS=(
-#	af ar ast be bg br ca cak cs cy da de dsb
-#	el en-CA en-GB en-US es-AR es-ES et eu
-#	fi fr fy-NL ga-IE gd gl he hr hsb hu
-#	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
-#	pa-IN pl pt-BR pt-PT rm ro ru
-#	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
-#)
+MOZ_LANGS=(
+	af ar ast be bg br ca cak cs cy da de dsb
+	el en-CA en-GB en-US es-AR es-ES et eu
+	fi fr fy-NL ga-IE gd gl he hr hsb hu
+	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
+	pa-IN pl pt-BR pt-PT rm ro ru
+	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
+)
 
 # Firefox-only LANGS
-#MOZ_LANGS+=( ach )
-#MOZ_LANGS+=( an )
-#MOZ_LANGS+=( az )
-#MOZ_LANGS+=( bn )
-#MOZ_LANGS+=( bs )
-#MOZ_LANGS+=( ca-valencia )
-#MOZ_LANGS+=( eo )
-#MOZ_LANGS+=( es-CL )
-#MOZ_LANGS+=( es-MX )
-#MOZ_LANGS+=( fa )
-#MOZ_LANGS+=( ff )
-#MOZ_LANGS+=( fur )
-#MOZ_LANGS+=( gn )
-#MOZ_LANGS+=( gu-IN )
-#MOZ_LANGS+=( hi-IN )
-#MOZ_LANGS+=( hy-AM )
-#MOZ_LANGS+=( ia )
-#MOZ_LANGS+=( km )
-#MOZ_LANGS+=( kn )
-#MOZ_LANGS+=( lij )
-#MOZ_LANGS+=( mk )
-#MOZ_LANGS+=( mr )
-#MOZ_LANGS+=( my )
-#MOZ_LANGS+=( ne-NP )
-#MOZ_LANGS+=( oc )
-#MOZ_LANGS+=( sc )
-#MOZ_LANGS+=( sco )
-#MOZ_LANGS+=( si )
-#MOZ_LANGS+=( skr )
-#MOZ_LANGS+=( son )
-#MOZ_LANGS+=( szl )
-#MOZ_LANGS+=( ta )
-#MOZ_LANGS+=( te )
-#MOZ_LANGS+=( tl )
-#MOZ_LANGS+=( trs )
-#MOZ_LANGS+=( ur )
-#MOZ_LANGS+=( xh )
+MOZ_LANGS+=( ach )
+MOZ_LANGS+=( an )
+MOZ_LANGS+=( az )
+MOZ_LANGS+=( bn )
+MOZ_LANGS+=( bs )
+MOZ_LANGS+=( ca-valencia )
+MOZ_LANGS+=( eo )
+MOZ_LANGS+=( es-CL )
+MOZ_LANGS+=( es-MX )
+MOZ_LANGS+=( fa )
+MOZ_LANGS+=( ff )
+MOZ_LANGS+=( fur )
+MOZ_LANGS+=( gn )
+MOZ_LANGS+=( gu-IN )
+MOZ_LANGS+=( hi-IN )
+MOZ_LANGS+=( hy-AM )
+MOZ_LANGS+=( ia )
+MOZ_LANGS+=( km )
+MOZ_LANGS+=( kn )
+MOZ_LANGS+=( lij )
+MOZ_LANGS+=( mk )
+MOZ_LANGS+=( mr )
+MOZ_LANGS+=( my )
+MOZ_LANGS+=( ne-NP )
+MOZ_LANGS+=( oc )
+MOZ_LANGS+=( sc )
+MOZ_LANGS+=( sco )
+MOZ_LANGS+=( si )
+MOZ_LANGS+=( skr )
+MOZ_LANGS+=( son )
+MOZ_LANGS+=( szl )
+MOZ_LANGS+=( ta )
+MOZ_LANGS+=( te )
+MOZ_LANGS+=( tl )
+MOZ_LANGS+=( trs )
+MOZ_LANGS+=( ur )
+MOZ_LANGS+=( xh )
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
@@ -579,13 +579,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
-
-	# upstreamed into 138 branch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1951581-add-missing-libaom-includes.patch
-	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1941479-libcxx-19-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
-#	rm -v "${WORKDIR}"/firefox-patches/
+	# Workaround for bgo#917599
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
+#	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -787,7 +783,7 @@ src_configure() {
 		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
-		--with-system-ffi \
+		--enable-system-ffi \
 		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CBUILD:-${CHOST}}" \
@@ -810,7 +806,8 @@ src_configure() {
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --enable-update-channel=${update_channel}
 
-	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
+	# Whitelist to allow unkeyworded arches to build with "--disable-rust-simd" by default.
+	if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
 	fi
 
@@ -1189,7 +1186,7 @@ src_install() {
 	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
 	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
 
-	# Don't install llvm-symbolizer from sys-devel/llvm package
+	# Don't install llvm-symbolizer from llvm-core/llvm package
 	if [[ -f "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" ]] ; then
 		rm -v "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" || die
 	fi
@@ -1320,16 +1317,32 @@ src_install() {
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-	# Install search provider for Gnome
-	insinto /usr/share/gnome-shell/search-providers/
-	doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
+	if use gnome-shell ; then
+		# Install search provider for Gnome
+		insinto /usr/share/gnome-shell/search-providers/
+		doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
 
-	insinto /usr/share/dbus-1/services/
-	doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
+		insinto /usr/share/dbus-1/services/
+		doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
 
-	sed -e "s/firefox.desktop/${desktop_filename}/g" \
-		-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
-			die "Failed to sed search-provider file."
+		# Toggle between rapid and esr desktop file names
+		if [[ -n ${MOZ_ESR} ]] ; then
+			sed -e "s/firefox.desktop/${desktop_filename}/g" \
+				-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" ||
+					die "Failed to sed org.mozilla.firefox.search-provider.ini file."
+		fi
+
+		# Make the dbus service aware of a previous session, bgo#939196
+		sed -e \
+			"s/Exec=\/usr\/bin\/firefox/Exec=\/usr\/$(get_libdir)\/firefox\/firefox --dbus-service \/usr\/bin\/firefox/g" \
+			-i "${ED}/usr/share/dbus-1/services/org.mozilla.firefox.SearchProvider.service" ||
+				die "Failed to sed org.mozilla.firefox.SearchProvider.service dbus file"
+
+		# Update prefs to enable Gnome search provider
+		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable gnome-search-provider via prefs"
+		pref("browser.gnome-search-provider.enabled", true);
+		EOF
+	fi
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
