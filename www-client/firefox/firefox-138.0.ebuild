@@ -5,7 +5,7 @@ EAPI=8
 
 FIREFOX_PATCHSET="firefox-137-patches-01.tar.xz"
 
-LLVM_COMPAT=( 17 18 19 20 )
+LLVM_COMPAT=( 19 20 )
 
 PYTHON_COMPAT=( python3_{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -580,7 +580,6 @@ src_prepare() {
 	fi
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
-	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	# upstreamed into 138 branch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1951581-add-missing-libaom-includes.patch
