@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-137-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-137-patches-02.tar.xz"
 
 LLVM_COMPAT=( 19 20 )
 
@@ -582,6 +582,10 @@ src_prepare() {
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 #	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
+
+	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1951581-add-missing-libaom-includes.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1941479-libcxx-19-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

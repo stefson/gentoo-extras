@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-137-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-137-patches-02.tar.xz"
 
 LLVM_COMPAT=( 19 20 )
 
@@ -582,10 +582,11 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed into 139 branch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1790526-check-for-propagated-BrowsingContext-in-SessionStoreParent.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1951581-add-missing-libaom-includes.patch
-	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1941479-libcxx-19-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1951581-add-missing-libaom-includes.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1941479-libcxx-19-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-1790526-check-for-propagated-BrowsingContext-in-SessionStoreParent.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1957749-detach-linux-sandbox-broker-threads-if-needed.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
