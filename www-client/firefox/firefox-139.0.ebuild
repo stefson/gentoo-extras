@@ -582,6 +582,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed into 139 branch
+	rm -v "${WORKDIR}"/firefox-patches/0014-gcc-lto-pgo-gentoo.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1951581-add-missing-libaom-includes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1941479-libcxx-19-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
