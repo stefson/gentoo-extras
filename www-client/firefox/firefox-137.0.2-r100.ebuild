@@ -581,7 +581,6 @@ src_prepare() {
 
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
-#	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

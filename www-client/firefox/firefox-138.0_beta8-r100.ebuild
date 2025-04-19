@@ -581,7 +581,6 @@ src_prepare() {
 
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
-#	rm -v "${WORKDIR}"/firefox-patches/*-bgo-944056-fix-wasm-on-llvm-profile.patch
 
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1951581-add-missing-libaom-includes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1941479-libcxx-19-fix.patch
