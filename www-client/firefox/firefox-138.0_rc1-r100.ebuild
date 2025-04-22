@@ -78,10 +78,10 @@ FF_ONLY_DEPEND="!www-client/firefox:0
 	selinux? ( sec-policy/selinux-mozilla )"
 BDEPEND="${PYTHON_DEPS}
 	$(llvm_gen_dep '
-		sys-devel/clang:${LLVM_SLOT}
-		sys-devel/llvm:${LLVM_SLOT}
+		llvm-core/clang:${LLVM_SLOT}
+		llvm-core/llvm:${LLVM_SLOT}
 		clang? (
-			sys-devel/lld:${LLVM_SLOT}
+			llvm-core/lld:${LLVM_SLOT}
 			virtual/rust:0/llvm-${LLVM_SLOT}
 		)
 		pgo? ( sys-libs/compiler-rt-sanitizers:${LLVM_SLOT}[profile] )
@@ -115,7 +115,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.109
+	>=dev-libs/nss-3.110
 	>=dev-libs/nspr-4.36
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -209,14 +209,14 @@ if [[ -z "${MOZ_GMP_PLUGIN_LIST+set}" ]] ; then
 fi
 
 llvm_check_deps() {
-	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-		einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+	if ! has_version -b "llvm-core/clang:${LLVM_SLOT}" ; then
+		einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 		return 1
 	fi
 
 	if use clang && ! tc-ld-is-mold ; then
-		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-			einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		if ! has_version -b "llvm-core/lld:${LLVM_SLOT}" ; then
+			einfo "llvm-core/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
@@ -585,6 +585,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1951581-add-missing-libaom-includes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1941479-libcxx-19-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-1951697-add-missing-include-for-MOZ_RUNINIT.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-1957749-detach-linux-sandbox-broker-threads-if-needed.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -786,7 +787,7 @@ src_configure() {
 		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
-		--with-system-ffi \
+		--enable-system-ffi \
 		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CBUILD:-${CHOST}}" \
@@ -1189,7 +1190,7 @@ src_install() {
 	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
 	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
 
-	# Don't install llvm-symbolizer from sys-devel/llvm package
+	# Don't install llvm-symbolizer from llvm-core/llvm package
 	if [[ -f "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" ]] ; then
 		rm -v "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" || die
 	fi
