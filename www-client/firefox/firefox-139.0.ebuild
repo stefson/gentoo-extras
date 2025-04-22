@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-137-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-139-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 )
 
@@ -582,7 +582,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 	# upstreamed into 139 branch
-	rm -v "${WORKDIR}"/firefox-patches/0002-bmo-847568-support-system-harfbuzz-graphite2.patch
 	rm -v "${WORKDIR}"/firefox-patches/0014-gcc-lto-pgo-gentoo.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1951581-add-missing-libaom-includes.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1941479-libcxx-19-fix.patch
@@ -807,8 +806,6 @@ src_configure() {
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
-		--x-includes="${ESYSROOT}/usr/include" \
-		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
 
 	# Set update channel
 	local update_channel=release
