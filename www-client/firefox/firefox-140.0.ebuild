@@ -802,7 +802,7 @@ src_configure() {
 		--with-system-nss \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
-		--with-unsigned-addon-scopes=app,system \
+		--with-unsigned-addon-scopes=app,system
 
 	# Set update channel
 	local update_channel=release
