@@ -1029,8 +1029,8 @@ src_configure() {
 			if use clang ; then
 				# Nothing to do
 				:;
-			elif use lto ; then
-				append-ldflags -Wl,--no-keep-memory
+#			elif use lto ; then
+#				append-ldflags -Wl,--no-keep-memory
 			else
 				append-ldflags -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
 			fi
