@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-139-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-139-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 )
 
@@ -584,8 +584,6 @@ src_prepare() {
 
 	# upstreamed to 139 branch
 	rm -v "${WORKDIR}"/firefox-patches/0014-gcc-lto-pgo-gentoo.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1790526-check-for-propagated-BrowsingContext-in-SessionStoreParent.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1961610-dont-advertise-hdr-support-on-wayland.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
