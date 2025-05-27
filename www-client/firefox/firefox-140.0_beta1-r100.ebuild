@@ -784,6 +784,7 @@ src_configure() {
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \
+		--with-system-gbm \
 		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CBUILD:-${CHOST}}" \
@@ -793,6 +794,7 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
+		--with-system-libdrm \
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-zlib \

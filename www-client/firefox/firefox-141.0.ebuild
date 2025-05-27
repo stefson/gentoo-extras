@@ -773,6 +773,8 @@ src_configure() {
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
 		--with-system-ffi \
+		--with-system-gbm \
+		--with-system-libdrm \
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-pixman \

@@ -784,6 +784,8 @@ src_configure() {
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \
+		--with-system-gbm \
+		--with-system-libdrm \
 		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CBUILD:-${CHOST}}" \
