@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-139-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-139-patches-03.tar.xz"
 
 LLVM_COMPAT=( 19 20 )
 
@@ -586,7 +586,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fixup-sqlite-vec-uint-mozbg1953266.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
