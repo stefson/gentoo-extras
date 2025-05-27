@@ -40,7 +40,7 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
-inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm-r1 multiprocessing \
+inherit check-reqs desktop flag-o-matic gnome2-utils linux-info llvm-r1 multiprocessing \
 	optfeature pax-utils python-any-r1 readme.gentoo-r1 toolchain-funcs virtualx xdg
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
@@ -126,6 +126,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	virtual/freedesktop-icon-theme
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
+	x11-libs/libdrm
 	x11-libs/pango
 	x11-libs/pixman
 	dbus? (
@@ -781,6 +782,7 @@ src_configure() {
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
+		--enable-packed-relative-relocs \
 		--enable-release \
 		--with-system-ffi \
 		--with-system-gbm \
