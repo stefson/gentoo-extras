@@ -1,0 +1,25 @@
+From c397e2ab7f8894c7876e3d667bd07dc2fb1b08a9 Mon Sep 17 00:00:00 2001
+From: Gerald Pfeifer <gerald@pfeifer.com>
+Date: Mon, 25 Nov 2024 22:58:09 +0100
+Subject: [PATCH] winhlp32: Drop unused member of struct lexret.
+
+As a side effect (and trigger) this gets rid of a variable named
+bool which is a reserved identifier in C23 and would break with
+GCC 15 moving to -std=gnu23 (which is based on C23).
+---
+ programs/winhlp32/macro.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/programs/winhlp32/macro.h b/programs/winhlp32/macro.h
+index 910782db60c3..a009a7d68c2e 100644
+--- a/programs/winhlp32/macro.h
++++ b/programs/winhlp32/macro.h
+@@ -26,7 +26,6 @@
+ 
+ struct lexret {
+   LPCSTR        proto;
+-  BOOL          bool;
+   LONG          integer;
+   LPCSTR        string;
+   FARPROC       function;
+

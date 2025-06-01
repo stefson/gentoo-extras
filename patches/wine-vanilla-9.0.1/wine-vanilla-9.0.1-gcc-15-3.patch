@@ -1,0 +1,33 @@
+From f0960a2aef7e3856fcf4a72af89e339edce1df9f Mon Sep 17 00:00:00 2001
+From: Gerald Pfeifer <gerald@pfeifer.com>
+Date: Wed, 20 Nov 2024 00:23:31 +0100
+Subject: [PATCH] msi: Don't use bool as a variable name.
+
+This is a reserved identifier in C23 and would break with GCC 15
+moving to -std=gnu23 (based on C23).
+---
+ dlls/msi/cond.y | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dlls/msi/cond.y b/dlls/msi/cond.y
+index b08c67447dd3..49ad91ce049c 100644
+--- a/dlls/msi/cond.y
++++ b/dlls/msi/cond.y
+@@ -123,7 +123,7 @@ static void value_free( struct value val )
+     struct value value;
+     LPWSTR identifier;
+     INT operator;
+-    BOOL bool;
++    BOOL boolean;
+ }
+ 
+ %token COND_SPACE
+@@ -137,7 +137,7 @@ static void value_free( struct value val )
+ 
+ %nonassoc COND_ERROR
+ 
+-%type <bool> expression boolean_term boolean_factor
++%type <boolean> expression boolean_term boolean_factor
+ %type <value> value
+ %type <identifier> identifier
+ %type <operator> operator
