@@ -24,7 +24,7 @@ LICENSE="
 	ZPL BSD BSD-2 ISC LGPL-2+ LGPL-2.1+ MIT public-domain
 "
 SLOT="0"
-KEYWORDS="~arm64"
+KEYWORDS="~amd64"
 IUSE="custom-cflags +strip"
 
 BDEPEND="
@@ -39,8 +39,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 HOSTS=(
-	aarch64-w64-mingw32
-#	i686-w64-mingw32
+	x86_64-w64-mingw32
 )
 
 pkg_pretend() {
@@ -89,8 +88,7 @@ src_compile() {
 	use custom-cflags || strip-flags # fancy flags are not realistic here
 
 	local -A lib_hosts=(
-		aarch64-w64-mingw32 "--disable-lib32 --disable-lib64 --enable-libarm64"
-		i686-w64-mingw32 "--enable-lib32 --disable-lib64 --disable-libarm64"
+		x86_64-w64-mingw32 "--disable-lib32 --enable-lib64 --disable-libarm64"
 	)
 	for CHOST in ${HOSTS[@]}; do
 		( per_host_compile ${lib_hosts[${CHOST}]} )
