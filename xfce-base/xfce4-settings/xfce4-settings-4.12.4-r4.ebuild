@@ -26,7 +26,7 @@ RDEPEND=">=dev-libs/dbus-glib-0.100
 	>=xfce-base/libxfce4ui-4.11[gtk2(+)]
 	>=xfce-base/libxfce4util-4.11
 	>=xfce-base/xfconf-4.10
-	libcanberra? ( >=media-libs/libcanberra-0.25[sound] )
+	libcanberra? ( >=media-libs/libcanberra-0.25 )
 	input_devices_libinput? ( x11-drivers/xf86-input-libinput )
 	libnotify? ( >=x11-libs/libnotify-0.7 )
 	upower? ( >=sys-power/upower-0.9.23 )
