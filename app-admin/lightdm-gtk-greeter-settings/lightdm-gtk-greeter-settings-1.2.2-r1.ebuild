@@ -5,13 +5,13 @@ EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
 DISTUTILS_SINGLE_IMPL=1
-PYTHON_COMPAT=( python3_{11..12} )
+PYTHON_COMPAT=( python3_{11..13} )
 
 inherit distutils-r1 xdg
 
 DESCRIPTION="Settings editor for LightDM GTK+ greeter"
 HOMEPAGE="https://github.com/Xubuntu/lightdm-gtk-greeter"
-SRC_URI="https://launchpad.net/${PN}/${PV}/+download/${P}.tar.gz"
+SRC_URI="https://github.com/Xubuntu/${PN}/releases/download/${P}/${P}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
