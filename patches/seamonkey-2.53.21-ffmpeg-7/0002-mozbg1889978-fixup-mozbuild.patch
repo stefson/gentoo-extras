@@ -1,0 +1,53 @@
+diff --git a/dom/media/platforms/ffmpeg/ffmpeg61/moz.build b/dom/media/platforms/ffmpeg/ffmpeg61/moz.build
+index d598ae0..d99b4bc 100644
+--- a/dom/media/platforms/ffmpeg/ffmpeg61/moz.build
++++ b/dom/media/platforms/ffmpeg/ffmpeg61/moz.build
+@@ -6,17 +6,13 @@
+ 
+ UNIFIED_SOURCES += [
+     "../FFmpegAudioDecoder.cpp",
+-    "../FFmpegAudioEncoder.cpp",
+     "../FFmpegDataDecoder.cpp",
+-    "../FFmpegDataEncoder.cpp",
+     "../FFmpegDecoderModule.cpp",
+-    "../FFmpegEncoderModule.cpp",
+     "../FFmpegVideoDecoder.cpp",
+-    "../FFmpegVideoEncoder.cpp",
+ ]
+ LOCAL_INCLUDES += [
+     "..",
+-    "/media/mozva",
++#    "/media/mozva",
+     "include",
+ ]
+ 
+@@ -30,18 +26,18 @@ if CONFIG["CC_TYPE"] == "gcc":
+     CXXFLAGS += [
+         "-Wno-attributes",
+     ]
+-if CONFIG["MOZ_WIDGET_TOOLKIT"] == "gtk":
+-    CXXFLAGS += CONFIG["MOZ_GTK3_CFLAGS"]
+-if CONFIG["MOZ_ENABLE_VAAPI"] or CONFIG["MOZ_ENABLE_V4L2"]:
+-    UNIFIED_SOURCES += ["../FFmpegVideoFramePool.cpp"]
+-    LOCAL_INCLUDES += ["/third_party/drm/drm/include/libdrm/"]
+-    USE_LIBS += ["mozva"]
+-    DEFINES["MOZ_USE_HWDECODE"] = 1
++#if CONFIG["MOZ_WIDGET_TOOLKIT"] == "gtk":
++#    CXXFLAGS += CONFIG["MOZ_GTK3_CFLAGS"]
++#if CONFIG["MOZ_ENABLE_VAAPI"] or CONFIG["MOZ_ENABLE_V4L2"]:
++#    UNIFIED_SOURCES += ["../FFmpegVideoFramePool.cpp"]
++#    LOCAL_INCLUDES += ["/third_party/drm/drm/include/libdrm/"]
++#    USE_LIBS += ["mozva"]
++#    DEFINES["MOZ_USE_HWDECODE"] = 1
+ 
+-include("/ipc/chromium/chromium-config.mozbuild")
++#include("/ipc/chromium/chromium-config.mozbuild")
+ 
+-LOCAL_INCLUDES += [
+-    "/media/libyuv/libyuv/include",
+-]
++#LOCAL_INCLUDES += [
++#    "/media/libyuv/libyuv/include",
++#]
+ 
+ FINAL_LIBRARY = "xul"
