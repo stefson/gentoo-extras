@@ -7,7 +7,7 @@ FIREFOX_PATCHSET="firefox-139-patches-03.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 VIRTUALX_REQUIRED="manual"
