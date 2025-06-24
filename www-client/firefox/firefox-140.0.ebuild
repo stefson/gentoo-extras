@@ -62,8 +62,8 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack +jumbo-build libproxy lto"
 IUSE+=" openh264 pgo pulseaudio sndio selinux +system-av1 +system-harfbuzz +system-icu"
-IUSE+=" +system-jpeg +system-libevent +system-libvpx system-png +system-webp +telemetry valgrind"
-IUSE+=" wasm-sandbox wayland wifi +X"
+IUSE+=" +system-jpeg +system-libevent system-pipewire +system-libvpx system-png +system-webp +telemetry"
+IUSE+=" valgrind wasm-sandbox wayland wifi +X"
 
 # Firefox-only IUSE
 IUSE+=" +gmp-autoupdate gnome-shell"
@@ -154,6 +154,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1:= )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
+	system-pipewire? ( media-video/pipewire:= )
 	system-png? ( >=media-libs/libpng-1.6.45:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
 	valgrind? ( dev-debug/valgrind )
@@ -871,6 +872,7 @@ src_configure() {
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
+	mozconfig_use_with system-pipewire
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 

@@ -62,7 +62,7 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack libproxy pgo pulseaudio sndio selinux"
-IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-jpeg +system-libevent"
+IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-jpeg +system-libevent system-pipewire"
 IUSE+=" +system-libvpx system-png +system-webp test valgrind wayland wifi +X"
 
 # Firefox-only IUSE
@@ -155,6 +155,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1:= )
 	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
+	system-pipewire? ( media-video/pipewire:= )
 	system-png? ( >=media-libs/libpng-1.6.45:0=[apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
 	valgrind? ( dev-debug/valgrind )
@@ -854,6 +855,7 @@ src_configure() {
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
+	mozconfig_use_with system-pipewire
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
