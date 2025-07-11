@@ -6,12 +6,12 @@ VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
 
-PYTHON_COMPAT=( python3_{9..13} )
+PYTHON_COMPAT=( python3_{9..14} )
 PYTHON_REQ_USE='ncurses,ssl,threads(+)'
 
 S="${WORKDIR}/firefox"
 
-EGIT_REPO_URI="https://github.com/mozilla/gecko-dev"
+EGIT_REPO_URI="https://github.com/mozilla/firefox"
 EGIT_CHECKOUT_DIR="${WORKDIR}/firefox"
 
 inherit check-reqs flag-o-matic toolchain-funcs \
