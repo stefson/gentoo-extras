@@ -1,0 +1,36 @@
+# HG changeset patch
+# User Emilio Cobos Álvarez <emilio@crisal.io>
+# Date 1753252298 0
+# Node ID 03126ea2d55a774719a6e38585e6b0995a2cc02e
+# Parent  d8cb13769869c9ec35437c3deb46d0742bbb3175
+Bug 1978620 - Add gdk_wayland_device_get_wl_seat to mozwayland. r=stransky
+
+Differential Revision: https://phabricator.services.mozilla.com/D258324
+
+
+diff --git a/widget/gtk/mozwayland/mozwayland.c b/widget/gtk/mozwayland/mozwayland.c
+--- a/widget/gtk/mozwayland/mozwayland.c
++++ b/widget/gtk/mozwayland/mozwayland.c
+@@ -225,16 +225,21 @@ MOZ_EXPORT struct wl_surface* gdk_waylan
+     GdkWindow* window) {
+   return NULL;
+ }
+ 
+ MOZ_EXPORT struct wl_pointer* gdk_wayland_device_get_wl_pointer(
+     GdkDevice* device) {
+   return NULL;
+ }
++
++MOZ_EXPORT struct wl_seat* gdk_wayland_device_get_wl_seat(GdkDevice* device) {
++  return NULL;
++}
++
+ MOZ_EXPORT struct wl_display* gdk_wayland_display_get_wl_display(
+     GdkDisplay* display) {
+   return NULL;
+ }
+ 
+ MOZ_EXPORT void wl_display_set_max_buffer_size(struct wl_display* display,
+                                                size_t max_buffer_size) {}
+ 
+
