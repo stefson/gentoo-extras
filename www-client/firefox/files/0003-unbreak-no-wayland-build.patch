@@ -33,4 +33,17 @@ diff --git a/widget/gtk/mozwayland/mozwayland.c b/widget/gtk/mozwayland/mozwayla
  MOZ_EXPORT void wl_display_set_max_buffer_size(struct wl_display* display,
                                                 size_t max_buffer_size) {}
  
+diff --git a/widget/gtk/mozwayland/mozwayland.c b/widget/gtk/mozwayland/mozwayland.c
+index 28ddaa29625e..4fdc86f145a9 100644
+--- a/widget/gtk/mozwayland/mozwayland.c
++++ b/widget/gtk/mozwayland/mozwayland.c
+@@ -226,6 +226,9 @@ MOZ_EXPORT struct wl_surface* gdk_wayland_window_get_wl_surface(
+   return NULL;
+ }
 
++MOZ_EXPORT void gdk_wayland_window_set_use_custom_surface(
++    GdkWaylandWindow* window) {}
++
+ MOZ_EXPORT struct wl_pointer* gdk_wayland_device_get_wl_pointer(
+     GdkDevice* device) {
+   return NULL;
