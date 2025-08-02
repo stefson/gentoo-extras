@@ -572,7 +572,7 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-#	# upstreamed into 141 branch
+#	# upstreamed into 143 branch
 
 	eapply "${WORKDIR}/firefox-patches"
 
