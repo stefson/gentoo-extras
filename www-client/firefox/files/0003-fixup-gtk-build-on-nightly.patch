@@ -1,0 +1,11 @@
+diff --git a/widget/gtk/GRefPtr.h b/widget/gtk/GRefPtr.h
+index b0e294183732..48e4c4a7803a 100644
+--- a/widget/gtk/GRefPtr.h
++++ b/widget/gtk/GRefPtr.h
+@@ -16,6 +16,7 @@
+
+ typedef struct _DbusmenuMenuitem DbusmenuMenuitem;
+ typedef struct _DbusmenuServer DbusmenuServer;
++typedef struct _GSettings GSettings;
+
+ namespace mozilla {
