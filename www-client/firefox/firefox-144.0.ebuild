@@ -113,7 +113,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.115
+	>=dev-libs/nss-3.116
 	>=dev-libs/nspr-4.37
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -569,13 +569,12 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-#	# upstreamed into 143 branch
+#	# upstreamed into 144 branch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-include-termios2-for-musl.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
