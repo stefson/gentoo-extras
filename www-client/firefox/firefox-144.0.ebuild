@@ -570,6 +570,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 #	# upstreamed into 144 branch
+	rm -v "${WORKDIR}"/firefox-patches/0015-bmo-1874059-fix-libcxx-18.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
