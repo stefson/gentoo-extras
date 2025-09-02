@@ -581,6 +581,8 @@ src_prepare() {
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 
+	rm -v "${WORKDIR}"/firefox-patches/0015-bmo-1874059-fix-libcxx-18.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
