@@ -777,7 +777,6 @@ src_configure() {
 		--disable-legacy-profile-creation \
 		--disable-parental-controls \
 		--disable-strip \
-		--disable-tests \
 		--disable-updater \
 		--disable-wmf \
 		--enable-negotiateauth \
@@ -785,9 +784,6 @@ src_configure() {
 		--enable-official-branding \
 		--enable-packed-relative-relocs \
 		--enable-release \
-		--enable-system-ffi \
-		--with-system-gbm \
-		--enable-system-pixman \
 		--enable-system-policies \
 		--host="${CBUILD:-${CHOST}}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
@@ -796,9 +792,12 @@ src_configure() {
 		--without-ccache \
 		--with-intl-api \
 		--with-libclang-path="$(llvm-config --libdir)" \
+		--with-system-ffi \
+		--with-system-gbm \
 		--with-system-libdrm \
 		--with-system-nspr \
 		--with-system-nss \
+		--with-system-pixman \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system
