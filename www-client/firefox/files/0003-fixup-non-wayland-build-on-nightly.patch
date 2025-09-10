@@ -1,0 +1,62 @@
+From d16a5fa2b65eb64889ece8dbcaba7a6d1bf468d9 Mon Sep 17 00:00:00 2001
+From: stransky <stransky@redhat.com>
+Date: Wed, 10 Sep 2025 13:25:05 +0000
+Subject: [PATCH] Bug 1987124 [Wayland] Build and use
+ ScreenHelperGTK::ScreensPrefChanged() on Wayland only r=jhorak
+
+Differential Revision: https://phabricator.services.mozilla.com/D264393
+---
+ widget/gtk/ScreenHelperGTK.cpp | 4 +++-
+ widget/gtk/ScreenHelperGTK.h   | 4 ++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/widget/gtk/ScreenHelperGTK.cpp b/widget/gtk/ScreenHelperGTK.cpp
+index e7f334490992..d72a088a03cc 100644
+--- a/widget/gtk/ScreenHelperGTK.cpp
++++ b/widget/gtk/ScreenHelperGTK.cpp
+@@ -730,6 +730,7 @@ static GdkFilterReturn root_window_event_filter(GdkXEvent* aGdkXEvent,
+   return GDK_FILTER_CONTINUE;
+ }
+ 
++#ifdef MOZ_WAYLAND
+ /* static */
+ void ScreenHelperGTK::ScreensPrefChanged(const char* aPrefIgnored,
+                                          void* aDataIgnored) {
+@@ -737,6 +738,7 @@ void ScreenHelperGTK::ScreensPrefChanged(const char* aPrefIgnored,
+   MOZ_RELEASE_ASSERT(XRE_IsParentProcess());
+   ScreenHelperGTK::RequestRefreshScreens();
+ }
++#endif
+ 
+ ScreenHelperGTK::ScreenHelperGTK() {
+   LOG_SCREEN("ScreenHelperGTK::ScreenHelperGTK() created");
+@@ -780,11 +782,11 @@ ScreenHelperGTK::ScreenHelperGTK() {
+     LOG_SCREEN("ScreenHelperGTK() query HDR Wayland display");
+     RequestRefreshScreens(/* aInitialRefresh */ true);
+   }
+-#endif
+   Preferences::RegisterCallback(
+       ScreenHelperGTK::ScreensPrefChanged,
+       nsDependentCString(
+           StaticPrefs::GetPrefName_widget_wayland_fractional_scale_enabled()));
++#endif
+ }
+ 
+ int ScreenHelperGTK::GetMonitorCount() {
+diff --git a/widget/gtk/ScreenHelperGTK.h b/widget/gtk/ScreenHelperGTK.h
+index be454ced795b..b1dc1b8eec8a 100644
+--- a/widget/gtk/ScreenHelperGTK.h
++++ b/widget/gtk/ScreenHelperGTK.h
+@@ -30,9 +30,9 @@ class ScreenHelperGTK final : public ScreenManager::Helper {
+ 
+   static void RequestRefreshScreens(bool aInitialRefresh = false);
+   static int GetLastSerial() { return gLastSerial; }
+-
++#ifdef MOZ_WAYLAND
+   static void ScreensPrefChanged(const char* aPrefIgnored, void* aDataIgnored);
+-
++#endif
+  private:
+   static GdkWindow* sRootWindow;
+   static StaticRefPtr<ScreenGetterGtk> gLastScreenGetter;
+
