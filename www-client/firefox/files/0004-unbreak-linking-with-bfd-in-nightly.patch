@@ -1,0 +1,17 @@
+diff --git a/config/system-headers.mozbuild b/config/system-headers.mozbuild
+--- a/config/system-headers.mozbuild
++++ b/config/system-headers.mozbuild
+@@ -862,10 +862,11 @@
+     "sys/sem.h",
+     "sys/sendfile.h",
+     "sys/shm.h",
+     "sys/siginfo.h",
+     "sys/signal.h",
++    "sys/single_threaded.h",
+     "sys/socket.h",
+     "sys/sockio.h",
+     "sys/sparc/frame.h",
+     "sys/stack.h",
+     "sys/statfs.h",
+
+
