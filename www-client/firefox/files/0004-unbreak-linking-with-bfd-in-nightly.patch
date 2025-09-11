@@ -1,9 +1,19 @@
+From 58ebf1fd6557761649c299f8b12556dd5c8bfe35 Mon Sep 17 00:00:00 2001
+From: Mike Hommey <mh+mozilla@glandium.org>
+Date: Wed, 10 Sep 2025 19:56:25 +0000
+Subject: [PATCH] Bug 1987546 - Add sys/single_threaded.h as a system header.
+ r=firefox-build-system-reviewers,jcristau,ahochheiden
+
+Differential Revision: https://phabricator.services.mozilla.com/D264360
+---
+ config/system-headers.mozbuild | 1 +
+ 1 file changed, 1 insertion(+)
+
 diff --git a/config/system-headers.mozbuild b/config/system-headers.mozbuild
+index 76fcc03fbce03..0cd55c4412d03 100644
 --- a/config/system-headers.mozbuild
 +++ b/config/system-headers.mozbuild
-@@ -862,10 +862,11 @@
-     "sys/sem.h",
-     "sys/sendfile.h",
+@@ -864,6 +864,7 @@ system_headers = [
      "sys/shm.h",
      "sys/siginfo.h",
      "sys/signal.h",
@@ -11,7 +21,4 @@ diff --git a/config/system-headers.mozbuild b/config/system-headers.mozbuild
      "sys/socket.h",
      "sys/sockio.h",
      "sys/sparc/frame.h",
-     "sys/stack.h",
-     "sys/statfs.h",
-
 
