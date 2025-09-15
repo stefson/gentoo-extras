@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-141-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-143-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -571,6 +571,7 @@ src_prepare() {
 
 #	# upstreamed into 144 branch
 	rm -v "${WORKDIR}"/firefox-patches/0015-bmo-1874059-fix-libcxx-18.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-bgo-962129-libcxx-21-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
