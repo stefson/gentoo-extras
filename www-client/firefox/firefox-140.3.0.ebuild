@@ -591,6 +591,12 @@ src_prepare() {
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
+#	eapply "${FILESDIR}"/privacy-patchset-140/firefox-60-disable-telemetry.patch
+
+	# disable unwanted addons and pocket as well
+#	eapply "${FILESDIR}"/privacy-patchset-140/disable-pocket.patch
+#	eapply "${FILESDIR}"/privacy-patchset-140/remove_addons.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -684,7 +690,7 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
-	rm -rv browser/extensions/{formautofill,pictureinpicture,search-detection,webcompat}
+	rm -rv browser/extensions/{formautofill,newtab,pictureinpicture,search-detection,webcompat}
 
 	xdg_environment_reset
 }
