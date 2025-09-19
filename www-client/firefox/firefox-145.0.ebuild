@@ -570,6 +570,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 #	# upstreamed into 145 branch
+	rm -v "${WORKDIR}"/firefox-patches/0007-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 	rm -v "${WORKDIR}"/firefox-patches/0013-gcc-lto-pgo-gentoo.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bgo-962129-libcxx-21-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1970223-python-3.14-support.patch
