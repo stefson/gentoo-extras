@@ -1272,6 +1272,10 @@ src_install() {
 		EOF
 	fi
 
+	cat "${FILESDIR}"/privacy-patchset-140/140.0-privacy.js-1 >> \
+	"${GENTOO_PREFS}" \
+	|| die
+
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
