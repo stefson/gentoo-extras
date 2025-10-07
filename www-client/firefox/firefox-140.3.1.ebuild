@@ -144,7 +144,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	sndio? ( >=media-sound/sndio-1.8.0-r1 )
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=
-		>=media-libs/libaom-1.0.0:=
+		>=media-libs/libaom-3.10.0:=
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.13
