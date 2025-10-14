@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-143-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-144-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -578,10 +578,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	# Workaround for bgo#917599
+	# Workaround for bgo#917599 and bmo#1988166
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bgo-962129-libcxx-21-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1970223-python-3.14-support.patch
+	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
