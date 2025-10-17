@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-144-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-144-patches-02.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -113,7 +113,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.117
+	>=dev-libs/nss-3.118
 	>=dev-libs/nspr-4.37
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -573,6 +573,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0007-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
 	rm -v "${WORKDIR}"/firefox-patches/0013-gcc-lto-pgo-gentoo.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1990430-make-autobuffer-trivially-copyable.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
