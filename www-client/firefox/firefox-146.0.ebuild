@@ -571,6 +571,7 @@ src_prepare() {
 
 #	# upstreamed into 146 branch
 	rm -v "${WORKDIR}"/firefox-patches/0007-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
+	rm -v "${WORKDIR}"/firefox-patches/0012-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0013-gcc-lto-pgo-gentoo.patch
 	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1990430-make-autobuffer-trivially-copyable.patch
