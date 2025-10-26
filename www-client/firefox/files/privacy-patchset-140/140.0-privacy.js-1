@@ -163,5 +163,9 @@ pref("media.videocontrols.picture-in-picture.video-toggle.enabled",false);
 
 pref("media.hardwaremediakeys.enabled",false);
 
-/* Disable website advertising preferences by default */
-pref("dom.private-attribution.submission.enabled",  false);
+// Disable website advertising preferences by default //
+pref("dom.private-attribution.submission.enabled",false);
+
+// Disable silly tabs preview //
+pref("browser.tabs.hoverPreview.enabled",false);
+pref("browser.tabs.hoverPreview.showThumbnails",false);
