@@ -95,7 +95,7 @@ RDEPEND="dev-libs/glib:2
 	elibc_musl? ( sys-libs/queue-standalone )
 	ffmpeg? ( media-video/ffmpeg:0= )
 	flac? ( media-libs/flac:0 )
-	gme? ( sys-libs/zlib:0 )
+	gme? ( virtual/zlib:= )
 	gtk2? ( dev-libs/atk:0
 		dev-libs/jansson:=
 		x11-libs/cairo:0
@@ -110,7 +110,7 @@ RDEPEND="dev-libs/glib:2
 	midi? ( media-sound/timidity-freepats:0 )
 	mpg123? ( media-sound/mpg123:0 )
 	opus? ( media-libs/opusfile:0 )
-	psf? ( sys-libs/zlib:0 )
+	psf? ( virtual/zlib:= )
 	pulseaudio? ( media-sound/pulseaudio:0 )
 	sndfile? ( media-libs/libsndfile:0 )
 	vorbis? ( media-libs/libogg:0
