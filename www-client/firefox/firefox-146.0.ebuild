@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-144-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-145-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -570,12 +570,8 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
 #	# upstreamed into 146 branch
-	rm -v "${WORKDIR}"/firefox-patches/0007-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
-	rm -v "${WORKDIR}"/firefox-patches/0008-build-Disable-Werror.patch
-	rm -v "${WORKDIR}"/firefox-patches/0012-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0013-gcc-lto-pgo-gentoo.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bmo-1990430-make-autobuffer-trivially-copyable.patch
+	rm -v "${WORKDIR}"/firefox-patches/0007-build-Disable-Werror.patch
+	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 

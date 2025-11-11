@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-144-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-145-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -581,10 +581,6 @@ src_prepare() {
 	# Workaround for bgo#917599 and bmo#1988166
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
-
-	# upstreamd into 145 branch
-	rm -v "${WORKDIR}"/firefox-patches/0007-musl-sys-auvx.h-avaliable-on-more-then-just-glibc-sy.patch
-	rm -v "${WORKDIR}"/firefox-patches/0013-gcc-lto-pgo-gentoo.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
