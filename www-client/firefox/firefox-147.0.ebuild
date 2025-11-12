@@ -92,7 +92,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.29.1
+	>=dev-util/cbindgen-0.29.2
 	net-libs/nodejs
 	virtual/pkgconfig
 	amd64? ( >=dev-lang/nasm-2.14 )
@@ -114,7 +114,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/glib:2
 	dev-libs/libffi:=
 	>=dev-libs/nss-3.118
-	>=dev-libs/nspr-4.37
+	>=dev-libs/nspr-4.38
 	media-libs/alsa-lib
 	media-libs/fontconfig
 	media-libs/freetype
