@@ -569,8 +569,9 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-#	# upstreamed into 146 branch
+#	# upstreamed into 147 branch
 	rm -v "${WORKDIR}"/firefox-patches/0007-build-Disable-Werror.patch
+	rm -v "${WORKDIR}"/firefox-patches/0011-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
 	eapply "${WORKDIR}/firefox-patches"
