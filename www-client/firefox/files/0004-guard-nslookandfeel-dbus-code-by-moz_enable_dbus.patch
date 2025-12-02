@@ -1,0 +1,106 @@
+diff --git a/widget/gtk/nsLookAndFeel.h b/widget/gtk/nsLookAndFeel.h
+--- a/widget/gtk/nsLookAndFeel.h
++++ b/widget/gtk/nsLookAndFeel.h
+@@ -69,14 +69,16 @@
+ 
+   nsresult GetKeyboardLayoutImpl(nsACString& aLayout) override;
+ 
+   static const nscolor kBlack = NS_RGB(0, 0, 0);
+   static const nscolor kWhite = NS_RGB(255, 255, 255);
++#ifdef MOZ_ENABLE_DBUS
+   // Returns whether any setting changed.
+   bool RecomputeDBusSettings();
+   // Returns whether the setting really changed.
+   bool RecomputeDBusAppearanceSetting(const nsACString& aKey, GVariant* aValue);
++#endif
+ 
+   struct ColorPair {
+     nscolor mBg = kWhite;
+     nscolor mFg = kBlack;
+ 
+@@ -105,12 +107,14 @@
+  protected:
+   void RecordLookAndFeelSpecificTelemetry() override;
+   static bool ShouldHonorThemeScrollbarColors();
+   mozilla::Maybe<ColorScheme> ComputeColorSchemeSetting();
+ 
++#ifdef MOZ_ENABLE_DBUS
+   void WatchDBus();
+   void UnwatchDBus();
++#endif
+ 
+   // We use up to two themes (one light, one dark), which might have different
+   // sets of fonts and colors.
+   struct PerThemeData {
+     nsCString mName;
+diff --git a/widget/gtk/nsLookAndFeel.cpp b/widget/gtk/nsLookAndFeel.cpp
+--- a/widget/gtk/nsLookAndFeel.cpp
++++ b/widget/gtk/nsLookAndFeel.cpp
+@@ -123,10 +123,11 @@
+   return float(gdk_screen_get_resolution(s) / 96.0);
+ }
+ 
+ static bool sCSDAvailable;
+ 
++#ifdef MOZ_ENABLE_DBUS
+ static nsCString GVariantToString(GVariant* aVariant) {
+   nsCString ret;
+   gchar* s = g_variant_print(aVariant, TRUE);
+   if (s) {
+     ret.Assign(s);
+@@ -323,10 +324,11 @@
+   g_signal_handlers_disconnect_by_func(
+       mDBusSettingsProxy, FuncToGpointer(settings_changed_signal_cb), this);
+   mDBusSettingsProxy = nullptr;
+   nsAppShell::DBusConnectionCheck();
+ }
++#endif
+ 
+ nsLookAndFeel::nsLookAndFeel() {
+   static constexpr nsLiteralCString kObservedSettings[] = {
+       // Affects system font sizes.
+       "notify::gtk-xft-dpi"_ns,
+@@ -368,10 +370,11 @@
+   }
+ 
+   sCSDAvailable =
+       nsWindow::GetSystemGtkWindowDecoration() != nsWindow::GTK_DECORATION_NONE;
+ 
++#ifdef MOZ_ENABLE_DBUS
+   if (ShouldUsePortal(PortalKind::Settings)) {
+     mDBusID = g_bus_watch_name(
+         G_BUS_TYPE_SESSION, "org.freedesktop.portal.Desktop",
+         G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
+         [](GDBusConnection*, const gchar*, const gchar*,
+@@ -383,10 +386,11 @@
+           auto* lnf = static_cast<nsLookAndFeel*>(data);
+           lnf->UnwatchDBus();
+         },
+         this, nullptr);
+   }
++#endif
+   if (IsKdeDesktopEnvironment()) {
+     GUniquePtr<gchar> path(
+         g_strconcat(g_get_user_config_dir(), "/gtk-3.0/colors.css", NULL));
+     mKdeColors = dont_AddRef(g_file_new_for_path(path.get()));
+     mKdeColorsMonitor = dont_AddRef(
+@@ -400,15 +404,17 @@
+   FcInit();
+ }
+ 
+ nsLookAndFeel::~nsLookAndFeel() {
+   ClearRoundedCornerProvider();
++#ifdef MOZ_ENABLE_DBUS
+   if (mDBusID) {
+     g_bus_unwatch_name(mDBusID);
+     mDBusID = 0;
+   }
+   UnwatchDBus();
++#endif
+   if (GtkSettings* settings = gtk_settings_get_default()) {
+     g_signal_handlers_disconnect_by_func(
+         settings, FuncToGpointer(settings_changed_cb), nullptr);
+   }
+ }
+
+
