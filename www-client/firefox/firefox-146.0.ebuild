@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-145-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-146-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -583,7 +583,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
 #	# upstreamed into 146 branch
-	rm -v "${WORKDIR}"/firefox-patches/0007-build-Disable-Werror.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0007-build-Disable-Werror.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
