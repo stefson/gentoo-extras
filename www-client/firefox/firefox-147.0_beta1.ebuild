@@ -582,8 +582,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
-#	# upstreamed into 146 branch
-#	rm -v "${WORKDIR}"/firefox-patches/0007-build-Disable-Werror.patch
+#	# upstreamed into 147 branch
 
 	eapply "${WORKDIR}/firefox-patches"
 
