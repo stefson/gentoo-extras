@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-146-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-146-patches-02.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -583,7 +583,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
 #	# upstreamed into 147 branch
-
+	rm -v "${WORKDIR}"/firefox-patches/0021-bgo-966424-PR_GetEnv-non-unified-build-fix.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
