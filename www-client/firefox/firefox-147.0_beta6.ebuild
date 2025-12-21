@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-146-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-146-patches-03a.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -584,6 +584,7 @@ src_prepare() {
 
 #	# upstreamed into 147 branch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bgo-966424-PR_GetEnv-non-unified-build-fix.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
