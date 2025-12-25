@@ -572,7 +572,7 @@ src_prepare() {
 #	# upstreamed into 148 branch
 	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bgo-966424-PR_GetEnv-non-unified-build-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2000361-fix-missing-array-non-unified-build-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
