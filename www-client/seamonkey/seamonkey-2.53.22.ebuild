@@ -8,7 +8,7 @@ WANT_AUTOCONF="2.1"
 PYTHON_COMPAT=( python3_11 )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
 
-LLVM_COMPAT=( {18..20} )
+LLVM_COMPAT=( {18..21} )
 
 # This list can be updated with scripts/get_langs.sh from the mozilla overlay
 # note - could not roll langpacks for: ca fi
