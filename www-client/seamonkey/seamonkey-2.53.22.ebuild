@@ -21,7 +21,7 @@ MOZ_PV="${PV}"
 MOZ_PV="${MOZ_PV/_beta/b}"
 MOZ_P="${P}"
 MY_MOZ_P="${PN}-${MOZ_PV}"
-PATCH_PV="2.53.22"
+PATCH_PV="2.53.22-1"
 PATCH="${PN}-${PATCH_PV}-patches"
 PATCH_S="${WORKDIR}/gentoo-${PN}-patches-${PATCH_PV}"
 
@@ -209,6 +209,11 @@ src_prepare() {
 	# Patch for people who use their systems ICU 74
 	if has_version ">=dev-libs/icu-74.1" && use system-icu ; then
 		eapply -p1 "${PATCH_S}/USE_flag/2022-bmo-1862601-system-icu-74.patch"
+	fi
+
+	# Patch for people who use their systems ICU 78
+	if has_version ">=dev-libs/icu-78.1" && use system-icu ; then
+		eapply -p1 "${PATCH_S}/USE_flag/2023-bmo-2000225-system-icu-78.patch"
 	fi
 
 	# Allow user to apply any additional patches without modifing ebuild
