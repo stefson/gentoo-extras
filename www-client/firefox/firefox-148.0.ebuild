@@ -573,6 +573,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2000361-fix-missing-array-non-unified-build-fix.patch
+	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-2005928-add-missing-cstdint-header.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
