@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-146-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-147-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -583,7 +583,7 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
 #	# upstreamed into 147 branch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2000361-fix-missing-array-non-unified-build-fix.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2000361-fix-missing-array-non-unified-build-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
