@@ -1276,10 +1276,6 @@ src_install() {
 	"${GENTOO_PREFS}" \
 	|| die
 
-	cat "${FILESDIR}"/privacy-patchset-140/140.0-non-ai.js >> \
-	"${GENTOO_PREFS}" \
-	|| die
-
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
