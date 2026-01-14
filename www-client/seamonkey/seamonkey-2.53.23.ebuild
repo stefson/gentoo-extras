@@ -69,8 +69,8 @@ COMMON_DEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0
 	>=dev-libs/glib-2.26:2
 	>=dev-libs/libffi-3.0.10:=
-	>=dev-libs/nspr-4.23
-	>=dev-libs/nss-3.47.1
+	>=dev-libs/nspr-4.35
+	>=dev-libs/nss-3.112
 	media-libs/fontconfig
 	>=media-libs/freetype-2.4.10
 	>=media-libs/mesa-10.2:=
