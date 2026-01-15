@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-146-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-147-patches-02.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -569,11 +569,10 @@ src_prepare() {
 
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
 
-#	# upstreamed into 148 branch
+#	# upstreamed into 149 branch
 	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2000361-fix-missing-array-non-unified-build-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0022-bmo-2005928-add-missing-cstdint-header.patch
+	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2005928-add-missing-cstdint-header.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
