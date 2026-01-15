@@ -582,9 +582,6 @@ src_prepare() {
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
 
-#	# upstreamed into 147 branch
-#	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2000361-fix-missing-array-non-unified-build-fix.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
