@@ -5,7 +5,7 @@ EAPI=8
 
 WANT_AUTOCONF="2.1"
 
-PYTHON_COMPAT=( python3_11 )
+PYTHON_COMPAT=( python3_12 )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
 
 LLVM_COMPAT=( {18..21} )
@@ -21,7 +21,7 @@ MOZ_PV="${PV}"
 MOZ_PV="${MOZ_PV/_beta/b}"
 MOZ_P="${P}"
 MY_MOZ_P="${PN}-${MOZ_PV}"
-PATCH_PV="2.53.22-1"
+PATCH_PV="2.53.23"
 PATCH="${PN}-${PATCH_PV}-patches"
 PATCH_S="${WORKDIR}/gentoo-${PN}-patches-${PATCH_PV}"
 
