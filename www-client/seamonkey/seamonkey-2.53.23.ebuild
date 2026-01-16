@@ -5,7 +5,7 @@ EAPI=8
 
 WANT_AUTOCONF="2.1"
 
-PYTHON_COMPAT=( python3_12 )
+PYTHON_COMPAT=( python3_{12..13} )
 PYTHON_REQ_USE='ncurses,sqlite,ssl,threads(+)'
 
 LLVM_COMPAT=( {18..21} )
