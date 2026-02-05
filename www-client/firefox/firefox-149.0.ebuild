@@ -567,10 +567,17 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	rm -v "${WORKDIR}"/firefox-patches/*-bgo-748849-RUST_TARGET_override.patch
+	# let me take care of wasm myself
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 
-#	# upstreamed into 149 branch
-	rm -v "${WORKDIR}"/firefox-patches/0019-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
+	# Workaround for bgo#915651 and bmo#1988166 on musl
+	if use elibc_glibc ; then
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
+	fi
+
+	# upstreamed into 149 branch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2005928-add-missing-cstdint-header.patch
 

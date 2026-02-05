@@ -578,9 +578,15 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
 	fi
 
-	# Workaround for bgo#917599 and bmo#1988166
+	# let me take care of wasm myself
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
-	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch
+
+	# Workaround for bgo#915651 and bmo#1988166 on musl
+	if use elibc_glibc ; then
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
+	fi
 
 	eapply "${WORKDIR}/firefox-patches"
 
