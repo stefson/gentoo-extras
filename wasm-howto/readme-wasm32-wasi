@@ -1,0 +1,79 @@
+Note 2: How to compile WASI runtimes using crossdev.
+
+1. crossdev -L wasm32-wasi
+
+It should failed with "error: Target architecture not supported by installed LLVM toolchain".
+
+2. In CROSSDEV_OVERLAY, remove cross_llvm-wasm32-wasi/linux-headers, link clang-crossdev-wrappers, compiler-rt and wasi-libc to my overlay.
+
+3. emerge cross_llvm-wasm32-wasi/clang-crossdev-wrappers cross_llvm-wasm32-wasi/compiler-rt cross_llvm-wasm32-wasi/wasi-libc
+
+4. edit /usr/wasm32-wasi/etc/portage/profile/make.defaults
+
+```
+ARCH="wasm32"
+KERNEL="-linux wasi"
+ELIBC="wasi"
+AR=llvm-ar
+AS=wasm32-wasi-as
+CC="wasm32-wasi-clang"
+CPP="wasm32-wasi-cpp"
+CROSS_COMPILE="wasm32-wasi-"
+```
+
+ARCH/KERNEL/ELIBC is not supported by current gentoo tree, so the name is arbitrary
+
+/usr/wasm32-wasi/etc/portage/profile/use.force
+
+```
+-kernel_linux
+wasi
+```
+
+/usr/wasm32-wasi/etc/portage/profile/package.provided
+
+```
+sys-devel/llvm-19.1.2
+sys-devel/clang-19.1.2
+```
+
+/usr/wasm32-wasi/etc/portage/package.accept_keywords
+
+```
+sys-libs/libcxxabi ~*
+sys-libs/libcxx ~*
+```
+
+edit /usr/wasm32-wasi/etc/portage/repos.conf, add my overlay
+
+5. wasm32-wasi-emerge libcxxabi libcxx
+6. Test c/c++ programs
+
+hello.c
+```
+#include <stdio.h>
+int main() {
+    printf("Hello world!\n");
+    return 0;
+}
+```
+
+hello.cpp
+```
+#include <iostream>
+int main() {
+  std::cout << "Gentoo Linux Clang/LLVM/LLD toolchain for WASI!" << std::endl;
+  return 0;
+}
+```
+
+`wasm32-wasi-clang hello.c -o hello.wasm`
+`wasm32-wasi-clang++ hello.cpp -o hello-cpp.wasm`
+
+You need a wasm runtime to run WASI program. 
+
+dev-util/wasm3 and dev-util/wasmer don't works as the version in Gentoo are old and not compitable with current wasm features. See https://blog.rust-lang.org/2024/09/24/webassembly-targets-change-in-default-target-features.html
+
+Install wasmtime using cargo: `cargo install wasmtime-cli`
+
+`wasmtime hello-cpp.wasm` should output `Gentoo Linux Clang/LLVM/LLD toolchain for WASI!`
