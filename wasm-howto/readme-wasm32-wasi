@@ -6,6 +6,15 @@ It should failed with "error: Target architecture not supported by installed LLV
 
 2. In CROSSDEV_OVERLAY, remove cross_llvm-wasm32-wasi/linux-headers, link clang-crossdev-wrappers, compiler-rt and wasi-libc to my overlay.
 
+2a. symlink cmake.eclass from overlay into crossdev overlay, mkdir crossdev/eclass
+2b. cross wasi-libc needs to drop all CFLAGS, CXXFLAGS, LDFLAGS. 
+
+cat /etc/portage/env/cross_llvm-wasm32-wasi/wasi-libc
+
+LDFLAGS=""
+CFLAGS=""
+CXXFLAGS=""
+
 3. emerge cross_llvm-wasm32-wasi/clang-crossdev-wrappers cross_llvm-wasm32-wasi/compiler-rt cross_llvm-wasm32-wasi/wasi-libc
 
 4. edit /usr/wasm32-wasi/etc/portage/profile/make.defaults
@@ -33,15 +42,15 @@ wasi
 /usr/wasm32-wasi/etc/portage/profile/package.provided
 
 ```
-sys-devel/llvm-19.1.2
-sys-devel/clang-19.1.2
+llvm-core/llvm-21.1.8
+llvm-core/clang-21.1.8
 ```
 
 /usr/wasm32-wasi/etc/portage/package.accept_keywords
 
 ```
-sys-libs/libcxxabi ~*
-sys-libs/libcxx ~*
+=llvm-runtimes/libcxxabi-21.1.8 **
+=llvm-runtimes/libcxx-21.1.8 **
 ```
 
 edit /usr/wasm32-wasi/etc/portage/repos.conf, add my overlay
