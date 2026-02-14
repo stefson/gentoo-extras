@@ -1072,7 +1072,7 @@ src_configure() {
 	fi
 
 	if use wasm-sandbox; then
-		mozconfig_add_options_ac 'enable wasm sandbox' --with-wasi-sysroot="${EROOT}/usr/wasm32-wasi"
+		mozconfig_add_options_ac 'enable wasm sandbox' --with-wasi-sysroot="${EROOT}/usr/wasm32-wasip1"
 	else
 		mozconfig_add_options_ac 'disable wasm sandbox' --without-wasm-sandboxed-libraries
 	fi
