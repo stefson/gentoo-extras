@@ -588,7 +588,7 @@ src_prepare() {
 
 	# ICU's subslot change should trigger rebuild on Firefox if it is updated 77->78.
 	if use system-icu && has_version ">=dev-libs/icu-78.1" ; then
-		eapply "${FILESDIR}/firefox-146.0.1-icu78.patch" # bgo#967261
+		eapply "${FILESDIR}/firefox-140.7.1-icu78.patch" # bgo#967261
 	fi
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
