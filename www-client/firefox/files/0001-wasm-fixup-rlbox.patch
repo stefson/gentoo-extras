@@ -1,5 +1,5 @@
 diff --git a/security/rlbox/moz.build b/security/rlbox/moz.build
-index 7ad8d07..220af54 100644
+index f676e24..53b4f17 100644
 --- a/security/rlbox/moz.build
 +++ b/security/rlbox/moz.build
 @@ -46,6 +46,7 @@ if CONFIG["MOZ_WASM_SANDBOXING_GRAPHITE"]:
@@ -8,5 +8,6 @@ index 7ad8d07..220af54 100644
          WASM_DEFINES[k] = v
 +    LOCAL_INCLUDES += ["/gfx/graphite2/include"]
      LOCAL_INCLUDES += ["/gfx/graphite2/src"]
- 
- if CONFIG["MOZ_WASM_SANDBOXING_OGG"]:
+     if CONFIG["MOZ_SYSTEM_GRAPHITE2"]:
+       OS_LIBS += CONFIG["MOZ_GRAPHITE2_LIBS"]
+
