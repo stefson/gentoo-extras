@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-147-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-147-patches-07.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -646,6 +646,8 @@ src_prepare() {
 
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
+	# glslopt: bgo#969412
+	moz_clear_vendor_checksums glslopt
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
