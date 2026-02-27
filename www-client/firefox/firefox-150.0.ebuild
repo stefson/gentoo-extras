@@ -575,6 +575,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-970537-fix-types-header-musl-include.patch || die
 	fi
 
 	# upstreamed into 150 branch
