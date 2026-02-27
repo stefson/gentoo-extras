@@ -589,7 +589,6 @@ src_prepare() {
 	fi
 
 	# upstreamed into 149 branch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2005928-add-missing-cstdint-header.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
