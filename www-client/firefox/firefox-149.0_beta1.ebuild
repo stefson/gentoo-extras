@@ -664,7 +664,9 @@ src_prepare() {
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
+	# wast: mozbg#2018848
 	moz_clear_vendor_checksums glslopt
+	moz_clear_vendor_checksums wast
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
