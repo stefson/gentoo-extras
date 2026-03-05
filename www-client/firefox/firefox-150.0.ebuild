@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-150-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-150-patches-02.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -580,7 +580,6 @@ src_prepare() {
 
 	# upstreamed into 150 branch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0021-bmo-2005928-add-missing-cstdint-header.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
