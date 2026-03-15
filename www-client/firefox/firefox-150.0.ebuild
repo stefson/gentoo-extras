@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-150-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-150-patches-04.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -113,7 +113,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.121
+	>=dev-libs/nss-3.122
 	>=dev-libs/nspr-4.38.2
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -576,6 +576,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-970537-fix-types-header-musl-include.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-971176-fix-cstdint-header-musl-include.patch || die
 	fi
 
 	# upstreamed into 150 branch
