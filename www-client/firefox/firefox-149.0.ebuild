@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-149-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-149-patches-03.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 )
 
@@ -587,6 +587,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-970537-fix-types-header-musl-include.patch || die
+		rm -v "${WORKDIR}"/firefox-patches/*bgo-970694-fix-missing-stdint.h-on-musl.patch || die
 	fi
 
 	# upstreamed into 149 branch
