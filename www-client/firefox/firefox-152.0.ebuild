@@ -113,7 +113,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.123
+	>=dev-libs/nss-3.124
 	>=dev-libs/nspr-4.38.2
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -580,8 +580,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-971176-fix-cstdint-header-musl-include.patch || die
 	fi
 
-	# upstreamed into 150 branch
+	# upstreamed into 152 branch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -649,7 +650,7 @@ src_prepare() {
 	# Clear checksums from cargo crates we've manually patched.
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
-	moz_clear_vendor_checksums glslopt
+	# moz_clear_vendor_checksums glslopt
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
