@@ -1,138 +1,33 @@
+# HG changeset patch
+# User Greg Stoll <greg@gregstoll.com>
+# Date 1777316927 0
+# Node ID bd876ab690e3c3545b9af27894f1a67ee4302ead
+# Parent  5892d5065c697616b054e8de0acd730340cc57de
+Bug 2033188 - fix includes of udev-specific code in WebSerial to be consistent r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D296728
+
+
 diff --git a/dom/webserial/PosixSerialPlatformService.h b/dom/webserial/PosixSerialPlatformService.h
 --- a/dom/webserial/PosixSerialPlatformService.h
 +++ b/dom/webserial/PosixSerialPlatformService.h
-@@ -49,11 +49,11 @@
-   nsresult ConfigurePort(int aFd, const IPCSerialOptions& aOptions);
+@@ -4,17 +4,17 @@
  
-   nsresult StartMonitoring();
-   void StopMonitoring();
+ #ifndef mozilla_dom_PosixSerialPlatformService_h
+ #define mozilla_dom_PosixSerialPlatformService_h
  
--#ifdef XP_LINUX
-+#if defined(XP_LINUX) && defined(MOZ_ENABLE_DBUS)
-   nsresult InitializeUdev();
-   void ShutdownUdev();
-   static gboolean OnUdevMonitor(GIOChannel* source, GIOCondition condition,
-                                 gpointer data);
-   void ReadUdevChange();
-diff --git a/dom/webserial/PosixSerialPlatformService.cpp b/dom/webserial/PosixSerialPlatformService.cpp
---- a/dom/webserial/PosixSerialPlatformService.cpp
-+++ b/dom/webserial/PosixSerialPlatformService.cpp
-@@ -69,11 +69,11 @@
-   close(fd);
-   return isReal;
- }
+ #include "mozilla/UniquePtrExtensions.h"
+ #include "mozilla/dom/SerialPlatformService.h"
+ #include "nsTHashMap.h"
  
- PosixSerialPlatformService::PosixSerialPlatformService()
--#ifdef XP_LINUX
-+#if defined(XP_LINUX) && defined(MOZ_ENABLE_DBUS)
-     : mMonitor(nullptr),
-       mMonitorSourceID(0)
- #elif defined(XP_MACOSX)
-     : mNotificationPort(nullptr),
-       mAddedIterator(0),
-@@ -153,10 +153,11 @@
-   }
+-#if defined(XP_LINUX) && defined(MOZ_ENABLE_DBUS)
++#ifdef XP_LINUX
+ #  include <glib.h>
  
-   IOObjectRelease(serialPortIterator);
- 
- #elif defined(XP_LINUX)
-+#  ifdef MOZ_ENABLE_DBUS
-   // Use an IIFE to avoid excessive nesting
-   [&]() {
-     if (!mUdevLib) {
-       MOZ_LOG(gWebSerialLog, LogLevel::Warning,
-               ("PosixSerialPlatformService[%p]::EnumeratePorts udev not "
-@@ -242,10 +243,11 @@
-                info.usbVendorId().valueOr(0), info.usbProductId().valueOr(0)));
- 
-       aPorts.AppendElement(info);
-     }
-   }();
-+#  endif  // MOZ_ENABLE_DBUS
- 
-   // Also scan /dev/ directly for onboard serial ports that may not appear
-   // in the udev enumeration (e.g. on minimal or embedded Linux systems).
-   DIR* devDir = opendir("/dev");
-   if (devDir) {
-@@ -277,10 +279,11 @@
-                "port from /dev scan: %s",
-                this, devpath.get()));
- 
-       IPCSerialPortInfo info;
-       bool haveSetInfo = false;
-+#  ifdef MOZ_ENABLE_DBUS
-       // Try udev lookup for richer metadata (product name, vendor/product IDs).
-       nsAutoCString syspath("/sys/class/tty/");
-       syspath.Append(ent->d_name);
-       udev_device* dev = mUdevLib ? mUdevLib->udev_device_new_from_syspath(
-                                         mUdevLib->udev, syspath.get())
-@@ -288,10 +291,11 @@
-       if (dev) {
-         PopulatePortInfoFromUdev(dev, devpath.get(), info);
-         mUdevLib->udev_device_unref(dev);
-         haveSetInfo = true;
-       }
-+#  endif  // MOZ_ENABLE_DBUS
-       if (!haveSetInfo) {
-         info.id() = devpathUtf16;
-         info.path() = devpathUtf16;
-         info.friendlyName() =
-             NS_ConvertUTF8toUTF16(nsDependentCString(ent->d_name));
-@@ -997,11 +1001,11 @@
- 
-   return NS_OK;
- }
- 
- nsresult PosixSerialPlatformService::StartMonitoring() {
--#ifdef XP_LINUX
-+#if defined(XP_LINUX) && defined(MOZ_ENABLE_DBUS)
-   return InitializeUdev();
- #elif defined(XP_MACOSX)
-   return InitializeMacOS();
- #else
-   return NS_OK;
-@@ -1098,11 +1102,11 @@
-   return NS_OK;
- }
+ #  include "mozilla/UdevLib.h"
  #endif
  
- void PosixSerialPlatformService::StopMonitoring() {
--#ifdef XP_LINUX
-+#if defined(XP_LINUX) && defined(MOZ_ENABLE_DBUS)
-   ShutdownUdev();
- #elif defined(XP_MACOSX)
-   if (mAddedIterator) {
-     IOObjectRelease(mAddedIterator);
-     mAddedIterator = 0;
-@@ -1132,11 +1136,11 @@
-           ("PosixSerialPlatformService[%p]::StopMonitoring monitoring stopped",
-            this));
+ #ifdef XP_MACOSX
+ #  include <IOKit/IOKitLib.h>
  #endif
- }
- 
--#ifdef XP_LINUX
-+#if defined(XP_LINUX) && defined(MOZ_ENABLE_DBUS)
- nsresult PosixSerialPlatformService::InitializeUdev() {
-   mUdevLib = MakeUnique<udev_lib>();
-   if (!*mUdevLib) {
-     MOZ_LOG(gWebSerialLog, LogLevel::Error,
-             ("PosixSerialPlatformService[%p]::InitializeUdev udev_lib "
-diff --git a/dom/webserial/moz.build b/dom/webserial/moz.build
---- a/dom/webserial/moz.build
-+++ b/dom/webserial/moz.build
-@@ -34,11 +34,12 @@
-         OS_LIBS += [
-             "-framework IOKit",
-             "-framework CoreFoundation",
-         ]
-     elif CONFIG["OS_TARGET"] == "Linux":
--        CXXFLAGS += CONFIG["GLIB_CFLAGS"]
-+        if CONFIG["MOZ_ENABLE_DBUS"]:
-+            CXXFLAGS += CONFIG["GLIB_CFLAGS"]
- 
- UNIFIED_SOURCES += [
-     "Serial.cpp",
-     "SerialManagerChild.cpp",
-     "SerialManagerParent.cpp",
-
 
