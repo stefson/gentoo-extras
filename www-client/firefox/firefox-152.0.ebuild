@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-151-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-150-patches-05.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -572,7 +572,6 @@ src_prepare() {
 
 	# Workaround for bgo#915651 and bmo#1988166 on musl
 	if use elibc_glibc ; then
-		rm -v "${WORKDIR}"/firefox-patches/0008-bgo-816975-fix-build-on-x86.patch
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
@@ -581,8 +580,11 @@ src_prepare() {
 	fi
 
 	# upstreamed into 152 branch
+	rm -v "${WORKDIR}"/firefox-patches/0008-bgo-816975-fix-build-on-x86.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2033279-make-rust-simd-work-with-rust-1.95.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2023597-use-wasm32-wasip1-target-for-clang-22.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
