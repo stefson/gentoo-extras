@@ -96,7 +96,7 @@ src_configure() {
 	)
 
 	# bug #787299
-	append-cxxflags -std=gnu++14
+	append-cxxflags -std=gnu++17
 
 	if ! use test ; then
 		mycmakeargs+=(
