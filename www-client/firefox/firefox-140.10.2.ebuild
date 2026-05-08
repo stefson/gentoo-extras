@@ -584,6 +584,9 @@ src_prepare() {
 	# Workaround for bgo#917599
 	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
 
+	# merged
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2036244-allow-loading-libavcodec.so.62-in-runtime.patch
+
 	eapply "${WORKDIR}/firefox-patches"
 
 	# ICU's subslot change should trigger rebuild on Firefox if it is updated 77->78.
