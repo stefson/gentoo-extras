@@ -582,6 +582,7 @@ src_prepare() {
 
 	# upstreamed into 152 branch
 	rm -v "${WORKDIR}"/firefox-patches/0008-bgo-816975-fix-build-on-x86.patch
+	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-928126-enable-jxl.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2033279-make-rust-simd-work-with-rust-1.95.patch
