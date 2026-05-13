@@ -3,19 +3,25 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{13..14} )
+PYTHON_COMPAT=( python3_{11..14} )
 
-inherit eapi9-ver linux-info meson pam python-any-r1 udev xdg-utils git-r3
+if [[ ${PV} = *9999* ]]; then
+	EGIT_BRANCH="v257-stable"
+	EGIT_REPO_URI="https://github.com/elogind/elogind.git"
+	inherit git-r3
+else
+	SRC_URI="https://github.com/${PN}/${PN}/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+fi
+
+inherit eapi9-ver linux-info meson pam python-any-r1 udev xdg-utils
 
 DESCRIPTION="The systemd project's logind, extracted to a standalone package"
 HOMEPAGE="https://github.com/elogind/elogind"
-EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
-EGIT_BRANCH="v257-stable"
-EGIT_SUBMODULES=()
 
 LICENSE="CC0-1.0 LGPL-2.1+ public-domain"
 SLOT="0"
-IUSE="+acl audit debug doc efi +pam +policykit selinux test +userdb"
+IUSE="+acl audit cgroup-hybrid debug doc +pam +policykit selinux test"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
@@ -47,11 +53,6 @@ PDEPEND="
 
 DOCS=( README.md )
 
-PATCHES=(
-	# all downstream patches:
-	"${FILESDIR}/${PN}-257.10-nodocs.patch"
-)
-
 python_check_deps() {
 	python_has_version "dev-python/jinja2[${PYTHON_USEDEP}]" &&
 	python_has_version "dev-python/lxml[${PYTHON_USEDEP}]"
@@ -66,18 +67,25 @@ pkg_setup() {
 src_prepare() {
 	default
 	xdg_environment_reset
+
+	# don't cleanup /dev/shm/ on logout on logout
+	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=949698
+	sed -e "s/#RemoveIPC=yes/RemoveIPC=no/" \
+		-i src/login/logind.conf.in || die
 }
 
 src_configure() {
+	if use cgroup-hybrid; then
+		cgroupmode="hybrid"
+	else
+		cgroupmode="unified"
+	fi
 
 	python_setup
 
 	EMESON_BUILDTYPE="$(usex debug debug release)"
 
-	# Removed -Ddefault-hierarchy=${cgroupmode}
-	# -> It is deprecated and will be ignored by the build system
 	local emesonargs=(
-		$(usex debug "-Ddebug-extra=elogind" "")
 		-Ddocdir="${EPREFIX}/usr/share/doc/${PF}"
 		-Dhtmldir="${EPREFIX}/usr/share/doc/${PF}/html"
 		-Dudevrulesdir="${EPREFIX}$(get_udevdir)"/rules.d
@@ -85,23 +93,26 @@ src_configure() {
 		--localstatedir="${EPREFIX}"/var
 		-Dbashcompletiondir="${EPREFIX}/usr/share/bash-completion/completions"
 		-Dman=auto
-		-Dsmack=false
+		-Dsmack=true
 		-Dcgroup-controller=openrc
-		-Ddefault-kill-user-processes=true
+		-Ddefault-hierarchy=${cgroupmode}
+		-Ddefault-kill-user-processes=false
 		-Dacl=$(usex acl enabled disabled)
 		-Daudit=$(usex audit enabled disabled)
-		-Defi=$(usex efi true false)
 		-Dhtml=$(usex doc auto disabled)
-		-Dnss-elogind=$(usex userdb true false)
 		-Dpam=$(usex pam enabled disabled)
 		-Dpamlibdir="$(getpam_mod_dir)"
 		-Dselinux=$(usex selinux enabled disabled)
 		-Dtests=$(usex test true false)
-		-Duserdb=$(usex userdb true false)
 		-Dutmp=$(usex elibc_musl false true)
 		-Dmode=release
-		-Dzshcompletiondir=""
-		-Db_lto=true
+
+		# Ensure consistency between merged-usr and split-usr (bug 945965)
+		-Dhalt-path="${EPREFIX}/sbin/halt"
+		-Dkexec-path="${EPREFIX}/usr/sbin/kexec"
+		-Dnologin-path="${EPREFIX}/sbin/nologin"
+		-Dpoweroff-path="${EPREFIX}/sbin/poweroff"
+		-Dreboot-path="${EPREFIX}/sbin/reboot"
 	)
 
 	meson_src_configure
@@ -109,14 +120,14 @@ src_configure() {
 
 src_install() {
 	meson_src_install
-
 	keepdir /var/lib/elogind
 
-	newinitd "${FILESDIR}"/${PN}2.init ${PN}
-	newconfd "${FILESDIR}"/${PN}.conf ${PN}
+	rm "${ED}"/usr/share/doc/${PF}/LICENSE* || die
+	rm "${ED}"/usr/share/doc/${PF}/CODING_STYLE.md || die
 
-	newinitd "${FILESDIR}"/${PN}-userdbd.init ${PN}-userdbd
-	newconfd "${FILESDIR}"/${PN}-userdbd.conf ${PN}-userdbd
+	newinitd "${FILESDIR}"/${PN}.init-r1 ${PN}
+
+	newconfd "${FILESDIR}"/${PN}.conf ${PN}
 }
 
 pkg_postinst() {
@@ -131,9 +142,9 @@ pkg_postinst() {
 		ewarn "USE=\"policykit\"! That means e.g. no suspend or hibernate."
 		ewarn
 	fi
-	if [[ "$(rc-status boot | grep elogind)" != "" ]]; then
+	if [[ "$(rc-config list boot | grep elogind)" != "" ]]; then
 		elog "elogind is currently started from boot runlevel."
-	elif [[ "$(rc-status default | grep elogind)" != "" ]]; then
+	elif [[ "$(rc-config list default | grep elogind)" != "" ]]; then
 		ewarn "elogind is currently started from default runlevel."
 		ewarn "Please remove elogind from the default runlevel and"
 		ewarn "add it to the boot runlevel by:"
@@ -154,15 +165,11 @@ pkg_postinst() {
 		fi
 	fi
 
-	for version in ${REPLACING_VERSIONS}; do
-		if ver_test "${version}" -lt 255.3; then
-			elog "Starting with release 255.3 the sleep configuration is now done"
-			elog "in the /etc/elogind/sleep.conf while the elogind additions have"
-			elog "been moved to /etc/elogind/sleep.conf.d/10-elogind.conf."
-			elog "Should you use non-default sleep configuration remember to migrate"
-			elog "those to a new configuration file in /etc/elogind/sleep.conf.d/."
-		fi
-	done
+	if ver_replacing -lt 252.9; then
+		elog "Starting with release 252.9 the sleep configuration is now done"
+		elog "in the /etc/elogind/sleep.conf. Should you use non-default sleep"
+		elog "configuration remember to migrate those to new configuration file."
+	fi
 
 	local file files
 	# find custom hooks excluding known (nvidia-drivers, sys-power/tlp)
