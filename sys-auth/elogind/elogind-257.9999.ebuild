@@ -94,6 +94,8 @@ src_configure() {
 		-Dbashcompletiondir="${EPREFIX}/usr/share/bash-completion/completions"
 		-Dman=auto
 		-Dsmack=true
+		-Dnss-elogind=false
+		-Duserdb=false
 		-Dcgroup-controller=openrc
 		-Ddefault-hierarchy=${cgroupmode}
 		-Ddefault-kill-user-processes=false
