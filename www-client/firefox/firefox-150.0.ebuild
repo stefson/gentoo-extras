@@ -5,7 +5,7 @@ EAPI=8
 
 FIREFOX_PATCHSET="firefox-150-patches-04.tar.xz"
 
-LLVM_COMPAT=( 19 20 21 )
+LLVM_COMPAT=( 19 20 21 22 )
 
 PYTHON_COMPAT=( python3_{10..14} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -589,8 +589,6 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-970537-fix-types-header-musl-include.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-971176-fix-cstdint-header-musl-include.patch || die
 	fi
-
-	# upstreamed into 149 branch
 
 	eapply "${WORKDIR}/firefox-patches"
 
