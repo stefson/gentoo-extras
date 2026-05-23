@@ -1,0 +1,36 @@
+diff --git a/bindgen/clang.rs b/bindgen/clang.rs
+index e52fed0d4a..1e8326ed82 100644
+--- a/third_party/rust/bindgen/clang.rs
++++ b/third_party/rust/bindgen/clang.rs
+@@ -1211,11 +1211,11 @@ impl Type {
+
+     /// Get a cursor pointing to this type's declaration.
+     pub(crate) fn declaration(&self) -> Cursor {
+-        unsafe {
+-            Cursor {
+-                x: clang_getTypeDeclaration(self.x),
+-            }
+-        }
++        let decl = Cursor {
++            x: unsafe { clang_getTypeDeclaration(self.x) },
++        };
++        // Prior to clang 22, the declaration pointed to the definition.
++        decl.definition().unwrap_or(decl)
+     }
+
+
+diff --git a/src/Transform_inl.h b/src/Transform_inl.h
+index bc10e7d..99faf25 100644
+--- a/gfx/skia/skia/modules/skcms/src/Transform_inl.h
++++ b/gfx/skia/skia/modules/skcms/src/Transform_inl.h
+@@ -156,8 +156,8 @@
+ #elif defined(USING_AVX512F)
+     return (F)_mm512_cvtph_ps((__m256i)half);
+ #elif defined(USING_AVX_F16C)
+-    typedef int16_t __attribute__((vector_size(16))) I16;
+-    return __builtin_ia32_vcvtph2ps256((I16)half);
++    typedef _Float16 __attribute__((vector_size(16))) F16;
++    return __builtin_convertvector((F16)half, F);
+ #else
+     U32 wide = cast<U32>(half);
+     // A half is 1-5-10 sign-exponent-mantissa, with 15 exponent bias.
