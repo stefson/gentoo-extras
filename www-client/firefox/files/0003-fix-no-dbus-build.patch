@@ -1,0 +1,180 @@
+diff --git a/browser/components/shell/moz.build b/browser/components/shell/moz.build
+--- a/browser/components/shell/moz.build
++++ b/browser/components/shell/moz.build
+@@ -39,20 +39,20 @@
+         "OpenTabsProvider.sys.mjs",
+     ]
+     SOURCES += [
+         "nsGNOMEShellService.cpp",
+     ]
+-    LOCAL_INCLUDES += [
+-        "/widget",
+-        "/widget/gtk",  # for nsWindow
+-    ]
+     if CONFIG["MOZ_ENABLE_DBUS"]:
++        include("/ipc/chromium/chromium-config.mozbuild")
++        LOCAL_INCLUDES += [
++            "/widget",
++            "/widget/gtk",  # for nsWindow
++        ]
+         SOURCES += [
+             "nsGNOMEShellDBusHelper.cpp",
+             "nsGNOMEShellSearchProvider.cpp",
+         ]
+-        include("/ipc/chromium/chromium-config.mozbuild")
+ 
+ elif CONFIG["OS_ARCH"] == "WINNT":
+     XPIDL_SOURCES += [
+         "nsILimitedAccessFeature.idl",
+         "nsISecondaryTile.idl",
+diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/components/shell/nsGNOMEShellService.cpp
+--- a/browser/components/shell/nsGNOMEShellService.cpp
++++ b/browser/components/shell/nsGNOMEShellService.cpp
+@@ -2,13 +2,10 @@
+  * License, v. 2.0. If a copy of the MPL was not distributed with this
+  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ 
+ #include "mozilla/Preferences.h"
+ #include "mozilla/widget/GSettings.h"
+-#include "nsWindow.h"
+-#include "WidgetUtils.h"
+-
+ #include "nsAppRunner.h"
+ #include "nsCOMPtr.h"
+ #include "nsGNOMEShellService.h"
+ #include "nsShellService.h"
+ #include "nsIFile.h"
+@@ -27,14 +24,19 @@
+ #include "mozilla/GRefPtr.h"
+ #include "mozilla/GUniquePtr.h"
+ #include "mozilla/WidgetUtilsGtk.h"
+ #include "mozilla/dom/Element.h"
+ #include "mozilla/dom/Promise.h"
+-#include "mozilla/widget/AsyncDBus.h"
+ #include "nsImageToPixbuf.h"
+ #include "nsXULAppAPI.h"
+ 
++#ifdef MOZ_ENABLE_DBUS
++#include "nsWindow.h"
++#include "WidgetUtils.h"
++#include "mozilla/widget/AsyncDBus.h"
++#endif
++
+ #include <glib.h>
+ #include <gio/gio.h>
+ #include <gdk/gdk.h>
+ #include <gdk-pixbuf/gdk-pixbuf.h>
+ #include <stdlib.h>
+@@ -268,11 +270,11 @@
+     nsCOMPtr<nsIStringBundleService> bundleService =
+         components::StringBundle::Service(&rv);
+     NS_ENSURE_SUCCESS(rv, rv);
+ 
+     nsCOMPtr<nsIStringBundle> brandBundle;
+-    rv = bundleService->CreateBundle(BRAND_PROPERTIES,
++    rv = bundleService->CreateBundle(SHELL_BRAND_PROPERTIES_URI,
+                                      getter_AddRefs(brandBundle));
+     NS_ENSURE_SUCCESS(rv, rv);
+ 
+     nsAutoString brandShortName;
+     brandBundle->GetStringFromName("brandShortName", brandShortName);
+@@ -380,11 +382,11 @@
+ 
+   // get the product brand name from localized strings
+   if (nsCOMPtr<nsIStringBundleService> bundleService =
+           components::StringBundle::Service()) {
+     nsCOMPtr<nsIStringBundle> brandBundle;
+-    bundleService->CreateBundle(BRAND_PROPERTIES, getter_AddRefs(brandBundle));
++    bundleService->CreateBundle(SHELL_BRAND_PROPERTIES_URI, getter_AddRefs(brandBundle));
+     if (bundleService) {
+       brandBundle->GetStringFromName("brandShortName", brandName);
+     }
+   }
+ 
+@@ -560,22 +562,25 @@
+   nsCString mPath;
+ 
+   ~AsyncGIconReader() = default;
+ };
+ 
++#ifdef MOZ_ENABLE_DBUS
+ static RefPtr<widget::DBusProxyPromise> CreateDynamicLauncherProxy() {
+   return widget::CreateDBusProxyForBus(
+       G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, nullptr,
+       "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop",
+       "org.freedesktop.portal.DynamicLauncher");
+ }
++#endif
+ 
+ NS_IMETHODIMP nsGNOMEShellService::RequestInstallDynamicLauncher(
+     const nsACString& aEntryId, nsIINIParserWriter* aDesktopEntry,
+     mozIDOMWindowProxy* aWindow, JSContext* aCx, dom::Promise** aPromise) {
+   MOZ_DIAGNOSTIC_ASSERT(NS_IsMainThread());
+ 
++#ifdef MOZ_ENABLE_DBUS
+   ErrorResult rv;
+   RefPtr<dom::Promise> promise =
+       dom::Promise::Create(xpc::CurrentNativeGlobal(aCx), rv);
+   if (MOZ_UNLIKELY(rv.Failed())) {
+     return rv.StealNSResult();
+@@ -767,16 +772,19 @@
+                }
+              });
+ 
+   promise.forget(aPromise);
+   return NS_OK;
++#else
++  return NS_ERROR_FAILURE;
++#endif
+ }
+ 
+ NS_IMETHODIMP nsGNOMEShellService::RequestUninstallDynamicLauncher(
+     const nsACString& aEntryId, JSContext* aCx, dom::Promise** aPromise) {
+   MOZ_DIAGNOSTIC_ASSERT(NS_IsMainThread());
+-
++#ifdef MOZ_ENABLE_DBUS
+   ErrorResult rv;
+   RefPtr<dom::Promise> promise =
+       dom::Promise::Create(xpc::CurrentNativeGlobal(aCx), rv);
+   if (MOZ_UNLIKELY(rv.Failed())) {
+     return rv.StealNSResult();
+@@ -809,6 +817,9 @@
+                }
+              });
+ 
+   promise.forget(aPromise);
+   return NS_OK;
++#else
++  return NS_ERROR_FAILURE;
++#endif
+ }
+diff --git a/browser/components/shell/nsShellService.h b/browser/components/shell/nsShellService.h
+--- a/browser/components/shell/nsShellService.h
++++ b/browser/components/shell/nsShellService.h
+@@ -6,8 +6,8 @@
+ #define BROWSER_COMPONENTS_SHELL_NSSHELLSERVICE_H_
+ 
+ #define PREF_CHECKDEFAULTBROWSER "browser.shell.checkDefaultBrowser"
+ #define PREF_DEFAULTBROWSERCHECKCOUNT "browser.shell.defaultBrowserCheckCount"
+ 
+-#define BRAND_PROPERTIES "chrome://branding/locale/brand.properties"
++#define SHELL_BRAND_PROPERTIES_URI "chrome://branding/locale/brand.properties"
+ 
+ #endif  // BROWSER_COMPONENTS_SHELL_NSSHELLSERVICE_H_
+diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
+--- a/widget/gtk/nsWindow.h
++++ b/widget/gtk/nsWindow.h
+@@ -35,11 +35,10 @@
+ #  include <gdk/gdkx.h>
+ #  include "X11UndefineNone.h"
+ #endif
+ #ifdef MOZ_WAYLAND
+ #  include <gdk/gdkwayland.h>
+-#  include "base/thread.h"
+ #  include "nsClipboardWayland.h"
+ #endif
+ 
+ #ifdef MOZ_LOGGING
+ 
+
+
