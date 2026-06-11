@@ -21,7 +21,7 @@ HOMEPAGE="https://github.com/elogind/elogind"
 
 LICENSE="CC0-1.0 LGPL-2.1+ public-domain"
 SLOT="0"
-IUSE="+acl audit cgroup-hybrid debug doc +pam +policykit selinux test"
+IUSE="+acl audit cgroup-hybrid debug doc nss-elogind +pam +policykit selinux userdb varlink test"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
@@ -41,7 +41,6 @@ DEPEND="
 	acl? ( sys-apps/acl )
 	pam? ( sys-libs/pam )
 	selinux? ( sys-libs/libselinux )
-	elibc_musl? ( sys-libs/musl-nscd )
 "
 RDEPEND="${DEPEND}
 	!sys-apps/systemd
@@ -95,9 +94,10 @@ src_configure() {
 		-Dbashcompletiondir="${EPREFIX}/usr/share/bash-completion/completions"
 		-Dman=auto
 		-Dsmack=true
-		-Dvarlink=false
-		-Dnss-elogind=false
-		-Duserdb=false
+		-Dvarlink=$(usex varlink enabled disabled)
+		-Dnss-elogind=$(usex nss-elogind enabled disabled)
+		# or fix via: elibc_musl? ( sys-libs/musl-nscd )
+		-Duserdb=$(usex userdb enabled disabled)
 		-Dcgroup-controller=openrc
 		-Ddefault-hierarchy=${cgroupmode}
 		-Ddefault-kill-user-processes=false
