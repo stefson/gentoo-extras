@@ -41,6 +41,7 @@ DEPEND="
 	acl? ( sys-apps/acl )
 	pam? ( sys-libs/pam )
 	selinux? ( sys-libs/libselinux )
+	elibc_musl? ( sys-libs/musl-nscd )
 "
 RDEPEND="${DEPEND}
 	!sys-apps/systemd
