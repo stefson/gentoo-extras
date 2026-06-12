@@ -161,20 +161,4 @@ diff --git a/browser/components/shell/nsShellService.h b/browser/components/shel
 +#define SHELL_BRAND_PROPERTIES_URI "chrome://branding/locale/brand.properties"
  
  #endif  // BROWSER_COMPONENTS_SHELL_NSSHELLSERVICE_H_
-diff --git a/widget/gtk/nsWindow.h b/widget/gtk/nsWindow.h
---- a/widget/gtk/nsWindow.h
-+++ b/widget/gtk/nsWindow.h
-@@ -35,11 +35,10 @@
- #  include <gdk/gdkx.h>
- #  include "X11UndefineNone.h"
- #endif
- #ifdef MOZ_WAYLAND
- #  include <gdk/gdkwayland.h>
--#  include "base/thread.h"
- #  include "nsClipboardWayland.h"
- #endif
- 
- #ifdef MOZ_LOGGING
- 
-
 
