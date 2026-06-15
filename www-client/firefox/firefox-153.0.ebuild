@@ -1359,6 +1359,12 @@ src_install() {
 		EOF
 	fi
 
+	if use jpegxl ; then
+		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable jpegxl via pref"
+		pref("image.jxl.enabled", true);
+		EOF
+	fi
+
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
 	newbin "${FILESDIR}/${PN}-r1.sh" ${PN}

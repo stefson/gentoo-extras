@@ -66,7 +66,7 @@ IUSE+=" +system-jpeg +system-libevent system-pipewire +system-libvpx system-png 
 IUSE+=" valgrind wasm-sandbox wayland wifi +X"
 
 # Firefox-only IUSE
-IUSE+=" +gmp-autoupdate gnome-shell"
+IUSE+=" +gmp-autoupdate gnome-shell jpegxl"
 
 REQUIRED_USE="|| ( X wayland )
 	debug? ( !system-av1 )
@@ -1079,6 +1079,8 @@ src_configure() {
 		mozconfig_add_options_ac 'disable wasm sandbox' --without-wasm-sandboxed-libraries
 	fi
 
+	! use jpegxl && mozconfig_add_options_ac '-jpegxl' --disable-jxl
+
 	# System-av1 fix
 	use system-av1 && append-ldflags "-Wl,--undefined-version"
 
@@ -1353,6 +1355,12 @@ src_install() {
 		# Update prefs to enable Gnome search provider
 		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable gnome-search-provider via prefs"
 		pref("browser.gnome-search-provider.enabled", true);
+		EOF
+	fi
+
+	if use jpegxl ; then
+		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable jpegxl via pref"
+		pref("image.jxl.enabled", true);
 		EOF
 	fi
 
