@@ -589,6 +589,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-no-dbus-build.patch
 	eapply "${FILESDIR}/"0004-fix-system-nss.patch
+	eapply "${FILESDIR}/"0005-fix-builtin-type-pack-element-style-for-gcc.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 

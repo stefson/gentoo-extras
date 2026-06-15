@@ -1,0 +1,20 @@
+diff --git a/mfbt/Variant.h b/mfbt/Variant.h
+--- a/mfbt/Variant.h
++++ b/mfbt/Variant.h
+@@ -29,11 +29,13 @@
+ class Variant;
+ 
+ namespace detail {
+ 
+ // Nth<N, types...>::Type is the Nth type (0-based) in the list of types Ts.
+-#if defined(__has_builtin)
++// GCC dislikes using builtins in function signatures for portability reason, a
++// topic we are not affected by so just ignore the optimisation for GCC.
++#if defined(__clang__) && defined(__has_builtin)
+ #  if __has_builtin(__type_pack_element)
+ #    define MOZ_HAS_TYPE_PACK_ELEMENT
+ #  endif
+ #endif
+ 
+
+
