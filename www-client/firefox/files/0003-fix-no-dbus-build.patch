@@ -1,38 +1,24 @@
-diff --git a/browser/components/shell/moz.build b/browser/components/shell/moz.build
---- a/browser/components/shell/moz.build
-+++ b/browser/components/shell/moz.build
-@@ -39,20 +39,20 @@
-         "OpenTabsProvider.sys.mjs",
-     ]
-     SOURCES += [
-         "nsGNOMEShellService.cpp",
-     ]
--    LOCAL_INCLUDES += [
--        "/widget",
--        "/widget/gtk",  # for nsWindow
--    ]
-     if CONFIG["MOZ_ENABLE_DBUS"]:
-+        include("/ipc/chromium/chromium-config.mozbuild")
-+        LOCAL_INCLUDES += [
-+            "/widget",
-+            "/widget/gtk",  # for nsWindow
-+        ]
-         SOURCES += [
-             "nsGNOMEShellDBusHelper.cpp",
-             "nsGNOMEShellSearchProvider.cpp",
-         ]
--        include("/ipc/chromium/chromium-config.mozbuild")
- 
- elif CONFIG["OS_ARCH"] == "WINNT":
-     XPIDL_SOURCES += [
-         "nsILimitedAccessFeature.idl",
-         "nsISecondaryTile.idl",
+From 5bd2180d0f1576014491808ba170b889c0357b84 Mon Sep 17 00:00:00 2001
+From: stransky <stransky@redhat.com>
+Date: Mon, 15 Jun 2026 12:39:52 +0000
+Subject: [PATCH] Bug 2046299 [Linux] Fix nsGNOMEShellService build with
+ disabled DBus r=emilio
+
+Differential Revision: https://phabricator.services.mozilla.com/D305817
+---
+ .../components/shell/nsGNOMEShellService.cpp  | 26 ++++++++++++++-----
+ browser/components/shell/nsShellService.h     |  2 +-
+ widget/gtk/moz.build                          |  6 ++++-
+ widget/gtk/nsAppShell.cpp                     |  2 +-
+ widget/gtk/nsDragServiceWayland.cpp           |  6 ++++-
+ widget/gtk/nsWidgetFactory.cpp                |  4 +--
+ 6 files changed, 33 insertions(+), 13 deletions(-)
+
 diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/components/shell/nsGNOMEShellService.cpp
+index b77eb27c7bc2b..3d957321eddc9 100644
 --- a/browser/components/shell/nsGNOMEShellService.cpp
 +++ b/browser/components/shell/nsGNOMEShellService.cpp
-@@ -2,13 +2,10 @@
-  * License, v. 2.0. If a copy of the MPL was not distributed with this
-  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+@@ -4,9 +4,6 @@
  
  #include "mozilla/Preferences.h"
  #include "mozilla/widget/GSettings.h"
@@ -42,11 +28,7 @@ diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/componen
  #include "nsAppRunner.h"
  #include "nsCOMPtr.h"
  #include "nsGNOMEShellService.h"
- #include "nsShellService.h"
- #include "nsIFile.h"
-@@ -27,14 +24,19 @@
- #include "mozilla/GRefPtr.h"
- #include "mozilla/GUniquePtr.h"
+@@ -29,10 +26,15 @@
  #include "mozilla/WidgetUtilsGtk.h"
  #include "mozilla/dom/Element.h"
  #include "mozilla/dom/Promise.h"
@@ -55,19 +37,15 @@ diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/componen
  #include "nsXULAppAPI.h"
  
 +#ifdef MOZ_ENABLE_DBUS
-+#include "nsWindow.h"
-+#include "WidgetUtils.h"
-+#include "mozilla/widget/AsyncDBus.h"
++#  include "nsWindow.h"
++#  include "WidgetUtils.h"
++#  include "mozilla/widget/AsyncDBus.h"
 +#endif
 +
  #include <glib.h>
  #include <gio/gio.h>
  #include <gdk/gdk.h>
- #include <gdk-pixbuf/gdk-pixbuf.h>
- #include <stdlib.h>
-@@ -268,11 +270,11 @@
-     nsCOMPtr<nsIStringBundleService> bundleService =
-         components::StringBundle::Service(&rv);
+@@ -270,7 +272,7 @@ nsGNOMEShellService::SetDefaultBrowser(bool aForAllUsers) {
      NS_ENSURE_SUCCESS(rv, rv);
  
      nsCOMPtr<nsIStringBundle> brandBundle;
@@ -76,24 +54,17 @@ diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/componen
                                       getter_AddRefs(brandBundle));
      NS_ENSURE_SUCCESS(rv, rv);
  
-     nsAutoString brandShortName;
-     brandBundle->GetStringFromName("brandShortName", brandShortName);
-@@ -380,11 +382,11 @@
- 
-   // get the product brand name from localized strings
+@@ -382,7 +384,8 @@ nsGNOMEShellService::SetDesktopBackground(dom::Element* aElement,
    if (nsCOMPtr<nsIStringBundleService> bundleService =
            components::StringBundle::Service()) {
      nsCOMPtr<nsIStringBundle> brandBundle;
 -    bundleService->CreateBundle(BRAND_PROPERTIES, getter_AddRefs(brandBundle));
-+    bundleService->CreateBundle(SHELL_BRAND_PROPERTIES_URI, getter_AddRefs(brandBundle));
++    bundleService->CreateBundle(SHELL_BRAND_PROPERTIES_URI,
++                                getter_AddRefs(brandBundle));
      if (bundleService) {
        brandBundle->GetStringFromName("brandShortName", brandName);
      }
-   }
- 
-@@ -560,22 +562,25 @@
-   nsCString mPath;
- 
+@@ -562,18 +565,21 @@ class AsyncGIconReader {
    ~AsyncGIconReader() = default;
  };
  
@@ -115,11 +86,7 @@ diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/componen
    ErrorResult rv;
    RefPtr<dom::Promise> promise =
        dom::Promise::Create(xpc::CurrentNativeGlobal(aCx), rv);
-   if (MOZ_UNLIKELY(rv.Failed())) {
-     return rv.StealNSResult();
-@@ -767,16 +772,19 @@
-                }
-              });
+@@ -769,12 +775,15 @@ NS_IMETHODIMP nsGNOMEShellService::RequestInstallDynamicLauncher(
  
    promise.forget(aPromise);
    return NS_OK;
@@ -136,11 +103,7 @@ diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/componen
    ErrorResult rv;
    RefPtr<dom::Promise> promise =
        dom::Promise::Create(xpc::CurrentNativeGlobal(aCx), rv);
-   if (MOZ_UNLIKELY(rv.Failed())) {
-     return rv.StealNSResult();
-@@ -809,6 +817,9 @@
-                }
-              });
+@@ -811,4 +820,7 @@ NS_IMETHODIMP nsGNOMEShellService::RequestUninstallDynamicLauncher(
  
    promise.forget(aPromise);
    return NS_OK;
@@ -149,11 +112,10 @@ diff --git a/browser/components/shell/nsGNOMEShellService.cpp b/browser/componen
 +#endif
  }
 diff --git a/browser/components/shell/nsShellService.h b/browser/components/shell/nsShellService.h
+index c399c3a39a15f..af03e9c762dea 100644
 --- a/browser/components/shell/nsShellService.h
 +++ b/browser/components/shell/nsShellService.h
-@@ -6,8 +6,8 @@
- #define BROWSER_COMPONENTS_SHELL_NSSHELLSERVICE_H_
- 
+@@ -8,6 +8,6 @@
  #define PREF_CHECKDEFAULTBROWSER "browser.shell.checkDefaultBrowser"
  #define PREF_DEFAULTBROWSERCHECKCOUNT "browser.shell.defaultBrowserCheckCount"
  
@@ -161,4 +123,93 @@ diff --git a/browser/components/shell/nsShellService.h b/browser/components/shel
 +#define SHELL_BRAND_PROPERTIES_URI "chrome://branding/locale/brand.properties"
  
  #endif  // BROWSER_COMPONENTS_SHELL_NSSHELLSERVICE_H_
+diff --git a/widget/gtk/moz.build b/widget/gtk/moz.build
+index 1554fed4b3590..350d7d80f0402 100644
+--- a/widget/gtk/moz.build
++++ b/widget/gtk/moz.build
+@@ -117,7 +117,6 @@ SOURCES += [
+ 
+ if CONFIG["MOZ_WAYLAND"]:
+     UNIFIED_SOURCES += [
+-        "FileTransferPortal.cpp",
+         "MozContainerWayland.cpp",
+         "nsDragServiceWayland.cpp",
+         "nsWaylandDisplay.cpp",
+@@ -219,4 +218,9 @@ if CONFIG["MOZ_ENABLE_DBUS"]:
+     ]
+     CXXFLAGS += CONFIG["MOZ_DBUS_CFLAGS"]
+ 
++if CONFIG["MOZ_WAYLAND"] and CONFIG["MOZ_ENABLE_DBUS"]:
++    UNIFIED_SOURCES += [
++        "FileTransferPortal.cpp",
++    ]
++
+ COMPILE_FLAGS["WARNINGS_CXXFLAGS"] += ["-Werror=switch"]
+diff --git a/widget/gtk/nsAppShell.cpp b/widget/gtk/nsAppShell.cpp
+index 251d15355a678..e4d645ad7755a 100644
+--- a/widget/gtk/nsAppShell.cpp
++++ b/widget/gtk/nsAppShell.cpp
+@@ -21,10 +21,10 @@
+ #include "mozilla/StaticPrefs_widget.h"
+ #include "mozilla/WidgetUtils.h"
+ #include "nsIPowerManagerService.h"
++#include "nsIObserverService.h"
+ #include "mozilla/Preferences.h"
+ #ifdef MOZ_ENABLE_DBUS
+ #  include <gio/gio.h>
+-#  include "nsIObserverService.h"
+ #  include "WidgetUtilsGtk.h"
+ #endif
+ #include "WakeLockListener.h"
+diff --git a/widget/gtk/nsDragServiceWayland.cpp b/widget/gtk/nsDragServiceWayland.cpp
+index a0e83e2bb5224..aff77eb063d6f 100644
+--- a/widget/gtk/nsDragServiceWayland.cpp
++++ b/widget/gtk/nsDragServiceWayland.cpp
+@@ -5,7 +5,9 @@
+ #include "nsDragService.h"
+ #include "nsDragServiceWayland.h"
+ #include "AsyncClipboardRequest.h"
+-#include "FileTransferPortal.h"
++#ifdef MOZ_ENABLE_DBUS
++#  include "FileTransferPortal.h"
++#endif
+ 
+ using namespace mozilla;
+ using namespace mozilla::widget;
+@@ -151,11 +153,13 @@ static GUniquePtr<char*> GetURIs(const gchar* aData, int aLength) {
+ }
+ 
+ static GUniquePtr<char*> GetURIsFromPortal(const gchar* aData, int aLength) {
++#ifdef MOZ_ENABLE_DBUS
+   nsCString data(nsDependentCString(aData, aLength));
+   if (widget::FileTransferPortal* portal =
+           widget::FileTransferPortal::GetPortal()) {
+     return GUniquePtr<char*>(portal->RetrieveFilesSync(data.get()));
+   }
++#endif
+   return nullptr;
+ }
+ 
+diff --git a/widget/gtk/nsWidgetFactory.cpp b/widget/gtk/nsWidgetFactory.cpp
+index 094a4dadb23df..640a4cf2838f5 100644
+--- a/widget/gtk/nsWidgetFactory.cpp
++++ b/widget/gtk/nsWidgetFactory.cpp
+@@ -23,7 +23,7 @@
+ #include "nsSound.h"
+ #include "nsGTKToolkit.h"
+ #include "WakeLockListener.h"
+-#ifdef MOZ_WAYLAND
++#if defined(MOZ_WAYLAND) && defined(MOZ_ENABLE_DBUS)
+ #  include "FileTransferPortal.h"
+ #endif
+ #include "DMABufDevice.h"
+@@ -55,7 +55,7 @@ void nsWidgetGtk2ModuleDtor() {
+   // Shutdown all XP level widget classes.
+   DMABufDeviceLock::Shutdown();
+   WidgetUtils::Shutdown();
+-#ifdef MOZ_WAYLAND
++#if defined(MOZ_WAYLAND) && defined(MOZ_ENABLE_DBUS)
+   FileTransferPortal::Shutdown();
+ #endif
+   NativeKeyBindings::Shutdown();
 
