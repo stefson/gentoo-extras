@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-151-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-152-patches-01.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -578,9 +578,7 @@ src_prepare() {
 	fi
 
 	# upstreamed into 153 branch
-	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-928126-enable-jxl.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"

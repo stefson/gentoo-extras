@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-151-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-152-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 22 )
 
@@ -588,8 +588,8 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-928126-enable-jxl.patch
-	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-928126-enable-jxl.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
