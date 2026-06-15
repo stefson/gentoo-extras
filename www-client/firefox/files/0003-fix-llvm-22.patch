@@ -1,9 +1,9 @@
-diff --git a/bindgen/clang.rs b/bindgen/clang.rs
-index e52fed0d4a..1e8326ed82 100644
+diff --git a/third_party/rust/bindgen/clang.rs b/third_party/rust/bindgen/clang.rs
+index 19f3e70..c7e1531 100644
 --- a/third_party/rust/bindgen/clang.rs
 +++ b/third_party/rust/bindgen/clang.rs
-@@ -1211,11 +1211,11 @@ impl Type {
-
+@@ -1210,11 +1210,11 @@ impl Type {
+ 
      /// Get a cursor pointing to this type's declaration.
      pub(crate) fn declaration(&self) -> Cursor {
 -        unsafe {
@@ -17,8 +17,8 @@ index e52fed0d4a..1e8326ed82 100644
 +        // Prior to clang 22, the declaration pointed to the definition.
 +        decl.definition().unwrap_or(decl)
      }
-
-
+ 
+     /// Get the canonical declaration of this type, if it is available.
 diff --git a/gfx/skia/skia/modules/skcms/src/Transform_inl.h b/gfx/skia/skia/modules/skcms/src/Transform_inl.h
 index bc10e7d..99faf25 100644
 --- a/gfx/skia/skia/modules/skcms/src/Transform_inl.h
