@@ -1,9 +1,22 @@
+From e22d6b76fd62b8429e8abfcba6614bb0b0373d7a Mon Sep 17 00:00:00 2001
+From: serge-sans-paille <sguelton@mozilla.com>
+Date: Tue, 16 Jun 2026 07:42:44 +0000
+Subject: [PATCH] Bug 2047412 - Do not leak __type_pack_element in ABI r=emilio
+
+Use an inner type instead of a type alias to avoid having the ABI that
+depends on a compiler internal, which has no portability guarantee. It
+also pleases GCC ;-)
+
+Differential Revision: https://phabricator.services.mozilla.com/D306750
+---
+ mfbt/Variant.h | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
 diff --git a/mfbt/Variant.h b/mfbt/Variant.h
+index d08d2ced4cb2b..3c8735e5cbb53 100644
 --- a/mfbt/Variant.h
 +++ b/mfbt/Variant.h
-@@ -28,21 +28,28 @@
- template <typename... Ts>
- class Variant;
+@@ -30,7 +30,6 @@ class Variant;
  
  namespace detail {
  
@@ -11,8 +24,7 @@ diff --git a/mfbt/Variant.h b/mfbt/Variant.h
  #if defined(__has_builtin)
  #  if __has_builtin(__type_pack_element)
  #    define MOZ_HAS_TYPE_PACK_ELEMENT
- #  endif
- #endif
+@@ -39,8 +38,16 @@ namespace detail {
  
  #ifdef MOZ_HAS_TYPE_PACK_ELEMENT
  
@@ -30,7 +42,4 @@ diff --git a/mfbt/Variant.h b/mfbt/Variant.h
  
  #else
  
- template <size_t N, typename... Ts>
- struct NthImpl;
-
 
