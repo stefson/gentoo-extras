@@ -589,6 +589,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0004-fix-system-nss.patch
 	eapply "${FILESDIR}/"0005-link-freebl-explicitly-for-system-NSS.patch
 	eapply "${FILESDIR}/"0006-fix-builtin-type-pack-element-style-for-gcc.patch
+	eapply "${FILESDIR}/"0007-fix-cross-compile-variant-header.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
