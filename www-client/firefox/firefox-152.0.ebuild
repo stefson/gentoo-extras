@@ -588,9 +588,6 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-#	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-928126-enable-jxl.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-969412-glibc-2.43.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
