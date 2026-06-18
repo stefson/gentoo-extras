@@ -577,7 +577,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 153 branch
+	# upstreamed into 154 branch
 	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
@@ -585,10 +585,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fix-no-dbus-build.patch
-	eapply "${FILESDIR}/"0004-fix-system-nss.patch
-	eapply "${FILESDIR}/"0005-link-freebl-explicitly-for-system-NSS.patch
-	eapply "${FILESDIR}/"0006-fix-builtin-type-pack-element-style-for-gcc.patch
 	eapply "${FILESDIR}/"0007-fix-cross-compile-variant-header.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
