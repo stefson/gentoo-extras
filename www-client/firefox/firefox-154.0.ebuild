@@ -578,13 +578,15 @@ src_prepare() {
 	fi
 
 	# upstreamed into 154 branch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0017-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
+	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	eapply "${FILESDIR}/"0008-fix-single_threaded-header-detection.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 

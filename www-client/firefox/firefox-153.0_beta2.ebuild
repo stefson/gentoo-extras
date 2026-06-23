@@ -584,11 +584,11 @@ src_prepare() {
 	# Workaround for bgo#915651 and bmo#1988166 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
-		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
 	upstreamed to 153 branch
+	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 
 	eapply "${WORKDIR}/firefox-patches"
@@ -600,6 +600,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0005-link-freebl-explicitly-for-system-NSS.patch
 	eapply "${FILESDIR}/"0006-fix-builtin-type-pack-element-style-for-gcc.patch
 	eapply "${FILESDIR}/"0007-fix-cross-compile-variant-header.patch
+	eapply "${FILESDIR}/"0008-fix-single_threaded-header-detection.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
