@@ -594,6 +594,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0008-fix-single_threaded-header-detection.patch
+	eapply "${FILESDIR}/"0009-fixup-vulkan-ffmpeg-on-32bit.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
