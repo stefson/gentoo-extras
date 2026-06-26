@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-152-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-152-patches-02.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 22 )
 
@@ -587,9 +587,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	upstreamed to 153 branch
-	rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
+	# upstreamed to 153 branch
+	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2039878-fix-Vulkan-Video-decoder-build-on-32-bit.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -597,7 +597,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-no-dbus-build.patch
 	eapply "${FILESDIR}/"0005-link-freebl-explicitly-for-system-NSS.patch
-	eapply "${FILESDIR}/"0008-fix-single_threaded-header-detection.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 

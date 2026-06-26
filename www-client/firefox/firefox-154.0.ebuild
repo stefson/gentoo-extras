@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-152-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-152-patches-02.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -573,20 +573,18 @@ src_prepare() {
 	# Workaround for bgo#915651 and bmo#1988166 on musl
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
-		rm -v "${WORKDIR}"/firefox-patches/*bmo-1988166-musl-remove-nonexisting-system-header-req.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
 	# upstreamed into 154 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0017-bmo-1988166-musl-remove-nonexisting-system-header-req.patch
-	rm -v "${WORKDIR}"/firefox-patches/0025-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
+	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2039878-fix-Vulkan-Video-decoder-build-on-32-bit.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0008-fix-single_threaded-header-detection.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
