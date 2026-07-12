@@ -580,6 +580,7 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2039878-fix-Vulkan-Video-decoder-build-on-32-bit.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1988166-only-wrap-single_threaded-when-it-actually-exists.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
