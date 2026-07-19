@@ -578,6 +578,8 @@ src_prepare() {
 
 	# upstreamed into 154 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
+	rm -v "${WORKDIR}"/firefox-patches/0018-bgo-966424-PR_GetEnv-non-unified-build-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-970694-fix-missing-stdint.h-on-musl.patch
 	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2039878-fix-Vulkan-Video-decoder-build-on-32-bit.patch
