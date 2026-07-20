@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-152-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-153-patches-01.tar.xz"
 
 LLVM_COMPAT=( 20 21 22 )
 
@@ -579,11 +579,7 @@ src_prepare() {
 	# upstreamed into 154 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0018-bgo-966424-PR_GetEnv-non-unified-build-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-970694-fix-missing-stdint.h-on-musl.patch
-	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2039878-fix-Vulkan-Video-decoder-build-on-32-bit.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1988166-only-wrap-single_threaded-when-it-actually-exists.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
