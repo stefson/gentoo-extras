@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-152-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-153-patches-01.tar.xz"
 
 LLVM_COMPAT=( 19 20 21 22 )
 
@@ -586,11 +586,6 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-748849-RUST_TARGET_override.patch || die
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
-
-	# upstreamed to 153 branch
-	rm -v "${WORKDIR}"/firefox-patches/0024-bmo-2040125-addGetSystemProxyDirect-to-libproxy-path.patch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2039878-fix-Vulkan-Video-decoder-build-on-32-bit.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-1988166-only-wrap-single_threaded-when-it-actually-exists.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
