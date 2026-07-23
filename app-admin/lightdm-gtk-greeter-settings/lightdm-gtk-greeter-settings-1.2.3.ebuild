@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Foundation
+# Copyright 1999-2026 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -10,12 +10,12 @@ PYTHON_COMPAT=( python3_{11..14} )
 inherit distutils-r1 xdg
 
 DESCRIPTION="Settings editor for LightDM GTK+ greeter"
-HOMEPAGE="https://github.com/Xubuntu/lightdm-gtk-greeter"
+HOMEPAGE="https://github.com/Xubuntu/lightdm-gtk-greeter-settings"
 SRC_URI="https://github.com/Xubuntu/${PN}/releases/download/${P}/${P}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
-KEYWORDS="~x86 ~amd64"
+KEYWORDS="~amd64"
 IUSE=""
 
 RDEPEND="
@@ -33,6 +33,13 @@ BDEPEND="
 		dev-python/python-distutils-extra[${PYTHON_USEDEP}]
 	')
 "
+
+src_prepare() {
+	# bug #931488
+	sed -i "s|\(target_data =\).*|\1 '${EPREFIX}/usr/'|" setup.py || die
+
+	distutils-r1_python_prepare_all
+}
 
 src_install() {
 	distutils-r1_src_install

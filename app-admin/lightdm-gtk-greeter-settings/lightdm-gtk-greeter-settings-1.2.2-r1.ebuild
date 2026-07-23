@@ -33,6 +33,12 @@ BDEPEND="
 		dev-python/python-distutils-extra[${PYTHON_USEDEP}]
 	')
 "
+src_prepare() {
+	# bug #931488
+	sed -i "s|\(target_data =\).*|\1 '${EPREFIX}/usr/'|" setup.py || die
+
+	distutils-r1_python_prepare_all
+}
 
 src_install() {
 	distutils-r1_src_install
