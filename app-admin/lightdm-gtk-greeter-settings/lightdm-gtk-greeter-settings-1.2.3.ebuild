@@ -15,7 +15,7 @@ SRC_URI="https://github.com/Xubuntu/${PN}/releases/download/${P}/${P}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="amd64"
 IUSE=""
 
 RDEPEND="
