@@ -1,0 +1,27 @@
+From: Mike Hommey <mh+mozilla@glandium.org>
+Date: Sat, 11 Jul 2026 21:25:02 +0900
+Subject: Bug 2048097 - Add missing cinttypes include.
+ r?media-playback-reviewers
+
+Bug 2033987 removed the include, but it's actually necessary in one
+specific code path.
+
+Differential Revision: https://phabricator.services.mozilla.com/D311679
+---
+ dom/media/webaudio/blink/DenormalDisabler.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/dom/media/webaudio/blink/DenormalDisabler.h b/dom/media/webaudio/blink/DenormalDisabler.h
+index a748718c..210265f 100644
+--- a/dom/media/webaudio/blink/DenormalDisabler.h
++++ b/dom/media/webaudio/blink/DenormalDisabler.h
+@@ -27,6 +27,9 @@
+ 
+ #include <float.h>
+ 
++#if defined(__GNUC__) && defined(__SSE__) && !defined(__x86_64__)
++#include <cinttypes>
++#endif
+ #include <cmath>
+ #include <cstring>
+ 
