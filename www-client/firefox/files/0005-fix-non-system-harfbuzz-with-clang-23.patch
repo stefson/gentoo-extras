@@ -21,3 +21,32 @@ index 7e2837f99ab..2458c1b3ab1 100644
  #pragma GCC diagnostic error   "-Wunused-variable"
  #pragma GCC diagnostic error   "-Wvla"
 
+From 5e887d36722abfef1c02a11ab15a369d7745027e Mon Sep 17 00:00:00 2001
+From: Behdad Esfahbod <behdad@behdad.org>
+Date: Thu, 9 Jul 2026 12:14:33 -0600
+Subject: [PATCH] Fix previous commit
+
+---
+ src/hb.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gfx/harfbuzz/src/hb.hh b/gfx/harfbuzz/src/hb.hh
+index 2458c1b3ab1..5d7c45c7941 100644
+--- a/gfx/harfbuzz/src/hb.hh
++++ b/gfx/harfbuzz/src/hb.hh
+@@ -92,7 +92,6 @@
+ #pragma GCC diagnostic error   "-Wunneeded-internal-declaration"
+ #pragma GCC diagnostic error   "-Wunused"
+ #pragma GCC diagnostic error   "-Wunused-local-typedefs"
+-#pragma GCC diagnostic error   "-Wunused-template"
+ #pragma GCC diagnostic error   "-Wunused-value"
+ #pragma GCC diagnostic error   "-Wunused-variable"
+ #pragma GCC diagnostic error   "-Wvla"
+@@ -152,6 +151,7 @@
+ #pragma GCC diagnostic ignored "-Wrange-loop-analysis" // https://github.com/harfbuzz/harfbuzz/issues/2834
+ #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+ #pragma GCC diagnostic ignored "-Wtype-limits"
++#pragma GCC diagnostic ignored "-Wunused-template"
+ #pragma GCC diagnostic ignored "-Wc++11-compat" // only gcc raises it
+ #endif
+ 
