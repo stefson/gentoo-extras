@@ -1,0 +1,23 @@
+From b011381764f87be3cdd57b9a3205a51064016bba Mon Sep 17 00:00:00 2001
+From: Behdad Esfahbod <behdad@behdad.org>
+Date: Thu, 9 Jul 2026 12:09:01 -0600
+Subject: [PATCH] Ignore -Wunused-template
+
+Fixes https://github.com/harfbuzz/harfbuzz/issues/6059
+---
+ src/hb.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/gfx/harfbuzz/src/hb.hh b/gfx/harfbuzz/src/hb.hh
+index 7e2837f99ab..2458c1b3ab1 100644
+--- a/gfx/harfbuzz/src/hb.hh
++++ b/gfx/harfbuzz/src/hb.hh
+@@ -92,6 +92,7 @@
+ #pragma GCC diagnostic error   "-Wunneeded-internal-declaration"
+ #pragma GCC diagnostic error   "-Wunused"
+ #pragma GCC diagnostic error   "-Wunused-local-typedefs"
++#pragma GCC diagnostic error   "-Wunused-template"
+ #pragma GCC diagnostic error   "-Wunused-value"
+ #pragma GCC diagnostic error   "-Wunused-variable"
+ #pragma GCC diagnostic error   "-Wvla"
+
