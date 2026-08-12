@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-153-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-154-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 )
 
@@ -579,7 +579,6 @@ src_prepare() {
 	# upstreamed into 155 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0020-bgo-970694-fix-missing-stdint.h-on-musl.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
