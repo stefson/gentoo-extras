@@ -597,6 +597,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fixup-neon-in-llama-cpp.patch
 	eapply "${FILESDIR}/"0004-fix-non-system-harfbuzz-with-clang-23.patch
+	eapply "${FILESDIR}/"0005-fix-icu_collator-order.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
@@ -667,6 +668,7 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
+	moz_clear_vendor_checksums icu_collator
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
