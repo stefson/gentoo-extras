@@ -595,7 +595,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fixup-neon-in-llama-cpp.patch
 	eapply "${FILESDIR}/"0004-fix-up-neon-arm64.patch
 	eapply "${FILESDIR}/"0005-fix-up-neon-arm.patch
 
