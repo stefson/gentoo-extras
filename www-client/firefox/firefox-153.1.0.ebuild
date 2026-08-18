@@ -12,7 +12,7 @@ PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 VIRTUALX_REQUIRED="manual"
 
-MOZ_ESR=
+MOZ_ESR=1
 
 MOZ_PV=${PV}
 MOZ_PV_SUFFIX=
