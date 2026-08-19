@@ -3,11 +3,11 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-154-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-155-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
-PYTHON_COMPAT=( python3_{10..15} )
+PYTHON_COMPAT=( python3_{12..15} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 VIRTUALX_REQUIRED="manual"
@@ -595,8 +595,9 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0004-fix-up-neon-arm64.patch
-	eapply "${FILESDIR}/"0005-fix-up-neon-arm.patch
+	eapply "${FILESDIR}/"0003-fix-up-neon-arm64.patch
+	eapply "${FILESDIR}/"0004-fix-up-neon-arm.patch
+	eapply "${FILESDIR}/"0005-fix-icu_collator-order.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
@@ -667,6 +668,7 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
+	moz_clear_vendor_checksums icu_collator
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431

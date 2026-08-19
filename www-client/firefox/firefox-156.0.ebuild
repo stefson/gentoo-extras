@@ -3,11 +3,11 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-154-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-155-patches-01.tar.xz"
 
-LLVM_COMPAT=( 21 22 )
+LLVM_COMPAT=( 21 22 23 )
 
-PYTHON_COMPAT=( python3_{10..15} )
+PYTHON_COMPAT=( python3_{12..15} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 VIRTUALX_REQUIRED="manual"
@@ -584,8 +584,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0004-fix-up-neon-arm64.patch
-	eapply "${FILESDIR}/"0005-fix-up-neon-arm.patch
+	eapply "${FILESDIR}/"0003-fix-up-neon-arm64.patch
+	eapply "${FILESDIR}/"0004-fix-up-neon-arm.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
