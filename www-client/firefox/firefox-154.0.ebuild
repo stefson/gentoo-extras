@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-154-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-154-patches-02.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -597,7 +597,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0004-fix-non-system-harfbuzz-with-clang-23.patch
 	eapply "${FILESDIR}/"0005-fix-icu_collator-order.patch
-	eapply "${FILESDIR}/"0006-fixup-clang-22.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
