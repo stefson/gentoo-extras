@@ -597,6 +597,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-llvm-22.patch
+	eapply "${FILESDIR}/"rust-1.98.0.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
