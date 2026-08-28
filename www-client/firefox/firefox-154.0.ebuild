@@ -598,6 +598,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0004-fix-non-system-harfbuzz-with-clang-23.patch
 	eapply "${FILESDIR}/"0005-fix-icu_collator-order.patch
 	eapply "${FILESDIR}/"0006-fix-no-dbus-backport.patch
+	eapply "${FILESDIR}/"rust-1.98.0.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
