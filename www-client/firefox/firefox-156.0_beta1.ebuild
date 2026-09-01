@@ -589,7 +589,6 @@ src_prepare() {
 
 	# upstreamed into 156 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2063808-fix-build-failure-with-system-av1.patch
 
 	eapply "${WORKDIR}/firefox-patches"
