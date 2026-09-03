@@ -30,6 +30,16 @@ BDEPEND="
 		llvm-core/lld:${LLVM_SLOT}
 	')
 "
+src_prepare() {
+	cmake_src_prepare
+
+	# Fix upstream issue #92337 by ensuring startup_target is always empty.
+	# This avoids the missing rule error during install-libc in overlay mode.
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" ]]; then
+		sed -i 's/set(startup_target "libc-startup")/set(startup_target "")/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" || die
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
@@ -39,7 +49,7 @@ src_configure() {
 		
 		# Overlay mode prevents overwriting your system musl installation
 		-DLIBC_BUILD_MODE="overlay"
-	
+
 		# Safe isolated installation path under Gentoo's standard LLVM root
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/llvm-libc"
 	)
