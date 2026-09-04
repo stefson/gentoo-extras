@@ -30,6 +30,13 @@ BDEPEND="
 		llvm-core/lld:${LLVM_SLOT}
 	')
 "
+
+# Track patches individually to separate issues cleanly
+PATCHES=(
+	"${FILESDIR}/0001-fix-musl-flock64.patch"
+	"${FILESDIR}/0002-fix-musl-stdout-macro.patch"
+)
+
 src_prepare() {
 	cmake_src_prepare
 
@@ -38,13 +45,6 @@ src_prepare() {
 	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" ]]; then
 		sed -i 's/set(startup_target "libc-startup")/set(startup_target "")/g' \
 			"${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" || die
-	fi
-
-	# Fix musl compilation failure where 'struct flock64' is an incomplete type.
-	# Since musl structures are 64-bit by default, we can safely alias it to 'flock'.
-	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" ]]; then
-		sed -i '1i #define flock64 flock' \
-			"${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" || die
 	fi
 }
 

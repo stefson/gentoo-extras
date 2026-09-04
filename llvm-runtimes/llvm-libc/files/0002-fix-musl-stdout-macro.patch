@@ -1,0 +1,13 @@
+--- a/libc/src/stdio/generic/vprintf.cpp
++++ b/libc/src/stdio/generic/vprintf.cpp
+@@ -22,7 +22,11 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ 
++#if defined(__musl__) || !defined(__GLIBC__)
++#define PRINTF_STDOUT stdout
++#else
+ #define PRINTF_STDOUT ::stdout
++#endif
+ 
+ namespace LIBC_NAMESPACE_DECL {
