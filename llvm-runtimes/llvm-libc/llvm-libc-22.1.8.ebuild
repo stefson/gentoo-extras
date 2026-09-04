@@ -39,6 +39,13 @@ src_prepare() {
 		sed -i 's/set(startup_target "libc-startup")/set(startup_target "")/g' \
 			"${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" || die
 	fi
+
+	# Fix musl compilation failure where 'struct flock64' is an incomplete type.
+	# Since musl structures are 64-bit by default, we can safely alias it to 'flock'.
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" ]]; then
+		sed -i '1i #define flock64 flock' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" || die
+	fi
 }
 
 src_configure() {

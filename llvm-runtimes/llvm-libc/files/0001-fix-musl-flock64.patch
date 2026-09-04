@@ -1,0 +1,15 @@
+--- a/libc/src/__support/OSUtil/linux/fcntl.cpp
++++ b/libc/src/__support/OSUtil/linux/fcntl.cpp
+@@ -10,6 +10,10 @@
+ #include "src/__support/macros/config.cmake"
+ #include "src/__support/macros/sanitizer.h"
+ 
++#if !defined(__GLIBC__)
+
+
++#define flock64 flock
++#endif
++
+ #include <fcntl.h>
+ #include <stdarg.h>
+ #include <sys/syscall.h>
