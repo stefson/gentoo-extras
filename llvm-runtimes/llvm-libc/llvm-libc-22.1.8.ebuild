@@ -30,13 +30,6 @@ BDEPEND="
 		llvm-core/lld:${LLVM_SLOT}
 	')
 "
-
-# Track patches individually to separate issues cleanly
-PATCHES=(
-	"${FILESDIR}/0001-fix-musl-flock64.patch"
-	"${FILESDIR}/0002-fix-musl-stdout-macro.patch"
-)
-
 src_prepare() {
 	cmake_src_prepare
 
