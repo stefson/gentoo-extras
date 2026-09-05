@@ -50,6 +50,13 @@ src_prepare() {
 			"${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" || die
 	fi
 
+	# Fix 32-bit musl arm compilation where F_GETLK64, F_SETLK64, and F_SETLKW64 are missing.
+	# We map them cleanly to standard macros because musl handles 64-bit offsets natively.
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" ]]; then
+		sed -i '1i #if !defined(F_GETLK64)\n#define F_GETLK64 F_GETLK\n#define F_SETLK64 F_SETLK\n#define F_SETLKW64 F_SETLKW\n#endif' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" || die
+	fi
+
 	# Fix musl compilation failure caused by global scope resolution of ::stdout in vprintf.cpp
 	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/vprintf.cpp" ]]; then
 		sed -i 's/#define PRINTF_STDOUT ::stdout/#if defined(__musl__) || !defined(__GLIBC__)\n#define PRINTF_STDOUT stdout\n#else\n#define PRINTF_STDOUT ::stdout\n#endif/g' \
