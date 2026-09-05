@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-155-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-155-patches-05.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -579,7 +579,7 @@ src_prepare() {
 	fi
 
 	# let me take care of wasm myself
-	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support.patch
+	rm -v "${WORKDIR}"/firefox-patches/*-bgo-940031-wasm-support*.patch
 
 	# Workaround for bgo#915651 and bmo#1988166 on musl
 	if use elibc_glibc ; then
