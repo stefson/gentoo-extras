@@ -34,10 +34,64 @@ src_prepare() {
 	cmake_src_prepare
 
 	# Fix upstream issue #92337 by ensuring startup_target is always empty.
-	# This avoids the missing rule error during install-libc in overlay mode.
 	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" ]]; then
 		sed -i 's/set(startup_target "libc-startup")/set(startup_target "")/g' \
 			"${WORKDIR}/llvm-project-${PV}.src/libc/lib/CMakeLists.txt" || die
+	fi
+
+	# Fix musl compilation failure where 'struct flock64' is an incomplete type.
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" ]]; then
+		sed -i '1i #define flock64 flock' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/__support/OSUtil/linux/fcntl.cpp" || die
+	fi
+
+	# Fix musl compilation failure caused by global scope resolution of ::stdout in vprintf.cpp
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/vprintf.cpp" ]]; then
+		sed -i 's/#define PRINTF_STDOUT ::stdout/#if defined(__musl__) || !defined(__GLIBC__)\n#define PRINTF_STDOUT stdout\n#else\n#define PRINTF_STDOUT ::stdout\n#endif/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/vprintf.cpp" || die
+	fi
+
+	# Fix musl compilation failure caused by global scope resolution of ::stdout in printf.cpp
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/printf.cpp" ]]; then
+		sed -i 's/#define PRINTF_STDOUT ::stdout/#if defined(__musl__) || !defined(__GLIBC__)\n#define PRINTF_STDOUT stdout\n#else\n#define PRINTF_STDOUT ::stdout\n#endif/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/printf.cpp" || die
+	fi
+
+	# Fix musl compilation failure caused by global scope resolution of ::stdin in vscanf.cpp
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/vscanf.cpp" ]]; then
+		sed -i 's/#define SCANF_STDIN ::stdin/#if defined(__musl__) || !defined(__GLIBC__)\n#define SCANF_STDIN stdin\n#else\n#define SCANF_STDIN ::stdin\n#endif/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/vscanf.cpp" || die
+	fi
+
+	# Fix musl compilation failure caused by global scope resolution of ::stdin in scanf.cpp
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/scanf.cpp" ]]; then
+		sed -i 's/#define SCANF_STDIN ::stdin/#if defined(__musl__) || !defined(__GLIBC__)\n#define SCANF_STDIN stdin\n#else\n#define SCANF_STDIN ::stdin\n#endif/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/stdio/generic/scanf.cpp" || die
+	fi
+
+	# Fix termios speed fields (c_ospeed / c_ispeed) for musl in individual files
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/cfsetospeed.cpp" ]]; then
+		sed -i 's/t->c_ospeed = speed;/\/\/ Removed for musl compat/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/cfsetospeed.cpp" || die
+	fi
+
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/cfsetispeed.cpp" ]]; then
+		sed -i 's/t->c_ispeed = speed;/\/\/ Removed for musl compat/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/cfsetispeed.cpp" || die
+	fi
+
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/tcgetattr.cpp" ]]; then
+		sed -i 's/t->c_ispeed = kt.c_cflag \& CBAUD;/\/\/ Removed/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/tcgetattr.cpp" || die
+		sed -i 's/t->c_ospeed = kt.c_cflag \& CBAUD;/\/\/ Removed/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/tcgetattr.cpp" || die
+	fi
+
+	if [[ -f "${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/tcsetattr.cpp" ]]; then
+		sed -i 's/t->c_ispeed =/\/\/ Removed/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/tcsetattr.cpp" || die
+		sed -i 's/t->c_ospeed =/\/\/ Removed/g' \
+			"${WORKDIR}/llvm-project-${PV}.src/libc/src/termios/linux/tcsetattr.cpp" || die
 	fi
 }
 
@@ -45,7 +99,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DLLVM_ENABLE_RUNTIMES="libc"
 		-DCMAKE_C_COMPILER=clang
-		-DCMAKE_CXX_COMPILER=clang++
+		-DLLVM_LIBC_FULL_BUILD=OFF
 		
 		# Overlay mode prevents overwriting your system musl installation
 		-DLIBC_BUILD_MODE="overlay"
