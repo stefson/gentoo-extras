@@ -30,6 +30,11 @@ BDEPEND="
 		llvm-core/lld:${LLVM_SLOT}
 	')
 "
+
+# inherit llvm.org 
+#LLVM_COMPONENTS=( libc runtimes cmake )
+#llvm.org_set_globals
+
 src_prepare() {
 	cmake_src_prepare
 
@@ -99,10 +104,10 @@ src_configure() {
 	local mycmakeargs=(
 		-DLLVM_ENABLE_RUNTIMES="libc"
 		-DCMAKE_C_COMPILER=clang
-		-DLLVM_LIBC_FULL_BUILD=OFF
-		
+		-DCMAKE_CXX_COMPILER=clang++
+
 		# Overlay mode prevents overwriting your system musl installation
-		-DLIBC_BUILD_MODE="overlay"
+		-DLLVM_LIBC_FULL_BUILD=OFF
 
 		# Safe isolated installation path under Gentoo's standard LLVM root
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/llvm-libc"
