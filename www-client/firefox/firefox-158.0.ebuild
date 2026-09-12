@@ -113,7 +113,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.128
+	>=dev-libs/nss-3.129
 	>=dev-libs/nspr-4.39
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -576,10 +576,12 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 157 branch
+	# upstreamed into 158 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2063808-fix-build-failure-with-system-av1.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bgo-981812-bindgen-libcxx-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -770,7 +772,6 @@ src_configure() {
 		--disable-parental-controls \
 		--disable-strip \
 		--disable-updater \
-		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
