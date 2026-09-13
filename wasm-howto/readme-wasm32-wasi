@@ -1,61 +1,61 @@
 Note 2: How to compile WASI runtimes using crossdev.
 
-1. crossdev -L wasm32-wasi
+1. crossdev -L wasm32-wasip1
 
 It should failed with "error: Target architecture not supported by installed LLVM toolchain".
 
-2. In CROSSDEV_OVERLAY, remove cross_llvm-wasm32-wasi/linux-headers, link clang-crossdev-wrappers, compiler-rt and wasi-libc to my overlay.
+2. In CROSSDEV_OVERLAY, remove cross_llvm-wasm32-wasip1/linux-headers, link clang-crossdev-wrappers, compiler-rt and wasi-libc to my overlay.
 
 2a. symlink cmake.eclass from overlay into crossdev overlay, mkdir crossdev/eclass
 2b. cross wasi-libc needs to drop all CFLAGS, CXXFLAGS, LDFLAGS. 
 
-cat /etc/portage/env/cross_llvm-wasm32-wasi/wasi-libc
+cat /etc/portage/env/cross_llvm-wasm32-wasip1/wasi-libc
 
 LDFLAGS=""
 CFLAGS=""
 CXXFLAGS=""
 
-3. emerge cross_llvm-wasm32-wasi/clang-crossdev-wrappers cross_llvm-wasm32-wasi/compiler-rt cross_llvm-wasm32-wasi/wasi-libc
+3. emerge cross_llvm-wasm32-wasip1/clang-crossdev-wrappers cross_llvm-wasm32-wasip1/compiler-rt cross_llvm-wasm32-wasip1/wasi-libc
 
-4. edit /usr/wasm32-wasi/etc/portage/profile/make.defaults
+4. edit /usr/wasm32-wasip1/etc/portage/profile/make.defaults
 
 ```
 ARCH="wasm32"
 KERNEL="-linux wasi"
 ELIBC="wasi"
 AR=llvm-ar
-AS=wasm32-wasi-as
-CC="wasm32-wasi-clang"
-CPP="wasm32-wasi-cpp"
-CROSS_COMPILE="wasm32-wasi-"
+AS=wasm32-wasip1-as
+CC="wasm32-wasip1-clang"
+CPP="wasm32-wasip1-cpp"
+CROSS_COMPILE="wasm32-wasip1-"
 ```
 
 ARCH/KERNEL/ELIBC is not supported by current gentoo tree, so the name is arbitrary
 
-/usr/wasm32-wasi/etc/portage/profile/use.force
+/usr/wasm32-wasip1/etc/portage/profile/use.force
 
 ```
 -kernel_linux
 wasi
 ```
 
-/usr/wasm32-wasi/etc/portage/profile/package.provided
+/usr/wasm32-wasip1/etc/portage/profile/package.provided
 
 ```
 llvm-core/llvm-21.1.8
 llvm-core/clang-21.1.8
 ```
 
-/usr/wasm32-wasi/etc/portage/package.accept_keywords
+/usr/wasm32-wasip1/etc/portage/package.accept_keywords
 
 ```
 =llvm-runtimes/libcxxabi-21.1.8 **
 =llvm-runtimes/libcxx-21.1.8 **
 ```
 
-edit /usr/wasm32-wasi/etc/portage/repos.conf, add my overlay
+edit /usr/wasm32-wasip1/etc/portage/repos.conf, add my overlay
 
-5. wasm32-wasi-emerge libcxxabi libcxx
+5. wasm32-wasip1-emerge libcxxabi libcxx
 6. Test c/c++ programs
 
 hello.c
@@ -76,8 +76,8 @@ int main() {
 }
 ```
 
-`wasm32-wasi-clang hello.c -o hello.wasm`
-`wasm32-wasi-clang++ hello.cpp -o hello-cpp.wasm`
+`wasm32-wasip1-clang hello.c -o hello.wasm`
+`wasm32-wasip1-clang++ hello.cpp -o hello-cpp.wasm`
 
 You need a wasm runtime to run WASI program. 
 
