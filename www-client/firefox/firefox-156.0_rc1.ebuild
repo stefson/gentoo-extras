@@ -665,6 +665,10 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
+	moz_clear_vendor_checksums audio_thread_priority
+	moz_clear_vendor_checksums audioipc2-client
+	moz_clear_vendor_checksums dbus
+	moz_clear_vendor_checksums libdbus-sys
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
