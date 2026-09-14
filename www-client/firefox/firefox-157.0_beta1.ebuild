@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-155-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-156-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -112,7 +112,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.128
+	>=dev-libs/nss-3.129
 	>=dev-libs/nspr-4.39
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -587,9 +587,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 156 branch
+	# upstreamed into 157 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2063808-fix-build-failure-with-system-av1.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-981812-bindgen-libcxx-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
@@ -792,7 +792,6 @@ src_configure() {
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
-		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
