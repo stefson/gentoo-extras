@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-155-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-156-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -589,12 +589,13 @@ src_prepare() {
 
 	# upstreamed into 156 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-	rm -v "${WORKDIR}"/firefox-patches/0026-bmo-2063808-fix-build-failure-with-system-av1.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
+	# https://github.com/mozilla/audio_thread_priority/issues/49
+	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
@@ -666,9 +667,6 @@ src_prepare() {
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
 	moz_clear_vendor_checksums audio_thread_priority
-	moz_clear_vendor_checksums audioipc2-client
-	moz_clear_vendor_checksums dbus
-	moz_clear_vendor_checksums libdbus-sys
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
