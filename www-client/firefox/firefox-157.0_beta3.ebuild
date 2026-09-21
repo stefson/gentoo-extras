@@ -597,6 +597,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	# https://github.com/mozilla/audio_thread_priority/issues/49
 	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
+	eapply "${FILESDIR}/"0004-fix-parakeet-on-musl-missing-header.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
