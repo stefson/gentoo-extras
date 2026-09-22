@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-158-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-158-patches-02.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -579,7 +579,7 @@ src_prepare() {
 	# upstreamed into 158 branch
 	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0009-gcc-lto-pgo-gentoo.patch
-	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1657849-musl-sandbox-sched_setscheduler.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1657849-musl-sandbox-sched_setscheduler.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-981812-bindgen-libcxx-fix.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
