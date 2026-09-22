@@ -579,7 +579,6 @@ src_prepare() {
 	# upstreamed into 158 branch
 	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0009-gcc-lto-pgo-gentoo.patch
-#	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1657849-musl-sandbox-sched_setscheduler.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-981812-bindgen-libcxx-fix.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
@@ -590,6 +589,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	# https://github.com/mozilla/audio_thread_priority/issues/49
 	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
+	# https://github.com/mudler/parakeet.cpp/issues/70
 	eapply "${FILESDIR}/"0004-fix-parakeet-on-musl-missing-header.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
