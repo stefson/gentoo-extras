@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-156-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-156-patches-02.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -595,8 +595,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	# https://github.com/mozilla/audio_thread_priority/issues/49
-	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
 	# https://github.com/mudler/parakeet.cpp/issues/70
 	eapply "${FILESDIR}/"0004-fix-parakeet-on-musl-missing-header.patch
 
