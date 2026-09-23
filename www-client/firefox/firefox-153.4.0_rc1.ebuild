@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-153esr-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-153esr-patches-04.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -591,7 +591,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fixup-neon-in-llama-cpp.patch
 	eapply "${FILESDIR}/"0004-fix-non-system-harfbuzz-with-clang-23.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
