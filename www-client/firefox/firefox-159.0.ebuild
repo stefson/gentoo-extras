@@ -576,7 +576,9 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 158 branch
+	# upstreamed into 159 branch
+	# 0007: backport failed, is this still needed?
+	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-981812-bindgen-libcxx-fix.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
