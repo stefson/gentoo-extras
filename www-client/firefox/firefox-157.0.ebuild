@@ -589,7 +589,6 @@ src_prepare() {
 
 	# upstreamed into 157 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-#	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-981812-bindgen-libcxx-fix.patch
 
 	eapply "${WORKDIR}/firefox-patches"
 
