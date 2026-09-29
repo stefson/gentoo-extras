@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-158-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-158-patches-05.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -580,7 +580,6 @@ src_prepare() {
 	# 0007: backport failed, is this still needed?
 	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bgo-981812-bindgen-libcxx-fix.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
@@ -655,6 +654,7 @@ src_prepare() {
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
 	moz_clear_vendor_checksums audio_thread_priority
+	moz_clear_vendor_checksums bindgen
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
