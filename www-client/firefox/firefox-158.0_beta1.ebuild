@@ -667,6 +667,7 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
+#	moz_clear_vendor_checksums audio_thread_priority
 	moz_clear_vendor_checksums bindgen
 
 	# Respect choice for "jumbo-build"
