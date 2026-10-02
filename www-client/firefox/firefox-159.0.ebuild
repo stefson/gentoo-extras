@@ -578,6 +578,7 @@ src_prepare() {
 
 	# upstreamed into 159 branch
 	# 0007: backport failed, is this still needed?
+	# replaced by 0005-rust-no-lto.patch 
 	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0017-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
@@ -590,6 +591,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
 	# https://github.com/mudler/parakeet.cpp/issues/70
 	eapply "${FILESDIR}/"0004-fix-parakeet-on-musl-missing-header.patch
+	eapply "${FILESDIR}/"0005-rust-no-lto.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 

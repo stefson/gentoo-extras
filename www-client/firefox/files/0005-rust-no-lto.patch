@@ -1,0 +1,27 @@
+diff --git a/config/makefiles/rust.mk b/config/makefiles/rust.mk
+index ab33044..8302cd1 100644
+--- a/config/makefiles/rust.mk
++++ b/config/makefiles/rust.mk
+@@ -54,10 +54,6 @@ cargo_build_flags += $(MOZ_CARGO_BUILD_STD_ARGS)
+ # These flags are passed via `cargo rustc` and only apply to the final rustc
+ # invocation (i.e., only the top-level crate, not its dependencies).
+ cargo_rustc_flags = $(CARGO_RUSTCFLAGS)
+-# Enable link-time optimization for release builds.
+-ifdef RUST_LIBRARY_LTO
+-cargo_rustc_flags += -Clto
+-endif
+ 
+ ifdef CARGO_INCREMENTAL
+ export CARGO_INCREMENTAL
+@@ -329,11 +325,6 @@ force-cargo-library-build:
+ ifndef MOZ_PROFILE_GENERATE
+ ifeq ($(OS_ARCH), Linux)
+ ifeq (,$(RUST_SANCOV_FLAGS)$(MOZ_ASAN)$(MOZ_TSAN)$(MOZ_UBSAN))
+-ifndef MOZ_LTO_RUST_CROSS
+-ifdef RUST_LIBRARY_LTO
+-	$(call py_action,check_binary $(@F),--networking $(RUST_LIBRARY_FILE))
+-endif
+-endif
+ endif
+ endif
+ endif

@@ -589,6 +589,7 @@ src_prepare() {
 
 	# upstreamed into 158 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
+ 	# replaced by 0005-rust-no-lto.patch
 	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	rm -v "${WORKDIR}"/firefox-patches/0009-gcc-lto-pgo-gentoo.patch
 	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1657849-musl-sandbox-sched_setscheduler.patch
@@ -598,6 +599,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
+	eapply "${FILESDIR}/"0005-rust-no-lto.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
