@@ -94,8 +94,8 @@ src_configure() {
 		-Dbashcompletiondir="${EPREFIX}/usr/share/bash-completion/completions"
 		-Dman=auto
 		-Dsmack=true
-		-Dvarlink=$(usex varlink false true)
-		-Dnss-elogind=$(usex nss-elogind enabled disabled)
+		-Dvarlink=$(usex varlink true false)
+		-Dnss-elogind=$(usex nss-elogind true false)
 		# or fix via: elibc_musl? ( sys-libs/musl-nscd )
 		-Duserdb=$(usex userdb enabled disabled)
 		-Dcgroup-controller=openrc
@@ -108,7 +108,7 @@ src_configure() {
 		-Dpamlibdir="$(getpam_mod_dir)"
 		-Dselinux=$(usex selinux enabled disabled)
 		-Dtests=$(usex test true false)
-		-Dutmp=$(usex elibc_musl false true)
+		-Dutmp=$(usex elibc_musl true false)
 		-Dmode=release
 
 		# Ensure consistency between merged-usr and split-usr (bug 945965)
