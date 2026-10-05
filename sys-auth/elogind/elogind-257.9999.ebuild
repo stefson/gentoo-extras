@@ -94,7 +94,7 @@ src_configure() {
 		-Dbashcompletiondir="${EPREFIX}/usr/share/bash-completion/completions"
 		-Dman=auto
 		-Dsmack=true
-		-Dvarlink=$(usex varlink enabled disabled)
+		-Dvarlink=$(usex varlink false true)
 		-Dnss-elogind=$(usex nss-elogind enabled disabled)
 		# or fix via: elibc_musl? ( sys-libs/musl-nscd )
 		-Duserdb=$(usex userdb enabled disabled)
