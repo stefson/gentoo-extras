@@ -97,7 +97,7 @@ src_configure() {
 		-Dvarlink=$(usex varlink true false)
 		-Dnss-elogind=$(usex nss-elogind true false)
 		# or fix via: elibc_musl? ( sys-libs/musl-nscd )
-		-Duserdb=$(usex userdb enabled disabled)
+		-Duserdb=$(usex userdb true false)
 		-Dcgroup-controller=openrc
 		-Ddefault-hierarchy=${cgroupmode}
 		-Ddefault-kill-user-processes=false
