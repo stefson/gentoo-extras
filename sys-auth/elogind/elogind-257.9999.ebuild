@@ -110,6 +110,7 @@ src_configure() {
 		-Dtests=$(usex test true false)
 		-Dutmp=$(usex elibc_musl true false)
 		-Dmode=release
+		-Dlibc=$(usex elibc_musl musl glibc)
 
 		# Ensure consistency between merged-usr and split-usr (bug 945965)
 		-Dhalt-path="${EPREFIX}/sbin/halt"
