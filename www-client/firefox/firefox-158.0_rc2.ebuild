@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-157-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-158-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -591,15 +591,11 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
  	# replaced by 0005-rust-no-lto.patch
 	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
-	rm -v "${WORKDIR}"/firefox-patches/0009-gcc-lto-pgo-gentoo.patch
-	rm -v "${WORKDIR}"/firefox-patches/0014-bmo-1657849-musl-sandbox-sched_setscheduler.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2071536-audio_thread_priority-musl-fix.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fix-musl-pthread_t-in-audio_thread_priority.patch
-	eapply "${FILESDIR}/"0005-rust-no-lto.patch
+#	eapply "${FILESDIR}/"0005-rust-no-lto.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
@@ -670,7 +666,6 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
-	moz_clear_vendor_checksums audio_thread_priority
 	moz_clear_vendor_checksums bindgen
 
 	# Respect choice for "jumbo-build"
