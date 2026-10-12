@@ -589,13 +589,13 @@ src_prepare() {
 
 	# upstreamed into 158 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
- 	# replaced by 0005-rust-no-lto.patch
-	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
+#	# replaced by 0005-rust-no-lto.patch
+#	rm -v "${WORKDIR}"/firefox-patches/0007-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-	eapply "${FILESDIR}/"0003-fix-non-dbus.patch
+#	eapply "${FILESDIR}/"0003-fix-non-dbus.patch
 #	eapply "${FILESDIR}/"0005-rust-no-lto.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
