@@ -591,7 +591,6 @@ src_prepare() {
 #	rm -v "${WORKDIR}"/firefox-patches/
 #	# replaced by 0005-rust-no-lto.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2071536-audio_thread_priority-musl-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0030-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
