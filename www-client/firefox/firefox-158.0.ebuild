@@ -90,7 +90,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.29.4
-	net-libs/nodejs[ssl]
+	net-libs/nodejs[ssl,icu]
 	virtual/pkgconfig
 	!clang? ( >=virtual/rust-1.82 )
 	!elibc_glibc? ( dev-lang/rust )
