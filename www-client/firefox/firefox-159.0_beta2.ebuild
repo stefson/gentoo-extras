@@ -589,13 +589,11 @@ src_prepare() {
 
 	# upstreamed into 159 branch
 #	rm -v "${WORKDIR}"/firefox-patches/
-#	# replaced by 0005-rust-no-lto.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2071536-audio_thread_priority-musl-fix.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-#	eapply "${FILESDIR}/"0005-rust-no-lto.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 

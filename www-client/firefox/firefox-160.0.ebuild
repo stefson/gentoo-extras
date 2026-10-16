@@ -577,8 +577,6 @@ src_prepare() {
 	fi
 
 	# upstreamed into 159 branch
-	# 0007: backport failed, is this still needed?
-	# replaced by 0005-rust-no-lto.patch 
 	rm -v "${WORKDIR}"/firefox-patches/0016-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2071536-audio_thread_priority-musl-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2074346-musl-fix-parakeet-cpp.patch
@@ -589,7 +587,6 @@ src_prepare() {
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
-#	eapply "${FILESDIR}/"0005-rust-no-lto.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
