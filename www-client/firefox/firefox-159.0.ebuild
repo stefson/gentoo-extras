@@ -112,7 +112,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.131
+	>=dev-libs/nss-3.131.1
 	>=dev-libs/nspr-4.39
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -141,7 +141,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	sndio? ( >=media-sound/sndio-1.8.0-r1 )
 	system-av1? (
 		>=media-libs/dav1d-1.5.4:=
-		>=media-libs/libaom-3.12.1:=
+		>=media-libs/libaom-3.14.1:=
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.13

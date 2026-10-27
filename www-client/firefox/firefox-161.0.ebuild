@@ -142,10 +142,10 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	sndio? ( >=media-sound/sndio-1.8.0-r1 )
 	system-av1? (
 		>=media-libs/dav1d-1.5.4:=
-		>=media-libs/libaom-3.12.1:=
+		>=media-libs/libaom-3.14.1:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.8.1:0=
+		>=media-libs/harfbuzz-10.0.0:0=
 		( >=media-gfx/graphite2-1.3.13 )
 	)
 	system-icu? ( >=dev-libs/icu-78.1:= )
