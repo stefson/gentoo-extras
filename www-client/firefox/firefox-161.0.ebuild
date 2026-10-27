@@ -576,11 +576,11 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 160 branch
+	# upstreamed into 161 branch
 	rm -v "${WORKDIR}"/firefox-patches/0016-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2071536-audio_thread_priority-musl-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2074346-musl-fix-parakeet-cpp.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-2080242-include-WidgetUtilsGtk.h-for-wayland-or-nodbus-builds.patch
+	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2074346-musl-fix-parakeet-cpp.patch
+	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2080242-include-WidgetUtilsGtk.h-for-wayland-or-nodbus-builds.patch
+	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-2084134-use-full-color-range-by-default-for-wayland.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
