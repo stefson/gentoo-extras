@@ -113,7 +113,7 @@ COMMON_DEPEND="${FF_ONLY_DEPEND}
 	dev-libs/expat
 	dev-libs/glib:2
 	dev-libs/libffi:=
-	>=dev-libs/nss-3.132
+	>=dev-libs/nss-3.133
 	>=dev-libs/nspr-4.39
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -578,9 +578,11 @@ src_prepare() {
 
 	# upstreamed into 161 branch
 	rm -v "${WORKDIR}"/firefox-patches/0016-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-981812-bindgen-libcxx-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2074346-musl-fix-parakeet-cpp.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2080242-include-WidgetUtilsGtk.h-for-wayland-or-nodbus-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-2084134-use-full-color-range-by-default-for-wayland.patch
+
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
@@ -651,7 +653,6 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
-	moz_clear_vendor_checksums bindgen
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
