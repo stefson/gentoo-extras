@@ -1,8 +1,8 @@
 --- a/libs/libGamedata/CMakeLists.txt
 +++ b/libs/libGamedata/CMakeLists.txt
-@@ -11,7 +11,7 @@
- FILE(GLOB SOURCES_OTHER *.cpp *.h)
- SOURCE_GROUP(other FILES ${SOURCES_OTHER})
+@@ -15,7 +15,7 @@ AddDirectory(lua)
+ file(GLOB SOURCES_OTHER CONFIGURE_DEPENDS *.cpp *.h)
+ source_group(other FILES ${SOURCES_OTHER})
  
 -find_package(Lua 5.1 REQUIRED)
 +find_package(Lua ${LUA_VERSION} EXACT REQUIRED)
