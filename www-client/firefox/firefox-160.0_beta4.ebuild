@@ -588,6 +588,7 @@ src_prepare() {
 	fi
 
 	# upstreamed into 160 branch
+	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-981812-bindgen-libcxx-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2074346-musl-fix-parakeet-cpp.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2080242-include-WidgetUtilsGtk.h-for-wayland-or-nodbus-builds.patch
 	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-2084134-use-full-color-range-by-default-for-wayland.patch
@@ -597,7 +598,6 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-drop-rust-lto-flags-to-thin-rework.patch
-	eapply "${FILESDIR}/"0004-fix-libyuv-32bit-x86.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
@@ -668,7 +668,6 @@ src_prepare() {
 	# moz_clear_vendor_checksums xyz
 	# glslopt: bgo#969412
 	# moz_clear_vendor_checksums glslopt
-	moz_clear_vendor_checksums bindgen
 
 	# Respect choice for "jumbo-build"
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
