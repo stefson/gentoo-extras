@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-159-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-160-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -587,12 +587,6 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 160 branch
-	rm -v "${WORKDIR}"/firefox-patches/0026-bgo-981812-bindgen-libcxx-fix.patch
-	rm -v "${WORKDIR}"/firefox-patches/0027-bmo-2074346-musl-fix-parakeet-cpp.patch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2080242-include-WidgetUtilsGtk.h-for-wayland-or-nodbus-builds.patch
-	rm -v "${WORKDIR}"/firefox-patches/0029-bmo-2084134-use-full-color-range-by-default-for-wayland.patch
-#	rm -v "${WORKDIR}"/firefox-patches/
 	eapply "${WORKDIR}/firefox-patches"
 
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
