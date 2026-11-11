@@ -576,7 +576,8 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 161 branch
+	# upstreamed into 162 branch
+	rm -v "${WORKDIR}"/firefox-patches/0016-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2077169-guard-build-debugger-against-null-match.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
