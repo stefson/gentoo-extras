@@ -1,0 +1,12 @@
+diff --unified --recursive a/widget/gtk/BufferSurface.cpp b/widget/gtk/BufferSurface.cpp
+--- a/widget/gtk/BufferSurface.cpp	2026-11-17 15:47:11.031866078 +0100
++++ b/widget/gtk/BufferSurface.cpp	2026-11-17 15:59:47.797125734 +0100
+@@ -17,6 +17,7 @@
+ #include "GLContextEGL.h"
+ #include "GLContextProvider.h"
+ #include "ScopedGLHelpers.h"
++#include "mozilla/WidgetUtilsGtk.h"
+ #include "mozilla/widget/DMABufDevice.h"
+ 
+ using namespace mozilla;
+
