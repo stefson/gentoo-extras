@@ -595,6 +595,12 @@ src_prepare() {
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
+#	eapply "${FILESDIR}"/privacy-patchset-153/firefox-140-disable-telemetry.patch
+
+	# disable unwanted addons and pocket as well
+#	eapply "${FILESDIR}"/privacy-patchset-153/firefox-140-disable-pocket.patch
+#	eapply "${FILESDIR}"/privacy-patchset-153/firefox-140-remove_addons.patch
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -689,6 +695,8 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
+
+#	rm -rv browser/extensions/{formautofill,newtab,pictureinpicture,webcompat}
 
 	xdg_environment_reset
 }
@@ -1273,6 +1281,10 @@ src_install() {
 		pref("toolkit.telemetry.dap_leader", "");
 		EOF
 	fi
+
+#	cat "${FILESDIR}"/privacy-patchset-153/153.0-privacy.js-1 >> \
+#	"${GENTOO_PREFS}" \
+#	|| die
 
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )

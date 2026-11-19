@@ -1,0 +1,37 @@
+diff --git a/browser/base/content/browser.js b/browser/base/content/browser.js
+index 5327db2..56f0e8e 100644
+--- a/browser/base/content/browser.js
++++ b/browser/base/content/browser.js
+@@ -2236,8 +2236,6 @@ var XULBrowserWindow = {
+ 
+     BrowserPageActions.onLocationChange();
+ 
+-    SaveToPocket.onLocationChange(window);
+-
+     UrlbarProviderSearchTips.onLocationChange(
+       window,
+       aLocationURI,
+diff --git a/browser/components/BrowserComponents.manifest b/browser/components/BrowserComponents.manifest
+index 7f4fb28..166e943 100644
+--- a/browser/components/BrowserComponents.manifest
++++ b/browser/components/BrowserComponents.manifest
+@@ -15,7 +15,6 @@ category browser-before-ui-startup resource:///modules/BuiltInThemes.sys.mjs Bui
+ #ifdef MOZ_NORMANDY
+ category browser-before-ui-startup resource://normandy/Normandy.sys.mjs Normandy.init
+ #endif
+-category browser-before-ui-startup chrome://pocket/content/SaveToPocket.sys.mjs SaveToPocket.init
+ category browser-before-ui-startup resource:///modules/ResetPBMPanel.sys.mjs ResetPBMPanel.init
+ category browser-before-ui-startup resource:///modules/AboutHomeStartupCache.sys.mjs AboutHomeStartupCache.init
+ category browser-before-ui-startup resource:///modules/AccountsGlue.sys.mjs AccountsGlue.init
+diff --git a/browser/components/moz.build b/browser/components/moz.build
+index 3dc676a..02e70c6 100644
+--- a/browser/components/moz.build
++++ b/browser/components/moz.build
+@@ -48,7 +48,6 @@ DIRS += [
+     "pagedata",
+     "permissions",
+     "places",
+-    "pocket",
+     "preferences",
+     "privatebrowsing",
+     "prompts",
