@@ -597,8 +597,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}"/privacy-patchset-153/firefox-153-disable-telemetry.patch
 
-	# disable unwanted addons and pocket as well
-#	eapply "${FILESDIR}"/privacy-patchset-153/firefox-140-disable-pocket.patch
+	# disable unwanted addons
 	eapply "${FILESDIR}"/privacy-patchset-153/firefox-153-remove_addons.patch
 
 	# Allow user to apply any additional patches without modifing ebuild
