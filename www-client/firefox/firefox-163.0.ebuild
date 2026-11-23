@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-160-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-160-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -576,7 +576,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bgo-967694-musl-prctrl-exception-on-musl.patch || die
 	fi
 
-	# upstreamed into 162 branch
+	# upstreamed into 163 branch
 	rm -v "${WORKDIR}"/firefox-patches/0016-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2077169-guard-build-debugger-against-null-match.patch
 #	rm -v "${WORKDIR}"/firefox-patches/

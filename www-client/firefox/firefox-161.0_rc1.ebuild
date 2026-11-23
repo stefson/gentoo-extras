@@ -3,7 +3,7 @@
 
 EAPI=8
 
-FIREFOX_PATCHSET="firefox-160-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-161-patches-01.tar.xz"
 
 LLVM_COMPAT=( 21 22 23 )
 
@@ -588,7 +588,6 @@ src_prepare() {
 	fi
 
 	# upstreamed into 161 branch
-	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2077169-guard-build-debugger-against-null-match.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
 	eapply "${WORKDIR}/firefox-patches"
