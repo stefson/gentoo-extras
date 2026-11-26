@@ -578,6 +578,7 @@ src_prepare() {
 
 	# upstreamed into 163 branch
 	rm -v "${WORKDIR}"/firefox-patches/0016-bgo-910309-dont-link-widevineplugin-to-libgcc_s.patch
+	rm -v "${WORKDIR}"/firefox-patches/0023-bgo-976592-file-path-include-fstream-gcc-17-fix.patch
 	rm -v "${WORKDIR}"/firefox-patches/0028-bmo-2077169-guard-build-debugger-against-null-match.patch
 #	rm -v "${WORKDIR}"/firefox-patches/
 
@@ -586,7 +587,7 @@ src_prepare() {
 	eapply "${FILESDIR}/"0001-remove-old-libstdc++-workaround-in-icu-gcc-12-fix.patch
 	eapply "${FILESDIR}/"0002-add-arm-to-list-of-mozinline.patch
 	eapply "${FILESDIR}/"0003-drop-rust-lto-flags-to-thin-rework.patch
-	eapply "${FILESDIR}/"0004-fix-missing-include-in-WidgetUtilsGtk.patch
+#	eapply "${FILESDIR}/"0004-fix-missing-include-in-WidgetUtilsGtk.patch
 
 	use wasm-sandbox && eapply "${FILESDIR}/"0001-wasm-fixup-rlbox.patch
 
